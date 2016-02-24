@@ -1,10 +1,11 @@
+#ifndef UI_HPP
+#define UI_HPP
+
 #include "SDL2/SDL.h"
 #include "common.hpp"
 #include <vector>
 #include "ui_classes.hpp"
 
-#ifndef UI
-#define UI
 
 void drawMap();
 void statusBars();

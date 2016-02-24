@@ -1,9 +1,15 @@
-#include "src/base.cpp"
+#ifndef PFX_HPP
+#define PFX_HPP
+
+#include <vector>
+#include "base.hpp"
+
+#include "SDL2/SDL_image.h"
 
 class pfx
 {
-	vector<base> particles;
-	vector<int> alphas;
+  std::vector<base> particles;
+  std::vector<int> alphas;
 	
 	SDL_Texture * glow;
 	float glowA;
@@ -21,3 +27,5 @@ public:
 	
 	void clear() {SDL_DestroyTexture(glow);}
 };
+
+#endif

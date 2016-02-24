@@ -1,4 +1,7 @@
-#include "src/ship.cpp"
+#ifndef MISSILE_HPP
+#define MISSILE_HPP
+
+#include "ship.hpp"
 
 class missile: public ship
 {
@@ -11,3 +14,5 @@ public:
 	void steering();
 	bool detonate() {return det;}
 };
+
+#endif

@@ -1,7 +1,12 @@
+#ifndef UTIL_HPP
+#define UTIL_HPP
+
 #include <math.h>
 #include <limits>
 #include <algorithm>
 #include <sstream>
+
+#include "SDL2/SDL_ttf.h"
 
 #define F_MAX numeric_limits<float>::max()
 #define F_INF numeric_limits<float>::infinity()
@@ -51,7 +56,7 @@ template<typename tt>
 tt clampdblsw(tt val, tt lim1, tt lim2)
 {
 	tt min, max;
-	
+
 	if(lim1 < lim2)
 	{
 		min = lim1;
@@ -263,6 +268,12 @@ float randFloat(float low, float high)
 	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(high-low))+low;
 }
 
+template<class t>
+float randNum(t low, t high)
+{
+  return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(high-low))+low;
+}
+
 double diffClock(clock_t clock1, clock_t clock2)
 {
 	double diffticks = clock1-clock2;
@@ -381,3 +392,5 @@ void swapnpop(vector<t> * vec, int i)
 	iter_swap( vec->begin() + i, vec->end() - 1 );
 	vec->pop_back();
 }
+
+#endif

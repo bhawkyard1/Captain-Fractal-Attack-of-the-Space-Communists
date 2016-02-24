@@ -1,7 +1,7 @@
-#ifndef CLASS_PFX
-#define CLASS_PFX
-
 #include "pfx.hpp"
+#include <iostream>
+#include "util.hpp"
+#include "common.hpp"
 
 pfx::pfx(vec2 p, vec2 v, vec2 wv, size_t no, float force, SDL_Texture * pt)
 {
@@ -84,5 +84,3 @@ void pfx::draw(float dt)
 	
 	SDL_SetTextureAlphaMod(cpy, 255.0f);
 }
-
-#endif

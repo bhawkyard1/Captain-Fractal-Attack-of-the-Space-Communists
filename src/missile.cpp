@@ -1,6 +1,3 @@
-#ifndef CLASS_MISSILE
-#define CLASS_MISSILE
-
 #include "missile.hpp"
 
 missile::missile(vec2 p): ship(p, ION_MISSILE_MKI) 
@@ -51,5 +48,3 @@ void missile::steering()
 		accelerate(1);
 	}
 }
-
-#endif

@@ -1,9 +1,10 @@
+#ifndef VECTORS_HPP
+#define VECTORS_HPP
+
 #include <math.h>
 
 using namespace std;
 
-#ifndef VECTORS2D
-#define VECTORS2D
 
 struct vec2
 {
@@ -529,4 +530,5 @@ ang3 rad(ang3 ang)
 	return ang * ( PI / 180 );
 }
 
+#endif
 #endif

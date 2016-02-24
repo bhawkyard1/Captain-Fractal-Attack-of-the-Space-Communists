@@ -1,6 +1,3 @@
-#ifndef SIM_TIME
-#define SIM_TIME
-
 #include "sim_time.hpp"
 
 sim_time::sim_time(float fps)
@@ -38,5 +35,3 @@ void sim_time::setCur()
 	
 	time_since_creation += diff;
 }
-
-#endif

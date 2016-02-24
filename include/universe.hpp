@@ -1,13 +1,16 @@
+#ifndef UNIVERSE_HPP
+#define UNIVERSE_HPP
+
 #include "weapons.hpp"
-#include "src/stardust.cpp"
-#include "src/stardust_sprite.cpp"
-#include "src/ship.cpp"
+#include "stardust.hpp"
+#include "stardust_sprite.hpp"
+#include "ship.hpp"
 #include "src/ship_presets.cpp"
-#include "src/enemy.cpp"
-#include "src/laser.cpp"
-#include "src/player.cpp"
-#include "src/pfx.cpp"
-#include "src/missile.cpp"
+#include "enemy.hpp"
+#include "laser.hpp"
+#include "player.hpp"
+#include "pfx.hpp"
+#include "missile.hpp"
 
 using namespace std;
 
@@ -81,4 +84,5 @@ public:
 	
 	void pause() {paused = !paused;}
 	bool isPaused() {return paused;}
+#endif
 };

@@ -1,6 +1,3 @@
-#ifndef CLASS_PLAYER
-#define CLASS_PLAYER
-
 #include "player.hpp"
 
 void player::ctrlUpdate()
@@ -15,5 +12,3 @@ void player::ctrlUpdate()
 	SDL_GetMouseState(&mx,&my);
 	setTAng(computeAngle({p.x - mx, p.y - my}));
 }
-
-#endif

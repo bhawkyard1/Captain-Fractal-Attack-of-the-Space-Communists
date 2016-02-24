@@ -1,3 +1,9 @@
+#ifndef ENEMY_HPP
+#define ENEMY_HPP
+
+#include "ship.hpp"
+#include "vectors.hpp"
+
 enum ai_goal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION};
 enum ai_team{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_PIRATES, NEUTRAL, NONE};
 
@@ -27,3 +33,5 @@ public:
 	void setConfidence(float c) {confidence = c;}
 	void decrConfidence(float d) {confidence -= d;}
 };
+
+#endif

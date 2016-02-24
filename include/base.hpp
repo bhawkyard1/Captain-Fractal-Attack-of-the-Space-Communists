@@ -1,3 +1,7 @@
+#ifndef BASE_HPP
+#define BASE_HPP
+
+#include "vectors.hpp"
 class base
 {
 	vec2 prevPos, pos, vel, wvel;
@@ -17,3 +21,5 @@ public:
 	
 	void updatePos(float dt);
 };
+
+#endif

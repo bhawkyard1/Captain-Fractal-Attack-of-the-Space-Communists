@@ -1,3 +1,6 @@
+#ifndef RENDERING_HPP
+#define RENDERING_HPP
+
 #include "../common.hpp"
 
 //Starts up SDL, creates window, and initializes OpenGL
@@ -136,4 +139,5 @@ void render()
             glVertex3f( -0.5f, 0.5f, 0.0f);
         glEnd();
     }
+#endif
 }

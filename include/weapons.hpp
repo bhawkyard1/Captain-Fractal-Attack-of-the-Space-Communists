@@ -1,3 +1,6 @@
+#ifndef WEAPONS_HPP
+#define WEAPONS_HPP
+
 //Weapon definitions.
   //Lasers per shot, spread, dmg, speed, red, green, blue, energy cost, cooldown, stopping power.
 float weapons[][10] = {
@@ -34,4 +37,5 @@ float getCooldown(int weap)
 bool isOffScreen(vec2 pos, float dist)
 {
 	return (pos.x < -dist or pos.y < -dist or pos.x > dist or pos.y > dist);
+#endif
 }

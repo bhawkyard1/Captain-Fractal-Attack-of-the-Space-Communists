@@ -1,4 +1,8 @@
-#include "src/stardust.cpp"
+#ifndef STARDUST_SPRITE_HPP
+#define STARDUST_SPRITE_HPP
+
+#include "SDL2/SDL.h"
+#include "stardust.hpp"
 
 class stardust_sprite: public stardust
 {
@@ -15,4 +19,5 @@ public:
 	void updateSprite(float);
 	void incrDim();
 	float getDim() {return dim;}
+#endif
 };

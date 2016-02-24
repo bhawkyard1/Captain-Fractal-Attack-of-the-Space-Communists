@@ -1,3 +1,6 @@
+#ifndef FILE_HPP
+#define FILE_HPP
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -119,4 +122,5 @@ void loadGame(universe * uni)
 	save.close();
 	
 	cout << "LOADED" << endl;
+#endif
 }

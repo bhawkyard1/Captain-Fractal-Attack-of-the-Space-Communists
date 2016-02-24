@@ -1,4 +1,7 @@
-#include "src/base.cpp"
+#ifndef STARDUST_HPP
+#define STARDUST_HPP
+
+#include "base.hpp"
 
 class stardust: public base
 {
@@ -17,3 +20,5 @@ public:
 	float getCol(int i) {return col[i];}
 	void setCol(int i, float v) {col[i] = v;}
 };
+
+#endif

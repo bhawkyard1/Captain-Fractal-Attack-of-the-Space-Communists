@@ -1,4 +1,13 @@
-#include "src/base.cpp"
+#ifndef SHIP_HPP
+#define SHIP_HPP
+
+#include <vector>
+
+#include "SDL2/SDL.h"
+
+#include "common.hpp"
+#include "util.hpp"
+#include "base.hpp"
 
 #define UPGRADES_LEN 4
 
@@ -108,3 +117,5 @@ public:
 	
 	bool inCombat() {return damageTimer > 0.0f;}
 };
+
+#endif

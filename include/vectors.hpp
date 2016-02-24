@@ -1,9 +1,10 @@
+#ifndef VECTORS_HPP
+#define VECTORS_HPP
+
 #include <math.h>
 
 using namespace std;
 
-#ifndef VECTORS2D
-#define VECTORS2D
 
 struct vec2
 {

@@ -1,4 +1,8 @@
-#include "src/base.cpp"
+#ifndef LASER_HPP
+#define LASER_HPP
+
+#include "base.hpp"
+#include "enemy.hpp"
 
 class laser: public base
 {
@@ -15,3 +19,5 @@ public:
 	
 	float getPower() {return power;}
 };
+
+#endif

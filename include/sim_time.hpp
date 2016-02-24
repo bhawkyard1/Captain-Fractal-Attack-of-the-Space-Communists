@@ -1,3 +1,6 @@
+#ifndef SIM_TIME_HPP
+#define SIM_TIME_HPP
+
 #include <chrono>
 
 class sim_time
@@ -23,4 +26,5 @@ public:
 	double getAcc() {return sim_accumulator;}
 	
 	void incrAcc(float incr) {sim_accumulator += incr;}
+#endif
 };

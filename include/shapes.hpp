@@ -1,3 +1,6 @@
+#ifndef SHAPES_HPP
+#define SHAPES_HPP
+
 struct circle
 {
 	vec2 center;
@@ -14,4 +17,5 @@ bool circleIntersectCircle(circle &c1, circle &c2)
 {
 	if( magns( c2.center - c1.center ) < sqr( c1.radius + c2.radius ) ) return true;
 	return false;
+#endif
 }

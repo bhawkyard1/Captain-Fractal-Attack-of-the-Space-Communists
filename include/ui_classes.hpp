@@ -1,5 +1,6 @@
-#ifndef UI_CLASSES
-#define UI_CLASSES
+#ifndef UI_CLASSES_HPP
+#define UI_CLASSES_HPP
+
 
 class button
 {

@@ -1,7 +1,7 @@
-#ifndef SHIP_PRESETS
-#define SHIP_PRESETS
+#include <vector>
+#include "ship.hpp"
 
-vector<ship> GLOBAL_SHIPS;
+std::vector<ship> GLOBAL_SHIPS;
 
 //This function loads all the ships in the game into a global vector that we can copy from later.
 void loadShips()
@@ -13,5 +13,3 @@ void loadShips()
 	}
 	cout << "len of global ship presets is " << GLOBAL_SHIPS.size() << endl;;
 }
-
-#endif

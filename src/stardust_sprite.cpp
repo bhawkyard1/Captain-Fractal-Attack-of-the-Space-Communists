@@ -1,7 +1,7 @@
-#ifndef CLASS_STARDUST_SPRITE
-#define CLASS_STARDUST_SPRITE
 
 #include "stardust_sprite.hpp"
+#include "util.hpp"
+#include "common.hpp"
 
 stardust_sprite::stardust_sprite(SDL_Texture * pt, float colp[]): stardust(colp) 
 {	
@@ -177,5 +177,3 @@ void stardust_sprite::incrDim()
 		dim -= 2.0f;
 	}
 }
-
-#endif

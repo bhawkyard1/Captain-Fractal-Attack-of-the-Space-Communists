@@ -1,7 +1,6 @@
-#ifndef CLASS_STARDUST
-#define CLASS_STARDUST
-
 #include "stardust.hpp"
+#include "util.hpp"
+#include "common.hpp"
 
 stardust::stardust(float colp[])
 {
@@ -108,5 +107,3 @@ void stardust::draw(float dt)
 	SDL_SetRenderDrawColor( renderer, col[0], col[1], col[2], clamp( ZOOM_LEVEL * col[3] / (static_cast<float>(fabs( wv.x * wv.y )) / 300.0f + 1.0f ), 30.0f, 255.0f ) );
 	SDL_RenderDrawLine( renderer, p.x, p.y, p.x + ( v.x + wv.x ) * z, p.y + ( v.y + wv.y ) * z );
 }
-
-#endif

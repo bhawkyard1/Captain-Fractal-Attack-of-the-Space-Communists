@@ -1,3 +1,6 @@
+#ifndef RENDERER_HPP
+#define RENDERER_HPP
+
 #include <math.h>
 
 class renderer
@@ -24,4 +27,5 @@ public:
 	void DELETE_rflip() {gRenderQuad = !gRenderQuad;}
 	bool DELETE_gflip() {return gRenderQuad;}
 };
+#endif
 

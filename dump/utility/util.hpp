@@ -1,3 +1,6 @@
+#ifndef UTIL_HPP
+#define UTIL_HPP
+
 #include <math.h>
 #include <limits>
 #include <algorithm>
@@ -380,4 +383,5 @@ void swapnpop(vector<t> * vec, int i)
 {
 	iter_swap( vec->begin() + i, vec->end() - 1 );
 	vec->pop_back();
+#endif
 }

@@ -1,6 +1,3 @@
-#ifndef CLASS_LASER
-#define CLASS_LASER
-
 #include "laser.hpp"
 
 laser::laser(vec2 p, vec2 v, float pAng, float pData[], ai_team pTeam)
@@ -53,5 +50,3 @@ void laser::draw(float dt)
 	
 	drawLineGr( renderer, {p.x, p.y}, {p.x + vec.x * spd * 4.0f, p.y + vec.y * spd * 4.0f}, ecol, scol );
 }
-
-#endif
