@@ -57,11 +57,11 @@ void loadConfig()
 
 void loadTextures()
 {
-  SDL_Surface * temp = IMG_Load("../resources/images/environment/smoke_1.png");
+	SDL_Surface * temp = IMG_Load("../resources/images/environment/smoke_1.png");
 	SMOKE_TEXTURE = SDL_CreateTextureFromSurface(renderer, temp);
 	SDL_FreeSurface(temp);
 	
-  SDL_Surface * temp2 = IMG_Load("../resources/images/environment/explosion.png");
+	SDL_Surface * temp2 = IMG_Load("../resources/images/environment/explosion.png");
 	XPLO_TEXT = SDL_CreateTextureFromSurface(renderer, temp2);
 	SDL_FreeSurface(temp2);
 }

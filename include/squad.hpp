@@ -3,6 +3,7 @@
 
 class squad
 {
+  ai_goal team_goal;
   void updateGoal();
   vector<enemy> squaddies;
 public:

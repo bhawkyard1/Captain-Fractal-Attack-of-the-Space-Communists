@@ -11,8 +11,8 @@
 #include <sstream>
 
 //openGL headers
-#include <GL/glew.h>
-#include <GL/glu.h>
+//#include <GL/glew.h>
+//#include <GL/glu.h>
 
 //SDL headers
 #include "SDL2/SDL.h"
@@ -51,6 +51,7 @@
 #include <windows.h>
 #endif
 
+SDL_Window * gameInit();
 void handleUserKeyDownInput(int,player*,universe*,int*);
 void handleUserKeyUpInput(int,int*);
 void handleUserMouseDownInput(int,int,player*,universe*);
@@ -62,64 +63,23 @@ void setDifficulty();
 
 int main(int argc, char* argv[])
 {
-  #ifdef _WIN32
-  AllocConsole() ;
-  AttachConsole( GetCurrentProcessId() );
-  freopen( "CON", "w", stdout );
-  freopen( "CON", "w", stdin );
-  freopen( "CON", "w", stderr );
-  #endif
-
-  loadConfig();
-
-  if(SDL_Init(SDL_INIT_VIDEO) != 0)
-  {
-    cerr << "SDL_Init() failed: " << SDL_GetError() << endl;
-    SDL_Quit();
-    return 1;
-  }
-
-  if(TTF_Init() != 0)
-  {
-    cerr << "TTF_Init() failed: " << TTF_GetError() << endl;
-    SDL_Quit();
-    return 1;
-  }
-
-  if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
-    {
-    cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << endl;
-    //SDL_Quit();
-        //return 1;
-    }
-
-  loadSounds();
-
-  srand (static_cast <unsigned> (time(0)));
-
-  SDL_Window *window = SDL_CreateWindow("Elite: Dangerous v2.0",
-    WIN_POS_X, WIN_POS_Y,
-    WIN_HEIGHT, WIN_WIDTH,
-    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED );
-
-  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-  SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_BLEND);
-
-  universe uni;
-  transmitPointers(&uni);
-  menus_init();
-  upgrades_init();
-  loadTextures();
-  loadShips();
-  int loopCount = 0;
-
-  sim_time clock(60.0f);
-
-  bool active = true;
-
-  int mod = 0;
-  while(active == true)
+	SDL_Window * window = gameInit();
+	if(!window) return 1;
+	
+	universe uni;
+	transmitPointers(&uni);
+	menus_init();
+	upgrades_init();
+	loadTextures();
+	loadShips();
+	int loopCount = 0;
+	
+	sim_time clock(60.0f);
+	
+	bool active = true;
+	
+	int mod = 0;
+	while(active == true)
   {
     sim_time profiler(0.0f);
 
@@ -260,6 +220,55 @@ void handleUserMouseDownInput(int btn, int mod, player *ply, universe *uni)
   }
 }
 
+SDL_Window * gameInit()
+{
+	#ifdef _WIN32
+	AllocConsole() ;
+	AttachConsole( GetCurrentProcessId() );
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stdin );
+	freopen( "CON", "w", stderr );
+	#endif
+	
+	loadConfig();
+	
+	if(SDL_Init(SDL_INIT_VIDEO) != 0)
+	{
+		cerr << "SDL_Init() failed: " << SDL_GetError() << endl;
+		SDL_Quit();
+		return nullptr;
+	}
+	
+	if(TTF_Init() != 0)
+	{
+		cerr << "TTF_Init() failed: " << TTF_GetError() << endl;
+		SDL_Quit();
+		return nullptr;
+	}
+	
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+	{
+		cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << endl;
+		//SDL_Quit();
+		//return 1;
+	}
+	
+	loadSounds();
+	
+	srand (static_cast <unsigned> (time(0)));
+	
+	SDL_Window *window = SDL_CreateWindow("Elite: Dangerous v2.0",
+    WIN_POS_X, WIN_POS_Y,
+    WIN_HEIGHT, WIN_WIDTH,
+    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED );
+
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_BLEND);
+
+	return window;
+}
+
 void handleUserMouseUpInput(int btn, int mod, player *ply, universe *uni)
 {
   if(mod == 0)
@@ -370,21 +379,13 @@ void handleUserKeyUpInput(int sym, int * mod)
   }
 }
 
-void setDifficulty()
-{
-  cout << "#####################################" << endl
-  << "#####################################" << endl
-  << "#########                   #########" << endl
-  << "####      SELECT DIFFICULTY      ####" << endl
-  << "#########                   #########" << endl
-  << "#####################################" << endl
-  << "#####################################" << endl;
-
-}
-
 
 /*
 g++ -Wall -o "%e" -lmingw32  -mwindows -L C:\SDL2\x86_64-w64-mingw32\lib "%f" -I C:\SDL2\x86_64-w64-mingw32\include -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2main -lSDL2 -std=c++11
 
 g++ -Wall -o "%e"  -L usr\bin\lib "%f" -I usr\bin\include -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2main -lSDL2 -std=c++11
+*/
+
+/*
+g++ -Wall -o "%e" -lmingw32  -mwindows -L C:\SDL2\x86_64-w64-mingw32\lib "%f" -I C:\SDL2\x86_64-w64-mingw32\include  C:\Users\Ben\Documents\Programming\projects\CA1\ed2\src C:\Users\Ben\Documents\Programming\projects\CA1\ed2\include -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2main -lSDL2 -std=c++11 
 */

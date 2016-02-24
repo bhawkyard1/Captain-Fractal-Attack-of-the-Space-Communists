@@ -1,4 +1,4 @@
-#include "src/stardust.cpp"
+#include "stardust.cpp"
 
 class stardust_sprite: public stardust
 {

@@ -39,7 +39,7 @@ universe::universe(): ply( {0.0f, 0.0f} )
 	vector<SDL_Surface*> surfs;
 	for(size_t i = 0; i < 5; i++)
 	{
-    string name = "../resources/images/environment/stardust_" + to_string(i);
+		string name = "../resources/images/environment/stardust_" + to_string(i);
 		name += ".png";
 	
 		surfs.push_back(IMG_Load(name.c_str()));

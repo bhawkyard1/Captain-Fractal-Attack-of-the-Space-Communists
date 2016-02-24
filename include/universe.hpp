@@ -1,13 +1,13 @@
 #include "weapons.hpp"
-#include "src/stardust.cpp"
-#include "src/stardust_sprite.cpp"
-#include "src/ship.cpp"
-#include "src/ship_presets.cpp"
-#include "src/enemy.cpp"
-#include "src/laser.cpp"
-#include "src/player.cpp"
-#include "src/pfx.cpp"
-#include "src/missile.cpp"
+#include "stardust.cpp"
+#include "stardust_sprite.cpp"
+#include "ship.cpp"
+#include "ship_presets.cpp"
+#include "enemy.cpp"
+#include "laser.cpp"
+#include "player.cpp"
+#include "pfx.cpp"
+#include "missile.cpp"
 
 using namespace std;
 

@@ -19,7 +19,7 @@ void squad::populate(ai_team t, size_t n)
 
 void update(float dt)
 {
-
+	for(auto i = squaddies.begin(); i != squaddies.end(); ++i) squaddies.at(i).update(dt);
 }
 
 void updateGoal()

@@ -48,4 +48,4 @@ LIBS += -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 #include($(HOME)/NGL/UseNGL.pri)
 
 OTHER_FILES += readme.md
-#            += resources/fonts/pix.TTF
+#           += resources/fonts/pix.TTF

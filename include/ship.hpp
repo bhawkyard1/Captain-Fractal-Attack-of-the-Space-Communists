@@ -1,4 +1,4 @@
-#include "src/base.cpp"
+#include "base.cpp"
 
 #define UPGRADES_LEN 4
 

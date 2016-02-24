@@ -1,4 +1,4 @@
-#include "src/ship.cpp"
+#include "ship.cpp"
 
 class missile: public ship
 {
