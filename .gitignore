@@ -1,0 +1,6 @@
+*.o
+*.pro.user*
+.qmake*
+build*
+MakeFile
+Elite_Dangerous_v2
