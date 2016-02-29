@@ -18,14 +18,14 @@ float BG_DENSITY = 5.0f;
 
 void loadConfig()
 {
-  ifstream config("../resources/config.txt");
-  string cur;
+  std::ifstream config("../resources/config.txt");
+  std::string cur;
 
   while(getline( config, cur ))
   {
     if(cur.length() == 0) continue;
 
-    vector<string> strings = split(cur, ' ');
+    std::vector<std::string> strings = split(cur, ' ');
 
     for(size_t i = 0; i < strings.size(); i++)
     {
@@ -38,7 +38,7 @@ void loadConfig()
   }
   config.close();
   HALFWIN = {WIN_WIDTH / 2.0f, WIN_HEIGHT / 2.0f};
-  MAX_DIM = max( WIN_WIDTH, WIN_HEIGHT );
+  MAX_DIM = std::max( WIN_WIDTH, WIN_HEIGHT );
 
   std::cout << "Resolution: " << WIN_WIDTH << " x " << WIN_HEIGHT << std::endl;
   std::cout << "Difficulty: " << DIFFICULTY << std::endl;

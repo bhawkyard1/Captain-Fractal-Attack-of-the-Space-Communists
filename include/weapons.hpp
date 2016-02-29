@@ -3,7 +3,7 @@
 
 //Weapon definitions.
   //Lasers per shot, spread, dmg, speed, red, green, blue, energy cost, cooldown, stopping power.
-float weapons[][10] = {
+static float weapons[][10] = {
           {1.0f,	2.0f,             8.0f,     12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.005f},//Laser cannon	0
           {12.0f,	5.0f,             3.0f,     8.0f,     50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.01f},//Shotgun			1
           {1.0f,	1.0f,             2.0f,     30.0f,		40.0f,	75.0f,	255.0f,	1.0f,   0.05f,  0.001f},//Blue laser		2
@@ -24,18 +24,19 @@ float weapons[][10] = {
           {3.0f,	0.5f/DIFFICULTY,	7.0f,     10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f},//P gunship laser	17
 					};
 
-float getEnergyCost(int weap)
+inline float getEnergyCost(int weap)
 {
 	return weapons[weap][7];
 }
 
-float getCooldown(int weap)
+inline float getCooldown(int weap)
 {
 	return weapons[weap][8];
 }
 
-bool isOffScreen(vec2 pos, float dist)
+inline bool isOffScreen(vec2 pos, float dist)
 {
 	return (pos.x < -dist or pos.y < -dist or pos.x > dist or pos.y > dist);
-#endif
 }
+
+#endif

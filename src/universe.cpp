@@ -1,4 +1,6 @@
 #include "universe.hpp"
+#include "util.hpp"
+#include "ship_presets.hpp"
 
 bool emnityCheck(ai_team a, ai_team b);
 
@@ -33,16 +35,16 @@ universe::universe(): ply( {0.0f, 0.0f} )
 		dots.push_back(stardust(cColP));
 	}
 	
-	vector<SDL_Surface*> surfs;
+  std::vector<SDL_Surface*> surfs;
 	for(size_t i = 0; i < 5; i++)
 	{
-		string name = "../resources/images/environment/stardust_" + to_string(i);
+    std::string name = "../resources/images/environment/stardust_" + std::to_string(i);
 		name += ".png";
 	
 		surfs.push_back(IMG_Load(name.c_str()));
 	}
 	
-	vector<SDL_Texture*> texs;
+  std::vector<SDL_Texture*> texs;
 	
 	for(size_t i = 0; i < surfs.size(); i++)
 	{
@@ -68,7 +70,7 @@ void universe::addShot(vec2 p, vec2 v, float angle, int weap, ai_team team)
 	int temp_angle = angle + 90;
 	for(int i = 0; i < weapons[weap][0]; i++)
 	{
-		//vec2 vec = computeVector(temp_angle);
+    //vec2 vec = computeVector(temp_angle);
 		laser temp( p + v, v, temp_angle, weapons[weap], team);
 		shots.push_back(temp);
 	}
@@ -77,7 +79,7 @@ void universe::addShot(vec2 p, vec2 v, float angle, int weap, ai_team team)
 void universe::addMissile(vec2 p, vec2 v, float angle, bool team)
 {
 	missile m(p);
-	m.setVel(v + computeVector(angle + 90) * 5);
+  m.setVel(v + computeVector(angle + 90) * 5);
 	m.setWVel(vel);
 	m.setAng(angle);
 	
@@ -196,7 +198,7 @@ void universe::update(int loopCount, float dt)
 		int h = 0;
 		SDL_QueryTexture(temp, NULL, NULL, &w, &h);
 		
-		if(isOffScreen(sparkles.at(i).getPos(), (MAX_DIM + max(w, h)) * BG_DENSITY * sparkles.at(i).getZ() / ZOOM_LEVEL))
+    if(isOffScreen(sparkles.at(i).getPos(), (MAX_DIM + std::max(w, h)) * BG_DENSITY * sparkles.at(i).getZ() / ZOOM_LEVEL))
 		{
 			sparkles.at(i).spriteGen(cColP);
 		}
@@ -234,10 +236,10 @@ void universe::update(int loopCount, float dt)
 	partitions.lasers.clear();
 	partitions.rocks.clear();
 	partitions.rockets.clear();
-	vector<enemy*> init_ship;
-	vector<laser*> init_laser;
-	vector<missile*> init_missile;
-	vector<ship*> init_asteroid;
+  std::vector<enemy*> init_ship;
+  std::vector<laser*> init_laser;
+  std::vector<missile*> init_missile;
+  std::vector<ship*> init_asteroid;
 	SDL_Rect init_rect = {0, 0, 0, 0};
 	int minX = I_INF, minY = I_INF, maxX = -I_INF, maxY = -I_INF;
 	for(size_t i = 0; i < enemies.size(); ++i)
@@ -272,10 +274,10 @@ void universe::update(int loopCount, float dt)
 		vec2 p = shots.at(i).getPos();
 		vec2 pp = p + shots.at(i).getVel();
 		
-		if(min(p.x, pp.x) < minX) minX = p.x;
-		if(min(p.y, pp.y) < minY) minY = p.y;
-		if(max(p.x, pp.x) > maxX) maxX = p.x;
-		if(max(p.y, pp.y) > maxY) maxY = p.y;
+    if(std::min(p.x, pp.x) < minX) minX = p.x;
+    if(std::min(p.y, pp.y) < minY) minY = p.y;
+    if(std::max(p.x, pp.x) > maxX) maxX = p.x;
+    if(std::max(p.y, pp.y) > maxY) maxY = p.y;
 		init_laser.push_back( &shots.at(i) );
 	}
 	if(ply.getPos().x < minX) minX = ply.getPos().x;
@@ -627,7 +629,7 @@ void universe::update(int loopCount, float dt)
 		int h = 0;
 		SDL_QueryTexture(temp, NULL, NULL, &w, &h);
 		
-		if(alph < 0.0f or isOffScreen(passive_sprites.at(i).getPos(), (MAX_DIM + max(w, h)) * BG_DENSITY * passive_sprites.at(i).getZ() / ZOOM_LEVEL) or passive_sprites.at(i).getDim() <= 0.0f)
+    if(alph < 0.0f or isOffScreen(passive_sprites.at(i).getPos(), (MAX_DIM + std::max(w, h)) * BG_DENSITY * passive_sprites.at(i).getZ() / ZOOM_LEVEL) or passive_sprites.at(i).getDim() <= 0.0f)
 		{
 			swapnpop(&passive_sprites, i);
 			//passive_sprites.erase(passive_sprites.begin() + i);
@@ -812,14 +814,14 @@ void universe::draw(float dt)
 	}
 }
 
-void universe::detectCollisions(SDL_Rect box, vector<enemy*> ships, vector<laser*> lasers, vector<missile*> rockets, vector<ship*> rocks, unsigned short int lvl)
+void universe::detectCollisions(SDL_Rect box, std::vector<enemy*> ships, std::vector<laser*> lasers, std::vector<missile*> rockets, std::vector<ship*> rocks, unsigned short int lvl)
 {
 	//cout << lvl << ") SIZES : ships " << ships.size() << ", lasers " << lasers.size() << ", missiles " << rockets.size() << ", rocks " << rocks.size() << endl;
 	size_t count = 0;
-	vector<enemy*> pships;
-	vector<laser*> plasers;
-	vector<missile*> prockets;
-	vector<ship*> procks;
+  std::vector<enemy*> pships;
+  std::vector<laser*> plasers;
+  std::vector<missile*> prockets;
+  std::vector<ship*> procks;
 	
 	for(size_t i = 0; i < ships.size(); ++i)
 	{
@@ -1197,7 +1199,7 @@ void universe::reload(bool newGame)
 						{3.0f,	0.5f/DIFFICULTY,	7.0f,		10.0f,		255.0f,	216.0f,	0.0f,	1.0f,	0.9f},//P gunship laser	17
 						};
 	
-	for(int i = 0; i < 14; ++i) copy(&tmp[i][0], &tmp[i][8], &weapons[i][0]);
+  for(int i = 0; i < 14; ++i) std::copy(&tmp[i][0], &tmp[i][8], &weapons[i][0]);
 	
 	partitions.ships.clear();
 	partitions.lasers.clear();

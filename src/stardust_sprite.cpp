@@ -1,4 +1,3 @@
-
 #include "stardust_sprite.hpp"
 #include "util.hpp"
 #include "common.hpp"
@@ -40,7 +39,7 @@ void stardust_sprite::spriteGen(float colp[])
 	
 	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
 	
-	int m = max(w,h);
+  int m = std::max(w,h);
 	//m *= getZ();
 	m *= ZOOM_LEVEL;
 	

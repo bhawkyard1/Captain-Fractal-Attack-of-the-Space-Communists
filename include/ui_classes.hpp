@@ -1,7 +1,6 @@
 #ifndef UI_CLASSES_HPP
 #define UI_CLASSES_HPP
 
-
 class button
 {
 	bool selected = false;
@@ -12,10 +11,10 @@ class button
 	int cost;
 	bool dark;
 public:
-	button(string,int*,int*,vec2,vec2);
-	button(string,int*,int*,vec2,vec2,int);
+  button(std::string,int*,int*,vec2,vec2);
+  button(std::string,int*,int*,vec2,vec2,int);
 	void select();
-	void updateText(string);
+  void updateText(std::string);
 	void set(bool s) {selected = s;}
 	bool on() {return selected;}
 	void draw();
@@ -29,7 +28,7 @@ public:
 	bool isDark() {return dark;}
 };
 
-button::button(string txt, int b_col[], int t_col[], vec2 pos, vec2 dim)
+button::button(std::string txt, int b_col[], int t_col[], vec2 pos, vec2 dim)
 {
 	dark = false;
 	selected = false;
@@ -55,7 +54,7 @@ button::button(string txt, int b_col[], int t_col[], vec2 pos, vec2 dim)
 	cost = 0;
 }
 
-button::button(string txt, int b_col[], int t_col[], vec2 pos, vec2 dim, int pcost)
+button::button(std::string txt, int b_col[], int t_col[], vec2 pos, vec2 dim, int pcost)
 {
 	dark = true;
 	selected = false;
@@ -81,7 +80,7 @@ button::button(string txt, int b_col[], int t_col[], vec2 pos, vec2 dim, int pco
 	cost = pcost;
 }
 
-void button::updateText(string text)
+void button::updateText(std::string text)
 {
   TTF_Font * Font_Pixelade = TTF_OpenFont("../resources/fonts/pix.TTF", 18);
 	texture = renderText(text, Font_Pixelade, {255,255,255,255}, renderer, I_MAX);
@@ -131,10 +130,10 @@ void button::del()
 
 class selection
 {
-	vector<button> buttons;
+  std::vector<button> buttons;
 	int selected;
 public:
-	vector<button> * getButtons() {return &buttons;}
+  std::vector<button> * getButtons() {return &buttons;}
 	int getSelected() {return selected;}
 	void add(button b) {buttons.push_back(b);}
 	bool click(vec2);

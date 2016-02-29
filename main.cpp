@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
     /*if(DEV_MODE)
     {
       profiler.setCur();
-      cout << std::fixed << "Game updates complete: " << profiler.getDiff() << endl;
+      cout << std::fixed << "Game updates complete: " << profiler.getDiff() << std::endl;
       profiler.setCur();
     }*/
 
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
     /*if(DEV_MODE)
     {
       profiler.setCur();
-      cout << std::fixed << "Draw updates complete: " << profiler.getDiff() << endl;
+      cout << std::fixed << "Draw updates complete: " << profiler.getDiff() << std::endl;
       profiler.setCur();
     }*/
 
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     /*if(DEV_MODE)
     {
       profiler.setCur();
-      cout << std::fixed << "UI draw updates complete: " << profiler.getDiff() << endl;
+      cout << std::fixed << "UI draw updates complete: " << profiler.getDiff() << std::endl;
       profiler.setCur();
     }*/
 
@@ -234,21 +234,21 @@ SDL_Window * gameInit()
 	
 	if(SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		cerr << "SDL_Init() failed: " << SDL_GetError() << endl;
+    std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
 		SDL_Quit();
 		return nullptr;
 	}
 	
 	if(TTF_Init() != 0)
 	{
-		cerr << "TTF_Init() failed: " << TTF_GetError() << endl;
+    std::cerr << "TTF_Init() failed: " << TTF_GetError() << std::endl;
 		SDL_Quit();
 		return nullptr;
 	}
 	
 	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
 	{
-		cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << endl;
+    std::cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << std::endl;
 		//SDL_Quit();
 		//return 1;
 	}

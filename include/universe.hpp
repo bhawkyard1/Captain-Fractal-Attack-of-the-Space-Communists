@@ -5,34 +5,32 @@
 #include "stardust.hpp"
 #include "stardust_sprite.hpp"
 #include "ship.hpp"
-#include "src/ship_presets.cpp"
+#include "ship_presets.hpp"
 #include "enemy.hpp"
 #include "laser.hpp"
 #include "player.hpp"
 #include "pfx.hpp"
 #include "missile.hpp"
 
-using namespace std;
-
 struct col_partition
 {
-	vector< vector<enemy*> > ships;
-	vector< vector<laser*> > lasers;
-	vector< vector<missile*> > rockets;
-	vector< vector<ship*> > rocks;
-	vector<SDL_Rect> rects;
+  std::vector< std::vector<enemy*> > ships;
+  std::vector< std::vector<laser*> > lasers;
+  std::vector< std::vector<missile*> > rockets;
+  std::vector< std::vector<ship*> > rocks;
+  std::vector<SDL_Rect> rects;
 };
 
 class universe
 {
-	vector<stardust> dots;
-	vector<stardust_sprite> sparkles;
-	vector<laser> shots;
-	vector<enemy> enemies;
-	vector<pfx> particles;
-	vector<missile> missiles;
-	vector<ship> asteroids;
-	vector<stardust_sprite> passive_sprites;
+  std::vector<stardust> dots;
+  std::vector<stardust_sprite> sparkles;
+  std::vector<laser> shots;
+  std::vector<enemy> enemies;
+  std::vector<pfx> particles;
+  std::vector<missile> missiles;
+  std::vector<ship> asteroids;
+  std::vector<stardust_sprite> passive_sprites;
 	player ply;
 	vec2 vel;
 	
@@ -59,15 +57,15 @@ public:
 	void update(int,float);
 	void draw(float);
 	
-	void detectCollisions(SDL_Rect, vector<enemy*>, vector<laser*>, vector<missile*>, vector<ship*>, unsigned short int);
+  void detectCollisions(SDL_Rect, std::vector<enemy*>, std::vector<laser*>, std::vector<missile*>, std::vector<ship*>, unsigned short int);
 	void checkCollisions();
 	
 	void addpfx(vec2,vec2,vec2,int,float);
 	void addParticleSprite(vec2,vec2, float, SDL_Texture*);
-	vector<enemy>* getEnemies() {return &enemies;}
-	vector<laser>* getShots() {return &shots;}
-	vector<missile>* getMissiles() {return &missiles;}
-	vector<ship>* getAsteroids() {return &asteroids;}
+  std::vector<enemy>* getEnemies() {return &enemies;}
+  std::vector<laser>* getShots() {return &shots;}
+  std::vector<missile>* getMissiles() {return &missiles;}
+  std::vector<ship>* getAsteroids() {return &asteroids;}
 	ship * closestEnemy(vec2 p, ai_team t);
 	void setScore(int s) {score = s;}
 	int getScore() {return score;}
@@ -84,5 +82,6 @@ public:
 	
 	void pause() {paused = !paused;}
 	bool isPaused() {return paused;}
-#endif
 };
+
+#endif

@@ -5,23 +5,23 @@
 #include <fstream>
 #include <sstream>
 
-void writeVector(ostream &file, universe * u, int v);
+void writeVector(std::ostream &file, universe * u, int v);
 
 void saveGame(universe * uni)
 {
-	ofstream save("save.txt");
+  std::ofstream save("save.txt");
 	
-	save 	<< "score " << uni->getScore() << endl
-			<< "mec " << uni->getMaxEnemyCount() << endl
-			<< "mwc " << uni->getMaxWingmanCount() << endl
-			<< "mmc " << uni->getMaxMinerCount() << endl
-			<< "nm " << uni->getPly()->getMissiles() << endl
-			<< "d " << DIFFICULTY << endl
+  save 	<< "score " << uni->getScore() << std::endl
+      << "mec " << uni->getMaxEnemyCount() << std::endl
+      << "mwc " << uni->getMaxWingmanCount() << std::endl
+      << "mmc " << uni->getMaxMinerCount() << std::endl
+      << "nm " << uni->getPly()->getMissiles() << std::endl
+      << "d " << DIFFICULTY << std::endl
 			<< "u ";
 			
 	for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
 	
-	save 	<< endl 
+  save 	<< std::endl
 			<< "tp ";
 	writeVector(save, uni, 0);
 	
@@ -30,12 +30,12 @@ void saveGame(universe * uni)
 	
 	save.close();
 	
-	cout << "SAVED" << endl;
+  std::cout << "SAVED" << std::endl;
 }
 
-void writeVector(ostream &file, universe * u, int v)
+void writeVector(std::ostream &file, universe * u, int v)
 {
-	vector<enemy> * e = u->getEnemies();
+  std::vector<enemy> * e = u->getEnemies();
 	switch(v)
 	{
 		case 0:
@@ -46,7 +46,7 @@ void writeVector(ostream &file, universe * u, int v)
 				vec2 p = e->at(i).getPos();
 				file << "|" << p.x << "," << p.y;
 			}
-			file << endl;
+      file << std::endl;
 			break;
 		case 1:
 			//STATIONS
@@ -56,31 +56,31 @@ void writeVector(ostream &file, universe * u, int v)
 				vec2 p = e->at(i).getPos();
 				file << "|" << p.x << "," << p.y;
 			}
-			file << endl;
+      file << std::endl;
 			break;
 	}
 }
 
-void readVector(string str, universe * u, int v)
+void readVector(std::string str, universe * u, int v)
 {
-	cout << "enter" << endl;
-	vector<string> vecs = split( str, '|' );
-	cout << "vecslen " << vecs.size() << endl;
+  std::cout << "enter" << std::endl;
+  std::vector<std::string> vecs = split( str, '|' );
+  std::cout << "vecslen " << vecs.size() << std::endl;
 	switch(v)
 	{
 		case 0:
 			//TURRETS
 			for(size_t i = 1; i < vecs.size(); ++i)
 			{
-				vector<string> vals = split( vecs.at(i), ',' );
-				u->addBuild({stof(vals.at(0), nullptr), stof(vals.at(1), nullptr)}, PLAYER_TURRET);
+        std::vector<std::string> vals = split( vecs.at(i), ',' );
+        u->addBuild({stof(vals.at(0), nullptr), stof(vals.at(1), nullptr)}, PLAYER_TURRET);
 			}
 			break;
 		case 1:
 			//STATIONS
 			for(size_t i = 1; i < vecs.size(); ++i)
 			{
-				vector<string> vals = split( vecs.at(i), ',' );
+        std::vector<std::string> vals = split( vecs.at(i), ',' );
 				u->addBuild({stof(vals.at(0), nullptr), stof(vals.at(1), nullptr)}, PLAYER_STATION);
 			}
 			break;
@@ -89,14 +89,14 @@ void readVector(string str, universe * u, int v)
 
 void loadGame(universe * uni)
 {
-	ifstream save("save.txt");	
-	string cur;
+  std::ifstream save("save.txt");
+  std::string cur;
 			
 	while(getline( save, cur ))
 	{
 		if(cur.length() == 0) continue;
 
-		vector<string> strings = split(cur, ' ');
+    std::vector<std::string> strings = split(cur, ' ');
 		
 		for(size_t i = 0; i < strings.size(); i++)
 		{
@@ -121,6 +121,6 @@ void loadGame(universe * uni)
 	}
 	save.close();
 	
-	cout << "LOADED" << endl;
+  std::cout << "LOADED" << std::endl;
 #endif
 }

@@ -19,5 +19,6 @@ public:
 	void updateSprite(float);
 	void incrDim();
 	float getDim() {return dim;}
-#endif
 };
+
+#endif

@@ -1,5 +1,4 @@
-#include <vector>
-#include "ship.hpp"
+#include "ship_presets.hpp"
 
 std::vector<ship> GLOBAL_SHIPS;
 
@@ -11,5 +10,5 @@ void loadShips()
 		ship insert( {0.0f, 0.0f}, static_cast<ship_spec>(i) );
 		GLOBAL_SHIPS.push_back(insert);
 	}
-	cout << "len of global ship presets is " << GLOBAL_SHIPS.size() << endl;;
+  std::cout << "len of global ship presets is " << GLOBAL_SHIPS.size() << std::endl;
 }

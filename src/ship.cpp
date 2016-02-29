@@ -1,6 +1,8 @@
 #include "ship.hpp"
 #include "weapons.hpp"
 
+ship_spec decrSpec(ship_spec s) {return static_cast<ship_spec>( static_cast<int>(s) - 1 );}
+
 ship::ship(vec2 p, ship_spec ptype)
 {
 	coolDown = 0.0f;
@@ -14,7 +16,7 @@ ship::ship(vec2 p, ship_spec ptype)
 	angle = 0.0f;
 	targetAngle = 0.0f;
 	
-	vector<SDL_Surface*> ship_surf;
+  std::vector<SDL_Surface*> ship_surf;
 	
 	engineGlow = 0.0f;
 	steeringGlow = 0.0f;
@@ -351,7 +353,7 @@ ship::ship(vec2 p, ship_spec ptype)
 		}
 		else 
 		{
-			cout << SDL_GetError() << endl;
+      std::cout << SDL_GetError() << std::endl;
 			shipTex.push_back( nullptr );
 		}
 	}
@@ -654,7 +656,7 @@ void ship::damage(float d)
 
 int ship::upgrade(int i) 
 {
-	cout << "upgrade! " << i << endl;
+  std::cout << "upgrade! " << i << std::endl;
 	if(i < 4) upgrades[i]++;
 	
 	switch(i)

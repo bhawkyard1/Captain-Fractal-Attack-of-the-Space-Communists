@@ -22,7 +22,7 @@ enum ship_spec {
 				SHIPS_END
 				};
 
-ship_spec decrSpec(ship_spec s) {return static_cast<ship_spec>( static_cast<int>(s) - 1 );}
+ship_spec decrSpec(ship_spec s);
 
 class ship: public base
 {
@@ -30,7 +30,7 @@ class ship: public base
 	float angVel;
 	float inertia, health, maxHealth, shield, maxShield, angle, energy, maxEnergy, coolDown, radius, damageTimer;
 	SDL_Rect dstrect;
-	vector<SDL_Texture*> shipTex;
+  std::vector<SDL_Texture*> shipTex;
 	
 	ship_spec classification;
 	
@@ -48,7 +48,7 @@ public:
 	ship(vec2, ship_spec);
 	ship(ship&, vec2);
 	void memFree();
-	vector<SDL_Texture*> getTex() {return shipTex;}
+  std::vector<SDL_Texture*> getTex() {return shipTex;}
 	
   void addVelS(vec2 v) {if(canMove) addVel(v);}
 	void accelerate(double mult);

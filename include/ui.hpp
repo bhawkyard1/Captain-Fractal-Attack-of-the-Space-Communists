@@ -15,17 +15,17 @@ void energyChoice();
 void drawUpgrades(int score);
 void drawWeap();
 
-vector<enemy>* ep;
-vector<laser>* lp;
-vector<missile>* mp;
-vector<ship>* ap;
+std::vector<enemy>* ep;
+std::vector<laser>* lp;
+std::vector<missile>* mp;
+std::vector<ship>* ap;
 player* ply;
 int* scorept;
 
 selection energy_menu;
 selection upgrades_menu;
 
-string roman_nums[] = {"I","II","III","IV","V","VI","VII","IX","X"};
+std::string roman_nums[] = {"I","II","III","IV","V","VI","VII","IX","X"};
 
 void menus_init()
 {
@@ -262,11 +262,11 @@ void drawCircle(int x, int y, int radius)
 void drawText(int score, int missiles)
 {
   TTF_Font * Font_Pixelade = TTF_OpenFont("../resources/fonts/pix.TTF", 18);
-	if(!Font_Pixelade) cout << "Font not loaded! " << TTF_GetError() << endl;
+  if(!Font_Pixelade) std::cout << "Font not loaded! " << TTF_GetError() << std::endl;
 	
-	string scoreText = "SCORE : ";
+  std::string scoreText = "SCORE : ";
 	
-	scoreText += to_string(score);
+  scoreText += std::to_string(score);
 	
 	SDL_Texture * scoreTxt = renderText(
 		scoreText.c_str(),
@@ -280,9 +280,9 @@ void drawText(int score, int missiles)
 	
 	SDL_RenderCopy(renderer, scoreTxt, NULL, &sdst);
 	
-	string missilesText = "MISSILES : ";
+  std::string missilesText = "MISSILES : ";
 
-	missilesText += to_string(missiles);
+  missilesText += std::to_string(missiles);
 	
 	SDL_Texture * missilesTxt = renderText(
 		missilesText.c_str(),
@@ -320,7 +320,7 @@ selectionReturn energy_clicked(vec2 p)
 
 void drawUpgrades(int score)
 {
-	vector<button> * vec = upgrades_menu.getButtons();
+  std::vector<button> * vec = upgrades_menu.getButtons();
 	for(size_t i = 0; i < vec->size(); i++)
 	{
 		if(vec->at(i).getCost() > score or (i < 4 and ply->getUpgrade(i) > 7))
@@ -343,7 +343,7 @@ void setUpgradeTextures(int lvl, int type)
 {
 	if(type > 3) return;
 	
-	string s1;
+  std::string s1;
 	
 	button * up = upgrades_menu.getAt(type);
 	up->setCost(pow(4, lvl + 1));
@@ -369,7 +369,7 @@ void setUpgradeTextures(int lvl, int type)
 	if(lvl < 8)
 	{
 		s1 += " (";
-		stringstream ss;
+    std::stringstream ss;
 		ss << up->getCost();
 		s1 += ss.str();
 		s1 += ")";
@@ -392,7 +392,7 @@ void playerUpgrade(int lvl)
 	
 	if(type > 3) return;
 	
-	string s1;
+  std::string s1;
 	
 	switch(type)
 	{
@@ -415,7 +415,7 @@ void playerUpgrade(int lvl)
 	if(lvl < 8)
 	{
 		s1 += " (";
-		stringstream ss;
+    std::stringstream ss;
 		ss << up->getCost();
 		s1 += ss.str();
 		s1 += ")";
@@ -440,19 +440,19 @@ void drawWeap()
 	
   TTF_Font * fnt = TTF_OpenFont("../resources/fonts/minimal.otf", 25);
 	
-	string weapText = "Damage ";
+  std::string weapText = "Damage ";
 
-	weapText += to_string(weapons[wn][2]);
+  weapText += std::to_string(weapons[wn][2]);
 	
 	weapText += "\nLasers ";
-	weapText += to_string(weapons[wn][0]);
+  weapText += std::to_string(weapons[wn][0]);
 	
 	weapText += "\nSpread ";
-	weapText += to_string(weapons[wn][1]);
+  weapText += std::to_string(weapons[wn][1]);
 	
 	weapText += "\nRate ";
 	float rate = 1.0f / weapons[wn][8];
-	weapText += to_string( static_cast<int>( rate ) );
+  weapText += std::to_string( static_cast<int>( rate ) );
 		
 	SDL_Texture * weapsTexture = renderText(
 		weapText.c_str(),
