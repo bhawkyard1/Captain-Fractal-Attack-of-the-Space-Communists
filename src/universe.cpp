@@ -98,15 +98,8 @@ void universe::addMissile(vec2 p, vec2 v, float angle, bool team)
 	missiles.push_back(m);
 }
 
-void universe::update(int loopCount, float dt)
+void universe::update(float dt)
 {
-	sim_time profiler(0.0f);	
-	/*if(DEV_MODE)
-	{
-		cout << "Update Loop Profiling Commence" << endl;
-		profiler.setCur();
-	}*/
-	
 	if(paused) return;
 	
 	cColP[0] += clamp(tColP[0] - cColP[0], -1.0f, 1.0f);
@@ -127,13 +120,6 @@ void universe::update(int loopCount, float dt)
 	
 	if(rand()%10000 == 0) BG_DENSITY = randFloat(1.0f,10.0f);
 	if(rand()%10000 == 0) gameplay_intensity = randFloat(0.0f, 2.2f);
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Universe updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 	
 	ply.ctrlUpdate();
 	ply.update(dt);
@@ -164,13 +150,6 @@ void universe::update(int loopCount, float dt)
 		GAME_OVER = true;
 	}
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Player updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
-	
 	for(unsigned int i = 0; i < dots.size(); i++)
 	{
 		dots.at(i).setWVel(vel);
@@ -180,13 +159,6 @@ void universe::update(int loopCount, float dt)
 			dots.at(i).gen(true, cColP);
 		}
 	}	
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Stardust updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 	
 	for(unsigned int i = 0; i < sparkles.size(); i++)
 	{
@@ -204,13 +176,6 @@ void universe::update(int loopCount, float dt)
 		}
 	}	
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Sprite updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
-	
 	for(int i = shots.size() - 1; i >= 0; i--)
 	{	
 		if(shots.at(i).getPower() < 0.0f)
@@ -223,13 +188,6 @@ void universe::update(int loopCount, float dt)
 			shots.at(i).update(dt);
 		}
 	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Shot updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 	
 	partitions.rects.clear();
 	partitions.ships.clear();
@@ -289,31 +247,10 @@ void universe::update(int loopCount, float dt)
 	init_rect.y = minY;
 	init_rect.w = maxX - minX;
 	init_rect.h = maxY - minY;
-
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Quadtree parameter generation complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 	
 	detectCollisions(init_rect, init_ship, init_laser, init_missile, init_asteroid, 0);
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Collision detection complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
-	
 	checkCollisions();	
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Collision resolution complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 
 	for(int i = missiles.size() - 1; i >= 0; i--)
 	{
@@ -356,14 +293,6 @@ void universe::update(int loopCount, float dt)
 		}
 	}
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Missile updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
-	
-	//cout << "pre" << endl;
 	for(int i = asteroids.size() - 1; i >= 0; i--)
 	{
 		asteroids.at(i).updatePos(dt);
@@ -400,13 +329,6 @@ void universe::update(int loopCount, float dt)
 			asteroids.at(i).update(dt);
 		}	
 	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Asteroid updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 	
 	for(int i = enemies.size() - 1; i >= 0; i--)
 	{	
@@ -541,13 +463,6 @@ void universe::update(int loopCount, float dt)
 		}
 	}	
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Enemy updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
-	
 	if(!GAME_OVER)
 	{
 		if(rand() % 45000 <= DIFFICULTY * gameplay_intensity and enemy_count < clamp(max_enemies_count,0,200))
@@ -591,31 +506,13 @@ void universe::update(int loopCount, float dt)
 		}
 	}
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Spawn cycles complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
-	
 	for(int i = particles.size() - 1; i >= 0; i--)
 	{
 		particles.at(i).setWVel(vel);
 		particles.at(i).update(dt);
-		if(particles.at(i).done()) 
-		{
-			swapnpop(&particles, i);
-			//particles.at(i).clear();
-			//particles.erase(particles.begin() + i);
-		}
+		if(particles.at(i).done()) swapnpop(&particles, i);
+
 	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Particle updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 	
 	for(int i = passive_sprites.size() - 1; i >= 0; --i)
 	{
@@ -632,20 +529,12 @@ void universe::update(int loopCount, float dt)
     if(alph < 0.0f or isOffScreen(passive_sprites.at(i).getPos(), (MAX_DIM + std::max(w, h)) * BG_DENSITY * passive_sprites.at(i).getZ() / ZOOM_LEVEL) or passive_sprites.at(i).getDim() <= 0.0f)
 		{
 			swapnpop(&passive_sprites, i);
-			//passive_sprites.erase(passive_sprites.begin() + i);
 			continue;
 		}
 		alph *= 0.94f;
 		alph -= 0.1f;
 		passive_sprites.at(i).setCol(3, alph);
 	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Particle sprite updates complete: " << profiler.getDiff() << " seconds." << endl;
-		profiler.setCur();
-	}*/
 }
 
 void universe::draw(float dt)

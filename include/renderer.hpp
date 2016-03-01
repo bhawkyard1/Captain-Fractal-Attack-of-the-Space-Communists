@@ -1,31 +1,18 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
-#include <math.h>
+#include <map>
 
 class renderer
 {
 	//The window we'll be rendering to
-	SDL_Window * gWindow = NULL;
-
-	//OpenGL context
-	SDL_GLContext gContext;
-
-	//Render flag
-	bool gRenderQuad = true;
-	
-	//std::map< ngl::model > models;
-	//std::map< ngl::texture > textures;
+  SDL_Window * m_indow = NULL;
+  SDL_Renderer * m_renderer = NULL;
+  int m_w, m_h;
 public:
-	renderer(int, int);
-	~renderer();
-	bool init(int, int);
-	bool initGL();
-	void render(float, double);
-	void close();
-	
-	void DELETE_rflip() {gRenderQuad = !gRenderQuad;}
-	bool DELETE_gflip() {return gRenderQuad;}
+  renderer(int,int);
+  void init();
 };
+
 #endif
 

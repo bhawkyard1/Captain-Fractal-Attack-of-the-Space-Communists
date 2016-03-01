@@ -54,7 +54,7 @@ public:
 	void addMiner() {max_miner_count++;}
 	void addBuild(vec2,ship_spec);
 	void addBuild(ship_spec);
-	void update(int,float);
+  void update(float);
 	void draw(float);
 	
   void detectCollisions(SDL_Rect, std::vector<enemy*>, std::vector<laser*>, std::vector<missile*>, std::vector<ship*>, unsigned short int);

@@ -51,7 +51,8 @@
 #include <windows.h>
 #endif
 
-SDL_Window * gameInit();
+//Function prototypes.
+void gameInit();
 void handleUserKeyDownInput(int,player*,universe*,int*);
 void handleUserKeyUpInput(int,int*);
 void handleUserMouseDownInput(int,int,player*,universe*);
@@ -59,33 +60,38 @@ void handleUserMouseUpInput(int,int,player*,universe*);
 void handleUserScroll(int,player*);
 double diffClock(clock_t clock1, clock_t clock2);
 
-void setDifficulty();
-
 int main(int argc, char* argv[])
 {
+  //Initialise SDL, create a window.
 	SDL_Window * window = gameInit();
-	if(!window) return 1;
+  if( !window ) return EXIT_FAILURE;
 	
+  //Create the universe.
 	universe uni;
-	transmitPointers(&uni);
+  //Send object pointers to the UI. //TO-DO: Rework this. Make UI part of the universe?
+  transmitPointers( &uni );
+  //Initialise menus, textures, ship upgrades, and create the default ship presets.
 	menus_init();
 	upgrades_init();
 	loadTextures();
 	loadShips();
-	int loopCount = 0;
 	
-	sim_time clock(60.0f);
+  //Timer used to keep track of game time.
+  //The argument is the fps of the updates, higher = more detailed.
+  sim_time clock(120.0f);
 	
+  //Is the game running?
 	bool active = true;
 	
-	int mod = 0;
+  //Keypress modifiers (shift, ctrl etc).
+  int keymod = 0;
 	while(active == true)
   {
-    sim_time profiler(0.0f);
-
+    //Event handling.
     SDL_Event incomingEvent;
     while( SDL_PollEvent( &incomingEvent ) )
     {
+      //Quit event.
       switch( incomingEvent.type )
       {
         case SDL_QUIT:
@@ -93,80 +99,57 @@ int main(int argc, char* argv[])
           break;
       }
 
+      //Ignore if the player is dead.
       if(GAME_OVER) break;
 
+      //Input events.
       switch( incomingEvent.type )
       {
         if( uni.isPaused() and incomingEvent.type != SDL_KEYDOWN and incomingEvent.button.button != SDLK_SPACE ) break;
         case SDL_MOUSEBUTTONDOWN:
-          handleUserMouseDownInput(incomingEvent.button.button, mod, uni.getPly(), &uni);
+          handleUserMouseDownInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
           break;
         case SDL_MOUSEBUTTONUP:
-          handleUserMouseUpInput(incomingEvent.button.button, mod, uni.getPly(), &uni);
+          handleUserMouseUpInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
           break;
         case SDL_MOUSEWHEEL:
           handleUserScroll(incomingEvent.wheel.y, uni.getPly());
           break;
         case SDL_KEYDOWN:
-          handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &mod);
+          handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
           break;
         case SDL_KEYUP:
-          handleUserKeyUpInput(incomingEvent.key.keysym.sym, &mod);
+          handleUserKeyUpInput(incomingEvent.key.keysym.sym, &keymod);
           break;
       }
     }
+    //Clear renderer.
     SDL_SetRenderDrawColor( renderer, 4, 1, 8, 255);
     SDL_RenderClear(renderer);
 
+    //Set current time (timer keeps track of time since cur time was last set).
     clock.setCur();
 
-    /*if(DEV_MODE)
-    {
-      profiler.setCur();
-    }*/
-
+    //Update the game in small time-steps (dependant on the timers fps).
     while(clock.getAcc() > clock.getFrame())
     {
-      uni.update(loopCount, clock.getDiff() * TIME_SCALE);
+      uni.update(clock.getDiff() * TIME_SCALE);
       clock.incrAcc( -clock.getDiff() );
     }
 
-    /*if(DEV_MODE)
-    {
-      profiler.setCur();
-      cout << std::fixed << "Game updates complete: " << profiler.getDiff() << std::endl;
-      profiler.setCur();
-    }*/
-
+    //Update the zoom level.
     ZOOM_LEVEL += (TARG_ZOOM_LEVEL - ZOOM_LEVEL) * 0.125f;
 
+    //Draw the game.
     float diff_clamped = clock.getDiff();
     if(diff_clamped == 0.0f) diff_clamped = 0.01f;
     uni.draw( clock.getAcc() / diff_clamped * TIME_SCALE );
 
-    /*if(DEV_MODE)
-    {
-      profiler.setCur();
-      cout << std::fixed << "Draw updates complete: " << profiler.getDiff() << std::endl;
-      profiler.setCur();
-    }*/
-
+    //If the player is alive, draw the UI.
     if(!GAME_OVER) drawUI( uni.getScore() );
 
-    /*if(DEV_MODE)
-    {
-      profiler.setCur();
-      cout << std::fixed << "UI draw updates complete: " << profiler.getDiff() << std::endl;
-      profiler.setCur();
-    }*/
-
+    //Show the contents of the renderer.
     SDL_RenderPresent(renderer);
-
-    loopCount++;
-    if(loopCount > 100)
-    {
-      loopCount = 0;
-    }
   }
   SDL_DestroyWindow( window );
   SDL_Quit();
@@ -174,9 +157,9 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-void handleUserMouseDownInput(int btn, int mod, player *ply, universe *uni)
+void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
 {
-  if(mod == 0)
+  if(keymod == 0)
   {
     if(btn == SDL_BUTTON_LEFT)
     {
@@ -190,7 +173,7 @@ void handleUserMouseDownInput(int btn, int mod, player *ply, universe *uni)
       uni->addMissile(ply->getPos(), ply->getVel(), ply->getAng(), 1);
     }
   }
-  else if(mod == 1)
+  else if(keymod == 1)
   {
     if(btn == SDL_BUTTON_LEFT)
     {
@@ -220,58 +203,26 @@ void handleUserMouseDownInput(int btn, int mod, player *ply, universe *uni)
   }
 }
 
-SDL_Window * gameInit()
+void gameInit()
 {
 	#ifdef _WIN32
-	AllocConsole() ;
-	AttachConsole( GetCurrentProcessId() );
-	freopen( "CON", "w", stdout );
-	freopen( "CON", "w", stdin );
-	freopen( "CON", "w", stderr );
+    AllocConsole() ;
+    AttachConsole( GetCurrentProcessId() );
+    freopen( "CON", "w", stdout );
+    freopen( "CON", "w", stdin );
+    freopen( "CON", "w", stderr );
 	#endif
 	
 	loadConfig();
-	
-	if(SDL_Init(SDL_INIT_VIDEO) != 0)
-	{
-    std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return nullptr;
-	}
-	
-	if(TTF_Init() != 0)
-	{
-    std::cerr << "TTF_Init() failed: " << TTF_GetError() << std::endl;
-		SDL_Quit();
-		return nullptr;
-	}
-	
-	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
-	{
-    std::cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << std::endl;
-		//SDL_Quit();
-		//return 1;
-	}
-	
+
 	loadSounds();
 	
 	srand (static_cast <unsigned> (time(0)));
-	
-	SDL_Window *window = SDL_CreateWindow("Elite: Dangerous v2.0",
-    WIN_POS_X, WIN_POS_Y,
-    WIN_HEIGHT, WIN_WIDTH,
-    SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED );
-
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-	SDL_SetRenderDrawBlendMode(renderer,SDL_BLENDMODE_BLEND);
-
-	return window;
 }
 
-void handleUserMouseUpInput(int btn, int mod, player *ply, universe *uni)
+void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
 {
-  if(mod == 0)
+  if(keymod == 0)
   {
     if(btn == SDL_BUTTON_LEFT)
     {
@@ -279,7 +230,7 @@ void handleUserMouseUpInput(int btn, int mod, player *ply, universe *uni)
 
     }
   }
-  else if(mod == 1)
+  else if(keymod == 1)
   {
 
   }
@@ -297,7 +248,7 @@ void handleUserScroll(int y, player * ply)
   }
 }
 
-void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * mod)
+void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
 {
   //int ang = ply->getAng();
 
@@ -308,7 +259,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * mod)
       uni->setVel(-ply->getVel());
       break;
     case SDLK_s:
-      if(*mod == 1) saveGame(uni);
+      if(*keymod == 1) saveGame(uni);
       else
       {
         ply->accelerate(-1);
@@ -343,20 +294,20 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * mod)
       TARG_ZOOM_LEVEL = clamp(TARG_ZOOM_LEVEL - 0.1f, 0.1f, 2.0f);
       break;
     case SDLK_LCTRL:
-      *mod = 1;
+      *keymod = 1;
       break;
     case SDLK_g:
       if(DEV_MODE) *uni->getScorePt() += 100;
       break;
     case SDLK_n:
-      if(*mod == 1)
+      if(*keymod == 1)
       {
         uni->reload(true);
         for(int i = 0; i < UPGRADES_LEN; ++i) setUpgradeTextures(0, i);
       }
       break;
     case SDLK_l:
-      if(*mod == 1)
+      if(*keymod == 1)
       {
         uni->reload(true);
         loadGame(uni);
@@ -369,12 +320,12 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * mod)
   }
 }
 
-void handleUserKeyUpInput(int sym, int * mod)
+void handleUserKeyUpInput(int sym, int * keymod)
 {
   switch (sym)
   {
     case SDLK_LCTRL:
-      *mod = 0;
+      *keymod = 0;
       break;
   }
 }
