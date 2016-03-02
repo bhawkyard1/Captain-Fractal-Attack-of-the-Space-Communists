@@ -32,12 +32,7 @@ ship::ship(vec2 p, ship_spec ptype)
 	switch(ptype)
 	{
 		case FEDERATION_MKI:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_1.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_1_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "FEDERATION_MKI";
 			setMaxHealth(50.0f,true);
 			setMaxShield(30.0f,true);
 			setMaxEnergy(100.0f,true);
@@ -45,12 +40,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 4;
 			break;
 		case FEDERATION_MKII:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_2.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_2_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "FEDERATION_MKII";
 			setMaxHealth(90.0f,true);
 			setMaxShield(60.0f,true);
 			setMaxEnergy(100.0f,true);
@@ -58,12 +48,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 4;
 			break;
 		case FEDERATION_MKIII:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_3.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_2_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "FEDERATION_MKIII";
 			setMaxHealth(120.0f,true);
 			setMaxShield(90.0f,true);
 			setMaxEnergy(150.0f,true);
@@ -71,12 +56,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 4;
 			break;
 		case FEDERATION_MKIV:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_4.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_2_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "FEDERATION_MKIV";
 			setMaxHealth(150.0f,true);
 			setMaxShield(120.0f,true);
 			setMaxEnergy(200.0f,true);
@@ -84,12 +64,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 4;
 			break;
 		case FEDERATION_GUNSHIP:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_5.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/enemy_5_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "FEDERATION_GUNSHIP";
 			setMaxHealth(500.0f,true);
 			setMaxShield(200.0f,true);
 			setMaxEnergy(500.0f,true);
@@ -97,12 +72,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 2 + 7;
 			break;
 		case PIRATE_GNAT:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_1.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_1_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PIRATE_GNAT";
 			setMaxHealth(80.0f,true);
 			setMaxShield(40.0f,true);
 			setMaxEnergy(90.0f,true);
@@ -110,12 +80,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 14;
 			break;
 		case PIRATE_CRUISER:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_2.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_1_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PIRATE_CRUISER";
 			setMaxHealth(100.0f,true);
 			setMaxShield(60.0f,true);
 			setMaxEnergy(100.0f,true);
@@ -123,12 +88,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 14;
 			break;
 		case PIRATE_WRANGLER:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_2.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_1_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PIRATE_WRANGLER";
 			setMaxHealth(140.0f,true);
 			setMaxShield(70.0f,true);
 			setMaxEnergy(120.0f,true);
@@ -136,12 +96,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 14;
 			break;
 		case PIRATE_MARAUDER:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_4.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PIRATE_MARAUDER";
 			setMaxHealth(120.0f,true);
 			setMaxShield(120.0f,true);
 			setMaxEnergy(120.0f,true);
@@ -149,12 +104,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 14;
 			break;
 		case PIRATE_GUNSHIP:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_5.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/pirate_5_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PIRATE_GUNSHIP";
 			setMaxHealth(200.0f,true);
 			setMaxShield(120.0f,true);
 			setMaxEnergy(150.0f,true);
@@ -162,12 +112,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = 17;
 			break;
 		case PLAYER_SHIP:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/player.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/player_engines.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/player_steering.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/player_shoot.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_SHIP";
 			setMaxHealth(100.0f,true);
 			setMaxShield(100.0f,true);
 			setMaxEnergy(100.0f,true);
@@ -175,12 +120,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = 0;
 			break;
 		case PLAYER_HUNTER:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/wingman_1.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/wingman_1_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_HUNTER";
 			setMaxHealth(100.0f,true); 
 			setMaxShield(100.0f,true); 
 			setMaxEnergy(100.0f,true);
@@ -188,12 +128,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 9;
 			break;
 		case PLAYER_DEFENDER:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/wingman_2.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/wingman_2_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_DEFENDER";
 			setMaxHealth(125.0f,true); 
 			setMaxShield(125.0f,true); 
 			setMaxEnergy(125.0f,true);
@@ -201,12 +136,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 9;
 			break;
 		case PLAYER_DESTROYER:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/wingman_3.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/wingman_3_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_DESTROYER";
 			setMaxHealth(150.0f,true); 
 			setMaxShield(150.0f,true); 
 			setMaxEnergy(150.0f,true);
@@ -214,12 +144,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = rand() % 3 + 9;
 			break;
 		case PLAYER_MINER_DROID:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/miner_1.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_MINER_DROID";
 			setMaxHealth(10.0f,true); 
 			setMaxShield(20.0f,true); 
 			setMaxEnergy(200.0f,true);
@@ -227,22 +152,12 @@ ship::ship(vec2 p, ship_spec ptype)
 			curWeap = 12;
 			break;
 		case ION_MISSILE_MKI:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/crappy_missile.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/crappy_missile_engines.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
+      m_identifier = "ION_MISSILE_MKI";
 			inertia = 0.1f;
 			canShoot = false;
 			break;
 		case ASTEROID_SMALL:
-			ship_surf.push_back( IMG_Load("../resources/images/items/asteroid_1.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
+      m_identifier = "ASTEROID_SMALL";
 			setMaxHealth(500.0f,true); 
 			setMaxShield(0.0f,true); 
 			setMaxEnergy(0.0f,true);
@@ -252,12 +167,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			canShoot = false;
 			break;
 		case ASTEROID_MID:
-			ship_surf.push_back( IMG_Load("../resources/images/items/asteroid_2.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
+      m_identifier = "ASTEROID_MID";
 			setMaxHealth(1000.0f,true); 
 			setMaxShield(0.0f,true); 
 			setMaxEnergy(0.0f,true);
@@ -267,12 +177,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			canShoot = false;
 			break;
 		case ASTEROID_LARGE:
-			ship_surf.push_back( IMG_Load("../resources/images/items/asteroid_3.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
+      m_identifier = "ASTEROID_LARGE";
 			setMaxHealth(2000.0f,true); 
 			setMaxShield(0.0f,true); 
 			setMaxEnergy(0.0f,true);
@@ -282,12 +187,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			canShoot = false;
 			break;
 		case PLAYER_TURRET:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/turret_1.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/shield.png") );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/turret_1_static.png") );
+      m_identifier = "PLAYER_TURRET";
 			setMaxHealth(100.0f,true); 
 			setMaxShield(200.0f,true); 
 			setMaxEnergy(300.0f,true);
@@ -296,12 +196,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			canMove = false;
 			break;
 		case PLAYER_STATION:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/station_1.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/station_1_shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_STATION";
 			setMaxHealth(10000.0f,true); 
 			setMaxShield(10000.0f,true); 
 			setMaxEnergy(100000.0f,true);
@@ -311,12 +206,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			canShoot = false;
 			break;
 		case PLAYER_GRAVWELL:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/well_1.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/station_1_shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_GRAVWELL";
 			setMaxHealth(5000.0f,true); 
 			setMaxShield(5000.0f,true); 
 			setMaxEnergy(50000.0f,true);
@@ -326,12 +216,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			canShoot = false;
 			break;
 		case PLAYER_BARRACKS:
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/barracks_1.png") );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( nullptr );
-			ship_surf.push_back( IMG_Load("../resources/spaceshits/station_1_shield.png") );
-			ship_surf.push_back( nullptr );
+      m_identifier = "PLAYER_BARRACKS";
 			setMaxHealth(8000.0f,true); 
 			setMaxShield(8000.0f,true); 
 			setMaxEnergy(80000.0f,true);

@@ -27,8 +27,6 @@ extern float MAX_DIM;
 
 extern bool DEV_MODE, GAME_OVER;
 
-extern SDL_Renderer * renderer;
-
 extern float TARG_ZOOM_LEVEL, ZOOM_LEVEL, PIXEL_UNIT_CONVERSION, TIME_SCALE;
 extern float BG_DENSITY;
 

@@ -22,13 +22,13 @@
 #include <SDL2/SDL_opengl.h>
 
 //Keeps track of time
-#include "src/sim_time.cpp"
+#include "sim_time.hpp"
 
 //Used for all vector math
 #include "vectors.hpp"
 
 //General utility library
-#include "include/util.hpp"
+#include "util.hpp"
 //#include "utility/rendering.hpp"
 
 //Contains program-wide variables
@@ -38,7 +38,7 @@
 #include "sfx.hpp"
 
 //Universe class, main class in game
-#include "src/universe.cpp"
+#include "universe.hpp"
 
 //All the UI code
 #include "ui_classes.hpp"
@@ -62,10 +62,6 @@ double diffClock(clock_t clock1, clock_t clock2);
 
 int main(int argc, char* argv[])
 {
-  //Initialise SDL, create a window.
-	SDL_Window * window = gameInit();
-  if( !window ) return EXIT_FAILURE;
-	
   //Create the universe.
 	universe uni;
   //Send object pointers to the UI. //TO-DO: Rework this. Make UI part of the universe?
@@ -123,10 +119,6 @@ int main(int argc, char* argv[])
           break;
       }
     }
-    //Clear renderer.
-    SDL_SetRenderDrawColor( renderer, 4, 1, 8, 255);
-    SDL_RenderClear(renderer);
-
     //Set current time (timer keeps track of time since cur time was last set).
     clock.setCur();
 
@@ -147,11 +139,7 @@ int main(int argc, char* argv[])
 
     //If the player is alive, draw the UI.
     if(!GAME_OVER) drawUI( uni.getScore() );
-
-    //Show the contents of the renderer.
-    SDL_RenderPresent(renderer);
   }
-  SDL_DestroyWindow( window );
   SDL_Quit();
 
   return 0;

@@ -57,12 +57,19 @@ SOURCES       = main.cpp \
 		src/missile.cpp \
 		src/pfx.cpp \
 		src/player.cpp \
+		src/renderer.cpp \
 		src/ship.cpp \
+		src/sim_time.cpp \
+		src/sprite_sheet.cpp \
 		src/squad.cpp \
 		src/stardust.cpp \
 		src/stardust_sprite.cpp \
+		src/universe.cpp \
 		src/util.cpp \
-		src/vectors.cpp 
+		src/vectors.cpp \
+		src/ui/button.cpp \
+		src/ui/interface.cpp \
+		src/ui/selection.cpp 
 OBJECTS       = obj/main.o \
 		obj/base.o \
 		obj/common.o \
@@ -72,12 +79,19 @@ OBJECTS       = obj/main.o \
 		obj/missile.o \
 		obj/pfx.o \
 		obj/player.o \
+		obj/renderer.o \
 		obj/ship.o \
+		obj/sim_time.o \
+		obj/sprite_sheet.o \
 		obj/squad.o \
 		obj/stardust.o \
 		obj/stardust_sprite.o \
+		obj/universe.o \
 		obj/util.o \
-		obj/vectors.o
+		obj/vectors.o \
+		obj/button.o \
+		obj/interface.o \
+		obj/selection.o
 DIST          = /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/qt/5.5/gcc_64/mkspecs/common/unix.conf \
 		/opt/qt/5.5/gcc_64/mkspecs/common/linux.conf \
@@ -223,6 +237,7 @@ DIST          = /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		include/ship.hpp \
 		include/ship_presets.hpp \
 		include/sim_time.hpp \
+		include/sprite_sheet.hpp \
 		include/squad.hpp \
 		include/stardust.hpp \
 		include/stardust_sprite.hpp \
@@ -232,7 +247,10 @@ DIST          = /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		include/user_input.hpp \
 		include/util.hpp \
 		include/vectors.hpp \
-		include/weapons.hpp main.cpp \
+		include/weapons.hpp \
+		include/ui/button.hpp \
+		include/ui/interface.hpp \
+		include/ui/selection.hpp main.cpp \
 		src/base.cpp \
 		src/common.cpp \
 		src/enemy.cpp \
@@ -241,12 +259,19 @@ DIST          = /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		src/missile.cpp \
 		src/pfx.cpp \
 		src/player.cpp \
+		src/renderer.cpp \
 		src/ship.cpp \
+		src/sim_time.cpp \
+		src/sprite_sheet.cpp \
 		src/squad.cpp \
 		src/stardust.cpp \
 		src/stardust_sprite.cpp \
+		src/universe.cpp \
 		src/util.cpp \
-		src/vectors.cpp
+		src/vectors.cpp \
+		src/ui/button.cpp \
+		src/ui/interface.cpp \
+		src/ui/selection.cpp
 QMAKE_TARGET  = SDLOpenGL
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = SDLOpenGL
@@ -554,8 +579,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents include/base.hpp include/base.hpp include/common.hpp include/enemy.hpp include/faction.hpp include/file.hpp include/laser.hpp include/missile.hpp include/pfx.hpp include/player.hpp include/renderer.hpp include/rendering.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/ship_presets.hpp include/sim_time.hpp include/squad.hpp include/stardust.hpp include/stardust_sprite.hpp include/ui.hpp include/ui_classes.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp src/base.cpp src/common.cpp src/enemy.cpp src/faction.cpp src/laser.cpp src/missile.cpp src/pfx.cpp src/player.cpp src/ship.cpp src/squad.cpp src/stardust.cpp src/stardust_sprite.cpp src/util.cpp src/vectors.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents include/base.hpp include/base.hpp include/common.hpp include/enemy.hpp include/faction.hpp include/file.hpp include/laser.hpp include/missile.hpp include/pfx.hpp include/player.hpp include/renderer.hpp include/rendering.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/ship_presets.hpp include/sim_time.hpp include/sprite_sheet.hpp include/squad.hpp include/stardust.hpp include/stardust_sprite.hpp include/ui.hpp include/ui_classes.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/interface.hpp include/ui/selection.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp src/base.cpp src/common.cpp src/enemy.cpp src/faction.cpp src/laser.cpp src/missile.cpp src/pfx.cpp src/player.cpp src/renderer.cpp src/ship.cpp src/sim_time.cpp src/sprite_sheet.cpp src/squad.cpp src/stardust.cpp src/stardust_sprite.cpp src/universe.cpp src/util.cpp src/vectors.cpp src/ui/button.cpp src/ui/interface.cpp src/ui/selection.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -592,44 +617,42 @@ compiler_clean:
 
 ####### Compile
 
-obj/main.o: main.cpp src/sim_time.cpp \
-		include/sim_time.hpp \
-		include/vectors.hpp \
+obj/main.o: main.cpp include/sim_time.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/common.hpp \
 		include/sfx.hpp \
-		src/universe.cpp \
 		include/universe.hpp \
 		include/weapons.hpp \
 		include/stardust.hpp \
 		include/base.hpp \
 		include/stardust_sprite.hpp \
 		include/ship.hpp \
-		src/ship_presets.cpp \
 		include/ship_presets.hpp \
 		include/enemy.hpp \
 		include/laser.hpp \
 		include/player.hpp \
 		include/pfx.hpp \
 		include/missile.hpp \
+		include/renderer.hpp \
 		include/ui_classes.hpp \
 		include/ui.hpp \
 		include/file.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
 obj/base.o: src/base.cpp include/base.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/common.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/base.o src/base.cpp
 
 obj/common.o: src/common.cpp include/common.hpp \
-		include/vectors.hpp
+		vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/common.o src/common.cpp
 
 obj/enemy.o: src/enemy.cpp include/enemy.hpp \
 		include/ship.hpp \
 		include/common.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/base.hpp \
 		src/ship_presets.cpp \
@@ -641,14 +664,14 @@ obj/faction.o: src/faction.cpp include/faction.hpp \
 		include/enemy.hpp \
 		include/ship.hpp \
 		include/common.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/base.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/faction.o src/faction.cpp
 
 obj/laser.o: src/laser.cpp include/laser.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/enemy.hpp \
 		include/ship.hpp \
 		include/common.hpp \
@@ -658,14 +681,14 @@ obj/laser.o: src/laser.cpp include/laser.hpp \
 obj/missile.o: src/missile.cpp include/missile.hpp \
 		include/ship.hpp \
 		include/common.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/base.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/missile.o src/missile.cpp
 
 obj/pfx.o: src/pfx.cpp include/pfx.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/common.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/pfx.o src/pfx.cpp
@@ -673,31 +696,42 @@ obj/pfx.o: src/pfx.cpp include/pfx.hpp \
 obj/player.o: src/player.cpp include/player.hpp \
 		include/ship.hpp \
 		include/common.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/base.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/player.o src/player.cpp
 
+obj/renderer.o: src/renderer.cpp include/renderer.hpp \
+		vectors.hpp \
+		include/util.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/renderer.o src/renderer.cpp
+
 obj/ship.o: src/ship.cpp include/ship.hpp \
 		include/common.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/base.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/ship.o src/ship.cpp
 
+obj/sim_time.o: src/sim_time.cpp include/sim_time.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/sim_time.o src/sim_time.cpp
+
+obj/sprite_sheet.o: src/sprite_sheet.cpp include/sprite_sheet.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/sprite_sheet.o src/sprite_sheet.cpp
+
 obj/squad.o: src/squad.cpp include/squad.hpp \
 		include/enemy.hpp \
 		include/ship.hpp \
 		include/common.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/base.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/squad.o src/squad.cpp
 
 obj/stardust.o: src/stardust.cpp include/stardust.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/common.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/stardust.o src/stardust.cpp
@@ -705,17 +739,46 @@ obj/stardust.o: src/stardust.cpp include/stardust.hpp \
 obj/stardust_sprite.o: src/stardust_sprite.cpp include/stardust_sprite.hpp \
 		include/stardust.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		vectors.hpp \
 		include/util.hpp \
 		include/common.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/stardust_sprite.o src/stardust_sprite.cpp
 
+obj/universe.o: src/universe.cpp include/universe.hpp \
+		include/weapons.hpp \
+		include/stardust.hpp \
+		include/base.hpp \
+		vectors.hpp \
+		include/stardust_sprite.hpp \
+		include/ship.hpp \
+		include/common.hpp \
+		include/util.hpp \
+		include/ship_presets.hpp \
+		include/enemy.hpp \
+		include/laser.hpp \
+		include/player.hpp \
+		include/pfx.hpp \
+		include/missile.hpp \
+		include/renderer.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/universe.o src/universe.cpp
+
 obj/util.o: src/util.cpp include/util.hpp \
-		include/vectors.hpp
+		vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/util.o src/util.cpp
 
-obj/vectors.o: src/vectors.cpp include/vectors.hpp
+obj/vectors.o: src/vectors.cpp vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/vectors.o src/vectors.cpp
+
+obj/button.o: src/ui/button.cpp include/ui/button.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/button.o src/ui/button.cpp
+
+obj/interface.o: src/ui/interface.cpp vectors.hpp \
+		include/ui/interface.hpp \
+		include/ui/selection.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/interface.o src/ui/interface.cpp
+
+obj/selection.o: src/ui/selection.cpp include/ui/selection.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/selection.o src/ui/selection.cpp
 
 ####### Install
 

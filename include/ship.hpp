@@ -30,7 +30,7 @@ class ship: public base
 	float angVel;
 	float inertia, health, maxHealth, shield, maxShield, angle, energy, maxEnergy, coolDown, radius, damageTimer;
 	SDL_Rect dstrect;
-  std::vector<SDL_Texture*> shipTex;
+  std::string m_identifier;
 	
 	ship_spec classification;
 	
@@ -48,7 +48,6 @@ public:
 	ship(vec2, ship_spec);
 	ship(ship&, vec2);
 	void memFree();
-  std::vector<SDL_Texture*> getTex() {return shipTex;}
 	
   void addVelS(vec2 v) {if(canMove) addVel(v);}
 	void accelerate(double mult);
@@ -116,6 +115,8 @@ public:
 	bool isLaserless() {return !canShoot;}
 	
 	bool inCombat() {return damageTimer > 0.0f;}
+
+  std::string getIdentifier() {return m_identifier;}
 };
 
 #endif

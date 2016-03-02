@@ -11,8 +11,6 @@ float MAX_DIM = 1920.0f;
 
 bool DEV_MODE = true, GAME_OVER = false;
 
-SDL_Renderer * renderer;
-
 float TARG_ZOOM_LEVEL = 1.0f, ZOOM_LEVEL = 1.0f, PIXEL_UNIT_CONVERSION = 80.0f, TIME_SCALE = 1.0f;
 float BG_DENSITY = 5.0f;
 

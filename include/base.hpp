@@ -20,6 +20,8 @@ public:
 	vec2 getWVel() {return wvel;}
 	
 	void updatePos(float dt);
+
+  vec2 getInpterpolatedPosition(float dt);
 };
 
 #endif

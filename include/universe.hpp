@@ -11,6 +11,8 @@
 #include "player.hpp"
 #include "pfx.hpp"
 #include "missile.hpp"
+#include "renderer.hpp"
+#include "ui/interface.hpp"
 
 struct col_partition
 {
@@ -23,6 +25,8 @@ struct col_partition
 
 class universe
 {
+  interface m_ui;
+  renderer m_drawer;
   std::vector<stardust> dots;
   std::vector<stardust_sprite> sparkles;
   std::vector<laser> shots;
@@ -44,6 +48,7 @@ class universe
 	SDL_Texture * sky;
 public:
 	universe();
+  void initUI();
 	player * getPly() {return &ply;}
 	void setVel(vec2 v) {vel = v;}
 	void addShot(vec2 p, vec2 v, float ang, int weap, ai_team team);

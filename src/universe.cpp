@@ -1,10 +1,12 @@
 #include "universe.hpp"
 #include "util.hpp"
 #include "ship_presets.hpp"
+#include "common.hpp"
 
 bool emnityCheck(ai_team a, ai_team b);
 
-universe::universe(): ply( {0.0f, 0.0f} )
+universe::universe(): ply( {0.0f, 0.0f} ),
+                      m_drawer(WIN_WIDTH, WIN_HEIGHT)
 {
   SDL_Surface * temp = IMG_Load("../resources/environment/background/sky.jpg");
 	sky = SDL_CreateTextureFromSurface(renderer, temp);
@@ -540,149 +542,80 @@ void universe::update(float dt)
 void universe::draw(float dt)
 {	
 	if(paused) dt = 0.0f;
-	
-	sim_time profiler(0.0f);	
-	/*if(DEV_MODE)
-	{
-		cout << "Draw Loop Profiling Commence" << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < dots.size(); i++)
-	{	
-		if(dots.at(i).getZ() > 1) continue;
-		dots.at(i).draw(dt);
-	}
-
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Stardust lower draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < sparkles.size(); i++)
-	{	
-		if(sparkles.at(i).getZ() <= 1) sparkles.at(i).draw(dt);;
-	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Sprite lower draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < passive_sprites.size(); i++)
-	{	
-		if(!paused) passive_sprites.at(i).incrDim();
-		passive_sprites.at(i).drawDim(dt);
-	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Particle sprite draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < shots.size(); i++)
-	{	
-		shots.at(i).draw(dt);
 		
-		/*if(DEV_MODE)
-		{
-			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-			vec2 pos = shots.at(i).getPos();
-			vec2 vel = shots.at(i).getVel();
-			SDL_RenderDrawLine( renderer, static_cast<int>(pos.x), static_cast<int>(pos.y), static_cast<int>(pos.x + vel.x), static_cast<int>(pos.y + vel.y) );
-		}*/
-	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Laser draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < asteroids.size(); i++)
-	{
-		asteroids.at(i).draw(dt);
-	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Asteroids draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < enemies.size(); i++)
-	{
-		enemies.at(i).draw(dt);
-	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Enemy draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	ply.draw(dt);
-	
-	for(size_t i = 0; i < missiles.size(); i++)
+  for(auto i = dots.begin(); i != dots.end(); ++i)
 	{	
-		missiles.at(i).draw(dt);
+    if(i->getZ() > 1) continue;
+
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    vec2 ivel = i->getVel();
+    int icol[3] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    m_drawer.drawLine(pos, ipos + ivel, icol)
 	}
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Missiles draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < particles.size(); i++)
-	{
-		particles.at(i).draw(dt);		
+  for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
+	{	
+    if(i->getZ() <= 1)
+    {
+      vec2 ipos = i->getInterpolatedPosition(dt);
+      float col[4] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+      m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
+    }
 	}
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Particles draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
+  for(auto i = passive_sprites.begin(); i != passive_sprites.end(); ++i)
+	{	
+    if(!paused) i->incrDim();
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    float col[4] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
+	}
 	
-	for(size_t i = 0; i < dots.size(); i++)
+  for(auto i = shots.begin(); i != shots.end(); ++i)
+  {
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    vec2 ivel = i->getVel();
+    int icol[3] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    m_drawer.drawLine(ipos, ipos + ivel, icol);
+	}
+	
+  for(auto i = asteroids.begin(); i != asteroids.end(); ++i)
+	{
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    m_drawer.drawTexture();
+    //asteroids.at(i).draw(dt);
+	}
+	
+  for(auto i = enemies.begin(); i != enemies.end(); ++i)
+	{
+    //enemies.at(i).draw(dt);
+	}
+	
+  //ply.draw(dt);
+	
+  for(auto i = missiles.begin(); i != missiles.end(); ++i)
+	{	
+    //missiles.at(i).draw(dt);
+	}
+	
+  for(auto i = particles.begin(); i != particles.end(); ++i)
+	{
+    //particles.at(i).draw(dt);
+	}
+	
+  for(auto i = dots.begin(); i != dots.end(); ++i)
 	{	
 		if(dots.at(i).getZ() <= 1) continue;
-		dots.at(i).draw(dt);
+    //dots.at(i).draw(dt);
 	}
 	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Dots lower draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
-	
-	for(size_t i = 0; i < sparkles.size(); i++)
+  for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
 	{	
 		if(sparkles.at(i).getZ() > 1) 
 		{
-			sparkles.at(i).draw(dt);
+      //sparkles.at(i).draw(dt);
 		}
 	}
-	
-	/*if(DEV_MODE)
-	{
-		profiler.setCur();
-		cout << std::fixed << "	Sprite upper draw complete: " << profiler.getDiff() << endl;
-		profiler.setCur();
-	}*/
 	
 	if(DEV_MODE)
 	{
@@ -1141,4 +1074,83 @@ void universe::addBuild(vec2 p, ship_spec type)
 		default:
 			break;
 	}
+}
+
+void universe::initUI()
+{
+  //Initialise the two selection menus.
+  selection energy_menu;
+  selection upgrades_menu;
+
+  //Add buttons to the energy menu.
+  int arr1[] = {20,20,20,200,100,100,100,255};
+  int arr2[] = {100,100,100,200,250,250,250,255};
+  button energy_menu_neutral("BALANCED",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.35f},{128.0f,64.0f});
+  energy_menu_neutral.set(true);
+  energy_menu.add(energy_menu_neutral);
+
+  arr1 = {12,24,26,200,27,95,232,255};
+  arr2 = {45,67,188,200,119,156,238,255};
+  button energy_menu_shields("SHIELDS",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.45f},{128.0f,64.0f});
+  energy_menu.add(energy_menu_shields);
+
+  arr1[] = {14,35,20,200,36,204,52,255};
+  arr2[] = {65,127,64,200,129,241,127,255};
+  button energy_menu_engines("ENGINES",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.55f},{128.0f,64.0f});
+  energy_menu.add(energy_menu_engines);
+
+  arr1[] = {35,23,23,200,232,31,31,255};
+  arr2[] = {124,33,33,200,217,116,116,255};
+  button energy_menu_guns("GUNS",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.65f},{128.0f,64.0f});
+  energy_menu.add(energy_menu_guns);
+
+  //Add buttons to the upgrades menu.
+  float w = 150.0f, h = 50.0f;
+  arr1[] = {100,50,50,200,250,200,200,255};
+  arr2[] = {100,50,50,200,250,200,200,255};
+  button upgrades_lasers("LASERS I (4)",arr1,arr2,{WIN_WIDTH * 0.0f, WIN_HEIGHT * 0.85f},{w,h},4);
+  upgrades_menu.add(upgrades_lasers);
+
+  arr1[] = {50,50,100,200,200,200,250,255};
+  arr2[] = {50,50,100,200,200,200,250,255};
+  button upgrades_shields("SHIELDS I (4)",arr1,arr2,{WIN_WIDTH * 0.15f, WIN_HEIGHT * 0.85f},{w,h},4);
+  upgrades_menu.add(upgrades_shields);
+
+  arr1[] = {50,100,50,200,200,250,200,255};
+  arr2[] = {50,100,50,200,200,250,200,255};
+  button upgrades_generators("GENERATORS I (4)",arr1,arr2,{WIN_WIDTH * 0.3f, WIN_HEIGHT * 0.85f},{w,h},4);
+  upgrades_menu.add(upgrades_generators);
+
+  arr1[] = {50,50,80,200,200,200,220,255};
+  arr2[] = {50,50,80,200,200,200,220,255};
+  button upgrades_thrusters("THRUSTERS I (4)",arr1,arr2,{WIN_WIDTH * 0.45f, WIN_HEIGHT * 0.85f},{w,h},4);
+  upgrades_menu.add(upgrades_thrusters);
+
+  arr1[] = {255,210,0,200,255,253,100,255};
+  arr2[] = {255,210,0,200,255,253,100,255};
+  button upgrades_missiles("MISSILE (4)",arr1,arr2,{WIN_WIDTH * 0.6f, WIN_HEIGHT * 0.85f},{w,h},4);
+  upgrades_menu.add(upgrades_missiles);
+
+  arr1[] = {100,210,255,200,180,220,255,255};
+  arr2[] = {100,210,255,200,180,220,255,255};
+  button upgrades_miner("MINER (16)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.85f},{w,h},16);
+  upgrades_menu.add(upgrades_miner);
+
+  button upgrades_wingman("WINGMAN (32)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.79f},{w,h},32);
+  upgrades_menu.add(upgrades_wingman);
+
+  button upgrades_turret("TURRET (32)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.73f},{w,h},32);
+  upgrades_menu.add(upgrades_turret);
+
+  button upgrades_gravwell("GRAVWELL (512)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.67f},{w,h},512);
+  upgrades_menu.add(upgrades_gravwell);
+
+  button upgrades_barracks("BARRACKS (1024)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.61f},{w,h},1024);
+  upgrades_menu.add(upgrades_barracks);
+
+  button upgrades_station("STATION (1024)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.55f},{w,h},1024);
+  upgrades_menu.add(upgrades_station);
+
+  ui.add(energy_menu);
+  ui.add(upgrades_menu);
 }
