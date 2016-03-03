@@ -60,20 +60,22 @@ double diffClock(clock_t clock1, clock_t clock2);
 
 int main(int argc, char* argv[])
 {
-  //Create the universe.
-	universe uni;
+    gameInit();
 
-  //Initialise menus, textures, ship upgrades, and create the default ship presets.
-  //menus_init();
-  //upgrades_init();
-  //loadTextures();
-	loadShips();
+    //Create the universe.
+    universe uni;
+
+    //Initialise menus, textures, ship upgrades, and create the default ship presets.
+    //menus_init();
+    //upgrades_init();
+    //loadTextures();
+    loadShips();
 	
-  //Timer used to keep track of game time.
-  //The argument is the fps of the updates, higher = more detailed.
-  sim_time clock(120.0f);
+    //Timer used to keep track of game time.
+    //The argument is the fps of the updates, higher = more detailed.
+    sim_time clock(120.0f);
 	
-  //Is the game running?
+    //Is the game running?
 	bool active = true;
 	
   //Keypress modifiers (shift, ctrl etc).

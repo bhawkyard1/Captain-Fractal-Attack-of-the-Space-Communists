@@ -25,6 +25,8 @@ renderer::renderer(int _w, int _h)
   m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
 
   SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+
+  loadTextures();
 }
 
 renderer::~renderer()
@@ -88,26 +90,26 @@ void renderer::loadTextures()
   loadTexture("SMOKE", "smoke_1");
   loadTexture("SKY", "sky");
 
-  loadFontSpriteSheet("pix", "../resources/fonts/pix.TTF", 18);
-  loadFontSpriteSheet("minimal", "../resources/fonts/minimal.otf", 18);
+  loadFontSpriteSheet("pix", "../../resources/fonts/pix.TTF", 18);
+  loadFontSpriteSheet("minimal", "../../resources/fonts/minimal.otf", 18);
 }
 
 void renderer::loadTexture(std::string _key, std::string _path)
 {
   std::vector<SDL_Texture*> temp;
-  temp.push_back( SDL_CreateTextureFromSurface(m_renderer, IMG_Load( ("../resources/textures/" + _path + "/" + _path + ".png").c_str() ) ) );
-  m_textures[_key] = temp;
+  temp.push_back( SDL_CreateTextureFromSurface(m_renderer, IMG_Load( ("../../resources/textures/" + _path + "/" + _path + ".png").c_str() ) ) );
+  m_textures.insert({_key, temp});
 }
 
 void renderer::loadTextureSet(std::string _key, std::string _set)
 {
   std::vector<SDL_Surface*> temp_surf;
-  temp_surf.push_back( IMG_Load( ("../resources/textures/" + _set + "/" + _set + ".png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../resources/textures/" + _set + "/" + _set + "_engines.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../resources/textures/" + _set + "/" + _set + "_steering.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../resources/textures/" + _set + "/" + _set + "_shoot.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../resources/textures/" + _set + "/" + _set + "_shield.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../resources/textures/" + _set + "/" + _set + "_static.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + ".png").c_str() ) );
+  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_engines.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_steering.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_shoot.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_shield.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_static.png").c_str() ) );
 
   std::vector<SDL_Texture*> temp_tex;
   for(size_t i = 0; i < temp_surf.size(); ++i)
@@ -123,7 +125,7 @@ void renderer::loadTextureSet(std::string _key, std::string _set)
       temp_tex.push_back( nullptr );
     }
   }
-  m_textures[_key] = temp_tex;
+  m_textures.insert({_key, temp_tex});
 }
 
 void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _size)
@@ -157,7 +159,7 @@ void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _siz
 
     TTF_CloseFont(fnt);
 
-    m_letters[name] = sheet;
+    m_letters.insert({name, sheet});
 }
 
 void renderer::queryTexture(std::string identifier, int index, int *w, int *h)
@@ -183,7 +185,7 @@ void renderer::clear()
 void renderer::drawTextureSet(std::string key, vec2 pos, float orient, float * alphaMod)
 {
   int w, h;
-  SDL_QueryTexture(m_textures.at(key).at(0), NULL, NULL, &w, &h);
+  SDL_QueryTexture(m_textures[key].at(0), NULL, NULL, &w, &h);
 
   pos *= ZOOM_LEVEL;
   pos += HALFWIN;
@@ -203,8 +205,8 @@ void renderer::drawTextureSet(std::string key, vec2 pos, float orient, float * a
   SDL_SetTextureAlphaMod(m_textures.at(key).at(4), alphaMod[4]);
   //SDL_SetTextureColorMod(m_textures.at(key).at(3), weapons[curWeap][4], weapons[curWeap][5], weapons[curWeap][6]);
 
-  for(int i = 0; i < 5; ++i) SDL_RenderCopyEx(m_renderer, m_textures.at(key).at(i), NULL, &dst, orient, NULL, SDL_FLIP_NONE);
-  SDL_RenderCopyEx(m_renderer, m_textures.at(key).at(5), NULL, &dst, 0, NULL, SDL_FLIP_NONE);
+  for(int i = 0; i < 5; ++i) SDL_RenderCopyEx(m_renderer, m_textures[key][i], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
+  SDL_RenderCopyEx(m_renderer, m_textures[key][5], NULL, &dst, 0, NULL, SDL_FLIP_NONE);
 }
 
 void renderer::drawText(std::string text, std::string font, vec2 pos)
@@ -223,7 +225,7 @@ void renderer::drawText(std::string text, std::string font, vec2 pos)
 void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient, float col[])
 {
   int w, h;
-  SDL_QueryTexture(m_textures.at(key).at(0), NULL, NULL, &w, &h);
+  SDL_QueryTexture(m_textures[key][index], NULL, NULL, &w, &h);
 
   pos *= ZOOM_LEVEL;
   pos += HALFWIN;
@@ -237,10 +239,10 @@ void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient
   dst.w = w;
   dst.h = h;
 
-  SDL_SetTextureColorMod(m_textures.at(key).at(index), col[0], col[1], col[2]);
-  SDL_SetTextureAlphaMod(m_textures.at(key).at(index), col[3]);
+  SDL_SetTextureColorMod(m_textures[key][index], col[0], col[1], col[2]);
+  SDL_SetTextureAlphaMod(m_textures[key][index], col[3]);
 
-  SDL_RenderCopyEx(m_renderer, m_textures.at(key).at(index), NULL, &dst, orient, NULL, SDL_FLIP_NONE);
+  SDL_RenderCopyEx(m_renderer, m_textures[key][index], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
 }
 
 void renderer::drawLine(vec2 _start, vec2 _end, float _col[])
@@ -251,12 +253,24 @@ void renderer::drawLine(vec2 _start, vec2 _end, float _col[])
 
 void renderer::drawLine(vec2 _start, vec2 _end, int _col[])
 {
+  _start *= ZOOM_LEVEL;
+  _start += HALFWIN;
+
+  _end *= ZOOM_LEVEL;
+  _end += HALFWIN;
+
   SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
   SDL_RenderDrawLine(m_renderer, _start.x, _start.y, _end.x, _end.y);
 }
 
 void renderer::drawLineGr(vec2 _start, vec2 _end, int _scol[], int _ecol[])
 {
+  _start *= ZOOM_LEVEL;
+  _start += HALFWIN;
+
+  _end *= ZOOM_LEVEL;
+  _end += HALFWIN;
+
   SDL_SetRenderDrawColor(m_renderer, _scol[0], _scol[1], _scol[2], _scol[3]);
   int p0[2] = {static_cast<int>(_start.x), static_cast<int>(_start.y)};
   int p1[2] = {static_cast<int>(_end.x), static_cast<int>(_end.y)};
@@ -415,25 +429,25 @@ void renderer::statusBars(player * ply)
 {
   //health base
   std::array<int, 4> col = {100, 20, 20, 255};
-  drawRect({0,0}, {256, 16}, col, true);
+  drawRect({0,0}, {256, 16}, col, false);
 
   //health
   col = {230, 50, 50, 255};
-  drawRect({0,0}, {256, 16}, col, true);
+  drawRect({0,0}, {256, 16}, col, false);
 
   //shield base
   col = {20, 20, 100, 255};
-  drawRect({0,16}, {256, 16}, col, true);
+  drawRect({0,16}, {256, 16}, col, false);
 
   //shield
   col = {50, 50, 230, 255};
-  drawRect({0,16}, {256, 16}, col, true);
+  drawRect({0,16}, {256, 16}, col, false);
 
   //energy base
   col = {20, 100, 20, 255};
-  drawRect({0,32}, {256, 16}, col, true);
+  drawRect({0,32}, {256, 16}, col, false);
 
   //energy
   col = {50, 230, 50, 255};
-  drawRect({0,32}, {256, 16}, col, true);
+  drawRect({0,32}, {256, 16}, col, false);
 }

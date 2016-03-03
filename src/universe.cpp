@@ -10,7 +10,7 @@ universe::universe(): ply( {0.0f, 0.0f} ),
                       m_drawer(WIN_WIDTH, WIN_HEIGHT)
 {	
 	setVel({0,0});
-	
+
 	max_enemies_count = 3;
 	max_wingmen_count = 0;
 	max_miner_count = 0;
@@ -63,7 +63,8 @@ universe::universe(): ply( {0.0f, 0.0f} ),
 	
 	score = 0;
 	paused = false;
-	
+
+    initUI();
 	//for(int i = 0; i < 3; ++i) spawnShip(TEAM_PLAYER_MINER);
 	//addStation();
 }
@@ -543,7 +544,9 @@ void universe::update(float dt)
 void universe::draw(float dt)
 {	
 	if(paused) dt = 0.0f;
-		
+
+  m_drawer.clear();
+
   for(auto i = dots.begin(); i != dots.end(); ++i)
 	{	
     if(i->getZ() > 1) continue;
@@ -592,8 +595,8 @@ void universe::draw(float dt)
 	{
     //enemies.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
-    float ialpha = 255.0f;
-    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), &ialpha);
+    float * ialpha = i->getAlphaStats();
+    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
 	}
 	
   //ply.draw(dt);
@@ -602,8 +605,8 @@ void universe::draw(float dt)
 	{	
     //missiles.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
-    float ialpha = 255.0f;
-    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), &ialpha);
+    float * ialpha = i->getAlphaStats();
+    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
 	}
 	
   for(auto i = particles.begin(); i != particles.end(); ++i)
@@ -655,6 +658,8 @@ void universe::draw(float dt)
 
   //Draw the ui
   drawUI();
+
+  m_drawer.finalise();
 }
 
 void universe::drawUI()

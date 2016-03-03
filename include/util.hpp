@@ -5,6 +5,7 @@
 #include <limits>
 #include <algorithm>
 #include <sstream>
+#include <time.h>
 
 #include "SDL2/SDL_ttf.h"
 

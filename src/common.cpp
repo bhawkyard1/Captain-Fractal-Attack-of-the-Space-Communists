@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "common.hpp"
 
 SDL_Texture * SMOKE_TEXTURE;
@@ -16,7 +17,7 @@ float BG_DENSITY = 5.0f;
 
 void loadConfig()
 {
-  std::ifstream config("../resources/config.txt");
+  std::ifstream config("../../resources/config.txt");
   std::string cur;
 
   while(getline( config, cur ))
@@ -37,6 +38,7 @@ void loadConfig()
   config.close();
   HALFWIN = {WIN_WIDTH / 2.0f, WIN_HEIGHT / 2.0f};
   MAX_DIM = std::max( WIN_WIDTH, WIN_HEIGHT );
+  std::cout << "Halfwin is " << HALFWIN.x << ", " << HALFWIN.y << std::endl;
 
   std::cout << "Resolution: " << WIN_WIDTH << " x " << WIN_HEIGHT << std::endl;
   std::cout << "Difficulty: " << DIFFICULTY << std::endl;

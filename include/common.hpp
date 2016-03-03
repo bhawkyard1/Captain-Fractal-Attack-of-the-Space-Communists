@@ -11,7 +11,7 @@
 
 #include "vectors.hpp"
 
-void loadTextures();
+//void loadTextures();
 void loadConfig();
 
 extern SDL_Texture * SMOKE_TEXTURE;

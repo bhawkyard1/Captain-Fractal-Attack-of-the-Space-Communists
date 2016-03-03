@@ -15,8 +15,17 @@ HEADERS += $$PWD/include/base.hpp \
 QMAKE_CXXFLAGS += $$system(sdl2-config --cflags)
 QMAKE_CXXFLAGS += -std=c++11
 
-LIBS += $$system(sdl2-config --libs)
-LIBS += -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+unix {
+    LIBS += $$system(sdl2-config --libs)
+    LIBS += -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+}
+
+win32 {
+    INCLUDEPATH += C:/SDL2/i686-w64-mingw32/include
+    INCLUDEPATH += C:/SDL2/i686-w64-mingw32/include/SDL2
+    LIBS += -L"C:/SDL2/i686-w64-mingw32/lib"
+    LIBS += -lmingw32 -mwindows -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2main -lSDL2
+}
 
 #include($(HOME)/NGL/UseNGL.pri)
 

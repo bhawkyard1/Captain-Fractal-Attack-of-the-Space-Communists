@@ -10,8 +10,6 @@ void base::updatePos(float dt)
 vec2 base::getInterpolatedPosition(float dt)
 {
   vec2 p = dt * getPos() + (1 - dt) * getPPos();
-  p *= ZOOM_LEVEL;
-  p += HALFWIN;
 
   return p;
 }

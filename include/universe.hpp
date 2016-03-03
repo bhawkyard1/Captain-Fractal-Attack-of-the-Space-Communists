@@ -45,7 +45,6 @@ class universe
 	float tColP[3];
 	float gameplay_intensity = 1;
 	bool paused;
-	SDL_Texture * sky;
 public:
 	universe();
   void initUI();
