@@ -2,6 +2,7 @@
 #define SHIP_HPP
 
 #include <vector>
+#include <array>
 
 #include "SDL2/SDL.h"
 
@@ -31,7 +32,9 @@ class ship: public base
 	float inertia, health, maxHealth, shield, maxShield, angle, energy, maxEnergy, coolDown, radius, damageTimer;
 	SDL_Rect dstrect;
   std::string m_identifier;
-	
+
+  std::vector< std::array<float, 10> > m_weapons;
+
 	ship_spec classification;
 	
 	bool shooting, accelerating, canMove, canShoot;
@@ -63,8 +66,8 @@ public:
 	void draw(float);
 	void setShooting() {drawShot = 255;}
 	void setWeap(int val) {curWeap = val;}
-	void incrWeap(int val) {if(DEV_MODE) curWeap = clampRoll(curWeap + val,0,16); else curWeap = clampRoll(curWeap + val,0,2);}
-	int getWeap() {return curWeap;}
+  void incrWeap(int val) {curWeap = clampRoll(curWeap + val, 0, static_cast<int>(m_weapons.size()) );}
+  std::array<float, 10> getWeap() {return m_weapons[curWeap];}
 	bool isFiring() {return shooting;}
 	void setFiring(bool v) {shooting = v;}
 	

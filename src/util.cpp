@@ -191,6 +191,12 @@ bool pointInRect(vec2 p, SDL_Rect * r)
   return false;
 }
 
+bool pointInRect(vec2 p, vec2 r_pos, vec2 r_dim)
+{
+  if(p.x > r_pos.x and p.x < r_pos.x + r_dim.x and p.y > r_pos.y and p.y < r_pos.y + r_dim.y) return true;
+  return false;
+}
+
 bool strToBool(std::string str)
 {
   if(str == "true") return true;

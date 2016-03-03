@@ -589,6 +589,8 @@ void universe::draw(float dt)
   for(auto i = enemies.begin(); i != enemies.end(); ++i)
 	{
     //enemies.at(i).draw(dt);
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng());
 	}
 	
   //ply.draw(dt);
@@ -596,17 +598,23 @@ void universe::draw(float dt)
   for(auto i = missiles.begin(); i != missiles.end(); ++i)
 	{	
     //missiles.at(i).draw(dt);
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng());
 	}
 	
   for(auto i = particles.begin(); i != particles.end(); ++i)
 	{
     //particles.at(i).draw(dt);
+    vec2 ipos = i->getInterpolatedPosition(dt);
+    float col = {255, 255, 255, i->getAlpha()};
+    m_drawer.drawTexture(i->getIdentifier(), 0, ipos, 0, col);
 	}
 	
   for(auto i = dots.begin(); i != dots.end(); ++i)
 	{	
 		if(dots.at(i).getZ() <= 1) continue;
     //dots.at(i).draw(dt);
+    vec2 ipos = i->getInterpolatedPosition(dt);
 	}
 	
   for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
@@ -614,26 +622,55 @@ void universe::draw(float dt)
 		if(sparkles.at(i).getZ() > 1) 
 		{
       //sparkles.at(i).draw(dt);
+      vec2 ipos = i->getInterpolatedPosition(dt);
 		}
 	}
 	
 	if(DEV_MODE)
 	{
-		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-		for(size_t i = 0; i < partitions.rects.size(); ++i)
+    for(auto i = partitions.rects.begin(); i != partitions.rects.end(); ++i)
 		{
-			SDL_Rect pr = partitions.rects.at(i);
-			pr.x *= ZOOM_LEVEL;
-			pr.y *= ZOOM_LEVEL;
-			pr.w *= ZOOM_LEVEL;
-			pr.h *= ZOOM_LEVEL;
-			
-			pr.x += HALFWIN.x;
-			pr.y += HALFWIN.y;
-			
-			SDL_RenderDrawRect( renderer, &pr );
+      int col[4] = {255, 0, 0, 255};
+      m_drawer.drawRect({i->x, i->y}, {i->w, i->h}, col, true);
 		}
 	}
+
+  //Draw the ui
+  drawUI();
+}
+
+void universe::drawUI()
+{
+  m_drawer.drawText("SCORE: " + std::to_string( score ),"pix",{260, 2});
+  m_drawer.drawText("MISSILES: " + std::to_string( ply.getMissiles() ),"pix",{260, 2});
+
+  m_drawer.drawMap(&missiles, &enemies, &asteroids, &shots);
+  m_drawer.statusBars(&ply);
+
+  for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
+  {
+    for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
+    {
+        col = j->getCol();
+        if(!j->isSelected())
+        {
+          m_drawer.drawRect(j->getPos(), j->getDim, {col[0], col[1], col[2], col[3]});
+        }
+        else
+        {
+          m_drawer.drawRect(j->getPos(), j->getDim, {col[4], col[5], col[6], col[7]});
+        }
+        m_drawer.drawText(j->getLabel(), "pix", j->getPos());
+        SDL_RenderCopy(renderer,texture,NULL,&mask);
+
+        if(dark)
+        {
+          SDL_SetRenderDrawColor(renderer,0,0,0,200);
+          SDL_RenderFillRect(renderer,&mask);
+        }
+      }
+    }
+  }
 }
 
 void universe::detectCollisions(SDL_Rect box, std::vector<enemy*> ships, std::vector<laser*> lasers, std::vector<missile*> rockets, std::vector<ship*> rocks, unsigned short int lvl)
@@ -1000,7 +1037,9 @@ void universe::reload(bool newGame)
 	ply.setEnergy( ply.getMaxEnergy() );
 	ply.setVel({0, 0});
 	
-	float tmp[][9] =	{
+  m_ui.reset();
+
+  /*float tmp[][9] =	{
 						{1.0f,	2.0f,				8.0f,		12.0f,		255.0f,	50.0f,	50.0f,	4.0f,	0.2f},//Laser cannon	0
 						{12.0f,	5.0f,				3.0f,		8.0f,		50.0f,	255.0f,	65.0f,	10.0f,	0.5f},//Shotgun			1
 						{1.0f,	1.0f,				2.0f,		30.0f,		40.0f,	75.0f,	255.0f,	1.0f,	0.05f},//Blue laser		2
@@ -1021,7 +1060,7 @@ void universe::reload(bool newGame)
 						{3.0f,	0.5f/DIFFICULTY,	7.0f,		10.0f,		255.0f,	216.0f,	0.0f,	1.0f,	0.9f},//P gunship laser	17
 						};
 	
-  for(int i = 0; i < 14; ++i) std::copy(&tmp[i][0], &tmp[i][8], &weapons[i][0]);
+  for(int i = 0; i < 14; ++i) std::copy(&tmp[i][0], &tmp[i][8], &weapons[i][0]);*/
 	
 	partitions.ships.clear();
 	partitions.lasers.clear();
@@ -1153,4 +1192,63 @@ void universe::initUI()
 
   ui.add(energy_menu);
   ui.add(upgrades_menu);
+}
+
+bool universe::upgradeCallback(int _sel, int _btn)
+{
+  //This function takes the selected button, looks at the cost vs the score, updates relevant values,
+  //then returns a bool representing whether the upgrade was successful or unsuccessful.
+
+  button * selectedButton = &m_ui.getElements()->at(_sel).at(btn);
+  int lvl = ply.getUpgrade( _btn );
+
+  selectedButton->set(false);
+
+  if(up->getCost() > score) return false;
+
+  if(lvl < 9)
+  {
+    score -= up->getCost();
+    if(type < 4) up->setCost(up->getCost() * 2);
+  }
+
+  if(type > 3) return true;
+
+
+
+  return true;
+}
+
+void universe::upgradeSetLabels(int _sel, int _btn)
+{
+  std::string s1;
+  int lvl = ply.getUpgrade( _btn );
+  switch(_btn)
+  {
+    case 0:
+      s1 = "LASERS ";
+      break;
+    case 1:
+      s1 = "SHIELDS ";
+      break;
+    case 2:
+      s1 = "GENERATORS ";
+      break;
+    case 3:
+      s1 = "THRUSTERS ";
+      break;
+  }
+
+  s1 += roman_nums[lvl];
+
+  if(lvl < 8)
+  {
+    s1 += " (";
+    std::stringstream ss;
+    ss << up->getCost();
+    s1 += ss.str();
+    s1 += ")";
+  }
+
+  if(lvl < 9) up->updateText(s1);
 }

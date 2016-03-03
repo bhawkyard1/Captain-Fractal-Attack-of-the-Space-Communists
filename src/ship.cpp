@@ -37,7 +37,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(30.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.1f;
-			curWeap = rand() % 3 + 4;
+      weapons.push_back( weapons[rand() % 3 + 4] );
+      curWeap = 0;
 			break;
 		case FEDERATION_MKII:
       m_identifier = "FEDERATION_MKII";
@@ -45,7 +46,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(60.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.09f;
-			curWeap = rand() % 3 + 4;
+      weapons.push_back( weapons[rand() % 3 + 4] );
+      curWeap = 0;
 			break;
 		case FEDERATION_MKIII:
       m_identifier = "FEDERATION_MKIII";
@@ -53,7 +55,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(90.0f,true);
 			setMaxEnergy(150.0f,true);
 			inertia = 0.08f;
-			curWeap = rand() % 3 + 4;
+      weapons.push_back( weapons[rand() % 3 + 4] );
+      curWeap = 0;
 			break;
 		case FEDERATION_MKIV:
       m_identifier = "FEDERATION_MKIV";
@@ -61,7 +64,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(120.0f,true);
 			setMaxEnergy(200.0f,true);
 			inertia = 0.15f;
-			curWeap = rand() % 3 + 4;
+      weapons.push_back( weapons[rand() % 3 + 4] );
+      curWeap = 0;
 			break;
 		case FEDERATION_GUNSHIP:
       m_identifier = "FEDERATION_GUNSHIP";
@@ -69,15 +73,17 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(200.0f,true);
 			setMaxEnergy(500.0f,true);
 			inertia = 0.02f;
-			curWeap = rand() % 2 + 7;
-			break;
+      weapons.push_back( weapons[rand() % 2 + 7] );
+      curWeap = 0;
+      break;
 		case PIRATE_GNAT:
       m_identifier = "PIRATE_GNAT";
 			setMaxHealth(80.0f,true);
 			setMaxShield(40.0f,true);
 			setMaxEnergy(90.0f,true);
 			inertia = 0.15f;
-			curWeap = rand() % 3 + 14;
+      weapons.push_back( weapons[rand() % 3 + 14] );
+      curWeap = 0;
 			break;
 		case PIRATE_CRUISER:
       m_identifier = "PIRATE_CRUISER";
@@ -85,7 +91,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(60.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.1f;
-			curWeap = rand() % 3 + 14;
+      weapons.push_back( weapons[rand() % 3 + 14] );
+      curWeap = 0;
 			break;
 		case PIRATE_WRANGLER:
       m_identifier = "PIRATE_WRANGLER";
@@ -93,7 +100,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(70.0f,true);
 			setMaxEnergy(120.0f,true);
 			inertia = 0.05f;
-			curWeap = rand() % 3 + 14;
+      weapons.push_back( weapons[rand() % 3 + 14] );
+      curWeap = 0;
 			break;
 		case PIRATE_MARAUDER:
       m_identifier = "PIRATE_MARAUDER";
@@ -101,7 +109,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(120.0f,true);
 			setMaxEnergy(120.0f,true);
 			inertia = 0.15f;
-			curWeap = rand() % 3 + 14;
+      weapons.push_back( weapons[rand() % 3 + 14] );
+      curWeap = 0;
 			break;
 		case PIRATE_GUNSHIP:
       m_identifier = "PIRATE_GUNSHIP";
@@ -109,7 +118,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(120.0f,true);
 			setMaxEnergy(150.0f,true);
 			inertia = 0.05f;
-			curWeap = 17;
+      weapons.push_back( weapons[17] );
+      curWeap = 0;
 			break;
 		case PLAYER_SHIP:
       m_identifier = "PLAYER_SHIP";
@@ -117,6 +127,9 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(100.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.07f;
+      weapons.push_back( weapons[0] );
+      weapons.push_back( weapons[1] );
+      weapons.push_back( weapons[2] );
 			curWeap = 0;
 			break;
 		case PLAYER_HUNTER:
@@ -125,7 +138,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(100.0f,true); 
 			setMaxEnergy(100.0f,true);
 			inertia = 0.07f;
-			curWeap = rand() % 3 + 9;
+      weapons.push_back( weapons[rand() % 3 + 9] );
+      curWeap = 0;
 			break;
 		case PLAYER_DEFENDER:
       m_identifier = "PLAYER_DEFENDER";
@@ -133,7 +147,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(125.0f,true); 
 			setMaxEnergy(125.0f,true);
 			inertia = 0.07f;
-			curWeap = rand() % 3 + 9;
+      weapons.push_back( weapons[rand() % 3 + 9] );
+      curWeap = 0;
 			break;
 		case PLAYER_DESTROYER:
       m_identifier = "PLAYER_DESTROYER";
@@ -141,7 +156,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(150.0f,true); 
 			setMaxEnergy(150.0f,true);
 			inertia = 0.07f;
-			curWeap = rand() % 3 + 9;
+      weapons.push_back( weapons[rand() % 3 + 9] );
+      curWeap = 0;
 			break;
 		case PLAYER_MINER_DROID:
       m_identifier = "PLAYER_MINER_DROID";
@@ -149,7 +165,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(20.0f,true); 
 			setMaxEnergy(200.0f,true);
 			inertia = 0.07f;
-			curWeap = 12;
+      weapons.push_back( weapons[12] );
+      curWeap = 0;
 			break;
 		case ION_MISSILE_MKI:
       m_identifier = "ION_MISSILE_MKI";
@@ -192,7 +209,8 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(200.0f,true); 
 			setMaxEnergy(300.0f,true);
 			inertia = 0.1f;
-			curWeap = 13;
+      weapons.push_back( weapons[13] );
+      curWeap = 0;
 			canMove = false;
 			break;
 		case PLAYER_STATION:
@@ -558,24 +576,27 @@ int ship::upgrade(int i)
 			7)energy cost 
 			8)cooldown.
 			*/
-			weapons[0][1] *= 0.9f;
-			weapons[0][2] *= 1.2f;
-			weapons[0][3] *= 1.12f;
-			weapons[0][7] *= 1.1f;
-			weapons[0][8] *= 0.95f;
+      if(m_weapons.size() < 1) break;
+      m_weapons[0][1] *= 0.9f;
+      m_weapons[0][2] *= 1.2f;
+      m_weapons[0][3] *= 1.12f;
+      m_weapons[0][7] *= 1.1f;
+      m_weapons[0][8] *= 0.95f;
 			
-			weapons[1][0] *= 1.1f;
-			weapons[1][1] *= 0.9f;
-			weapons[1][2] *= 1.1f;
-			weapons[1][3] *= 1.12f;
-			weapons[1][7] *= 1.1f;
-			weapons[1][8] *= 0.95f;
+      if(m_weapons.size() < 2) break;
+      m_weapons[1][0] *= 1.1f;
+      m_weapons[1][1] *= 0.9f;
+      m_weapons[1][2] *= 1.1f;
+      m_weapons[1][3] *= 1.12f;
+      m_weapons[1][7] *= 1.1f;
+      m_weapons[1][8] *= 0.95f;
 			
-			weapons[2][0] *= 1.1f;
-			weapons[2][1] *= 0.9f;
-			weapons[2][3] *= 1.12f;
-			weapons[1][7] *= 0.95f;
-			weapons[2][8] *= 0.95f;
+      if(m_weapons.size() < 3) break;
+      m_weapons[2][0] *= 1.1f;
+      m_weapons[2][1] *= 0.9f;
+      m_weapons[2][3] *= 1.12f;
+      m_weapons[1][7] *= 0.95f;
+      m_weapons[2][8] *= 0.95f;
 			break;
 		case 1:
 			shieldMul *= 1.2f;

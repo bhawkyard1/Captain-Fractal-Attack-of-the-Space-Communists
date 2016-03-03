@@ -160,8 +160,8 @@ void drawWeap()
 	
 	int wn = ply->getWeap();
 	
-	SDL_SetRenderDrawColor(renderer,weapons[wn][4],weapons[wn][5],weapons[wn][6],255);
-	SDL_RenderFillRect(renderer,&weap);
+  SDL_SetRenderDrawColor(renderer, weapons[wn][4], weapons[wn][5], weapons[wn][6], 255);
+  SDL_RenderFillRect(renderer, &weap);
 	
 	
   TTF_Font * fnt = TTF_OpenFont("../resources/fonts/minimal.otf", 25);

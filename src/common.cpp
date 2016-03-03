@@ -43,14 +43,3 @@ void loadConfig()
   std::cout << "Background Particles: " << BACKGROUND_DOTS << std::endl;
   std::cout << "Devmode: " << DEV_MODE << std::endl;
 }
-
-void loadTextures()
-{
-  SDL_Surface * temp = IMG_Load("../resources/images/environment/smoke_1.png");
-  SMOKE_TEXTURE = SDL_CreateTextureFromSurface(renderer, temp);
-  SDL_FreeSurface(temp);
-
-  SDL_Surface * temp2 = IMG_Load("../resources/images/environment/explosion.png");
-  XPLO_TEXT = SDL_CreateTextureFromSurface(renderer, temp2);
-  SDL_FreeSurface(temp2);
-}

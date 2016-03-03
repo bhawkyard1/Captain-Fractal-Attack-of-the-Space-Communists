@@ -231,7 +231,6 @@ DIST          = /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		include/pfx.hpp \
 		include/player.hpp \
 		include/renderer.hpp \
-		include/rendering.hpp \
 		include/sfx.hpp \
 		include/shapes.hpp \
 		include/ship.hpp \
@@ -241,8 +240,6 @@ DIST          = /opt/qt/5.5/gcc_64/mkspecs/features/spec_pre.prf \
 		include/squad.hpp \
 		include/stardust.hpp \
 		include/stardust_sprite.hpp \
-		include/ui.hpp \
-		include/ui_classes.hpp \
 		include/universe.hpp \
 		include/user_input.hpp \
 		include/util.hpp \
@@ -579,7 +576,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents include/base.hpp include/base.hpp include/common.hpp include/enemy.hpp include/faction.hpp include/file.hpp include/laser.hpp include/missile.hpp include/pfx.hpp include/player.hpp include/renderer.hpp include/rendering.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/ship_presets.hpp include/sim_time.hpp include/sprite_sheet.hpp include/squad.hpp include/stardust.hpp include/stardust_sprite.hpp include/ui.hpp include/ui_classes.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/interface.hpp include/ui/selection.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents include/base.hpp include/base.hpp include/common.hpp include/enemy.hpp include/faction.hpp include/file.hpp include/laser.hpp include/missile.hpp include/pfx.hpp include/player.hpp include/renderer.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/ship_presets.hpp include/sim_time.hpp include/sprite_sheet.hpp include/squad.hpp include/stardust.hpp include/stardust_sprite.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/interface.hpp include/ui/selection.hpp $(DISTDIR)/
 	$(COPY_FILE) --parents main.cpp src/base.cpp src/common.cpp src/enemy.cpp src/faction.cpp src/laser.cpp src/missile.cpp src/pfx.cpp src/player.cpp src/renderer.cpp src/ship.cpp src/sim_time.cpp src/sprite_sheet.cpp src/squad.cpp src/stardust.cpp src/stardust_sprite.cpp src/universe.cpp src/util.cpp src/vectors.cpp src/ui/button.cpp src/ui/interface.cpp src/ui/selection.cpp $(DISTDIR)/
 
 
@@ -635,8 +632,10 @@ obj/main.o: main.cpp include/sim_time.hpp \
 		include/pfx.hpp \
 		include/missile.hpp \
 		include/renderer.hpp \
-		include/ui_classes.hpp \
-		include/ui.hpp \
+		include/sprite_sheet.hpp \
+		include/ui/interface.hpp \
+		include/ui/selection.hpp \
+		include/ui/button.hpp \
 		include/file.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
@@ -702,8 +701,15 @@ obj/player.o: src/player.cpp include/player.hpp \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/player.o src/player.cpp
 
 obj/renderer.o: src/renderer.cpp include/renderer.hpp \
+		include/sprite_sheet.hpp \
 		vectors.hpp \
-		include/util.hpp
+		include/util.hpp \
+		include/enemy.hpp \
+		include/ship.hpp \
+		include/common.hpp \
+		include/base.hpp \
+		include/laser.hpp \
+		include/missile.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/renderer.o src/renderer.cpp
 
 obj/ship.o: src/ship.cpp include/ship.hpp \
@@ -759,7 +765,11 @@ obj/universe.o: src/universe.cpp include/universe.hpp \
 		include/player.hpp \
 		include/pfx.hpp \
 		include/missile.hpp \
-		include/renderer.hpp
+		include/renderer.hpp \
+		include/sprite_sheet.hpp \
+		include/ui/interface.hpp \
+		include/ui/selection.hpp \
+		include/ui/button.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/universe.o src/universe.cpp
 
 obj/util.o: src/util.cpp include/util.hpp \
@@ -769,15 +779,19 @@ obj/util.o: src/util.cpp include/util.hpp \
 obj/vectors.o: src/vectors.cpp vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/vectors.o src/vectors.cpp
 
-obj/button.o: src/ui/button.cpp include/ui/button.hpp
+obj/button.o: src/ui/button.cpp include/ui/button.hpp \
+		vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/button.o src/ui/button.cpp
 
 obj/interface.o: src/ui/interface.cpp vectors.hpp \
 		include/ui/interface.hpp \
-		include/ui/selection.hpp
+		include/ui/selection.hpp \
+		include/ui/button.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/interface.o src/ui/interface.cpp
 
-obj/selection.o: src/ui/selection.cpp include/ui/selection.hpp
+obj/selection.o: src/ui/selection.cpp include/ui/selection.hpp \
+		include/ui/button.hpp \
+		vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/selection.o src/ui/selection.cpp
 
 ####### Install

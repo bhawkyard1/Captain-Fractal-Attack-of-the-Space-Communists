@@ -24,6 +24,7 @@ public:
   void init();
   void loadTextures();
 
+  void loadFontSpriteSheet(std::string name, std::string path, int size);
   void loadSpriteSheet();
   void loadTexture(std::string _key, std::string _path);
   void loadTextureSet(std::string _key, std::string _set);
@@ -31,13 +32,15 @@ public:
   void clear();
   void drawTextureSet(std::string key, vec2 pos, float orient);
   void drawTexture(std::string key, size_t index, vec2 pos, float orient, float col[]);
+  void drawText(std::string text, std::string font, vec2 pos);
   void drawLine(vec2 _start, vec2 _end, int _col[]);
   void drawLineGr(vec2, vec2, int scol[], int ecol[]);
+  void drawRect(vec2 _p, vec2 _d, int col[]);
   void drawCircle(int x, int y, int radius);
   void drawText(std::string text);
 
   //UI drawing
-  void drawMap(std::vector<missile> * mp, std::vector<ship> * ap, std::vector<laser> * lp);
+  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
   void statusBars(player * ply);
 
   void finalise();

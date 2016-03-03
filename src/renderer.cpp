@@ -81,6 +81,10 @@ void renderer::loadTextures()
   loadTexture("STARDUST_4", "stardust_4");
 
   loadTexture("EXPLOSION", "explosion_1");
+  loadTexture("SMOKE", "smoke_1");
+
+  loadFontSpriteSheet("pix", "../resources/fonts/pix.TTF", 18);
+  loadFontSpriteSheet("minimal", "../resources/fonts/minimal.otf", 18);
 }
 
 void renderer::loadTexture(std::string _key, std::string _path)
@@ -117,6 +121,44 @@ void renderer::loadTextureSet(std::string key, std::string _set)
   m_textures[_key] = temp_tex;
 }
 
+void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _size)
+{
+    sprite_sheet sheet;
+
+    std::string chars = "";
+    for(char i = 0; i < 256; ++i) chars += i;
+
+    TTF_Font * fnt = TTF_OpenFont(_path, _size);
+
+    if (fnt == nullptr) return nullptr;
+
+    int w, h;
+    TTF_SizeUNICODE(fnt, "0", int *w, int *h);
+
+    //We need to first render to a surface as that's what TTF_RenderText
+    //returns, then load that surface into a texture
+    SDL_Surface *surf = TTF_RenderText_Blended_Wrapped(font, chars.c_str(), {255,255,255}, len);
+
+    if (surf == nullptr) return nullptr;
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(m_renderer, surf);
+
+    //Clean up the surface and font
+    SDL_FreeSurface(surf);
+
+    sheet.m_w = w;
+    sheet.m_h = h;
+    sheet.m_sheet = texture;
+
+    TTF_CloseFont(fnt);
+
+    m_letters[name] = sheet;
+}
+
+void renderer::loadSpriteSheet()
+{
+
+}
+
 void renderer::clear()
 {
     //Clear renderer.
@@ -149,6 +191,17 @@ void renderer::drawTextureSet(std::string key, vec2 pos, float orient, float * a
 
   for(int i = 0; i < 5; ++i) SDL_RenderCopyEx(m_renderer, m_textures.at(key).at(i), NULL, &drawRect, orient, NULL, SDL_FLIP_NONE);
   SDL_RenderCopyEx(m_renderer, m_textures.at(key).at(5), NULL, &drawRect, 0, NULL, SDL_FLIP_NONE);
+}
+
+void renderer::drawText(std::string text, std::string font, vec2 pos)
+{
+  for(size_t i = 0; i < text.length(); ++i)
+  {
+    sprite_sheet * tmp = m_letters[font];
+    int w = tmp->m_w;
+    int h = tmp->m_h;
+    SDL_RenderCopy( m_renderer, tmp->m_sheet, {w * i, 0, w, h}, {pos.x + w * i, pos.y, w, h} );
+  }
 }
 
 void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient, int col[])
@@ -237,6 +290,15 @@ void renderer::drawCircle(int x, int y, int radius)
   }
 }
 
+void renderer::drawRect(vec2 _p, vec2 _d, int col[], bool wire)
+{
+  SDL_Rect r = {_p.x, _p.y, _d.x, _d.y};
+  SDL_SetRenderDrawColor( m_renderer, col[0], col[1], col[2], col[3]);
+
+  if(!wire) SDL_RenderFillRect( m_renderer, &r );
+  else if(wire) SDL_RenderDrawRect( m_renderer, &r );
+}
+
 void renderer::drawText(std::string text, )
 {
   TTF_Font * Font_Pixelade = TTF_OpenFont("../resources/fonts/pix.TTF", 18);
@@ -277,6 +339,8 @@ void renderer::drawText(std::string text, )
   TTF_CloseFont(Font_Pixelade);
   SDL_DestroyTexture(scoreTxt);
   SDL_DestroyTexture(missilesTxt);
+
+
 }
 
 void renderer::finalise()
@@ -286,7 +350,7 @@ void renderer::finalise()
 }
 
 //UI CODE
-void renderer::drawMap(std::vector<missile> * mp, std::vector<ship> * ap, std::vector<laser> * lp)
+void renderer::drawMap(std::vector<missile> * mp, std::vector<enemies> * ep, std::vector<ship> * ap, std::vector<laser> * lp)
 {
   SDL_Rect map;
   map.w = 256;

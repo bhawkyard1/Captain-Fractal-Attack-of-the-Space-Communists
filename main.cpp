@@ -40,9 +40,7 @@
 //Universe class, main class in game
 #include "universe.hpp"
 
-//All the UI code
-#include "ui_classes.hpp"
-#include "ui.hpp"
+#include "ui/interface.hpp"
 
 //Contains funtions to save/load the game
 #include "file.hpp"
@@ -64,11 +62,10 @@ int main(int argc, char* argv[])
 {
   //Create the universe.
 	universe uni;
-  //Send object pointers to the UI. //TO-DO: Rework this. Make UI part of the universe?
-  transmitPointers( &uni );
+
   //Initialise menus, textures, ship upgrades, and create the default ship presets.
-	menus_init();
-	upgrades_init();
+  //menus_init();
+  //upgrades_init();
 	loadTextures();
 	loadShips();
 	
@@ -136,9 +133,6 @@ int main(int argc, char* argv[])
     float diff_clamped = clock.getDiff();
     if(diff_clamped == 0.0f) diff_clamped = 0.01f;
     uni.draw( clock.getAcc() / diff_clamped * TIME_SCALE );
-
-    //If the player is alive, draw the UI.
-    if(!GAME_OVER) drawUI( uni.getScore() );
   }
   SDL_Quit();
 
@@ -168,23 +162,23 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
       int x = 0, y = 0;
       SDL_GetMouseState(&x,&y);
 
-      selectionReturn ret1 = energy_clicked({static_cast<float>(x), static_cast<float>(y)});
-      selectionReturn ret2 = upgrades_clicked({static_cast<float>(x), static_cast<float>(y)});
+      selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
 
-      if(ret1.sel)
+      if(ret.m_sel_val == 0)
       {
-        ply->setEnergyPriority(ret1.val);
+        ply->setEnergyPriority(ret.m_button_val);
       }
-      else if(ret2.sel)
+      else if(ret.m_sel_val == 1)
       {
-        ply->upgrade(ret2.val);
-        playerUpgrade( ply->getUpgrade(ret2.val) );
-        if(ret2.val == 5) uni->addMiner();
-        else if(ret2.val == 6) uni->addWingman();
-        else if(ret2.val == 7) uni->addBuild(ply->getPos(), PLAYER_TURRET);
-        else if(ret2.val == 8) uni->addBuild(ply->getPos(), PLAYER_GRAVWELL);
-        else if(ret2.val == 9) uni->addBuild(ply->getPos(), PLAYER_BARRACKS);
-        else if(ret2.val == 10) uni->addBuild(PLAYER_STATION);
+        if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
+        ply->upgrade(ret.m_button_val);
+        //playerUpgrade( ply->getUpgrade(ret.m_button_val) );
+        if(ret.m_button_val == 5) uni->addMiner();
+        else if(ret.m_button_val == 6) uni->addWingman();
+        else if(ret.m_button_val == 7) uni->addBuild(ply->getPos(), PLAYER_TURRET);
+        else if(ret.m_button_val == 8) uni->addBuild(ply->getPos(), PLAYER_GRAVWELL);
+        else if(ret.m_button_val == 9) uni->addBuild(ply->getPos(), PLAYER_BARRACKS);
+        else if(ret.m_button_val == 10) uni->addBuild(PLAYER_STATION);
       }
     }
     return;
@@ -291,7 +285,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
       if(*keymod == 1)
       {
         uni->reload(true);
-        for(int i = 0; i < UPGRADES_LEN; ++i) setUpgradeTextures(0, i);
+        //for(int i = 0; i < UPGRADES_LEN; ++i) setUpgradeTextures(0, i);
       }
       break;
     case SDLK_l:
@@ -299,7 +293,10 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
       {
         uni->reload(true);
         loadGame(uni);
-        for(int i = 0; i < UPGRADES_LEN; ++i) setUpgradeTextures(uni->getPly()->getUpgrade(i), i);
+        for(int i = 0; i < UPGRADES_LEN; ++i)
+        {
+          uni->upgradeSetLabels(0, i);
+        }
       }
       break;
     case SDLK_SPACE:

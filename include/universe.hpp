@@ -61,6 +61,7 @@ public:
 	void addBuild(ship_spec);
   void update(float);
 	void draw(float);
+  void drawUI();
 	
   void detectCollisions(SDL_Rect, std::vector<enemy*>, std::vector<laser*>, std::vector<missile*>, std::vector<ship*>, unsigned short int);
 	void checkCollisions();
@@ -87,6 +88,10 @@ public:
 	
 	void pause() {paused = !paused;}
 	bool isPaused() {return paused;}
+
+  interface * getUI() {return &m_ui;}
+  bool upgradeCallback(int _sel, int _btn);
+  void upgradeSetLabels(int _sel, int _btn);
 };
 
 #endif
