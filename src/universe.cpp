@@ -1,4 +1,5 @@
 #include "universe.hpp"
+#include "sfx.hpp"
 #include "util.hpp"
 #include "ship_presets.hpp"
 #include "common.hpp"
@@ -7,11 +8,7 @@ bool emnityCheck(ai_team a, ai_team b);
 
 universe::universe(): ply( {0.0f, 0.0f} ),
                       m_drawer(WIN_WIDTH, WIN_HEIGHT)
-{
-  SDL_Surface * temp = IMG_Load("../resources/environment/background/sky.jpg");
-	sky = SDL_CreateTextureFromSurface(renderer, temp);
-	SDL_FreeSurface(temp);
-	
+{	
 	setVel({0,0});
 	
 	max_enemies_count = 3;
@@ -37,27 +34,31 @@ universe::universe(): ply( {0.0f, 0.0f} ),
 		dots.push_back(stardust(cColP));
 	}
 	
-  std::vector<SDL_Surface*> surfs;
-	for(size_t i = 0; i < 5; i++)
-	{
-    std::string name = "../resources/images/environment/stardust_" + std::to_string(i);
-		name += ".png";
-	
-		surfs.push_back(IMG_Load(name.c_str()));
-	}
-	
-  std::vector<SDL_Texture*> texs;
-	
-	for(size_t i = 0; i < surfs.size(); i++)
-	{
-		texs.push_back(SDL_CreateTextureFromSurface(renderer, surfs.at(i)));
-		SDL_FreeSurface(surfs.at(i));
-	}
-	surfs.clear();
-	
 	for(int i = 0; i < BACKGROUND_DOTS; i++)
 	{
-		sparkles.push_back(stardust_sprite(texs.at(rand()%texs.size()), cColP));
+    std::string id;
+    switch(rand()%4)
+    {
+      case 0:
+        id = "STARDUST_1";
+        break;
+      case 1:
+        id = "STARDUST_2";
+        break;
+      case 2:
+        id = "STARDUST_3";
+        break;
+      case 3:
+        id = "STARDUST_4";
+        break;
+      default:
+        break;
+    }
+
+    int w = 0;
+    int h = 0;
+    m_drawer.queryTexture(id, 0, &w, &h);
+    sparkles.push_back(stardust_sprite(id, cColP, w, h));
 	}
 	
 	score = 0;
@@ -67,13 +68,13 @@ universe::universe(): ply( {0.0f, 0.0f} ),
 	//addStation();
 }
 
-void universe::addShot(vec2 p, vec2 v, float angle, int weap, ai_team team)
+void universe::addShot(vec2 p, vec2 v, float angle, std::array<float, WEAPS_W> weap, ai_team team)
 {
 	int temp_angle = angle + 90;
-	for(int i = 0; i < weapons[weap][0]; i++)
+  for(int i = 0; i < weap[0]; i++)
 	{
     //vec2 vec = computeVector(temp_angle);
-		laser temp( p + v, v, temp_angle, weapons[weap], team);
+    laser temp( p + v, v, temp_angle, weap, team);
 		shots.push_back(temp);
 	}
 }
@@ -126,14 +127,14 @@ void universe::update(float dt)
 	ply.ctrlUpdate();
 	ply.update(dt);
 	
-	if(ply.getHealth() < ply.getMaxHealth()) addParticleSprite(ply.getPos(), ply.getVel(), ply.getHealth() / ply.getMaxHealth(), SMOKE_TEXTURE);
+  if(ply.getHealth() < ply.getMaxHealth()) addParticleSprite(ply.getPos(), ply.getVel(), ply.getHealth() / ply.getMaxHealth(), "SMOKE");
 	
-	if(ply.isFiring() and ply.getCooldown() <= 0.0f and ply.getEnergy() > getEnergyCost(ply.getWeap()))
+  if(ply.isFiring() and ply.getCooldown() <= 0.0f and ply.getEnergy() > ply.getCurWeapStat( ENERGY_COST ))
 	{
-		playSnd( ply.getWeap() );
+    playSnd( ply.getCurWeap() );
 		addShot( ply.getPos() - ply.getVel(), ply.getVel(), ply.getAng(), ply.getWeap(), TEAM_PLAYER );
-		ply.setEnergy( ply.getEnergy() - getEnergyCost(ply.getWeap()) );
-		ply.setCooldown( getCooldown(ply.getWeap()) );
+    ply.setEnergy( ply.getEnergy() - ply.getCurWeapStat(ENERGY_COST) );
+    ply.setCooldown( ply.getCurWeapStat(COOLDOWN) );
 	}
 	
 	if(!DEV_MODE and ply.getHealth() <= 0.0f and !GAME_OVER)
@@ -167,14 +168,14 @@ void universe::update(float dt)
 		sparkles.at(i).setWVel(vel);
 		sparkles.at(i).updateSprite(dt);
 		
-		SDL_Texture * temp = sparkles.at(i).getTex();
+    std::string temp = sparkles.at(i).getIdentifier();
 		int w = 0;
 		int h = 0;
-		SDL_QueryTexture(temp, NULL, NULL, &w, &h);
+    m_drawer.queryTexture(temp, 0, &w, &h);
 		
     if(isOffScreen(sparkles.at(i).getPos(), (MAX_DIM + std::max(w, h)) * BG_DENSITY * sparkles.at(i).getZ() / ZOOM_LEVEL))
 		{
-			sparkles.at(i).spriteGen(cColP);
+      sparkles.at(i).spriteGen(cColP, w, h);
 		}
 	}	
 	
@@ -308,7 +309,7 @@ void universe::update(float dt)
 					vec2 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
 					pos += asteroids.at(i).getPos();
 					addpfx(pos, asteroids.at(i).getVel(), vel, rand()%20 + 50, rand()%30 + 2);
-					for(int q = 0; q < 50; ++q) addParticleSprite(pos, asteroids.at(i).getVel() + vel + randVec(6.0f), 0.0f, SMOKE_TEXTURE);
+          for(int q = 0; q < 50; ++q) addParticleSprite(pos, asteroids.at(i).getVel() + vel + randVec(6.0f), 0.0f, "SMOKE");
 				}
 				if(asteroids.at(i).getClassification() == ASTEROID_SMALL) score += 10;
 				else
@@ -457,11 +458,11 @@ void universe::update(float dt)
 			if(enemies.at(i).isFiring() and enemies.at(i).getCooldown() <= 0)
 			{
 				addShot(enemies.at(i).getPos() - enemies.at(i).getVel(), enemies.at(i).getVel(), enemies.at(i).getAng(), enemies.at(i).getWeap(), enemies.at(i).getTeam());
-				enemies.at(i).setCooldown( getCooldown(enemies.at(i).getWeap()) );
+        enemies.at(i).setCooldown( (enemies.at(i).getCurWeapStat(COOLDOWN)) );
 				enemies.at(i).setFiring(false);
 			}
 			
-			if(enemies.at(i).getHealth() < enemies.at(i).getMaxHealth()) addParticleSprite(p, enemies.at(i).getVel(), enemies.at(i).getHealth() / enemies.at(i).getMaxHealth(), SMOKE_TEXTURE);
+      if(enemies.at(i).getHealth() < enemies.at(i).getMaxHealth()) addParticleSprite(p, enemies.at(i).getVel(), enemies.at(i).getHealth() / enemies.at(i).getMaxHealth(), "SMOKE");
 		}
 	}	
 	
@@ -523,10 +524,10 @@ void universe::update(float dt)
 		passive_sprites.at(i).setWVel(vel);
 		passive_sprites.at(i).updateSprite(dt);
 		
-		SDL_Texture * temp = passive_sprites.at(i).getTex();
+    std::string temp = passive_sprites.at(i).getIdentifier();
 		int w = 0;
 		int h = 0;
-		SDL_QueryTexture(temp, NULL, NULL, &w, &h);
+    m_drawer.queryTexture(temp, 0, &w, &h);
 		
     if(alph < 0.0f or isOffScreen(passive_sprites.at(i).getPos(), (MAX_DIM + std::max(w, h)) * BG_DENSITY * passive_sprites.at(i).getZ() / ZOOM_LEVEL) or passive_sprites.at(i).getDim() <= 0.0f)
 		{
@@ -549,8 +550,8 @@ void universe::draw(float dt)
 
     vec2 ipos = i->getInterpolatedPosition(dt);
     vec2 ivel = i->getVel();
-    int icol[3] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-    m_drawer.drawLine(pos, ipos + ivel, icol)
+    float icol[4] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    m_drawer.drawLine(ipos, ipos + ivel, icol);
 	}
 	
   for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
@@ -575,14 +576,15 @@ void universe::draw(float dt)
   {
     vec2 ipos = i->getInterpolatedPosition(dt);
     vec2 ivel = i->getVel();
-    int icol[3] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    float icol[] = {i->getCol(0), i->getCol(1), i->getCol(2), 255};
     m_drawer.drawLine(ipos, ipos + ivel, icol);
 	}
 	
   for(auto i = asteroids.begin(); i != asteroids.end(); ++i)
 	{
     vec2 ipos = i->getInterpolatedPosition(dt);
-    m_drawer.drawTexture();
+    float icol[] = {255, 255, 255, 255};
+    m_drawer.drawTexture(i->getIdentifier(), 0, ipos, i->getAng(), icol);
     //asteroids.at(i).draw(dt);
 	}
 	
@@ -590,7 +592,8 @@ void universe::draw(float dt)
 	{
     //enemies.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
-    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng());
+    float ialpha = 255.0f;
+    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), &ialpha);
 	}
 	
   //ply.draw(dt);
@@ -599,30 +602,45 @@ void universe::draw(float dt)
 	{	
     //missiles.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
-    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng());
+    float ialpha = 255.0f;
+    m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), &ialpha);
 	}
 	
   for(auto i = particles.begin(); i != particles.end(); ++i)
 	{
     //particles.at(i).draw(dt);
-    vec2 ipos = i->getInterpolatedPosition(dt);
-    float col = {255, 255, 255, i->getAlpha()};
+    vec2 ipos = i->getPos();
+    float col[] = {255, 255, 255, i->getAlpha()};
     m_drawer.drawTexture(i->getIdentifier(), 0, ipos, 0, col);
+    int k = 0;
+    for(auto j = i->getParticles()->begin(); j != i->getParticles()->end(); ++j)
+    {
+      vec2 jpos = j->getInterpolatedPosition(dt);
+      float col[] = {col[0], col[1], col[2], i->getAlpha(k)};
+      m_drawer.drawLine(jpos, jpos + j->getVel(), col);
+      k++;
+    }
 	}
 	
   for(auto i = dots.begin(); i != dots.end(); ++i)
 	{	
-		if(dots.at(i).getZ() <= 1) continue;
+    if(i->getZ() <= 1) continue;
     //dots.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
+    vec2 ivel = i->getVel();
+    float icol[] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    m_drawer.drawLine(ipos, ipos + ivel, icol);
 	}
 	
   for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
 	{	
-		if(sparkles.at(i).getZ() > 1) 
+    if(i->getZ() > 1)
 		{
       //sparkles.at(i).draw(dt);
       vec2 ipos = i->getInterpolatedPosition(dt);
+      float icol[] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+      m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), icol );
+
 		}
 	}
 	
@@ -630,8 +648,8 @@ void universe::draw(float dt)
 	{
     for(auto i = partitions.rects.begin(); i != partitions.rects.end(); ++i)
 		{
-      int col[4] = {255, 0, 0, 255};
-      m_drawer.drawRect({i->x, i->y}, {i->w, i->h}, col, true);
+      std::array<int, 4> col = {255, 0, 0, 255};
+      m_drawer.drawRect({static_cast<float>(i->x), static_cast<float>(i->y)}, {static_cast<float>(i->w), static_cast<float>(i->h)}, col, true);
 		}
 	}
 
@@ -651,25 +669,22 @@ void universe::drawUI()
   {
     for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
     {
-        col = j->getCol();
+        std::array<int, 8> col = j->getCol();
         if(!j->isSelected())
         {
-          m_drawer.drawRect(j->getPos(), j->getDim, {col[0], col[1], col[2], col[3]});
+          m_drawer.drawRect(j->getPos(), j->getDim(), {col[0], col[1], col[2], col[3]}, false);
         }
         else
         {
-          m_drawer.drawRect(j->getPos(), j->getDim, {col[4], col[5], col[6], col[7]});
+          m_drawer.drawRect(j->getPos(), j->getDim(), {col[4], col[5], col[6], col[7]}, false);
         }
         m_drawer.drawText(j->getLabel(), "pix", j->getPos());
-        SDL_RenderCopy(renderer,texture,NULL,&mask);
 
-        if(dark)
+        if(j->isDark())
         {
-          SDL_SetRenderDrawColor(renderer,0,0,0,200);
-          SDL_RenderFillRect(renderer,&mask);
+          m_drawer.drawRect(j->getPos(), j->getDim(), {0, 0 ,0 , 200}, false);
         }
-      }
-    }
+     }
   }
 }
 
@@ -812,7 +827,7 @@ void universe::checkCollisions()
 				if(SDL_IntersectRectAndLine(partitions.rocks.at(p).at(r)->getRekt(),&sx,&sy,&ex,&ey))
 				{
 					addpfx(ep + randVec(er), ev, vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
-					for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + randVec(6.0f), 0.0f, SMOKE_TEXTURE);
+          for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + randVec(6.0f), 0.0f, "SMOKE");
 					harm = partitions.lasers.at(p).at(l)->getDmg();
 					
 					for(int i = shots.size() - 1; i >= 0; --i) if(&shots.at(i) == partitions.lasers.at(p).at(l)) swapnpop(&shots, i);//shots.erase(shots.begin() + i);
@@ -917,7 +932,7 @@ void universe::checkCollisions()
 
 void universe::addpfx(vec2 p, vec2 v, vec2 wv, int no, float f)
 {
-	pfx pf(p,v,wv,no,f,XPLO_TEXT);
+  pfx pf(p,v,wv,no,f,"EXPLOSION");
 	particles.push_back(pf);
 }
 
@@ -940,16 +955,18 @@ ship * universe::closestEnemy(vec2 p, ai_team t)
 	return r;
 }
 
-void universe::addParticleSprite(vec2 p, vec2 v, float m, SDL_Texture * tex)
+void universe::addParticleSprite(vec2 p, vec2 v, float m, std::string tex)
 {
 	float col;
-	if( tex == SMOKE_TEXTURE ) col = randFloat(200.0f, 220.0f) * (1.0f - m);
-	else if( tex == XPLO_TEXT ) col = 255.0f;
+  if( tex == "SMOKE" ) col = randFloat(200.0f, 220.0f) * (1.0f - m);
+  else if( tex == "EXPLOSION" ) col = 255.0f;
 	
-	stardust_sprite sm (tex, col);
+  int w = 0, h = 0;
+  m_drawer.queryTexture(tex, 0, &w, &h);
+  stardust_sprite sm (tex, col, w, h);
 	sm.setPos(p);
-	if( tex == SMOKE_TEXTURE ) sm.setVel(v + randVec(1.0f));
-	else if( tex == XPLO_TEXT ) sm.setVel(v);
+  if( tex == "SMOKE" ) sm.setVel(v + randVec(1.0f));
+  else if( tex == "EXPLOSION" ) sm.setVel(v);
 	sm.setZ(1.0f);
 	passive_sprites.push_back(sm);
 }
@@ -1122,8 +1139,8 @@ void universe::initUI()
   selection upgrades_menu;
 
   //Add buttons to the energy menu.
-  int arr1[] = {20,20,20,200,100,100,100,255};
-  int arr2[] = {100,100,100,200,250,250,250,255};
+  std::array<int, 8> arr1 = {20,20,20,200,100,100,100,255};
+  std::array<int, 8> arr2 = {100,100,100,200,250,250,250,255};
   button energy_menu_neutral("BALANCED",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.35f},{128.0f,64.0f});
   energy_menu_neutral.set(true);
   energy_menu.add(energy_menu_neutral);
@@ -1133,45 +1150,45 @@ void universe::initUI()
   button energy_menu_shields("SHIELDS",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.45f},{128.0f,64.0f});
   energy_menu.add(energy_menu_shields);
 
-  arr1[] = {14,35,20,200,36,204,52,255};
-  arr2[] = {65,127,64,200,129,241,127,255};
+  arr1 = {14,35,20,200,36,204,52,255};
+  arr2 = {65,127,64,200,129,241,127,255};
   button energy_menu_engines("ENGINES",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.55f},{128.0f,64.0f});
   energy_menu.add(energy_menu_engines);
 
-  arr1[] = {35,23,23,200,232,31,31,255};
-  arr2[] = {124,33,33,200,217,116,116,255};
+  arr1 = {35,23,23,200,232,31,31,255};
+  arr2 = {124,33,33,200,217,116,116,255};
   button energy_menu_guns("GUNS",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.65f},{128.0f,64.0f});
   energy_menu.add(energy_menu_guns);
 
   //Add buttons to the upgrades menu.
   float w = 150.0f, h = 50.0f;
-  arr1[] = {100,50,50,200,250,200,200,255};
-  arr2[] = {100,50,50,200,250,200,200,255};
+  arr1 = {100,50,50,200,250,200,200,255};
+  arr2 = {100,50,50,200,250,200,200,255};
   button upgrades_lasers("LASERS I (4)",arr1,arr2,{WIN_WIDTH * 0.0f, WIN_HEIGHT * 0.85f},{w,h},4);
   upgrades_menu.add(upgrades_lasers);
 
-  arr1[] = {50,50,100,200,200,200,250,255};
-  arr2[] = {50,50,100,200,200,200,250,255};
+  arr1 = {50,50,100,200,200,200,250,255};
+  arr2 = {50,50,100,200,200,200,250,255};
   button upgrades_shields("SHIELDS I (4)",arr1,arr2,{WIN_WIDTH * 0.15f, WIN_HEIGHT * 0.85f},{w,h},4);
   upgrades_menu.add(upgrades_shields);
 
-  arr1[] = {50,100,50,200,200,250,200,255};
-  arr2[] = {50,100,50,200,200,250,200,255};
+  arr1 = {50,100,50,200,200,250,200,255};
+  arr2 = {50,100,50,200,200,250,200,255};
   button upgrades_generators("GENERATORS I (4)",arr1,arr2,{WIN_WIDTH * 0.3f, WIN_HEIGHT * 0.85f},{w,h},4);
   upgrades_menu.add(upgrades_generators);
 
-  arr1[] = {50,50,80,200,200,200,220,255};
-  arr2[] = {50,50,80,200,200,200,220,255};
+  arr1 = {50,50,80,200,200,200,220,255};
+  arr2 = {50,50,80,200,200,200,220,255};
   button upgrades_thrusters("THRUSTERS I (4)",arr1,arr2,{WIN_WIDTH * 0.45f, WIN_HEIGHT * 0.85f},{w,h},4);
   upgrades_menu.add(upgrades_thrusters);
 
-  arr1[] = {255,210,0,200,255,253,100,255};
-  arr2[] = {255,210,0,200,255,253,100,255};
+  arr1 = {255,210,0,200,255,253,100,255};
+  arr2 = {255,210,0,200,255,253,100,255};
   button upgrades_missiles("MISSILE (4)",arr1,arr2,{WIN_WIDTH * 0.6f, WIN_HEIGHT * 0.85f},{w,h},4);
   upgrades_menu.add(upgrades_missiles);
 
-  arr1[] = {100,210,255,200,180,220,255,255};
-  arr2[] = {100,210,255,200,180,220,255,255};
+  arr1 = {100,210,255,200,180,220,255,255};
+  arr2 = {100,210,255,200,180,220,255,255};
   button upgrades_miner("MINER (16)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.85f},{w,h},16);
   upgrades_menu.add(upgrades_miner);
 
@@ -1190,8 +1207,8 @@ void universe::initUI()
   button upgrades_station("STATION (1024)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.55f},{w,h},1024);
   upgrades_menu.add(upgrades_station);
 
-  ui.add(energy_menu);
-  ui.add(upgrades_menu);
+  m_ui.add(energy_menu);
+  m_ui.add(upgrades_menu);
 }
 
 bool universe::upgradeCallback(int _sel, int _btn)
@@ -1199,28 +1216,29 @@ bool universe::upgradeCallback(int _sel, int _btn)
   //This function takes the selected button, looks at the cost vs the score, updates relevant values,
   //then returns a bool representing whether the upgrade was successful or unsuccessful.
 
-  button * selectedButton = &m_ui.getElements()->at(_sel).at(btn);
+  button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
   int lvl = ply.getUpgrade( _btn );
 
   selectedButton->set(false);
 
-  if(up->getCost() > score) return false;
+  if(selectedButton->getCost() > score) return false;
 
   if(lvl < 9)
   {
-    score -= up->getCost();
-    if(type < 4) up->setCost(up->getCost() * 2);
+    score -= selectedButton->getCost();
+    if(_btn < 4) selectedButton->setCost(selectedButton->getCost() * 2);
   }
 
-  if(type > 3) return true;
+  upgradeSetLabels(_sel, _btn);
 
-
+  if(_btn > 3) return true;
 
   return true;
 }
 
 void universe::upgradeSetLabels(int _sel, int _btn)
 {
+  button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
   std::string s1;
   int lvl = ply.getUpgrade( _btn );
   switch(_btn)
@@ -1245,10 +1263,10 @@ void universe::upgradeSetLabels(int _sel, int _btn)
   {
     s1 += " (";
     std::stringstream ss;
-    ss << up->getCost();
+    ss << selectedButton->getCost();
     s1 += ss.str();
     s1 += ")";
   }
 
-  if(lvl < 9) up->updateText(s1);
+  if(lvl < 9) selectedButton->updateText(s1);
 }

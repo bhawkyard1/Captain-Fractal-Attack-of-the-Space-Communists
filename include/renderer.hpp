@@ -10,6 +10,12 @@
 #include "sprite_sheet.hpp"
 #include "vectors.hpp"
 
+#include "missile.hpp"
+#include "enemy.hpp"
+#include "ship.hpp"
+#include "laser.hpp"
+#include "player.hpp"
+
 class renderer
 {
 	//The window we'll be rendering to
@@ -21,7 +27,7 @@ class renderer
 public:
   renderer(int,int);
   ~renderer();
-  void init();
+  int init();
   void loadTextures();
 
   void loadFontSpriteSheet(std::string name, std::string path, int size);
@@ -30,14 +36,17 @@ public:
   void loadTextureSet(std::string _key, std::string _set);
 
   void clear();
-  void drawTextureSet(std::string key, vec2 pos, float orient);
+  void drawTextureSet(std::string key, vec2 pos, float orient, float * alphaMod);
   void drawTexture(std::string key, size_t index, vec2 pos, float orient, float col[]);
   void drawText(std::string text, std::string font, vec2 pos);
+  void drawLine(vec2 _start, vec2 _end, float _col[]);
   void drawLine(vec2 _start, vec2 _end, int _col[]);
   void drawLineGr(vec2, vec2, int scol[], int ecol[]);
-  void drawRect(vec2 _p, vec2 _d, int col[]);
+  void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire);
   void drawCircle(int x, int y, int radius);
   void drawText(std::string text);
+
+  void queryTexture(std::string identifier, int index, int * w, int * h);
 
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);

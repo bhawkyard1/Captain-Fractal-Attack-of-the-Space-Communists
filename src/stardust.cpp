@@ -95,15 +95,3 @@ void stardust::gen(bool regen, float colp[])
 		}
 	}
 }
-
-void stardust::draw(float dt)
-{
-	vec2 v = getVel() * ZOOM_LEVEL;
-	vec2 wv = getWVel() * ZOOM_LEVEL;
-	vec2 p = dt * getPos() + (1 - dt) * getPPos();
-	p *= ZOOM_LEVEL;
-	p += HALFWIN;
-	
-	SDL_SetRenderDrawColor( renderer, col[0], col[1], col[2], clamp( ZOOM_LEVEL * col[3] / (static_cast<float>(fabs( wv.x * wv.y )) / 300.0f + 1.0f ), 30.0f, 255.0f ) );
-	SDL_RenderDrawLine( renderer, p.x, p.y, p.x + ( v.x + wv.x ) * z, p.y + ( v.y + wv.y ) * z );
-}

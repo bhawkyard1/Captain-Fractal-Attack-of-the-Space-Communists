@@ -2,11 +2,11 @@
 #define INTERFACE_HPP
 
 #include <vector>
-
+#include <array>
 #include "vectors.hpp"
 #include "selection.hpp"
 
-std::string roman_nums[] = {"I","II","III","IV","V","VI","VII","IX","X"};
+extern std::array< std::string, 10> roman_nums;
 
 struct selectionReturn
 {

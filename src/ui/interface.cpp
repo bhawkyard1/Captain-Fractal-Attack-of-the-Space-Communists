@@ -1,12 +1,15 @@
+#include "util.hpp"
 #include "vectors.hpp"
 #include "ui/interface.hpp"
+
+std::array< std::string, 10> roman_nums = {"I","II","III","IV","V","VI","VII","IX","X"};
 
 interface::interface()
 {
 
 }
 
-selectionReturn handleInput(vec2 _pos)
+selectionReturn interface::handleInput(vec2 _pos)
 {
   selectionReturn r = {-1, -1};
 
@@ -14,8 +17,8 @@ selectionReturn handleInput(vec2 _pos)
   {
     for(size_t j = 0; j < m_elements.at(i).getButtons()->size(); ++j)
     {
-      button * b = m_elements.at(i).getButtons()->at(j);
-      if(pointInRect(_pos, b->getPos(), p->getDim()))
+      button b = m_elements.at(i).getButtons()->at(j);
+      if(pointInRect(_pos, b.getPos(), b.getDim()))
       {
         r.m_sel_val = i;
         r.m_button_val = j;
@@ -24,48 +27,10 @@ selectionReturn handleInput(vec2 _pos)
   }
 }
 
-void playerUpgrade(int lvl)
+void interface::reset()
 {
-  int type = upgrades_menu.getSelected();
-  button * up = upgrades_menu.getAt(type);
-  up->set(false);
-
-  if(lvl < 9)
+  for(auto i = m_elements.begin(); i != m_elements.end(); ++i)
   {
-    *scorept -= up->getCost();
-    if(type < 4) up->setCost(up->getCost() * 2);
+    i->reset();
   }
-
-  if(type > 3) return;
-
-  std::string s1;
-
-  switch(type)
-  {
-    case 0:
-      s1 = "LASERS ";
-      break;
-    case 1:
-      s1 = "SHIELDS ";
-      break;
-    case 2:
-      s1 = "GENERATORS ";
-      break;
-    case 3:
-      s1 = "THRUSTERS ";
-      break;
-  }
-
-  s1 += roman_nums[lvl];
-
-  if(lvl < 8)
-  {
-    s1 += " (";
-    std::stringstream ss;
-    ss << up->getCost();
-    s1 += ss.str();
-    s1 += ")";
-  }
-
-  if(lvl < 9) up->updateText(s1);
 }

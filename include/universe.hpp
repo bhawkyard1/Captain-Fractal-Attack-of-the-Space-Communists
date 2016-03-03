@@ -51,7 +51,7 @@ public:
   void initUI();
 	player * getPly() {return &ply;}
 	void setVel(vec2 v) {vel = v;}
-	void addShot(vec2 p, vec2 v, float ang, int weap, ai_team team);
+  void addShot(vec2 p, vec2 v, float ang, std::array<float, WEAPS_W> weap, ai_team team);
 	void addMissile(vec2 p, vec2 v, float angle, bool team);
 	void spawnShip(ai_team t);
 	void spawnShip(ai_team t, vec2 p);
@@ -67,7 +67,7 @@ public:
 	void checkCollisions();
 	
 	void addpfx(vec2,vec2,vec2,int,float);
-	void addParticleSprite(vec2,vec2, float, SDL_Texture*);
+  void addParticleSprite(vec2,vec2, float, std::string);
   std::vector<enemy>* getEnemies() {return &enemies;}
   std::vector<laser>* getShots() {return &shots;}
   std::vector<missile>* getMissiles() {return &missiles;}

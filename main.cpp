@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
   //Initialise menus, textures, ship upgrades, and create the default ship presets.
   //menus_init();
   //upgrades_init();
-	loadTextures();
+  //loadTextures();
 	loadShips();
 	
   //Timer used to keep track of game time.
@@ -246,7 +246,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
       {
         ply->accelerate(-1);
         uni->setVel(-ply->getVel());
-        uni->addParticleSprite( ply->getPos(), ply->getVel(), 0.0f, XPLO_TEXT);
+        uni->addParticleSprite( ply->getPos(), ply->getVel(), 0.0f, "EXPLOSION");
       }
       break;
     case SDLK_a:

@@ -37,7 +37,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(30.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.1f;
-      weapons.push_back( weapons[rand() % 3 + 4] );
+      m_weapons.push_back( weapons[rand() % 3 + 4] );
       curWeap = 0;
 			break;
 		case FEDERATION_MKII:
@@ -46,7 +46,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(60.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.09f;
-      weapons.push_back( weapons[rand() % 3 + 4] );
+      m_weapons.push_back( weapons[rand() % 3 + 4] );
       curWeap = 0;
 			break;
 		case FEDERATION_MKIII:
@@ -55,7 +55,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(90.0f,true);
 			setMaxEnergy(150.0f,true);
 			inertia = 0.08f;
-      weapons.push_back( weapons[rand() % 3 + 4] );
+      m_weapons.push_back( weapons[rand() % 3 + 4] );
       curWeap = 0;
 			break;
 		case FEDERATION_MKIV:
@@ -64,7 +64,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(120.0f,true);
 			setMaxEnergy(200.0f,true);
 			inertia = 0.15f;
-      weapons.push_back( weapons[rand() % 3 + 4] );
+      m_weapons.push_back( weapons[rand() % 3 + 4] );
       curWeap = 0;
 			break;
 		case FEDERATION_GUNSHIP:
@@ -73,7 +73,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(200.0f,true);
 			setMaxEnergy(500.0f,true);
 			inertia = 0.02f;
-      weapons.push_back( weapons[rand() % 2 + 7] );
+      m_weapons.push_back( weapons[rand() % 2 + 7] );
       curWeap = 0;
       break;
 		case PIRATE_GNAT:
@@ -82,7 +82,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(40.0f,true);
 			setMaxEnergy(90.0f,true);
 			inertia = 0.15f;
-      weapons.push_back( weapons[rand() % 3 + 14] );
+      m_weapons.push_back( weapons[rand() % 3 + 14] );
       curWeap = 0;
 			break;
 		case PIRATE_CRUISER:
@@ -91,7 +91,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(60.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.1f;
-      weapons.push_back( weapons[rand() % 3 + 14] );
+      m_weapons.push_back( weapons[rand() % 3 + 14] );
       curWeap = 0;
 			break;
 		case PIRATE_WRANGLER:
@@ -100,7 +100,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(70.0f,true);
 			setMaxEnergy(120.0f,true);
 			inertia = 0.05f;
-      weapons.push_back( weapons[rand() % 3 + 14] );
+      m_weapons.push_back( weapons[rand() % 3 + 14] );
       curWeap = 0;
 			break;
 		case PIRATE_MARAUDER:
@@ -109,7 +109,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(120.0f,true);
 			setMaxEnergy(120.0f,true);
 			inertia = 0.15f;
-      weapons.push_back( weapons[rand() % 3 + 14] );
+      m_weapons.push_back( weapons[rand() % 3 + 14] );
       curWeap = 0;
 			break;
 		case PIRATE_GUNSHIP:
@@ -118,7 +118,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(120.0f,true);
 			setMaxEnergy(150.0f,true);
 			inertia = 0.05f;
-      weapons.push_back( weapons[17] );
+      m_weapons.push_back( weapons[17] );
       curWeap = 0;
 			break;
 		case PLAYER_SHIP:
@@ -127,9 +127,9 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(100.0f,true);
 			setMaxEnergy(100.0f,true);
 			inertia = 0.07f;
-      weapons.push_back( weapons[0] );
-      weapons.push_back( weapons[1] );
-      weapons.push_back( weapons[2] );
+      m_weapons.push_back( weapons[0] );
+      m_weapons.push_back( weapons[1] );
+      m_weapons.push_back( weapons[2] );
 			curWeap = 0;
 			break;
 		case PLAYER_HUNTER:
@@ -138,7 +138,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(100.0f,true); 
 			setMaxEnergy(100.0f,true);
 			inertia = 0.07f;
-      weapons.push_back( weapons[rand() % 3 + 9] );
+      m_weapons.push_back( weapons[rand() % 3 + 9] );
       curWeap = 0;
 			break;
 		case PLAYER_DEFENDER:
@@ -147,7 +147,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(125.0f,true); 
 			setMaxEnergy(125.0f,true);
 			inertia = 0.07f;
-      weapons.push_back( weapons[rand() % 3 + 9] );
+      m_weapons.push_back( weapons[rand() % 3 + 9] );
       curWeap = 0;
 			break;
 		case PLAYER_DESTROYER:
@@ -156,7 +156,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(150.0f,true); 
 			setMaxEnergy(150.0f,true);
 			inertia = 0.07f;
-      weapons.push_back( weapons[rand() % 3 + 9] );
+      m_weapons.push_back( weapons[rand() % 3 + 9] );
       curWeap = 0;
 			break;
 		case PLAYER_MINER_DROID:
@@ -165,7 +165,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(20.0f,true); 
 			setMaxEnergy(200.0f,true);
 			inertia = 0.07f;
-      weapons.push_back( weapons[12] );
+      m_weapons.push_back( weapons[12] );
       curWeap = 0;
 			break;
 		case ION_MISSILE_MKI:
@@ -209,7 +209,7 @@ ship::ship(vec2 p, ship_spec ptype)
 			setMaxShield(200.0f,true); 
 			setMaxEnergy(300.0f,true);
 			inertia = 0.1f;
-      weapons.push_back( weapons[13] );
+      m_weapons.push_back( weapons[13] );
       curWeap = 0;
 			canMove = false;
 			break;
@@ -247,28 +247,13 @@ ship::ship(vec2 p, ship_spec ptype)
 			break;
 	}
 	
-	for(size_t i = 0; i < ship_surf.size(); ++i)
-	{
-		if(ship_surf.at(i) != nullptr)
-		{
-			shipTex.push_back( SDL_CreateTextureFromSurface( renderer, ship_surf.at(i) ) );
-			SDL_FreeSurface(ship_surf.at(i));
-		}
-		else 
-		{
-      std::cout << SDL_GetError() << std::endl;
-			shipTex.push_back( nullptr );
-		}
-	}
-	
 	priority = NONE;
 	
 	for(short unsigned int i = 0; i < UPGRADES_LEN; i++) upgrades[i] = 0;
 	shieldMul = 1.0f;
 	generatorMul = 1.0f;
 	
-	int w = 0, h = 0;
-	SDL_QueryTexture(shipTex.at(0), NULL, NULL, &w, &h);
+  int w = 64, h = 64;
 	
 	w/=2;
 	h/=2;
@@ -309,7 +294,7 @@ ship::ship(ship &src, vec2 p)
 	inertia = src.getInertia();
 	angVel = src.getAngVel();
 
-	shipTex = src.getTex();
+  m_identifier = src.getIdentifier();
 	
 	priority = NONE;
 	
@@ -317,9 +302,7 @@ ship::ship(ship &src, vec2 p)
 	shieldMul = 1.0f;
 	generatorMul = 1.0f;
 	
-	int w = 0, h = 0;
-	SDL_QueryTexture(shipTex.at(0), NULL, NULL, &w, &h);
-	
+  int w = 64, h = 64;
 	w/=2;
 	h/=2;
 	
@@ -330,7 +313,12 @@ ship::ship(ship &src, vec2 p)
 	
 	radius = src.getRadius();
 	
-	curWeap = src.getWeap();
+  curWeap = 0;
+
+  for(size_t i = 0; i < src.getWeaps().size(); ++i)
+  {
+    m_weapons.push_back(src.getWeaps()[i]);
+  }
 	
 	switch(src.getClassification())
 	{
@@ -386,14 +374,6 @@ ship::ship(ship &src, vec2 p)
 	}
 }
 
-void ship::memFree()
-{
-	for(int i = shipTex.size() - 1; i >= 0; i--)
-	{
-		SDL_DestroyTexture(shipTex.at(i));
-	}
-}
-
 void ship::accelerate(double mult)
 {
 	float energyLoss = 0.6f, accelMult = 1.0f;
@@ -437,56 +417,6 @@ void ship::dodge(float side)
 	vec2 vec = computeVector(getAng());
 	addVel(vec*side*accelMult);
 	energy -= energyLoss * fabs(side);
-}
-
-void ship::draw(float dt)
-{
-	vec2 p = dt * getPos() + (1 - dt) * getPPos();
-	
-	int w = dstrect.w, h = dstrect.h;
-	
-	SDL_Rect drawRect;
-	
-	p *= ZOOM_LEVEL;
-	p += HALFWIN;
-	
-	w *= ZOOM_LEVEL;
-	h *= ZOOM_LEVEL;
-	
-	drawRect.x = p.x - (w/2);
-	drawRect.y = p.y - (h/2);
-	drawRect.w = w;
-	drawRect.h = h;
-	
-	SDL_SetTextureAlphaMod(shipTex.at(1),engineGlow);
-	SDL_SetTextureAlphaMod(shipTex.at(2),steeringGlow);
-	SDL_SetTextureAlphaMod(shipTex.at(3),drawShot);
-	SDL_SetTextureAlphaMod(shipTex.at(4),shieldGlow);
-	SDL_SetTextureColorMod(shipTex.at(3),weapons[curWeap][4],weapons[curWeap][5],weapons[curWeap][6]);
-	
-	SDL_RenderCopyEx(renderer,shipTex.at(5),NULL,&drawRect,0,NULL,SDL_FLIP_NONE);
-	SDL_RenderCopyEx(renderer,shipTex.at(2),NULL,&drawRect,getAng(),NULL,SDL_FLIP_NONE);
-	SDL_RenderCopyEx(renderer,shipTex.at(1),NULL,&drawRect,getAng(),NULL,SDL_FLIP_NONE);
-	SDL_RenderCopyEx(renderer,shipTex.at(0),NULL,&drawRect,getAng(),NULL,SDL_FLIP_NONE);
-	SDL_RenderCopyEx(renderer,shipTex.at(3),NULL,&drawRect,getAng(),NULL,SDL_FLIP_NONE);
-	SDL_RenderCopyEx(renderer,shipTex.at(4),NULL,&drawRect,getAng(),NULL,SDL_FLIP_NONE);
-
-	if(DEV_MODE)
-	{	
-		SDL_SetRenderDrawColor(renderer,weapons[curWeap][4],weapons[curWeap][5],weapons[curWeap][6],255);
-		SDL_RenderDrawLine(renderer,p.x,p.y,p.x-sin(toRad(-targetAngle))*5,p.y-cos(toRad(-targetAngle))*5);
-		SDL_SetRenderDrawColor(renderer,weapons[curWeap][4],weapons[curWeap][5],weapons[curWeap][6],100);
-		SDL_Rect tmp = *getRekt();
-		tmp.x *= ZOOM_LEVEL;
-		tmp.y *= ZOOM_LEVEL;
-		tmp.w *= ZOOM_LEVEL;
-		tmp.h *= ZOOM_LEVEL;
-		tmp.x += HALFWIN.x;
-		tmp.y += HALFWIN.y;
-		SDL_RenderFillRect(renderer, &tmp);
-	}
-	
-	drawShot = clamp(drawShot - 30.0f, 0.0f, 255.0f);
 }
 
 void ship::update(float dt)

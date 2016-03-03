@@ -21,7 +21,7 @@ public:
 	
 	void updatePos(float dt);
 
-  vec2 getInpterpolatedPosition(float dt);
+  vec2 getInterpolatedPosition(float dt);
 };
 
 #endif

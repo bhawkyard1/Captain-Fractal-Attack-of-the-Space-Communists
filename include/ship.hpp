@@ -6,6 +6,7 @@
 
 #include "SDL2/SDL.h"
 
+#include "weapons.hpp"
 #include "common.hpp"
 #include "util.hpp"
 #include "base.hpp"
@@ -63,11 +64,13 @@ public:
 	float getTAng() {return targetAngle;}
 	void setAng(float ang) {angle = ang;}
 	float getAng() {return angle;}
-	void draw(float);
 	void setShooting() {drawShot = 255;}
 	void setWeap(int val) {curWeap = val;}
   void incrWeap(int val) {curWeap = clampRoll(curWeap + val, 0, static_cast<int>(m_weapons.size()) );}
+  float getCurWeapStat(WEAPON_STAT stat) {return m_weapons[curWeap][stat];}
+  std::vector<std::array<float, 10>> getWeaps() {return m_weapons;}
   std::array<float, 10> getWeap() {return m_weapons[curWeap];}
+  int getCurWeap() {return curWeap;}
 	bool isFiring() {return shooting;}
 	void setFiring(bool v) {shooting = v;}
 	

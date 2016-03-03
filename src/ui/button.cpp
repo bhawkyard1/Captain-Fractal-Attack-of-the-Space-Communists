@@ -1,6 +1,6 @@
 #include "ui/button.hpp"
 
-button::button(std::string _txt, int _b_col[], int _t_col[], vec2 _pos, vec2 _dim)
+button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _t_col, vec2 _pos, vec2 _dim)
 {
   dark = false;
   selected = false;
@@ -26,7 +26,7 @@ button::button(std::string _txt, int _b_col[], int _t_col[], vec2 _pos, vec2 _di
   cost = 0;
 }
 
-button::button(std::string _txt, int _b_col[], int _t_col[], vec2 _pos, vec2 _dim, int _pcost)
+button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _t_col, vec2 _pos, vec2 _dim, int _pcost)
 {
   dark = true;
   selected = false;
@@ -48,13 +48,13 @@ button::button(std::string _txt, int _b_col[], int _t_col[], vec2 _pos, vec2 _di
   m_dim.x = _dim.x;
   m_dim.y = _dim.y;
 
-  m_initCost = pcost;
+  m_initCost = _pcost;
   cost = _pcost;
 }
 
 void button::updateText(std::string _text)
 {
-  m_text = _text;
+  m_label = _text;
 }
 
 void button::select()
@@ -62,14 +62,10 @@ void button::select()
   if(selected)
   {
     selected = false;
-    SDL_SetTextureColorMod(texture,tcol[0],tcol[1],tcol[2]);
-    SDL_SetTextureAlphaMod(texture,tcol[3]);
   }
   else
   {
     selected = true;
-    SDL_SetTextureColorMod(texture,tcol[4],tcol[5],tcol[6]);
-    SDL_SetTextureAlphaMod(texture,tcol[7]);
   }
 }
 

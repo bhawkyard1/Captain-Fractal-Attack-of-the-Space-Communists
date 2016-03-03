@@ -11,7 +11,6 @@ public:
 	stardust(float*);
 	stardust(float);
 	void gen(bool regen, float * colp);
-	void draw(float);
 	
 	void updatePos(float dt);
 	

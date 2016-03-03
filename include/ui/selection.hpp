@@ -1,6 +1,7 @@
 #ifndef SELECTION_HPP
 #define SELECTION_HPP
 
+#include <vector>
 #include "button.hpp"
 #include "selection.hpp"
 

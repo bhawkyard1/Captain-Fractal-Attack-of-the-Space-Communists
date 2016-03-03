@@ -2,43 +2,33 @@
 #include "util.hpp"
 #include "common.hpp"
 
-stardust_sprite::stardust_sprite(SDL_Texture * pt, float colp[]): stardust(colp) 
+stardust_sprite::stardust_sprite(std::string identifier, float colp[], int w, int h): stardust(colp)
 {	
-	tex = pt;
-		
-	ang = randFloat(0,360);
-	angVel = randFloat(-0.12f, 0.12f);
-	
-	int w = 0;
-	int h = 0;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+  m_identifier = identifier;
+
+  m_dim = std::max(w, h) / 2;
+  m_ang = randFloat(0.0f,360.0f);
+  m_angVel = randFloat(-0.12f, 0.12f);
 	
 	setPos({(rand()%(WIN_WIDTH+w)-w)*BG_DENSITY,(rand()%(WIN_HEIGHT+h)-h)*BG_DENSITY});
 }
 
-stardust_sprite::stardust_sprite(SDL_Texture * pt, float alph): stardust(alph) 
+stardust_sprite::stardust_sprite(std::string identifier, float alph, int w, int h): stardust(alph)
 {	
-	dim = 32.0f;
-	tex = pt;
+  m_identifier = identifier;
+
+  m_dim = std::max(w, h) / 2;
 		
-	ang = randFloat(0,360);
-	angVel = randFloat(-0.12f, 0.12f);
-	
-	int w = 0;
-	int h = 0;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
+  m_ang = randFloat(0.0f,360.0f);
+  m_angVel = randFloat(-0.12f, 0.12f);
+
 }
 
-void stardust_sprite::spriteGen(float colp[])
+void stardust_sprite::spriteGen(float colp[], int w, int h)
 {
-	ang = randFloat(0,360);
-	angVel = randFloat(-0.12f, 0.12f);
-	
-	int w = 0;
-	int h = 0;
-	
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	
+  m_ang = randFloat(0.0f, 360.0f);
+  m_angVel = randFloat(-0.12f, 0.12f);
+		
   int m = std::max(w,h);
 	//m *= getZ();
 	m *= ZOOM_LEVEL;
@@ -102,77 +92,20 @@ void stardust_sprite::spriteGen(float colp[])
 	}
 }
 
-void stardust_sprite::draw(float dt)
-{
-	vec2 bp = dt * getPos() + (1 - dt) * getPPos();
-	bp *= ZOOM_LEVEL;
-	bp += HALFWIN;
-	
-	int w = 0, h = 0;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	
-	SDL_Rect dst;
-	dst.w = w * ZOOM_LEVEL;
-	dst.h = h * ZOOM_LEVEL;
-	dst.x = bp.x - dst.w / 2;
-	dst.y = bp.y - dst.h / 2;
-	
-	float z = getZ();
-	dst.w *= z;
-	dst.h *= z;
-	
-	SDL_Texture * cpy = tex;
-	
-	SDL_SetTextureAlphaMod(cpy, clamp( ZOOM_LEVEL * getCol(3) / ( (static_cast<float>(fabs( getWVel().x * getWVel().y )) ) / 300.0f + 1.0f ), 30.0f, 255.0f ));
-	SDL_SetTextureColorMod(cpy,getCol(0),getCol(1),getCol(2));
-	
-	SDL_SetTextureBlendMode(cpy, SDL_BLENDMODE_ADD);
-	
-	SDL_RenderCopyEx(renderer, cpy, NULL, &dst, ang, NULL, SDL_FLIP_NONE);
-}
-
-void stardust_sprite::drawDim(float dt)
-{
-	vec2 bp = dt * getPos() + (1 - dt) * getPPos();
-	bp *= ZOOM_LEVEL;
-	bp += HALFWIN;
-	
-	int w = 0, h = 0;
-	SDL_QueryTexture(tex, NULL, NULL, &w, &h);
-	
-	SDL_Rect dst;
-	dst.w = dim * ZOOM_LEVEL;
-	dst.h = dim * ZOOM_LEVEL;
-	dst.x = bp.x - dst.w / 2;
-	dst.y = bp.y - dst.h / 2;
-	
-	float z = getZ();
-	dst.w *= z;
-	dst.h *= z;
-	
-	SDL_Texture * cpy = tex;
-	
-	SDL_SetTextureAlphaMod(cpy, clamp(ZOOM_LEVEL * getCol(3), 0.0f, 255.0f));
-	
-	SDL_SetTextureBlendMode(cpy, SDL_BLENDMODE_BLEND);	
-	
-	SDL_RenderCopyEx(renderer, cpy, NULL, &dst, ang, NULL, SDL_FLIP_NONE);
-}
-
 void stardust_sprite::updateSprite(float dt)
 {
-	ang += angVel;
+  m_ang += m_angVel;
 	updatePos(dt);
 }
 
 void stardust_sprite::incrDim()
 {
-	if(tex == SMOKE_TEXTURE)
+  if(m_identifier == "SMOKE")
 	{
-		dim += 2.0f;
+    m_dim += 2.0f;
 	}
-	else if(tex == XPLO_TEXT)
+  else if(m_identifier == "EXPLOSION")
 	{
-		dim -= 2.0f;
+    m_dim -= 2.0f;
 	}
 }

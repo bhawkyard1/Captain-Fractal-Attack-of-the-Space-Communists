@@ -11,16 +11,15 @@ class stardust_sprite: public stardust
   float m_ang, m_angVel;
   float m_dim;
 public:
-	stardust_sprite(SDL_Texture *, float *);
-	stardust_sprite(SDL_Texture *, float);
-	void spriteGen(float*);
-	void draw(float);
-	void drawDim(float);
+  stardust_sprite(std::string identifier, float *, int, int);
+  stardust_sprite(std::string identifier, float, int, int);
+  void spriteGen(float*, int, int);
   std::string getTex() {return m_identifier;}
 	void updateSprite(float);
 	void incrDim();
   float getDim() {return m_dim;}
   float getAng() {return m_ang;}
+  std::string getIdentifier() {return m_identifier;}
 };
 
 #endif
