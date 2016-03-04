@@ -64,7 +64,8 @@ universe::universe(): ply( {0.0f, 0.0f} ),
 	score = 0;
 	paused = false;
 
-    initUI();
+  initUI();
+
 	//for(int i = 0; i < 3; ++i) spawnShip(TEAM_PLAYER_MINER);
 	//addStation();
 }
@@ -553,25 +554,27 @@ void universe::draw(float dt)
 
     vec2 ipos = i->getInterpolatedPosition(dt);
     vec2 ivel = i->getVel();
-    float icol[4] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
     m_drawer.drawLine(ipos, ipos + ivel, icol);
 	}
 	
+  m_drawer.setBlendMode(SDL_BLENDMODE_ADD);
   for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
 	{	
     if(i->getZ() <= 1)
     {
       vec2 ipos = i->getInterpolatedPosition(dt);
-      float col[4] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+      std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
       m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
     }
 	}
+  m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
 	
   for(auto i = passive_sprites.begin(); i != passive_sprites.end(); ++i)
 	{	
     if(!paused) i->incrDim();
     vec2 ipos = i->getInterpolatedPosition(dt);
-    float col[4] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
     m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
 	}
 	
@@ -579,14 +582,14 @@ void universe::draw(float dt)
   {
     vec2 ipos = i->getInterpolatedPosition(dt);
     vec2 ivel = i->getVel();
-    float icol[] = {i->getCol(0), i->getCol(1), i->getCol(2), 255};
+    std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), 255};
     m_drawer.drawLine(ipos, ipos + ivel, icol);
 	}
 	
   for(auto i = asteroids.begin(); i != asteroids.end(); ++i)
 	{
     vec2 ipos = i->getInterpolatedPosition(dt);
-    float icol[] = {255, 255, 255, 255};
+    std::array<float, 4> icol = {255, 255, 255, 255};
     m_drawer.drawTexture(i->getIdentifier(), 0, ipos, i->getAng(), icol);
     //asteroids.at(i).draw(dt);
 	}
@@ -595,7 +598,7 @@ void universe::draw(float dt)
 	{
     //enemies.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
-    float * ialpha = i->getAlphaStats();
+    std::array<float, 4> ialpha = i->getAlphaStats();
     m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
 	}
 	
@@ -605,7 +608,7 @@ void universe::draw(float dt)
 	{	
     //missiles.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
-    float * ialpha = i->getAlphaStats();
+    std::array<float, 4> ialpha = i->getAlphaStats();
     m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
 	}
 	
@@ -613,13 +616,13 @@ void universe::draw(float dt)
 	{
     //particles.at(i).draw(dt);
     vec2 ipos = i->getPos();
-    float col[] = {255, 255, 255, i->getAlpha()};
+    std::array<float, 4> col = {255, 255, 255, i->getAlpha()};
     m_drawer.drawTexture(i->getIdentifier(), 0, ipos, 0, col);
     int k = 0;
     for(auto j = i->getParticles()->begin(); j != i->getParticles()->end(); ++j)
     {
       vec2 jpos = j->getInterpolatedPosition(dt);
-      float col[] = {col[0], col[1], col[2], i->getAlpha(k)};
+      std::array<float, 4> col = {col[0], col[1], col[2], i->getAlpha(k)};
       m_drawer.drawLine(jpos, jpos + j->getVel(), col);
       k++;
     }
@@ -631,21 +634,23 @@ void universe::draw(float dt)
     //dots.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
     vec2 ivel = i->getVel();
-    float icol[] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
     m_drawer.drawLine(ipos, ipos + ivel, icol);
 	}
 	
+  m_drawer.setBlendMode(SDL_BLENDMODE_ADD);
   for(auto i = sparkles.begin(); i != sparkles.end(); ++i)
 	{	
     if(i->getZ() > 1)
 		{
       //sparkles.at(i).draw(dt);
       vec2 ipos = i->getInterpolatedPosition(dt);
-      float icol[] = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+      std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
       m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), icol );
 
 		}
 	}
+  m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
 	
 	if(DEV_MODE)
 	{

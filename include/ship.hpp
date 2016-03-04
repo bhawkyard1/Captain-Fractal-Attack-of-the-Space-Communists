@@ -66,11 +66,11 @@ public:
 	float getAng() {return angle;}
 	void setShooting() {drawShot = 255;}
 	void setWeap(int val) {curWeap = val;}
-    void incrWeap(int val) {curWeap = clampRoll(curWeap + val, 0, static_cast<int>(m_weapons.size()) );}
-    float getCurWeapStat(WEAPON_STAT stat) {return m_weapons[curWeap][stat];}
-    std::vector<std::array<float, 10>> getWeaps() {return m_weapons;}
-    std::array<float, 10> getWeap() {return m_weapons[curWeap];}
-    int getCurWeap() {return curWeap;}
+  void incrWeap(int val) {curWeap = clampRoll(curWeap + val, 0, static_cast<int>(m_weapons.size()) );}
+  float getCurWeapStat(WEAPON_STAT stat) {return m_weapons[curWeap][stat];}
+  std::vector<std::array<float, 10>> getWeaps() {return m_weapons;}
+  std::array<float, 10> getWeap() {return m_weapons[curWeap];}
+  int getCurWeap() {return curWeap;}
 	bool isFiring() {return shooting;}
 	void setFiring(bool v) {shooting = v;}
 	
@@ -122,8 +122,8 @@ public:
 	
 	bool inCombat() {return damageTimer > 0.0f;}
 
-    std::string getIdentifier() {return m_identifier;}
-    float * getAlphaStats() {float ret[] = {engineGlow, steeringGlow, drawShot, shieldGlow}; return ret;}
+  std::string getIdentifier() {return m_identifier;}
+  std::array<float, 4> getAlphaStats() {std::array<float, 4> ret = {static_cast<float>(engineGlow), static_cast<float>(steeringGlow), static_cast<float>(drawShot), static_cast<float>(shieldGlow)}; return ret;}
 };
 
 #endif

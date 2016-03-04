@@ -35,12 +35,13 @@ public:
   void loadTexture(std::string _key, std::string _path);
   void loadTextureSet(std::string _key, std::string _set);
 
+  void setBlendMode (SDL_BlendMode _b) {SDL_SetRenderDrawBlendMode(m_renderer, _b);}
   void clear();
-  void drawTextureSet(std::string key, vec2 pos, float orient, float * alphaMod);
-  void drawTexture(std::string key, size_t index, vec2 pos, float orient, float col[]);
+  void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod);
+  void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col);
   void drawText(std::string text, std::string font, vec2 pos);
-  void drawLine(vec2 _start, vec2 _end, float _col[]);
-  void drawLine(vec2 _start, vec2 _end, int _col[]);
+  void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col );
+  void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col);
   void drawLineGr(vec2, vec2, int scol[], int ecol[]);
   void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire);
   void drawCircle(int x, int y, int radius);

@@ -10,6 +10,8 @@
 #include "laser.hpp"
 #include "missile.hpp"
 
+std::string RESOURCE_LOC = "../resources/";
+
 renderer::renderer(int _w, int _h)
 {
   init();
@@ -27,6 +29,7 @@ renderer::renderer(int _w, int _h)
   SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
 
   loadTextures();
+
 }
 
 renderer::~renderer()
@@ -36,6 +39,8 @@ renderer::~renderer()
 
 int renderer::init()
 {
+  std::cout << "print1" << std::endl;
+
   if(SDL_Init(SDL_INIT_VIDEO) != 0)
   {
     std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
@@ -49,6 +54,8 @@ int renderer::init()
     SDL_Quit();
     return EXIT_FAILURE;
   }
+  std::cout << "print1" << std::endl;
+  return 1;
 }
 
 void renderer::loadTextures()
@@ -90,26 +97,26 @@ void renderer::loadTextures()
   loadTexture("SMOKE", "smoke_1");
   loadTexture("SKY", "sky");
 
-  loadFontSpriteSheet("pix", "../../resources/fonts/pix.TTF", 18);
-  loadFontSpriteSheet("minimal", "../../resources/fonts/minimal.otf", 18);
+  loadFontSpriteSheet("pix", RESOURCE_LOC + "fonts/pix.TTF", 18);
+  loadFontSpriteSheet("minimal", RESOURCE_LOC + "fonts/minimal.otf", 18);
 }
 
 void renderer::loadTexture(std::string _key, std::string _path)
 {
   std::vector<SDL_Texture*> temp;
-  temp.push_back( SDL_CreateTextureFromSurface(m_renderer, IMG_Load( ("../../resources/textures/" + _path + "/" + _path + ".png").c_str() ) ) );
+  temp.push_back( SDL_CreateTextureFromSurface(m_renderer, IMG_Load( ("../resources/textures/" + _path + "/" + _path + ".png").c_str() ) ) );
   m_textures.insert({_key, temp});
 }
 
 void renderer::loadTextureSet(std::string _key, std::string _set)
 {
   std::vector<SDL_Surface*> temp_surf;
-  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + ".png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_engines.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_steering.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_shoot.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_shield.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( ("../../resources/textures/" + _set + "/" + _set + "_static.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + ".png").c_str() ) );
+  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_engines.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_steering.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shoot.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shield.png").c_str() ) );
+  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_static.png").c_str() ) );
 
   std::vector<SDL_Texture*> temp_tex;
   for(size_t i = 0; i < temp_surf.size(); ++i)
@@ -182,7 +189,7 @@ void renderer::clear()
     SDL_RenderClear( m_renderer );
 }
 
-void renderer::drawTextureSet(std::string key, vec2 pos, float orient, float * alphaMod)
+void renderer::drawTextureSet(std::string key, vec2 pos, float orient, std::array<float,4> alphaMod)
 {
   int w, h;
   SDL_QueryTexture(m_textures[key].at(0), NULL, NULL, &w, &h);
@@ -222,7 +229,7 @@ void renderer::drawText(std::string text, std::string font, vec2 pos)
   }
 }
 
-void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient, float col[])
+void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float,4> col)
 {
   int w, h;
   SDL_QueryTexture(m_textures[key][index], NULL, NULL, &w, &h);
@@ -245,13 +252,13 @@ void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient
   SDL_RenderCopyEx(m_renderer, m_textures[key][index], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
 }
 
-void renderer::drawLine(vec2 _start, vec2 _end, float _col[])
+void renderer::drawLine(vec2 _start, vec2 _end, std::array<float, 4> _col)
 {
-  int _pcol[4] = {static_cast<int>(_col[0]), static_cast<int>(_col[1]), static_cast<int>(_col[2]), static_cast<int>(_col[3])};
+  std::array<int, 4> _pcol = {static_cast<int>(_col[0]), static_cast<int>(_col[1]), static_cast<int>(_col[2]), static_cast<int>(_col[3])};
   drawLine(_start, _end, _pcol);
 }
 
-void renderer::drawLine(vec2 _start, vec2 _end, int _col[])
+void renderer::drawLine(vec2 _start, vec2 _end, std::array<int, 4> _col)
 {
   _start *= ZOOM_LEVEL;
   _start += HALFWIN;
