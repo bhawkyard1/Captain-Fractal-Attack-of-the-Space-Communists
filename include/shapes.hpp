@@ -1,21 +1,13 @@
 #ifndef SHAPES_HPP
 #define SHAPES_HPP
 
-struct circle
-{
-	vec2 center;
-	float radius;
-};
+#include "util.hpp"
+#include "vectors.hpp"
 
-bool pointInCircle(vec2 &pos, circle &c)
-{
-	if( magns( c.center - pos ) < sqr( c.radius ) ) return true;
-	return false;
-}
+bool lineIntersectCircle(vec2 _start, vec2 _end, vec2 _pos, float _radius);
 
-bool circleIntersectCircle(circle &c1, circle &c2)
-{
-	if( magns( c2.center - c1.center ) < sqr( c1.radius + c2.radius ) ) return true;
-	return false;
+bool pointOnLine(vec2 _start, vec2 _end, vec2 _point);
+
+bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim);
+
 #endif
-}

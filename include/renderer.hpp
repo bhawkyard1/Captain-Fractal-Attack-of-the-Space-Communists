@@ -32,7 +32,7 @@ public:
 
   void loadFontSpriteSheet(std::string name, std::string path, int size);
   void loadSpriteSheet();
-  void loadTexture(std::string _key, std::string _path);
+  void loadTexture(std::string _key, std::string _path, SDL_BlendMode _b);
   void loadTextureSet(std::string _key, std::string _set);
 
   void setBlendMode (SDL_BlendMode _b) {SDL_SetRenderDrawBlendMode(m_renderer, _b);}
@@ -42,18 +42,22 @@ public:
   void drawText(std::string text, std::string font, vec2 pos);
   void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col );
   void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col);
-  void drawLineGr(vec2, vec2, int scol[], int ecol[]);
+  void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol);
   void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire);
-  void drawCircle(int x, int y, int radius);
+  void drawCircle(int x, int y, int radius, std::array<float, 4> _col);
+  void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col);
   void drawText(std::string text);
 
   void queryTexture(std::string identifier, int index, int * w, int * h);
+  float getTextureRadius(std::string _identifier);
 
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
   void statusBars(player * ply);
 
   void finalise();
+
+  SDL_Surface * getSurface(std::string path);
 };
 
 #endif

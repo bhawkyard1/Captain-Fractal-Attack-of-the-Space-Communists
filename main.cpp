@@ -65,12 +65,6 @@ int main(int argc, char* argv[])
   //Create the universe.
   universe uni;
 
-  //Initialise menus, textures, ship upgrades, and create the default ship presets.
-  //menus_init();
-  //upgrades_init();
-  //loadTextures();
-  loadShips();
-	
   //Timer used to keep track of game time.
   //The argument is the fps of the updates, higher = more detailed.
   sim_time clock(120.0f);
@@ -148,7 +142,6 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
     if(btn == SDL_BUTTON_LEFT)
     {
       ply->setFiring(true);
-
     }
     else if(btn == SDL_BUTTON_RIGHT and ply->getMissiles() > 0)
     {
@@ -248,7 +241,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
       {
         ply->accelerate(-1);
         uni->setVel(-ply->getVel());
-        uni->addParticleSprite( ply->getPos(), ply->getVel(), 0.0f, "EXPLOSION");
+        //uni->addParticleSprite( ply->getPos(), ply->getVel(), 0.0f, "EXPLOSION");
       }
       break;
     case SDLK_a:

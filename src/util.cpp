@@ -51,7 +51,7 @@ double dotProd(double x0, double y0, double x1, double y1)
 }
 
 //DELETE THESE
-
+/*
 void drawCircle(SDL_Renderer *renderer, int center[], int radius)
 {
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -141,7 +141,7 @@ void drawLineGr(SDL_Renderer *renderer, vec2 start, vec2 end, float scol[], floa
     }
   }
 }
-
+*/
 float sqr(float arg)
 {
   return arg*arg;
@@ -164,25 +164,6 @@ double diffClock(clock_t clock1, clock_t clock2)
   double diffticks = clock1-clock2;
   double diffs = diffticks/CLOCKS_PER_SEC;
   return diffs;
-}
-
-SDL_Texture* renderText(const std::string &message, TTF_Font * font, SDL_Color color, SDL_Renderer *renderer, int len)
-{
-  if (font == nullptr){
-    return nullptr;
-  }
-  //We need to first render to a surface as that's what TTF_RenderText
-  //returns, then load that surface into a texture
-  SDL_Surface *surf = TTF_RenderText_Blended_Wrapped(font, message.c_str(), color, len);
-
-  if (surf == nullptr){
-    return nullptr;
-  }
-  SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surf);
-
-  //Clean up the surface and font
-  SDL_FreeSurface(surf);
-  return texture;
 }
 
 bool pointInRect(vec2 p, SDL_Rect * r)

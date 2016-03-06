@@ -11,6 +11,7 @@ INPUT(
 ./obj\player.o
 ./obj\renderer.o
 ./obj\sfx.o
+./obj\shapes.o
 ./obj\ship.o
 ./obj\sim_time.o
 ./obj\sprite_sheet.o

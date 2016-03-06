@@ -8,7 +8,7 @@ class missile: public ship
 	ship * target;
 	bool det;
 public:
-	missile(vec2 p);
+    missile(vec2 p, float _r);
 	void setTarget(ship * s) {target = s;}
 	ship * getTarget() {return target;}
 	void steering();

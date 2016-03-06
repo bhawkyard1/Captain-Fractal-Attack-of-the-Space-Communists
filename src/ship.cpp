@@ -1,9 +1,21 @@
 #include "ship.hpp"
 #include "weapons.hpp"
 
+std::vector<std::string> texture_keys = {
+  "FEDERATION_MKI", "FEDERATION_MKII", "FEDERATION_MKIII", "FEDERATION_MKIV", "FEDERATION_GUNSHIP",
+          "PIRATE_GNAT", "PIRATE_CRUISER", "PIRATE_WRANGLER", "PIRATE_MARAUDER", "PIRATE_GUNSHIP",
+          "PLAYER_MINER_DROID", "PLAYER_TURRET", "PLAYER_STATION", "PLAYER_GRAVWELL", "PLAYER_BARRACKS",
+          "PLAYER_SHIP",
+          "PLAYER_HUNTER", "PLAYER_DEFENDER", "PLAYER_DESTROYER",
+          "ION_MISSILE_MKI",
+          "ASTEROID_SMALL", "ASTEROID_MID", "ASTEROID_LARGE",
+          "SHIPS_END"
+};
+
+std::string getTextureKey(ship_spec s) {return texture_keys[s];}
 ship_spec decrSpec(ship_spec s) {return static_cast<ship_spec>( static_cast<int>(s) - 1 );}
 
-ship::ship(vec2 p, ship_spec ptype)
+ship::ship(vec2 p, ship_spec ptype, float _radius)
 {
 	coolDown = 0.0f;
 	shooting = false;
@@ -15,9 +27,7 @@ ship::ship(vec2 p, ship_spec ptype)
 	setWVel({0.0f,0.0f});
 	angle = 0.0f;
 	targetAngle = 0.0f;
-	
-  std::vector<SDL_Surface*> ship_surf;
-	
+		
 	engineGlow = 0.0f;
 	steeringGlow = 0.0f;
 	shieldGlow = 0.0f;
@@ -253,17 +263,9 @@ ship::ship(vec2 p, ship_spec ptype)
 	shieldMul = 1.0f;
 	generatorMul = 1.0f;
 	
-  int w = 64, h = 64;
-	
-	w/=2;
-	h/=2;
-	
-	dstrect.w = w;
-	dstrect.h = h;
-	
 	classification = ptype;
 	
-	radius = w / 2;
+    radius = _radius;
 }
 
 ship::ship(ship &src, vec2 p)
@@ -294,21 +296,14 @@ ship::ship(ship &src, vec2 p)
 	inertia = src.getInertia();
 	angVel = src.getAngVel();
 
-  m_identifier = src.getIdentifier();
+    m_identifier = src.getIdentifier();
 	
 	priority = NONE;
 	
 	for(short unsigned int i = 0; i < UPGRADES_LEN; i++) upgrades[i] = 0;
 	shieldMul = 1.0f;
 	generatorMul = 1.0f;
-	
-  int w = 64, h = 64;
-	w/=2;
-	h/=2;
-	
-	dstrect.w = w;
-	dstrect.h = h;
-	
+		
 	classification = src.getClassification();
 	
 	radius = src.getRadius();
@@ -465,10 +460,7 @@ void ship::update(float dt)
 	
 	coolDown = clamp(coolDown - dt, 0.0f, 999.0f);
 	damageTimer = clamp(damageTimer - dt, 0.0f, 10.0f);
-	
-	dstrect.x = getPos().x - (dstrect.w/2);
-	dstrect.y = getPos().y - (dstrect.h/2);
-	
+		
 	accelerating = false;
 }
 

@@ -89,9 +89,9 @@ double dotProd(double x0, double y0, double x1, double y1);
 
 //DELETE THESE
 
-void drawCircle(SDL_Renderer *renderer, int center[], int radius);
+//void drawCircle(SDL_Renderer *renderer, int center[], int radius);
 
-void drawLineGr(SDL_Renderer *renderer, vec2 start, vec2 end, float scol[], float ecol[]);
+//void drawLineGr(SDL_Renderer *renderer, vec2 start, vec2 end, float scol[], float ecol[]);
 
 float sqr(float arg);
 

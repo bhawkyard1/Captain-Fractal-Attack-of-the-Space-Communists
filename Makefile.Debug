@@ -55,6 +55,7 @@ SOURCES       = main.cpp \
 		src\player.cpp \
 		src\renderer.cpp \
 		src\sfx.cpp \
+		src\shapes.cpp \
 		src\ship.cpp \
 		src\sim_time.cpp \
 		src\sprite_sheet.cpp \
@@ -79,6 +80,7 @@ OBJECTS       = obj/main.o \
 		obj/player.o \
 		obj/renderer.o \
 		obj/sfx.o \
+		obj/shapes.o \
 		obj/ship.o \
 		obj/sim_time.o \
 		obj/sprite_sheet.o \
@@ -106,7 +108,6 @@ DIST          =  include\base.hpp \
 		include\sfx.hpp \
 		include\shapes.hpp \
 		include\ship.hpp \
-		include\ship_presets.hpp \
 		include\sim_time.hpp \
 		include\sprite_sheet.hpp \
 		include\squad.hpp \
@@ -131,6 +132,7 @@ DIST          =  include\base.hpp \
 		src\player.cpp \
 		src\renderer.cpp \
 		src\sfx.cpp \
+		src\shapes.cpp \
 		src\ship.cpp \
 		src\sim_time.cpp \
 		src\sprite_sheet.cpp \
@@ -181,7 +183,7 @@ dist:
 	$(ZIP) SDLOpenGL.zip $(SOURCES) $(DIST) ed2.pro "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\spec_pre.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\qdevice.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\device_config.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\qconfig.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dcollision.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dcollision_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dcore.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dcore_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dinput.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dinput_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dlogic.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dlogic_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dquick.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dquick_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dquickrenderer.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3dquickrenderer_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3drenderer.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_3drenderer_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_axbase.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_axbase_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_axcontainer.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_axcontainer_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_axserver.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_axserver_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_bluetooth.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_bluetooth_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_bootstrap_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_clucene_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_concurrent.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_concurrent_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_core.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_core_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_dbus.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_dbus_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_declarative.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_declarative_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_designer.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_designer_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_designercomponents_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_enginio.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_enginio_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_gui.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_gui_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_help.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_help_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_location.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_location_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_multimedia.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_multimedia_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_multimediawidgets.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_multimediawidgets_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_network.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_network_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_nfc.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_nfc_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_opengl.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_opengl_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_openglextensions.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_openglextensions_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_platformsupport_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_positioning.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_positioning_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_printsupport.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_printsupport_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_qml.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_qml_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_qmldevtools_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_qmltest.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_qmltest_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_quick.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_quick_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_quickparticles_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_quickwidgets.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_quickwidgets_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_script.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_script_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_scripttools.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_scripttools_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_sensors.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_sensors_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_serialport.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_serialport_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_sql.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_sql_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_svg.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_svg_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_testlib.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_testlib_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_uiplugin.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_uitools.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_uitools_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_webchannel.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_webchannel_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_webkit.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_webkit_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_webkitwidgets.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_webkitwidgets_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_websockets.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_websockets_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_widgets.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_widgets_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_winextras.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_winextras_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_xml.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_xml_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_xmlpatterns.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\modules\qt_lib_xmlpatterns_private.pri" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\qt_functions.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\qt_config.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\win32\qt_config.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\win32-g++\qmake.conf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\spec_post.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\exclusive_builds.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\default_pre.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\win32\default_pre.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\resolve_config.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\exclusive_builds_post.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\default_post.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\build_pass.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\qml_debug.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\win32\rtti.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\precompile_header.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\warn_on.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\qt.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\resources.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\moc.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\win32\opengl.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\win32\windows.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\testcase_targets.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\exceptions.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\yacc.prf" "D:\Program Files\Qt\5.5\mingw492_32\mkspecs\features\lex.prf" ed2.pro "D:/Program Files/Qt/5.5/mingw492_32/lib/qtmaind.prl" "D:/Program Files/Qt/5.5/mingw492_32/lib/Qt5Guid.prl" "D:/Program Files/Qt/5.5/mingw492_32/lib/Qt5Cored.prl"  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) obj\main.o obj\base.o obj\common.o obj\enemy.o obj\faction.o obj\file.o obj\laser.o obj\missile.o obj\pfx.o obj\player.o obj\renderer.o obj\sfx.o obj\ship.o obj\sim_time.o obj\sprite_sheet.o obj\squad.o obj\stardust.o obj\stardust_sprite.o obj\universe.o obj\util.o obj\vectors.o obj\button.o obj\interface.o obj\selection.o
+	-$(DEL_FILE) obj\main.o obj\base.o obj\common.o obj\enemy.o obj\faction.o obj\file.o obj\laser.o obj\missile.o obj\pfx.o obj\player.o obj\renderer.o obj\sfx.o obj\shapes.o obj\ship.o obj\sim_time.o obj\sprite_sheet.o obj\squad.o obj\stardust.o obj\stardust_sprite.o obj\universe.o obj\util.o obj\vectors.o obj\button.o obj\interface.o obj\selection.o
 
 distclean: clean 
 	-$(DEL_FILE) $(DESTDIR_TARGET)
@@ -261,7 +263,7 @@ obj/main.o: main.cpp C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_opengl.h \
 		include/sim_time.hpp \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		include/common.hpp \
 		include/sfx.hpp \
@@ -271,7 +273,6 @@ obj/main.o: main.cpp C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
 		include/base.hpp \
 		include/stardust_sprite.hpp \
 		include/ship.hpp \
-		include/ship_presets.hpp \
 		include/enemy.hpp \
 		include/laser.hpp \
 		include/player.hpp \
@@ -286,7 +287,7 @@ obj/main.o: main.cpp C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\main.o main.cpp
 
 obj/base.o: src/base.cpp include/base.hpp \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_main.h \
@@ -379,7 +380,7 @@ obj/common.o: src/common.cpp include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp
+		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\common.o src\common.cpp
 
 obj/enemy.o: src/enemy.cpp include/enemy.hpp \
@@ -430,12 +431,10 @@ obj/enemy.o: src/enemy.cpp include/enemy.hpp \
 		include/weapons.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
-		include/base.hpp \
-		src/ship_presets.cpp \
-		include/ship_presets.hpp
+		include/base.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\enemy.o src\enemy.cpp
 
 obj/faction.o: src/faction.cpp include/faction.hpp \
@@ -488,7 +487,7 @@ obj/faction.o: src/faction.cpp include/faction.hpp \
 		include/weapons.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/base.hpp
@@ -542,14 +541,13 @@ obj/file.o: src/file.cpp include/file.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/stardust.hpp \
 		include/base.hpp \
 		include/stardust_sprite.hpp \
 		include/ship.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
-		include/ship_presets.hpp \
 		include/enemy.hpp \
 		include/laser.hpp \
 		include/player.hpp \
@@ -609,7 +607,7 @@ obj/laser.o: src/laser.cpp include/laser.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/base.hpp \
 		include/enemy.hpp \
 		include/ship.hpp \
@@ -665,7 +663,7 @@ obj/missile.o: src/missile.cpp include/missile.hpp \
 		include/weapons.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/base.hpp
@@ -673,7 +671,7 @@ obj/missile.o: src/missile.cpp include/missile.hpp \
 
 obj/pfx.o: src/pfx.cpp include/pfx.hpp \
 		include/base.hpp \
-		vectors.hpp \
+		include/vectors.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_main.h \
@@ -771,7 +769,7 @@ obj/player.o: src/player.cpp include/player.hpp \
 		include/weapons.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/base.hpp
@@ -824,7 +822,7 @@ obj/renderer.o: src/renderer.cpp C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/renderer.hpp \
 		include/sprite_sheet.hpp \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/missile.hpp \
 		include/ship.hpp \
 		include/weapons.hpp \
@@ -852,6 +850,55 @@ obj/sfx.o: src/sfx.cpp include/sfx.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_atomic.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\sfx.o src\sfx.cpp
+
+obj/shapes.o: src/shapes.cpp include/shapes.hpp \
+		include/util.hpp \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_main.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_stdinc.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_config.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_platform.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/begin_code.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/close_code.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_assert.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_atomic.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_audio.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_error.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_endian.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_mutex.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_thread.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_rwops.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_clipboard.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_cpuinfo.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_events.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_video.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_pixels.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_rect.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_surface.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_blendmode.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_keyboard.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_keycode.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_scancode.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_mouse.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_joystick.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_gamecontroller.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_quit.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_gesture.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_touch.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_filesystem.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_haptic.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_hints.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_loadso.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_log.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_messagebox.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_power.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_render.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_system.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
+		include/vectors.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\shapes.o src\shapes.cpp
 
 obj/ship.o: src/ship.cpp include/ship.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
@@ -900,7 +947,7 @@ obj/ship.o: src/ship.cpp include/ship.hpp \
 		include/weapons.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/base.hpp
@@ -1005,7 +1052,7 @@ obj/squad.o: src/squad.cpp include/squad.hpp \
 		include/weapons.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/base.hpp
@@ -1013,7 +1060,7 @@ obj/squad.o: src/squad.cpp include/squad.hpp \
 
 obj/stardust.o: src/stardust.cpp include/stardust.hpp \
 		include/base.hpp \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL.h \
@@ -1109,7 +1156,7 @@ obj/stardust_sprite.o: src/stardust_sprite.cpp include/stardust_sprite.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
 		include/stardust.hpp \
 		include/base.hpp \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/common.hpp \
@@ -1163,14 +1210,13 @@ obj/universe.o: src/universe.cpp include/universe.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/stardust.hpp \
 		include/base.hpp \
 		include/stardust_sprite.hpp \
 		include/ship.hpp \
 		include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
-		include/ship_presets.hpp \
 		include/enemy.hpp \
 		include/laser.hpp \
 		include/player.hpp \
@@ -1182,7 +1228,8 @@ obj/universe.o: src/universe.cpp include/universe.hpp \
 		include/ui/selection.hpp \
 		include/ui/button.hpp \
 		include/sfx.hpp \
-		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_mixer.h
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_mixer.h \
+		include/shapes.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\universe.o src\universe.cpp
 
 obj/util.o: src/util.cpp include/util.hpp \
@@ -1230,14 +1277,14 @@ obj/util.o: src/util.cpp include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_system.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
-		vectors.hpp
+		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\util.o src\util.cpp
 
-obj/vectors.o: src/vectors.cpp vectors.hpp
+obj/vectors.o: src/vectors.cpp include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\vectors.o src\vectors.cpp
 
 obj/button.o: src/ui/button.cpp include/ui/button.hpp \
-		vectors.hpp
+		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\button.o src\ui\button.cpp
 
 obj/interface.o: src/ui/interface.cpp include/util.hpp \
@@ -1285,7 +1332,7 @@ obj/interface.o: src/ui/interface.cpp include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_system.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/ui/interface.hpp \
 		include/ui/selection.hpp \
 		include/ui/button.hpp
@@ -1336,7 +1383,7 @@ obj/selection.o: src/ui/selection.cpp include/util.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_system.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
-		vectors.hpp \
+		include/vectors.hpp \
 		include/ui/selection.hpp \
 		include/ui/button.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\selection.o src\ui\selection.cpp

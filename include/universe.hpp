@@ -5,7 +5,6 @@
 #include "stardust.hpp"
 #include "stardust_sprite.hpp"
 #include "ship.hpp"
-#include "ship_presets.hpp"
 #include "enemy.hpp"
 #include "laser.hpp"
 #include "player.hpp"
@@ -25,6 +24,7 @@ struct col_partition
 
 class universe
 {
+  std::vector<ship> m_ship_templates;
   interface m_ui;
   renderer m_drawer;
   std::vector<stardust> dots;
@@ -35,8 +35,8 @@ class universe
   std::vector<missile> missiles;
   std::vector<ship> asteroids;
   std::vector<stardust_sprite> passive_sprites;
-	player ply;
-	vec2 vel;
+  player ply;
+  vec2 vel;
 	
 	col_partition partitions;
 	
@@ -84,7 +84,8 @@ public:
 	void setMaxMinerCount(int m) {max_miner_count = m;}
 	
 	void reload(bool);
-	
+    void loadShips();
+
 	void pause() {paused = !paused;}
 	bool isPaused() {return paused;}
 

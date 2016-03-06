@@ -1,6 +1,6 @@
 #include "missile.hpp"
 
-missile::missile(vec2 p): ship(p, ION_MISSILE_MKI) 
+missile::missile(vec2 p, float _r): ship(p, ION_MISSILE_MKI, _r)
 {
 	setPos(p);
 	setMaxHealth(10.0f, true);

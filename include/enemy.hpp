@@ -15,7 +15,7 @@ class enemy: public ship
 	float stopDist, confidence;
 	ai_team team;
 public:
-	enemy(vec2, vec2, ship_spec, ai_team);
+    enemy(vec2, vec2, ship_spec, ai_team, float);
 	
 	void setGoal(ai_goal g) {curGoal = g;}
 	ai_goal getGoal() {return curGoal;}

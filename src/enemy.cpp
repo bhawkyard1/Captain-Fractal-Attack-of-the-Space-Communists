@@ -1,8 +1,7 @@
 #include "enemy.hpp"
-#include "ship_presets.cpp"
 
-enemy::enemy(vec2 p , vec2 v, ship_spec pType, ai_team t): 
-ship( GLOBAL_SHIPS.at( static_cast<int>(pType)), p) 
+enemy::enemy(vec2 p , vec2 v, ship_spec pType, ai_team t, float _r):
+ship(p, pType, _r)
 {	
 	curGoal = GOAL_IDLE; 
 	setVel(v);

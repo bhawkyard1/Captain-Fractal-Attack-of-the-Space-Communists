@@ -7,7 +7,7 @@
 #include "common.hpp"
 #include <array>
 
-enum WEAPON_STAT {LASER_COUNT, SPREAD, DAMAGE, SPEED, COLOUR_RED, COLOUR_BLUE, ENERGY_COST, COOLDOWN, STOPPING_POWER};
+enum WEAPON_STAT {LASER_COUNT, SPREAD, DAMAGE, SPEED, COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE, ENERGY_COST, COOLDOWN, STOPPING_POWER};
 
 //Weapon definitions.
 //0 Lasers per shot, 1 spread, 2 dmg, 3 speed, 4 red, 5 green, 6 blue, 7 energy cost, 8 cooldown, 9 stopping power.

@@ -69,7 +69,7 @@ void renderer::loadTextures()
   loadTextureSet("PIRATE_GNAT",         "pirate_1");
   loadTextureSet("PIRATE_CRUISER",      "pirate_2");
   loadTextureSet("PIRATE_WRANGLER",     "pirate_3");
-  loadTextureSet("PIRATE_MAURAUDER",    "pirate_4");
+  loadTextureSet("PIRATE_MARAUDER",    "pirate_4");
   loadTextureSet("PIRATE_GUNSHIP",      "pirate_5");
 
   loadTextureSet("PLAYER_SHIP",         "player");
@@ -88,47 +88,54 @@ void renderer::loadTextures()
   loadTextureSet("ASTEROID_MID",        "asteroid_2");
   loadTextureSet("ASTEROID_LARGE",      "asteroid_3");
 
-  loadTexture("STARDUST_1", "stardust_1");
-  loadTexture("STARDUST_2", "stardust_2");
-  loadTexture("STARDUST_3", "stardust_3");
-  loadTexture("STARDUST_4", "stardust_4");
+  loadTexture("STARDUST_1", "stardust_1", SDL_BLENDMODE_ADD);
+  loadTexture("STARDUST_2", "stardust_2", SDL_BLENDMODE_ADD);
+  loadTexture("STARDUST_3", "stardust_3", SDL_BLENDMODE_ADD);
+  loadTexture("STARDUST_4", "stardust_4", SDL_BLENDMODE_ADD);
 
-  loadTexture("EXPLOSION", "explosion_1");
-  loadTexture("SMOKE", "smoke_1");
-  loadTexture("SKY", "sky");
+  loadTexture("EXPLOSION", "explosion_1", SDL_BLENDMODE_BLEND);
+  loadTexture("SMOKE", "smoke_1", SDL_BLENDMODE_BLEND);
+  loadTexture("SKY", "sky", SDL_BLENDMODE_NONE);
 
   loadFontSpriteSheet("pix", RESOURCE_LOC + "fonts/pix.TTF", 18);
   loadFontSpriteSheet("minimal", RESOURCE_LOC + "fonts/minimal.otf", 18);
 }
 
-void renderer::loadTexture(std::string _key, std::string _path)
+void renderer::loadTexture(std::string _key, std::string _path, SDL_BlendMode _b)
 {
   std::vector<SDL_Texture*> temp;
-  temp.push_back( SDL_CreateTextureFromSurface(m_renderer, IMG_Load( ("../resources/textures/" + _path + "/" + _path + ".png").c_str() ) ) );
+  SDL_Surface * s = IMG_Load( (RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() );
+  if(!s) std::cerr << "Texture load error! " << SDL_GetError() << std::endl;
+  SDL_Texture * t = SDL_CreateTextureFromSurface(m_renderer, IMG_Load( (RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() ) );
+  SDL_SetTextureBlendMode(t, _b);
+  if(!t) std::cerr << "Texture load error! " << SDL_GetError() << std::endl;
+  temp.push_back( t );
   m_textures.insert({_key, temp});
 }
 
 void renderer::loadTextureSet(std::string _key, std::string _set)
 {
   std::vector<SDL_Surface*> temp_surf;
-  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + ".png").c_str() ) );
-  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_engines.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_steering.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shoot.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shield.png").c_str() ) );
-  temp_surf.push_back( IMG_Load( (RESOURCE_LOC + "textures/" + _set + "/" + _set + "_static.png").c_str() ) );
+
+  temp_surf.push_back( getSurface( RESOURCE_LOC + "textures/" + _set + "/" + _set + ".png") );
+  temp_surf.push_back( getSurface( RESOURCE_LOC + "textures/" + _set + "/" + _set + "_engines.png") );
+  temp_surf.push_back( getSurface( RESOURCE_LOC + "textures/" + _set + "/" + _set + "_steering.png") );
+  temp_surf.push_back( getSurface( RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shoot.png") );
+  temp_surf.push_back( getSurface( RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shield.png") );
+  temp_surf.push_back( getSurface( RESOURCE_LOC + "textures/" + _set + "/" + _set + "_static.png") );
 
   std::vector<SDL_Texture*> temp_tex;
   for(size_t i = 0; i < temp_surf.size(); ++i)
   {
     if(temp_surf.at(i) != nullptr)
     {
-      temp_tex.push_back( SDL_CreateTextureFromSurface( m_renderer, temp_surf.at(i) ) );
+      SDL_Texture * t = SDL_CreateTextureFromSurface( m_renderer, temp_surf.at(i) );
+      if(!t) std::cerr << "Texture set load error! " << SDL_GetError() << std::endl;
+      temp_tex.push_back( t );
       SDL_FreeSurface(temp_surf.at(i));
     }
     else
     {
-      std::cout << SDL_GetError() << std::endl;
       temp_tex.push_back( nullptr );
     }
   }
@@ -139,12 +146,19 @@ void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _siz
 {
     sprite_sheet sheet;
 
-    std::string chars = "";
-    for(int i = 0; i < 256; ++i) chars += static_cast<char>(i);
+    char ascii[127 - 33];
+    for(int i = 33; i < 127; ++i)
+    {
+      ascii[i] = static_cast<char>(i);
+    }
 
     TTF_Font * fnt = TTF_OpenFont(_path.c_str(), _size);
 
-    if(fnt == nullptr) return;
+    if(fnt == nullptr)
+    {
+      std::cerr << "Font loading error! " << SDL_GetError() <<std::endl;
+      return;
+    }
 
     int w, h;
     const Uint16 c = '0';
@@ -152,9 +166,13 @@ void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _siz
 
     //We need to first render to a surface as that's what TTF_RenderText
     //returns, then load that surface into a texture
-    SDL_Surface * surf = TTF_RenderText_Blended(fnt, chars.c_str(), {255,255,255});
+    SDL_Surface * surf = TTF_RenderText_Blended(fnt, ascii, {255,255,255});
 
-    if (surf == nullptr) return;
+    if (surf == nullptr)
+    {
+      std::cerr << "Font loading error! " << SDL_GetError() <<std::endl;
+      return;
+    }
     SDL_Texture * texture = SDL_CreateTextureFromSurface(m_renderer, surf);
 
     //Clean up the surface and font
@@ -197,8 +215,8 @@ void renderer::drawTextureSet(std::string key, vec2 pos, float orient, std::arra
   pos *= ZOOM_LEVEL;
   pos += HALFWIN;
 
-  w *= ZOOM_LEVEL;
-  h *= ZOOM_LEVEL;
+  w *= ZOOM_LEVEL / 2;
+  h *= ZOOM_LEVEL / 2;
 
   SDL_Rect dst;
   dst.x = pos.x - (w/2);
@@ -206,10 +224,10 @@ void renderer::drawTextureSet(std::string key, vec2 pos, float orient, std::arra
   dst.w = w;
   dst.h = h;
 
-  SDL_SetTextureAlphaMod(m_textures.at(key).at(1), alphaMod[1]);
-  SDL_SetTextureAlphaMod(m_textures.at(key).at(2), alphaMod[2]);
-  SDL_SetTextureAlphaMod(m_textures.at(key).at(3), alphaMod[3]);
-  SDL_SetTextureAlphaMod(m_textures.at(key).at(4), alphaMod[4]);
+  SDL_SetTextureAlphaMod(m_textures.at(key).at(1), alphaMod[0]);
+  SDL_SetTextureAlphaMod(m_textures.at(key).at(2), alphaMod[1]);
+  SDL_SetTextureAlphaMod(m_textures.at(key).at(3), alphaMod[2]);
+  SDL_SetTextureAlphaMod(m_textures.at(key).at(4), alphaMod[3]);
   //SDL_SetTextureColorMod(m_textures.at(key).at(3), weapons[curWeap][4], weapons[curWeap][5], weapons[curWeap][6]);
 
   for(int i = 0; i < 5; ++i) SDL_RenderCopyEx(m_renderer, m_textures[key][i], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
@@ -237,8 +255,8 @@ void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient
   pos *= ZOOM_LEVEL;
   pos += HALFWIN;
 
-  w *= ZOOM_LEVEL;
-  h *= ZOOM_LEVEL;
+  w *= ZOOM_LEVEL / 2;
+  h *= ZOOM_LEVEL / 2;
 
   SDL_Rect dst;
   dst.x = pos.x - (w/2);
@@ -270,7 +288,7 @@ void renderer::drawLine(vec2 _start, vec2 _end, std::array<int, 4> _col)
   SDL_RenderDrawLine(m_renderer, _start.x, _start.y, _end.x, _end.y);
 }
 
-void renderer::drawLineGr(vec2 _start, vec2 _end, int _scol[], int _ecol[])
+void renderer::drawLineGr(vec2 _start, vec2 _end, std::array<float, 4> _scol, std::array<float, 4> _ecol)
 {
   _start *= ZOOM_LEVEL;
   _start += HALFWIN;
@@ -334,8 +352,28 @@ void renderer::drawLineGr(vec2 _start, vec2 _end, int _scol[], int _ecol[])
   }
 }
 
-void renderer::drawCircle(int x, int y, int radius)
+void renderer::drawCircle(int x, int y, int radius, std::array<float, 4> _col)
 {
+  x = x * ZOOM_LEVEL + HALFWIN.x;
+  y = y * ZOOM_LEVEL + HALFWIN.y;
+  radius *= ZOOM_LEVEL;
+
+  SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
+  for(int j = y - radius; j < y + radius; j++)
+  {
+    for(int i = x - radius; i < x + radius; i++)
+    {
+      if((i-x)*(i-x)+(j-y)*(j-y)<radius*radius)
+      {
+        SDL_RenderDrawPoint(m_renderer,i,j);
+      }
+    }
+  }
+}
+
+void renderer::drawCircleUI(int x, int y, int radius, std::array<float, 4> _col)
+{
+  SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
   for(int j = y - radius; j < y + radius; j++)
   {
     for(int i = x - radius; i < x + radius; i++)
@@ -413,7 +451,7 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     if(ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
     else if(ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3;
 
-    drawCircle(x, y, radius);
+    drawCircleUI(x, y, radius, {200,200,200,255});
   }
 
   for(unsigned int i = 0; i < ep->size(); i++)
@@ -428,7 +466,7 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     float x = clamp(epp.x / 156.0f + WIN_WIDTH - 128.0f, WIN_WIDTH - 256.0f, static_cast<float>(WIN_WIDTH));
     float y = clamp(epp.y / 156.0f + 128.0f, 0.0f, 256.0f);
 
-    drawCircle(x,y,radius);
+    drawCircleUI(x,y,radius,{255,0,0,255});
   }
 }
 
@@ -440,7 +478,7 @@ void renderer::statusBars(player * ply)
 
   //health
   col = {230, 50, 50, 255};
-  drawRect({0,0}, {256, 16}, col, false);
+  drawRect({0,0}, {(ply->getHealth() / ply->getMaxHealth()) * 256, 16}, col, false);
 
   //shield base
   col = {20, 20, 100, 255};
@@ -448,7 +486,7 @@ void renderer::statusBars(player * ply)
 
   //shield
   col = {50, 50, 230, 255};
-  drawRect({0,16}, {256, 16}, col, false);
+  drawRect({0,16}, {(ply->getShield() / ply->getMaxShield()) * 256, 16}, col, false);
 
   //energy base
   col = {20, 100, 20, 255};
@@ -456,5 +494,20 @@ void renderer::statusBars(player * ply)
 
   //energy
   col = {50, 230, 50, 255};
-  drawRect({0,32}, {256, 16}, col, false);
+  drawRect({0,32}, {(ply->getEnergy() / ply->getMaxEnergy()) * 256, 16}, col, false);
+}
+
+SDL_Surface * renderer::getSurface(std::string _path)
+{
+  //std::cout << "print1" << std::endl;
+  SDL_Surface * s = IMG_Load( _path.c_str() );
+  if(!s) std::cerr << "Surface get load error! " << SDL_GetError() << std::endl;
+  return s;
+}
+
+float renderer::getTextureRadius(std::string _identifier)
+{
+  int w = 0, h = 0;
+  SDL_QueryTexture(m_textures.at(_identifier).at(0), NULL, NULL, &w, &h);
+  return static_cast<float>(std::max(w, h)) / 2.0f;
 }

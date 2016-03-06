@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <unordered_map>
 
 #include "SDL2/SDL.h"
 
@@ -24,6 +25,10 @@ enum ship_spec {
 				SHIPS_END
 				};
 
+extern std::vector<std::string> texture_keys;
+
+
+std::string getTextureKey(ship_spec s);
 ship_spec decrSpec(ship_spec s);
 
 class ship: public base
@@ -31,10 +36,9 @@ class ship: public base
 	int targetAngle, curWeap, missiles;
 	float angVel;
 	float inertia, health, maxHealth, shield, maxShield, angle, energy, maxEnergy, coolDown, radius, damageTimer;
-	SDL_Rect dstrect;
-  std::string m_identifier;
+    std::string m_identifier;
 
-  std::vector< std::array<float, 10> > m_weapons;
+    std::vector< std::array<float, 10> > m_weapons;
 
 	ship_spec classification;
 	
@@ -49,16 +53,13 @@ class ship: public base
 	size_t upgrades[UPGRADES_LEN];
 	float shieldMul, generatorMul;
 public:
-	ship(vec2, ship_spec);
+    ship(vec2, ship_spec, float);
 	ship(ship&, vec2);
-	void memFree();
 	
-  void addVelS(vec2 v) {if(canMove) addVel(v);}
+    void addVelS(vec2 v) {if(canMove) addVel(v);}
 	void accelerate(double mult);
 	void dodge(float side);
-	
-	SDL_Rect* getRekt() {return &dstrect;}
-	
+
 	void update(float dt);
 	void setTAng(float ang) {targetAngle = ang;}
 	float getTAng() {return targetAngle;}
@@ -66,11 +67,11 @@ public:
 	float getAng() {return angle;}
 	void setShooting() {drawShot = 255;}
 	void setWeap(int val) {curWeap = val;}
-  void incrWeap(int val) {curWeap = clampRoll(curWeap + val, 0, static_cast<int>(m_weapons.size()) );}
-  float getCurWeapStat(WEAPON_STAT stat) {return m_weapons[curWeap][stat];}
-  std::vector<std::array<float, 10>> getWeaps() {return m_weapons;}
-  std::array<float, 10> getWeap() {return m_weapons[curWeap];}
-  int getCurWeap() {return curWeap;}
+    void incrWeap(int val) {curWeap = clampRoll(curWeap + val, 0, static_cast<int>(m_weapons.size()) - 1 );}
+    float getCurWeapStat(WEAPON_STAT stat) {return m_weapons[curWeap][stat];}
+    std::vector<std::array<float, 10>> getWeaps() {return m_weapons;}
+    std::array<float, 10> getWeap() {return m_weapons[curWeap];}
+    int getCurWeap() {return curWeap;}
 	bool isFiring() {return shooting;}
 	void setFiring(bool v) {shooting = v;}
 	
