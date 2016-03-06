@@ -156,9 +156,8 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
     {
       int x = 0, y = 0;
       SDL_GetMouseState(&x,&y);
-
       selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
-
+      std::cout << "DONE" << std::endl;
       if(ret.m_sel_val == 0)
       {
         ply->setEnergyPriority(ret.m_button_val);
@@ -274,7 +273,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
       *keymod = 1;
       break;
     case SDLK_g:
-      if(DEV_MODE) *uni->getScorePt() += 100;
+      if(DEV_MODE) uni->addScore(100);
       break;
     case SDLK_n:
       if(*keymod == 1)

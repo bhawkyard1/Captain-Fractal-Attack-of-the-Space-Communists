@@ -32,3 +32,8 @@ void selection::reset()
 {
   for(auto i = buttons.begin(); i != buttons.end(); ++i) i->reset();
 }
+
+void selection::update(int _s)
+{
+  for(auto i = buttons.begin(); i != buttons.end(); ++i) i->update(_s);
+}

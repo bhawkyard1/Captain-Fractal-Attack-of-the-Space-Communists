@@ -314,7 +314,7 @@ vec2 closest(vec2 p1, vec2 m1, vec2 p2)
   float m = mag(m1);
   if(m == 0.0f) return p1;
   else m1 /= m;
-  return p1 + m1 * dotProd1(p2-p1,m1);
+  return p1 + m1 * dotProd1( p2 - p1, m1 );
 }
 
 vec3 tovec3(vec2 vec)

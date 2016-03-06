@@ -24,6 +24,7 @@ public:
   std::vector<selection> * getElements() {return &m_elements;}
   selection getElement(size_t _i) {return m_elements.at(_i);}
   void reset();
+  void update(int _s);
 };
 
 #endif

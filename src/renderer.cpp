@@ -146,41 +146,46 @@ void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _siz
 {
     sprite_sheet sheet;
 
-    char ascii[127 - 33];
+    TTF_Font * fnt = TTF_OpenFont(_path.c_str(), _size);
+    if(!fnt)
+    {
+      std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+      return;
+    }
+
+    std::string ascii;
+    for(int i = 0; i < 33; ++i) ascii += ' ';
     for(int i = 33; i < 127; ++i)
     {
-      ascii[i] = static_cast<char>(i);
+      ascii += static_cast<char>(i);
     }
+    ascii += "\0";
 
-    TTF_Font * fnt = TTF_OpenFont(_path.c_str(), _size);
-
-    if(fnt == nullptr)
+    for(size_t i = 0; i < ascii.length(); ++i)
     {
-      std::cerr << "Font loading error! " << SDL_GetError() <<std::endl;
-      return;
+      //We need to first render to a surface as that's what TTF_RenderText
+      //returns, then load that surface into a texture
+      SDL_Surface * surf = TTF_RenderGlyph_Blended(fnt, ascii[i], {255,255,255});
+
+      if(!surf)
+      {
+        std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+        return;
+      }
+
+      SDL_Texture * texture = SDL_CreateTextureFromSurface(m_renderer, surf);
+
+      if(!texture)
+      {
+        std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+        return;
+      }
+
+      //Clean up the surface and font
+      SDL_FreeSurface(surf);
+
+      sheet.m_sheet.push_back(texture);
     }
-
-    int w, h;
-    const Uint16 c = '0';
-    TTF_SizeUNICODE(fnt, &c, &w, &h);
-
-    //We need to first render to a surface as that's what TTF_RenderText
-    //returns, then load that surface into a texture
-    SDL_Surface * surf = TTF_RenderText_Blended(fnt, ascii, {255,255,255});
-
-    if (surf == nullptr)
-    {
-      std::cerr << "Font loading error! " << SDL_GetError() <<std::endl;
-      return;
-    }
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(m_renderer, surf);
-
-    //Clean up the surface and font
-    SDL_FreeSurface(surf);
-
-    sheet.m_w = w;
-    sheet.m_h = h;
-    sheet.m_sheet = texture;
 
     TTF_CloseFont(fnt);
 
@@ -234,16 +239,17 @@ void renderer::drawTextureSet(std::string key, vec2 pos, float orient, std::arra
   SDL_RenderCopyEx(m_renderer, m_textures[key][5], NULL, &dst, 0, NULL, SDL_FLIP_NONE);
 }
 
-void renderer::drawText(std::string text, std::string font, vec2 pos)
+void renderer::drawText(std::string text, std::string font, vec2 _pos)
 {
+  sprite_sheet * tmp = &m_letters[font];
+
+  SDL_Rect dst = {static_cast<int>(_pos.x), static_cast<int>(_pos.y), 0, 0};
   for(int i = 0; i < text.length(); ++i)
   {
-    sprite_sheet * tmp = &m_letters[font];
-    int w = tmp->m_w;
-    int h = tmp->m_h;
-    SDL_Rect src = {w * i, 0, w, h};
-    SDL_Rect dst = {static_cast<int>(pos.x) + w * i, static_cast<int>(pos.y), w, h};
-    SDL_RenderCopy( m_renderer, tmp->m_sheet, &src, &dst );
+    SDL_Texture * draw = tmp->m_sheet[text[i]];
+    SDL_QueryTexture( draw, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy( m_renderer, draw, NULL, &dst );
+    dst.x += dst.w;
   }
 }
 
@@ -283,7 +289,6 @@ void renderer::drawLine(vec2 _start, vec2 _end, std::array<int, 4> _col)
 
   _end *= ZOOM_LEVEL;
   _end += HALFWIN;
-
   SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
   SDL_RenderDrawLine(m_renderer, _start.x, _start.y, _end.x, _end.y);
 }
@@ -459,9 +464,9 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     vec2 epp = ep->at(i).getPos();
     int radius = clamp( ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
-    if(ep->at(i).getTeam() == TEAM_PLAYER) SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 255);
-    else if(ep->at(i).getTeam() == TEAM_PLAYER_MINER) SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 255);
-    else if(ep->at(i).getTeam() == GALACTIC_FEDERATION or ep->at(i).getTeam() == SPOOKY_SPACE_PIRATES) SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+    if(ep->at(i).getTeam() == TEAM_PLAYER) SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+    else if(ep->at(i).getTeam() == TEAM_PLAYER_MINER) SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+    else if(ep->at(i).getTeam() == GALACTIC_FEDERATION or ep->at(i).getTeam() == SPOOKY_SPACE_PIRATES) SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
 
     float x = clamp(epp.x / 156.0f + WIN_WIDTH - 128.0f, WIN_WIDTH - 256.0f, static_cast<float>(WIN_WIDTH));
     float y = clamp(epp.y / 156.0f + 128.0f, 0.0f, 256.0f);
@@ -509,5 +514,5 @@ float renderer::getTextureRadius(std::string _identifier)
 {
   int w = 0, h = 0;
   SDL_QueryTexture(m_textures.at(_identifier).at(0), NULL, NULL, &w, &h);
-  return static_cast<float>(std::max(w, h)) / 2.0f;
+  return static_cast<float>(std::max(w, h)) / 4.0f;
 }

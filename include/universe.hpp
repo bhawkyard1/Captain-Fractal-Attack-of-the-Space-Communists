@@ -72,7 +72,8 @@ public:
   std::vector<missile>* getMissiles() {return &missiles;}
   std::vector<ship>* getAsteroids() {return &asteroids;}
 	ship * closestEnemy(vec2 p, ai_team t);
-	void setScore(int s) {score = s;}
+  void setScore(int _s) {score = _s; m_ui.update(score);}
+  void addScore(int _s) {score += _s; m_ui.update(score);}
 	int getScore() {return score;}
 	int * getScorePt() {return &score;}
 	
@@ -84,7 +85,7 @@ public:
 	void setMaxMinerCount(int m) {max_miner_count = m;}
 	
 	void reload(bool);
-    void loadShips();
+  void loadShips();
 
 	void pause() {paused = !paused;}
 	bool isPaused() {return paused;}

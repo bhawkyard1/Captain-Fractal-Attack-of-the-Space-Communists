@@ -17,6 +17,7 @@ public:
   void draw();
   button * getAt(size_t i) {return &buttons.at(i);}
   void reset();
+  void update(int _s);
 };
 
 #endif

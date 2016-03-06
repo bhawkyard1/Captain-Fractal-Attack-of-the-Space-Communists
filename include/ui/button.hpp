@@ -24,6 +24,7 @@ public:
   void updateText(std::string);
   void set(bool s) {selected = s;}
   bool on() {return selected;}
+  void update(int _s);
 
   int getCost() {return cost;}
   void setCost(int pcost) {cost = pcost;}

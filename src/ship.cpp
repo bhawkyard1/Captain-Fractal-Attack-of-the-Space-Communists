@@ -265,7 +265,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
 	
 	classification = ptype;
 	
-    radius = _radius;
+  radius = _radius;
 }
 
 ship::ship(ship &src, vec2 p)
@@ -481,7 +481,6 @@ void ship::damage(float d)
 
 int ship::upgrade(int i) 
 {
-  std::cout << "upgrade! " << i << std::endl;
 	if(i < 4) upgrades[i]++;
 	
 	switch(i)

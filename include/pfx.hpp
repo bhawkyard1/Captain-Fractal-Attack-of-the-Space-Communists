@@ -14,7 +14,7 @@ class pfx
   float glowA;
   std::string m_identifier;
 
-	int col[3];
+  float col[3];
 	
 	vec2 pos, vel, wvel;
 	bool active;
@@ -23,8 +23,8 @@ public:
 	void update(float);
 	bool done() {return !active;}
 	void setWVel(vec2 v) {wvel = v;}
-  int * getCol() {return col;}
-  int getCol(int i) {return col[i];}
+  float * getCol() {return col;}
+  float getCol(int i) {return col[i];}
   float getAlpha() {return glowA;}
   float getAlpha(int index) {return alphas.at(index);}
   std::string getIdentifier() {return m_identifier;}

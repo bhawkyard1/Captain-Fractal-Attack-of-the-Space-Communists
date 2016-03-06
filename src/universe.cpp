@@ -7,7 +7,7 @@
 bool emnityCheck(ai_team a, ai_team b);
 
 universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
-                      ply( {0.0f, 0.0f}, 64.0f )
+                      ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
 {	
 	setVel({0,0});
 
@@ -60,11 +60,10 @@ universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
     m_drawer.queryTexture(id, 0, &w, &h);
     sparkles.push_back(stardust_sprite(id, cColP, w, h));
 	}
-	
-	score = 0;
+  initUI();
+  setScore(0);
 	paused = false;
-    loadShips();
-    initUI();
+  loadShips();
 	//for(int i = 0; i < 3; ++i) spawnShip(TEAM_PLAYER_MINER);
 	//addStation();
 }
@@ -104,7 +103,9 @@ void universe::addMissile(vec2 p, vec2 v, float angle, bool team)
 
 void universe::update(float dt)
 {
-  std::cout << "INTERSECTION TEST " << lineIntersectCircle({-2,0},{-1,1},{0,0},1) << std::endl;
+  //vec2 TEMP_POS = closest({-1,-1}, {0,1}, {0,0});
+  //std::cout << "CLOSEST TEST " << TEMP_POS.x << ", " << TEMP_POS.y << std::endl;
+  //std::cout << "INTERSECTION TEST " << lineIntersectCircle({-2,0},{-1,1},{0,0},1) << std::endl;
 	if(paused) return;
 	
 	cColP[0] += clamp(tColP[0] - cColP[0], -1.0f, 1.0f);
@@ -352,7 +353,7 @@ void universe::update(float dt)
 					pos += enemies.at(i).getPos();
 					addpfx(pos, enemies.at(i).getVel(), vel, rand()%20 + 50, rand()%30 + 2);
 				}
-				score += enemies.at(i).getScore();
+        addScore( enemies.at(i).getScore() );
 				if( rand() % 8 <= DIFFICULTY ) max_enemies_count += DIFFICULTY + 1;
 				playSnd(3);
 			}
@@ -470,7 +471,7 @@ void universe::update(float dt)
 	
 	if(!GAME_OVER)
 	{
-		if(rand() % 45000 <= DIFFICULTY * gameplay_intensity and enemy_count < clamp(max_enemies_count,0,200))
+    if(rand() % 2000 <= DIFFICULTY * gameplay_intensity and enemy_count < clamp(max_enemies_count,0,200))
 		{
 			int reps = clamp(rand() % (DIFFICULTY * 5) + 1, 1, clamp(max_enemies_count,0,80) - enemy_count);
 			
@@ -593,12 +594,10 @@ void universe::draw(float dt)
     vec2 ipos = i->getInterpolatedPosition(dt);
     std::array<float, 4> icol = {255, 255, 255, 255};
     m_drawer.drawTexture(i->getIdentifier(), 0, ipos, i->getAng(), icol);
-    //asteroids.at(i).draw(dt);
 	}
 	
   for(auto i = enemies.begin(); i != enemies.end(); ++i)
 	{
-    //enemies.at(i).draw(dt);
     vec2 ipos = i->getInterpolatedPosition(dt);
     std::array<float, 4> ialpha = i->getAlphaStats();
     m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
@@ -607,7 +606,6 @@ void universe::draw(float dt)
   vec2 ppos = ply.getInterpolatedPosition(dt);
   std::array<float, 4> palpha = ply.getAlphaStats();
   m_drawer.drawTextureSet(ply.getIdentifier(), ppos, ply.getAng(), palpha);
-  m_drawer.drawCircle(ply.getPos().x, ply.getPos().y, ply.getRadius(), {255,0,0,255});
 	
   for(auto i = missiles.begin(); i != missiles.end(); ++i)
 	{	
@@ -622,12 +620,13 @@ void universe::draw(float dt)
     //particles.at(i).draw(dt);
     vec2 ipos = i->getPos();
     std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getAlpha()};
+
     m_drawer.drawTexture(i->getIdentifier(), 0, ipos, 0, col);
     int k = 0;
     for(auto j = i->getParticles()->begin(); j != i->getParticles()->end(); ++j)
     {
       vec2 jpos = j->getInterpolatedPosition(dt);
-      std::array<float, 4> col = {col[0], col[1], col[2], i->getAlpha(k)};
+      col[3] = i->getAlpha(k);
       m_drawer.drawLine(jpos, jpos + j->getVel(), col);
       k++;
     }
@@ -675,7 +674,7 @@ void universe::draw(float dt)
 void universe::drawUI()
 {
   m_drawer.drawText("SCORE: " + std::to_string( score ),"pix",{260, 2});
-  m_drawer.drawText("MISSILES: " + std::to_string( ply.getMissiles() ),"pix",{260, 2});
+  m_drawer.drawText("MISSILES: " + std::to_string( ply.getMissiles() ),"pix",{260, 20});
 
   m_drawer.drawMap(&missiles, &enemies, &asteroids, &shots);
   m_drawer.statusBars(&ply);
@@ -712,8 +711,8 @@ void universe::detectCollisions(SDL_Rect box, std::vector<enemy*> ships, std::ve
     std::vector<missile*> prockets;
     std::vector<ship*> procks;
 	
-    vec2 boxPos = {box.x, box.y};
-    vec2 boxDim = {box.w, box.h};
+    vec2 boxPos = {static_cast<float>(box.x), static_cast<float>(box.y)};
+    vec2 boxDim = {static_cast<float>(box.w), static_cast<float>(box.h)};
 
 	for(size_t i = 0; i < ships.size(); ++i)
 	{
@@ -1029,7 +1028,7 @@ void universe::spawnShip(ai_team t, vec2 p)
 		type = PLAYER_MINER_DROID;
 	}
 	
-    enemy newShip({0.0f, 0.0f}, -vel, type, t, m_drawer.getTextureRadius(getTextureKey(type)));
+   enemy newShip({0.0f, 0.0f}, -vel, type, t, m_drawer.getTextureRadius(getTextureKey(type)));
 	
 	if( t == TEAM_PLAYER ) wingmen_count++;
 	else if( t == TEAM_PLAYER_MINER ) miner_count++;
@@ -1104,7 +1103,7 @@ void universe::reload(bool newGame)
 		ply.setGradeArr(i, 0);
 	}
 	ply.setMissiles(3);
-	score = 0;
+  setScore(0);
 }
 
 void universe::addBuild(ship_spec type)
@@ -1237,12 +1236,11 @@ bool universe::upgradeCallback(int _sel, int _btn)
 
   if(lvl < 9)
   {
-    score -= selectedButton->getCost();
+    addScore( -selectedButton->getCost() );
     if(_btn < 4) selectedButton->setCost(selectedButton->getCost() * 2);
   }
 
   upgradeSetLabels(_sel, _btn);
-
   if(_btn > 3) return true;
 
   return true;
@@ -1251,6 +1249,7 @@ bool universe::upgradeCallback(int _sel, int _btn)
 void universe::upgradeSetLabels(int _sel, int _btn)
 {
   button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
+
   std::string s1;
   int lvl = ply.getUpgrade( _btn );
   switch(_btn)
@@ -1267,9 +1266,12 @@ void universe::upgradeSetLabels(int _sel, int _btn)
     case 3:
       s1 = "THRUSTERS ";
       break;
+    default:
+      return;
+      break;
   }
 
-  s1 += roman_nums[lvl];
+  s1 += roman_nums.at(lvl);
 
   if(lvl < 8)
   {
@@ -1279,7 +1281,6 @@ void universe::upgradeSetLabels(int _sel, int _btn)
     s1 += ss.str();
     s1 += ")";
   }
-
   if(lvl < 9) selectedButton->updateText(s1);
 }
 

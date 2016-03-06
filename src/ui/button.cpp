@@ -52,6 +52,12 @@ button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _
   cost = _pcost;
 }
 
+void button::update(int _pts)
+{
+  if(_pts > cost) dark = false;
+  else dark = true;
+}
+
 void button::updateText(std::string _text)
 {
   m_label = _text;

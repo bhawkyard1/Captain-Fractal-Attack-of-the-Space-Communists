@@ -12,9 +12,9 @@ pfx::pfx(vec2 p, vec2 v, vec2 wv, size_t no, float force, std::string _identifie
 	pos = p;
 	vel = v;
 	
-	col[0] = rand()%150+105;
-	col[1] = rand()%150+105;
-	col[2] = rand()%150+105;
+  col[0] = randNum(0.0f, 150.0f) + 105.0f;
+  col[1] = randNum(0.0f, 150.0f) + 105.0f;
+  col[2] = randNum(0.0f, 150.0f) + 105.0f;
 	
   m_identifier = _identifier;
 
