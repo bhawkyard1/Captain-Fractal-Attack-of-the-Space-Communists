@@ -1,5 +1,6 @@
 #include "ship.hpp"
 #include "weapons.hpp"
+#include "vectors.hpp"
 
 std::vector<std::string> texture_keys = {
   "FEDERATION_MKI", "FEDERATION_MKII", "FEDERATION_MKIII", "FEDERATION_MKIV", "FEDERATION_GUNSHIP",
@@ -286,8 +287,8 @@ ship::ship(ship &src, vec2 p)
 	shieldGlow = 0.0f;
 	drawShot = 0.0f;
 	
-	canMove = !src.isStatic();
-	canShoot = !src.isLaserless();
+  canMove = src.getCanMove();
+  canShoot = src.getCanShoot();
 	
 	setMaxHealth( src.getMaxHealth(), true );
 	setMaxShield( src.getMaxShield(), true );
@@ -369,7 +370,7 @@ ship::ship(ship &src, vec2 p)
 	}
 }
 
-void ship::accelerate(double mult)
+void ship::accelerate(float _mult)
 {
 	float energyLoss = 0.6f, accelMult = 1.0f;
 	
@@ -385,12 +386,35 @@ void ship::accelerate(double mult)
 	}
 		
 	if(energy <= energyLoss) return;
-	vec2 vec = computeVector(getAng() + 90.0f) * accelMult;
-	addVel(vec*mult);
+  vec2 add = vec(getAng() + 90.0f) * accelMult;
+  addVel(add * _mult);
 	energy -= energyLoss;
 	engineGlow = clamp(engineGlow + 10.0f * accelMult,0.0f,255.0f);
 	
 	accelerating = true;
+}
+
+void ship::accelerate(vec2 _dir, float _mult)
+{
+  float energyLoss = 0.6f, accelMult = 1.0f;
+
+  if(priority == ENGINES)
+  {
+    energyLoss = 1.2f;
+    accelMult = 2.0f;
+  }
+  else if(priority == GUNS)
+  {
+    energyLoss = 0.6f;
+    accelMult = 0.8f;
+  }
+
+  if(energy <= energyLoss) return;
+  addVel(_dir * _mult);
+  energy -= energyLoss;
+  engineGlow = clamp(engineGlow + 10.0f * accelMult,0.0f,255.0f);
+
+  accelerating = true;
 }
 
 void ship::dodge(float side)

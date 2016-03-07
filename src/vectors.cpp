@@ -345,9 +345,8 @@ float rad(float ang)
 
 vec2 vec(float ang)
 {
-  return { static_cast<float> (cos(ang)), static_cast<float> (sin(ang)) };
+  return { static_cast<float>(-cos(rad(-ang))), static_cast<float>(sin(rad(-ang))) };
 }
-
 
 ang3 operator +(const ang3 &lhs, const ang3 &rhs)
 {

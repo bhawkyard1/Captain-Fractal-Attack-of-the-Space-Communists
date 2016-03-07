@@ -71,7 +71,7 @@ universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
 void universe::addShot(vec2 p, vec2 v, float angle, std::array<float, WEAPS_W> weap, ai_team team)
 {
     int temp_angle = angle + 90;
-    for(int i = 0; i < weap[0]; i++)
+    for(int i = 0; i < weap[0]; ++i)
     {
         //vec2 vec = computeVector(temp_angle);
         laser temp( p + v, v, temp_angle, weap, team);
@@ -98,9 +98,6 @@ void universe::addMissile(vec2 p, vec2 v, float angle, ai_team _team)
 
 void universe::update(float dt)
 {
-    //vec2 TEMP_POS = closest({-1,-1}, {0,1}, {0,0});
-    //std::cout << "CLOSEST TEST " << TEMP_POS.x << ", " << TEMP_POS.y << std::endl;
-    //std::cout << "INTERSECTION TEST " << lineIntersectCircle({-2,0},{-1,1},{0,0},1) << std::endl;
     if(paused) return;
 
     cColP[0] += clamp(tColP[0] - cColP[0], -1.0f, 1.0f);
@@ -189,7 +186,6 @@ void universe::update(float dt)
             shots.at(i).update(dt);
         }
     }
-
     partitions.rects.clear();
     partitions.ships.clear();
     partitions.lasers.clear();
@@ -331,7 +327,6 @@ void universe::update(float dt)
             asteroids.at(i).update(dt);
         }
     }
-
     for(int i = enemies.size() - 1; i >= 0; i--)
     {
         enemies.at(i).updatePos(dt);
@@ -357,7 +352,6 @@ void universe::update(float dt)
             else if(enemies.at(i).getTeam() == TEAM_PLAYER) wingmen_count--;
 
             swapnpop(&enemies, i);
-            //enemies.erase(enemies.begin() + i);
         }
         else
         {
@@ -370,7 +364,6 @@ void universe::update(float dt)
 
             float minDist = F_MAX;
             enemies.at(i).setTarget(nullptr);
-
             if(enemies.at(i).getClassification() == PLAYER_MINER_DROID) //Set miner targets
             {
                 for(size_t k = 0; k < asteroids.size(); ++k)
@@ -403,7 +396,7 @@ void universe::update(float dt)
             {
                 if(rand() % 2048 == 0 and wingmen_count < 20) spawnShip(TEAM_PLAYER, enemies.at(i).getPos());
             }
-            else if(!enemies.at(i).isLaserless()) //Default target acquisition
+            else if(enemies.at(i).getCanShoot()) //Default target acquisition
             {
                 for(size_t k = 0; k < enemies.size(); ++k)
                 {
@@ -422,12 +415,10 @@ void universe::update(float dt)
                     }
                 }
             }
-
             //Setting the follow distances of the different units.
             float fd = 0.0f;
             if(enemies.at(i).getTeam() == TEAM_PLAYER) fd = 1500.0f;
             else if(enemies.at(i).getTeam() == TEAM_PLAYER_MINER) fd = 20000.0f;
-
             float nd = magns(ply.getPos() - enemies.at(i).getPos());
             if(emnityCheck( enemies.at(i).getTeam(), TEAM_PLAYER ) and nd < minDist )
             {
@@ -435,7 +426,7 @@ void universe::update(float dt)
                 enemies.at(i).setGoal(GOAL_ATTACK);
                 minDist = nd;
             }
-            else if(!enemies.at(i).isStatic() and !emnityCheck( enemies.at(i).getTeam(), TEAM_PLAYER ) and ( nd > fd * fd or enemies.at(i).getTarget() == nullptr ) and !enemies.at(i).inCombat())
+            else if(enemies.at(i).getCanMove() and !emnityCheck( enemies.at(i).getTeam(), TEAM_PLAYER ) and ( nd > fd * fd or enemies.at(i).getTarget() == nullptr ) and !enemies.at(i).inCombat())
             {
                 enemies.at(i).setTarget( (player*)&ply );
                 enemies.at(i).setGoal( GOAL_CONGREGATE );
@@ -445,36 +436,29 @@ void universe::update(float dt)
                 //if(enemies.at(i).getClassification() == PLAYER_TURRET) cout << "PLAYER_TURRET (" << enemies.at(i).isStatic() << " " << !enemies.at(i).isLaserless() << ") " << (enemies.at(i).getTarget() == nullptr) << endl;
                 enemies.at(i).setGoal( GOAL_IDLE );
             }
-
-            if(emnityCheck( enemies.at(i).getTeam(), TEAM_PLAYER ) and enemies.at(i).getHealth() < enemies.at(i).getConfidence() and !enemies.at(i).isStatic())
+            if(emnityCheck( enemies.at(i).getTeam(), TEAM_PLAYER ) and enemies.at(i).getHealth() < enemies.at(i).getConfidence() and enemies.at(i).getCanMove())
             {
                 enemies.at(i).setGoal(GOAL_FLEE);
             }
-
             enemies.at(i).behvrUpdate();
             enemies.at(i).steering();
-
             if(enemies.at(i).isFiring() and enemies.at(i).getCooldown() <= 0)
             {
                 addShot(enemies.at(i).getPos() - enemies.at(i).getVel(), enemies.at(i).getVel(), enemies.at(i).getAng(), enemies.at(i).getWeap(), enemies.at(i).getTeam());
                 enemies.at(i).setCooldown( (enemies.at(i).getCurWeapStat(COOLDOWN)) );
                 enemies.at(i).setFiring(false);
             }
-
             if(enemies.at(i).getHealth() < enemies.at(i).getMaxHealth()) addParticleSprite(p, enemies.at(i).getVel(), enemies.at(i).getHealth() / enemies.at(i).getMaxHealth(), "SMOKE");
         }
     }
-
     if(!GAME_OVER)
     {
         if(rand() % 2000 <= DIFFICULTY * gameplay_intensity and enemy_count < clamp(max_enemies_count,0,200))
         {
             int reps = clamp(rand() % (DIFFICULTY * 5) + 1, 1, clamp(max_enemies_count,0,80) - enemy_count);
-
             ai_team pteam;
             if(rand() % 100 < 70) pteam = SPOOKY_SPACE_PIRATES;
             else pteam = GALACTIC_FEDERATION;
-
             for(int i = 0; i < reps; i++)
             {
                 spawnShip(pteam);
@@ -508,7 +492,6 @@ void universe::update(float dt)
             asteroids.push_back(a);
         }
     }
-
     for(int i = particles.size() - 1; i >= 0; i--)
     {
         particles.at(i).setWVel(vel);
@@ -516,7 +499,6 @@ void universe::update(float dt)
         if(particles.at(i).done()) swapnpop(&particles, i);
 
     }
-
     for(int i = passive_sprites.size() - 1; i >= 0; --i)
     {
         float alph = passive_sprites.at(i).getCol(3);
@@ -605,7 +587,6 @@ void universe::draw(float dt)
 
     for(auto i = missiles.begin(); i != missiles.end(); ++i)
     {
-        //missiles.at(i).draw(dt);
         vec2 ipos = i->getInterpolatedPosition(dt);
         std::array<float, 4> ialpha = i->getAlphaStats();
         m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
@@ -613,7 +594,6 @@ void universe::draw(float dt)
 
     for(auto i = particles.begin(); i != particles.end(); ++i)
     {
-        //particles.at(i).draw(dt);
         vec2 ipos = i->getPos();
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getAlpha()};
 
@@ -631,7 +611,6 @@ void universe::draw(float dt)
     for(auto i = dots.begin(); i != dots.end(); ++i)
     {
         if(i->getZ() <= 1) continue;
-        //dots.at(i).draw(dt);
         vec2 ipos = i->getInterpolatedPosition(dt);
         vec2 ivel = i->getVel();
         std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
@@ -643,7 +622,6 @@ void universe::draw(float dt)
     {
         if(i->getZ() > 1)
         {
-            //sparkles.at(i).draw(dt);
             vec2 ipos = i->getInterpolatedPosition(dt);
             std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
             m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), icol );
@@ -652,14 +630,14 @@ void universe::draw(float dt)
     }
     m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
 
-    if(DEV_MODE)
+    /*if(DEV_MODE)
     {
         for(auto i = partitions.rects.begin(); i != partitions.rects.end(); ++i)
         {
             std::array<int, 4> col = {255, 0, 0, 255};
             m_drawer.drawRect({static_cast<float>(i->x), static_cast<float>(i->y)}, {static_cast<float>(i->w), static_cast<float>(i->h)}, col, true);
         }
-    }
+    }*/
 
     //Draw the ui
     drawUI();

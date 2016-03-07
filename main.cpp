@@ -169,7 +169,6 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
             {
                 if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
                 ply->upgrade(ret.m_button_val);
-                //playerUpgrade( ply->getUpgrade(ret.m_button_val) );
                 if(ret.m_button_val == 5) uni->addMiner();
                 else if(ret.m_button_val == 6) uni->addWingman();
                 else if(ret.m_button_val == 7) uni->addBuild(ply->getPos(), PLAYER_TURRET);

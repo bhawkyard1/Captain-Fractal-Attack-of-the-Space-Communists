@@ -51,5 +51,5 @@ void pfx::update(float dt)
 	}
 	
 	if(done) active = false;
-	glowA -= randFloat(15,18);
+  glowA = clamp(glowA - randFloat(15.0f,18.0f), 0.0f, 255.0f);
 }

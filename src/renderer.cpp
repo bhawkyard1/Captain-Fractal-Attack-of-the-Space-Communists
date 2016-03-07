@@ -67,7 +67,7 @@ void renderer::loadTextures()
     loadTextureSet("PIRATE_GNAT",         "pirate_1");
     loadTextureSet("PIRATE_CRUISER",      "pirate_2");
     loadTextureSet("PIRATE_WRANGLER",     "pirate_3");
-    loadTextureSet("PIRATE_MARAUDER",    "pirate_4");
+    loadTextureSet("PIRATE_MARAUDER",     "pirate_4");
     loadTextureSet("PIRATE_GUNSHIP",      "pirate_5");
 
     loadTextureSet("PLAYER_SHIP",         "player");
@@ -530,17 +530,18 @@ void renderer::drawWeaponStats(player * ply)
     SDL_SetRenderDrawColor(m_renderer, ws[4] * 0.6, ws[5] * 0.6, ws[6] * 0.6, 255);
     SDL_RenderFillRect(m_renderer,&weap);
 
+    float fWIN_WIDTH = static_cast<float>(WIN_WIDTH), fWIN_HEIGHT = static_cast<float>(WIN_HEIGHT);
     std::string damageText = "Damage " + std::to_string(ws[2]);
-    drawText(damageText, "minimal", {WIN_WIDTH - weap.w, WIN_HEIGHT - 1.4f * weap.h});
+    drawText(damageText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.4f * weap.h});
 
     std::string noText = "\nLasers " + std::to_string(static_cast<int>(ws[0]));
-    drawText(noText, "minimal", {WIN_WIDTH - weap.w, WIN_HEIGHT - 1.0f * weap.h});
+    drawText(noText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.2f * weap.h});
 
     std::string spreadText = "\nSpread " + std::to_string(ws[1]);
-    drawText(spreadText, "minimal", {WIN_WIDTH - weap.w, WIN_HEIGHT - 0.6f * weap.h});
+    drawText(spreadText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.0f * weap.h});
 
     std::string rateText = "\nRate ";
     float rate = 1.0f / ws[8];
     rateText += std::to_string( static_cast<int>( rate ) );
-    drawText(rateText, "minimal", {WIN_WIDTH - weap.w, WIN_HEIGHT - 0.2f * weap.h});
+    drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
 }

@@ -18,9 +18,17 @@
 #include "laser.hpp"
 #include "player.hpp"
 
+#include <ngl/Camera.h>
+#include <ngl/Colour.h>
+#include <ngl/Light.h>
+#include <ngl/Transformation.h>
+#include <ngl/Text.h>
+#include <ngl/Transformation.h>
+#include <ngl/ShaderLib.h>
+
 class renderer
 {
-	//The window we'll be rendering to
+  //The window we'll be rendering to
   SDL_Window * m_window = NULL;
   SDL_Renderer * m_renderer = NULL;
   int m_w, m_h;
