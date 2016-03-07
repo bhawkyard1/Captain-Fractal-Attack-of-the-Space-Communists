@@ -2,9 +2,11 @@
 #define MISSILE_HPP
 
 #include "ship.hpp"
+#include "enemy.hpp"
 
 class missile: public ship
 {
+    ai_team m_team;
 	ship * target;
 	bool det;
 public:
@@ -13,6 +15,7 @@ public:
 	ship * getTarget() {return target;}
 	void steering();
 	bool detonate() {return det;}
+    ai_team getTeam() {return m_team;}
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include "sprite_sheet.hpp"
 #include "vectors.hpp"
 
+#include "common.hpp"
 #include "missile.hpp"
 #include "enemy.hpp"
 #include "ship.hpp"
@@ -54,6 +55,7 @@ public:
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
   void statusBars(player * ply);
+  void drawWeaponStats(player * ply);
 
   void finalise();
 

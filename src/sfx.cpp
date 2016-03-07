@@ -2,62 +2,38 @@
 #include <SDL_mixer.h>
 #include <vector>
 #include <string>
+#include "common.hpp"
 
 std::vector< std::vector<Mix_Chunk*> > snds;
 
+void loadSound(std::string _path, int _len)
+{
+  if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+  {
+          std::cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << std::endl;
+          //SDL_Quit();
+          //return 1;
+  }
+
+  std::vector<Mix_Chunk*> temp_vec;
+  for(int i = 0; i < _len; i++)
+  {
+    std::string name = _path + std::to_string(i);
+    name += ".wav";
+    Mix_Chunk * temp = Mix_LoadWAV( name.c_str() );
+    if(!temp) std::cerr << name + ": Sound loading error! " << SDL_GetError() << std::endl;
+    temp_vec.push_back(temp);
+  }
+  snds.push_back(temp_vec);
+}
+
 void loadSounds()
 {
-  std::vector<Mix_Chunk*> temp1;
-  snds.push_back(temp1);
-
-  for(int i = 0; i < 3; i++)
-  {
-    std::string name = "../resources/sfx/red_laser_" + std::to_string(i);
-    name += ".wav";
-
-    Mix_Chunk * temp = Mix_LoadWAV( name.c_str() );
-    snds.at(0).push_back(temp);
-  }
-
-  std::vector<Mix_Chunk*> temp2;
-  snds.push_back(temp2);
-  for(int i = 0; i < 3; i++)
-  {
-    std::string name = "../resources/sfx/green_laser_" + std::to_string(i);
-    name += ".wav";
-    Mix_Chunk * temp = Mix_LoadWAV( name.c_str() );
-    snds.at(1).push_back(temp);
-  }
-
-  std::vector<Mix_Chunk*> temp3;
-  snds.push_back(temp3);
-  for(int i = 0; i < 3; i++)
-  {
-    std::string name = "../resources/sfx/blue_laser_" + std::to_string(i);
-    name += ".wav";
-    Mix_Chunk * temp = Mix_LoadWAV( name.c_str() );
-    snds.at(2).push_back(temp);
-  }
-
-  std::vector<Mix_Chunk*> temp4;
-  snds.push_back(temp4);
-  for(int i = 0; i < 3; i++)
-  {
-    std::string name = "../resources/sfx/explosion_" + std::to_string(i);
-    name += ".wav";
-    Mix_Chunk * temp = Mix_LoadWAV( name.c_str() );
-    snds.at(3).push_back(temp);
-  }
-
-  std::vector<Mix_Chunk*> temp5;
-  snds.push_back(temp5);
-  for(int i = 0; i < 1; i++)
-  {
-    std::string name = "../resources/sfx/ricochet_" + std::to_string(i);
-    name += ".wav";
-    Mix_Chunk * temp = Mix_LoadWAV( name.c_str() );
-    snds.at(4).push_back(temp);
-  }
+  loadSound(RESOURCE_LOC + "sfx/red_laser_", 3);
+  loadSound(RESOURCE_LOC + "sfx/green_laser_", 3);
+  loadSound(RESOURCE_LOC + "sfx/blue_laser_", 3);
+  loadSound(RESOURCE_LOC + "sfx/explosion_", 3);
+  loadSound(RESOURCE_LOC + "sfx/ricochet_", 1);
 }
 
 void playSnd(size_t snd)

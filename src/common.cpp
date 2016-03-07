@@ -1,8 +1,7 @@
 #include <algorithm>
 #include "common.hpp"
 
-SDL_Texture * SMOKE_TEXTURE;
-SDL_Texture * XPLO_TEXT;
+std::string RESOURCE_LOC = "../resources/";
 
 double g_GLOBAL_TIME = 0.f;
 
@@ -17,7 +16,7 @@ float BG_DENSITY = 5.0f;
 
 void loadConfig()
 {
-  std::ifstream config("../../resources/config.txt");
+  std::ifstream config( RESOURCE_LOC + "config.txt" );
   std::string cur;
 
   while(getline( config, cur ))

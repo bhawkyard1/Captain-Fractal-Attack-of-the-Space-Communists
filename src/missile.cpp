@@ -5,6 +5,7 @@ missile::missile(vec2 p, float _r): ship(p, ION_MISSILE_MKI, _r)
 	setPos(p);
 	setMaxHealth(10.0f, true);
 	setMaxShield(5.0f, true);
+    setMaxEnergy(10000.0f, true);
 	setTAng(0.0f);
 	det = false;
 }
@@ -34,8 +35,12 @@ void missile::steering()
 		float angleMul = (shortestAngle(getAng(), getTAng())+90)/90.0;
 		
 		setTAng(clampRoll(computeAngle(getPos() - tPos),-180.0f,180.0f));
-				
-		if(fabs(shortestAngle(getAng(), getTAng())) <= 2.0f) accelerate(accelMul*angleMul);
+
+        if(fabs(shortestAngle(getAng(), getTAng())) <= 2.0f)
+        {
+          //std::cout << "ACCELERATING " << accelMul * angleMul << std::endl;
+          accelerate(accelMul*angleMul);
+        }
 		
 		if(magns(getPos() - target->getPos()) < 50*50*cSpd) 
 		{
@@ -45,6 +50,6 @@ void missile::steering()
 	else
 	{
 		setTAng(getAng());
-		accelerate(1);
+        //accelerate(1);
 	}
 }

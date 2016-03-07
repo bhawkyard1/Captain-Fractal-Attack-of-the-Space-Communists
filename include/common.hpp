@@ -14,8 +14,7 @@
 //void loadTextures();
 void loadConfig();
 
-extern SDL_Texture * SMOKE_TEXTURE;
-extern SDL_Texture * XPLO_TEXT;
+extern std::string RESOURCE_LOC;
 
 extern double g_GLOBAL_TIME;
 

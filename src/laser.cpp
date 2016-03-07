@@ -22,11 +22,11 @@ laser::laser(vec2 p, vec2 v, float pAng, std::array<float, WEAPS_W> pData, ai_te
 	
 	power = 255.0f;
 
-  stop = pData[9];
+    stop = pData[9];
 }
 
 void laser::update(float dt)
 {
-	power -= 32.0f * dt;
+    power -= 64.0f * dt;
 	updatePos(dt);
 }
