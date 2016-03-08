@@ -10,5 +10,6 @@ void player::ctrlUpdate()
 	setPPos({v.x, v.y});
 	int mx = 0, my = 0;
 	SDL_GetMouseState(&mx,&my);
-	setTAng(computeAngle({p.x - mx, p.y - my}));
+    vec2 t = {p.x - mx, p.y - my};
+    setTAng(deg(-ang(t)));
 }

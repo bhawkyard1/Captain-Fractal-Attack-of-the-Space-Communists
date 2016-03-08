@@ -93,6 +93,8 @@ public:
     interface * getUI() {return &m_ui;}
     bool upgradeCallback(int _sel, int _btn);
     void upgradeSetLabels(int _sel, int _btn);
+
+    ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
 };
 
 #endif

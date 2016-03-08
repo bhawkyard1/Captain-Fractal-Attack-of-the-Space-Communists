@@ -10,6 +10,7 @@ INPUT(
 ./obj\pfx.o
 ./obj\player.o
 ./obj\renderer.o
+./obj\renderer_opengl.o
 ./obj\sfx.o
 ./obj\shapes.o
 ./obj\ship.o

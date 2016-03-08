@@ -105,6 +105,8 @@ t randNum(t low, t high)
   return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(high-low))+low;
 }
 
+float fastInvSqrt(float _val);
+
 double diffClock(clock_t clock1, clock_t clock2);
 
 SDL_Texture* renderText(const std::string &message, TTF_Font * font, SDL_Color color, SDL_Renderer *renderer, int len);

@@ -4,8 +4,6 @@
 #include <fstream>
 #include "universe.hpp"
 
-void writeVector(std::ostream &file, universe * u, int v);
-
 void saveGame(universe * uni)
 {
     std::ofstream save(RESOURCE_LOC + "save.txt");
@@ -21,68 +19,70 @@ void saveGame(universe * uni)
     for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
 
     save 	<< std::endl
-            << "tp ";
-    writeVector(save, uni, 0);
-
-    save << "sp ";
-    writeVector(save, uni, 1);
+            << "enemies ";
+    writeVector(save, uni->getEnemies());
 
     save.close();
 
     std::cout << "SAVED" << std::endl;
 }
 
-void writeVector(std::ostream &file, universe * u, int v)
-{
-    std::vector<enemy> * e = u->getEnemies();
-    switch(v)
+void writeVector(std::ostream &_file, std::vector<enemy> *_v)
+{    
+    for(auto &i : *_v)
     {
-    case 0:
-        //TURRETS
-        for(size_t i = 0; i < e->size(); ++i)
-        {
-            if(e->at(i).getClassification() != 998) continue;
-            vec2 p = e->at(i).getPos();
-            file << "|" << p.x << "," << p.y;
-        }
-        file << std::endl;
-        break;
-    case 1:
-        //STATIONS
-        for(size_t i = 0; i < e->size(); ++i)
-        {
-            if(e->at(i).getClassification() != 999) continue;
-            vec2 p = e->at(i).getPos();
-            file << "|" << p.x << "," << p.y;
-        }
-        file << std::endl;
-        break;
+       _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
+             << i.getPos().x << "," << i.getPos().y << "|"
+             << i.getVel().x << "," << i.getVel().y << "|"
+             << i.getAng() << "|"
+             << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
+                ;
     }
 }
 
 void readVector(std::string str, universe * u, int v)
 {
     std::cout << "enter" << std::endl;
-    std::vector<std::string> vecs = split( str, '|' );
+    std::vector<std::string> vecs = split( str, '/' );
     std::cout << "vecslen " << vecs.size() << std::endl;
-    switch(v)
+
+    for(auto &s : vecs)
     {
-    case 0:
-        //TURRETS
-        for(size_t i = 1; i < vecs.size(); ++i)
-        {
-            std::vector<std::string> vals = split( vecs.at(i), ',' );
-            u->addBuild({stof(vals.at(0), nullptr), stof(vals.at(1), nullptr)}, PLAYER_TURRET);
-        }
-        break;
-    case 1:
-        //STATIONS
-        for(size_t i = 1; i < vecs.size(); ++i)
-        {
-            std::vector<std::string> vals = split( vecs.at(i), ',' );
-            u->addBuild({stof(vals.at(0), nullptr), stof(vals.at(1), nullptr)}, PLAYER_STATION);
-        }
-        break;
+        std::vector<std::string> stats = split( s, '|' );
+        std::vector<std::string> stat;
+
+        int id, team;
+        stat = split(stats[0], ',');
+        id = std::stof(stat[0]);
+        team = std::stof(stat[1]);
+
+        vec2 pos;
+        stat = split(stats[1], ',');
+        pos.x = std::stof(stat[0]);
+        pos.y = std::stof(stat[1]);
+
+        vec2 vel;
+        stat = split(stats[2], ',');
+        pos.x = std::stof(stat[0]);
+        pos.y = std::stof(stat[1]);
+
+        float ang = std::stof(stats[3]);
+
+        float health, shield, energy;
+        stat = split(stats[4], ',');
+        health = std::stof(stat[0]);
+        shield = std::stof(stat[1]);
+        energy = std::stof(stat[1]);
+
+        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team), u-> _r);
+        temp.setPos(pos);
+        temp.setVel(vel);
+        temp.setAng(ang);
+        temp.setHealth(health);
+        temp.setShield(shield);
+        temp.setEnergy(energy);
+
+        u->getEnemies()->push_back(temp);
     }
 }
 

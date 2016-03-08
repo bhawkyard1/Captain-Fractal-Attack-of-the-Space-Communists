@@ -71,6 +71,8 @@ float mag(vec2 vec);
 float mag(vec3 vec);
 float magns(vec2 vec);
 float magns(vec3 vec);
+float invMag(vec2 vec);
+float invMag(vec3 vec);
 vec2 unit(vec2 vec);
 vec3 unit(vec3 vec);
 vec2 normal(vec2 vec);

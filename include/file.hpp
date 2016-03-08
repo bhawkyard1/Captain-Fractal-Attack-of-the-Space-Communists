@@ -5,14 +5,15 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 void writeVector(std::ostream &file, universe * u, int v);
 
 void saveGame(universe * uni);
 
-void writeVector(std::ostream &file, universe * u, int v);
+void writeVector(std::ostream &file, std::vector<enemy> * u);
 
-void readVector(std::string str, universe * u, int v);
+void readVector(std::string str, universe * u);
 
 void loadGame(universe * uni);
 
