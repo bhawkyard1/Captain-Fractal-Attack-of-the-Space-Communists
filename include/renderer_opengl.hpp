@@ -30,15 +30,21 @@ class renderer
 {
   //The window we'll be rendering to
   SDL_Window * m_window = NULL;
-  SDL_Renderer * m_renderer = NULL;
+  //SDL_Renderer * m_renderer = NULL;
   int m_w, m_h;
-  std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
-  std::unordered_map<std::string, sprite_sheet> m_letters;
+  /*std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
+  std::unordered_map<std::string, sprite_sheet> m_letters;*/
+  ngl::Mat4 m_view;
+  ngl::Mat4 m_project;
+  ngl::Transformation m_transform;
+  ngl::ShaderLib * shader;
+  void loadMatricesToShader();
 public:
   renderer(int,int);
   ~renderer();
+
   int init();
-  void loadTextures();
+  /*void loadTextures();
 
   void loadFontSpriteSheet(std::string name, std::string path, int size);
   void loadSpriteSheet();
@@ -68,7 +74,7 @@ public:
 
   void finalise();
 
-  SDL_Surface * getSurface(std::string path);
+  SDL_Surface * getSurface(std::string path);*/
 };
 
 #endif

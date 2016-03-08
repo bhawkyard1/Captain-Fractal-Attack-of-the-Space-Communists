@@ -16,8 +16,8 @@ QMAKE_CXXFLAGS += -std=c++11
 
 #include($(HOME)/NGL/UseNGL.pri)
 
-OTHER_FILES += readme.md
-#           += resources/fonts/pix.TTF
+OTHER_FILES += readme.md \
+            += ./shaders/*.glsl
 
 CONFIG += COMPILE_MODE_SDL
 
