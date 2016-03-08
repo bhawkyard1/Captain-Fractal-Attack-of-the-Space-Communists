@@ -13,6 +13,10 @@ void saveGame(universe * uni)
             << "mwc " << uni->getMaxWingmanCount() << std::endl
             << "mmc " << uni->getMaxMinerCount() << std::endl
             << "nm " << uni->getPly()->getMissiles() << std::endl
+            << "ps " << uni->getPly()->getVel().x << "," << uni->getPly()->getVel().y << ","
+                     << uni->getPly()->getHealth() << ","
+                     << uni->getPly()->getShield() << ","
+                     << uni->getPly()->getEnergy() << std::endl
             << "d " << DIFFICULTY << std::endl
             << "u ";
 
@@ -36,47 +40,51 @@ void writeVector(std::ostream &_file, std::vector<enemy> *_v)
              << i.getVel().x << "," << i.getVel().y << "|"
              << i.getAng() << "|"
              << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
+             << i.getRadius() << "|"
                 ;
     }
 }
 
-void readVector(std::string str, universe * u, int v)
+void readVector(std::string str, universe * u)
 {
     std::cout << "enter" << std::endl;
     std::vector<std::string> vecs = split( str, '/' );
     std::cout << "vecslen " << vecs.size() << std::endl;
 
-    for(auto &s : vecs)
+    for(size_t i = 1; i < vecs.size(); ++i)
     {
+        std::string s = vecs[i];
         std::vector<std::string> stats = split( s, '|' );
         std::vector<std::string> stat;
 
         int id, team;
-        stat = split(stats[0], ',');
+        stat = split(stats[1], ',');
         id = std::stof(stat[0]);
         team = std::stof(stat[1]);
 
         vec2 pos;
-        stat = split(stats[1], ',');
-        pos.x = std::stof(stat[0]);
-        pos.y = std::stof(stat[1]);
-
-        vec2 vel;
         stat = split(stats[2], ',');
         pos.x = std::stof(stat[0]);
         pos.y = std::stof(stat[1]);
 
-        float ang = std::stof(stats[3]);
+        vec2 vel;
+        stat = split(stats[3], ',');
+        vel.x = std::stof(stat[0]);
+        vel.y = std::stof(stat[1]);
+
+        float ang = std::stof(stats[4]);
 
         float health, shield, energy;
-        stat = split(stats[4], ',');
+        stat = split(stats[5], ',');
         health = std::stof(stat[0]);
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
 
-        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team), u-> _r);
-        temp.setPos(pos);
-        temp.setVel(vel);
+        float radius = std::stof(stats[6]);
+
+        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team), radius);
+        temp.setPos({pos.x,pos.y});
+
         temp.setAng(ang);
         temp.setHealth(health);
         temp.setShield(shield);
@@ -114,8 +122,21 @@ void loadGame(universe * uni)
                     //setUpgradeTextures(lvl, j);
                 }
             }
-            else if(strings.at(i) == "tp") { if(strings.size() > 1) readVector(strings.at(i + 1), uni, 0); }
-            else if(strings.at(i) == "sp") { if(strings.size() > 1) readVector(strings.at(i + 1), uni, 1); }
+            else if(strings.at(i) == "ps")
+            {
+                std::vector<std::string> stats = split(strings.at(i + 1), ',');
+                vec2 vel = {std::stof(stats[0]), std::stof(stats[1])};
+                float health = std::stof(stats[2]);
+                float shield = std::stof(stats[3]);
+                float energy = std::stof(stats[4]);
+                player * ply = uni->getPly();
+                ply->setVel(vel);
+                uni->setVel(-vel);
+                ply->setHealth(health);
+                ply->setShield(shield);
+                ply->setEnergy(energy);
+            }
+            else if(strings.at(i) == "enemies") { if(strings.size() > 1) readVector(strings.at(i + 1), uni); }
         }
     }
     save.close();

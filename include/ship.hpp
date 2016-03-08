@@ -27,7 +27,6 @@ enum ship_spec {
 
 extern std::vector<std::string> texture_keys;
 
-
 std::string getTextureKey(ship_spec s);
 ship_spec decrSpec(ship_spec s);
 
@@ -55,6 +54,7 @@ class ship: public base
 public:
   ship(vec2, ship_spec, float);
   ship(ship&, vec2);
+  ship(ship_spec);
 
   void addVelS(vec2 v) {if(canMove) addVel(v);}
   void accelerate(float mult);
@@ -128,4 +128,5 @@ public:
   std::array<float, 4> getAlphaStats() {std::array<float, 4> ret = {static_cast<float>(engineGlow), static_cast<float>(steeringGlow), static_cast<float>(drawShot), static_cast<float>(shieldGlow)}; return ret;}
 };
 
+extern std::vector<ship> g_ship_templates;
 #endif

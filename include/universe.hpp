@@ -24,7 +24,6 @@ struct col_partition
 
 class universe
 {
-    std::vector<ship> m_ship_templates;
     interface m_ui;
     renderer m_drawer;
     std::vector<stardust> dots;
@@ -94,7 +93,7 @@ public:
     bool upgradeCallback(int _sel, int _btn);
     void upgradeSetLabels(int _sel, int _btn);
 
-    ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
+    //ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
 };
 
 #endif

@@ -311,7 +311,7 @@ void universe::update(float dt)
                 {
                     for(int q = 0; q < 4; ++q)
                     {
-                        ship a(m_ship_templates.at( static_cast<int>(asteroids.at(i).getClassification()) - 1 ), p + randVec( asteroids.at(i).getRadius() ));
+                        ship a(g_ship_templates.at( static_cast<int>(asteroids.at(i).getClassification()) - 1 ), p + randVec( asteroids.at(i).getRadius() ));
                         a.setVel( asteroids.at(i).getVel() + randVec(1.0f) );
                         a.update(dt);
                         asteroids.push_back(a);
@@ -1242,7 +1242,7 @@ void universe::loadShips()
     {
         std::cout << "  loop " << i << std::endl;
         ship insert( {0.0f, 0.0f}, static_cast<ship_spec>(i), m_drawer.getTextureRadius(getTextureKey(static_cast<ship_spec>(i))) );
-        m_ship_templates.push_back(insert);
+        g_ship_templates.push_back(insert);
     }
-    std::cout << "No of ship types: " << m_ship_templates.size() << std::endl;
+    std::cout << "No of ship types: " << g_ship_templates.size() << std::endl;
 }
