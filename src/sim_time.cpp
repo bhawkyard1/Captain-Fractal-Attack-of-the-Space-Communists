@@ -23,9 +23,7 @@ void sim_time::setStart()
 void sim_time::setCur()
 {
 	cur = hr_clock::now().time_since_epoch().count();
-	
-	//cout << hr_clock::now().time_since_epoch().count() << endl;
-	
+		
 	diff = (cur - start) / tickRate;
 	sim_accumulator += diff;
 	

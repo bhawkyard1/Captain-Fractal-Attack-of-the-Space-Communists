@@ -2,7 +2,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include "universe.hpp"
+#include "sfx.hpp"
 
 void saveGame(universe * uni)
 {
@@ -23,15 +23,20 @@ void saveGame(universe * uni)
     for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
 
     save 	<< std::endl
-            << "enemies ";
-    writeVector(save, uni->getEnemies());
+          << "enemies ";
+    writeVectorEnemy(save, uni->getEnemies());
+
+    save << std::endl
+         << "asteroids ";
+    writeVectorAsteroid(save, uni->getAsteroids());
 
     save.close();
 
+    playSnd(SAVE_SND);
     std::cout << "SAVED" << std::endl;
 }
 
-void writeVector(std::ostream &_file, std::vector<enemy> *_v)
+void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_v)
 {    
     for(auto &i : *_v)
     {
@@ -45,11 +50,22 @@ void writeVector(std::ostream &_file, std::vector<enemy> *_v)
     }
 }
 
-void readVector(std::string str, universe * u)
+void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_v)
 {
-    std::cout << "enter" << std::endl;
+    for(auto &i : *_v)
+    {
+       _file << "/|" << i.getClassification() << "|"
+             << i.getPos().x << "," << i.getPos().y << "|"
+             << i.getVel().x << "," << i.getVel().y << "|"
+             << i.getAng() << "|"
+             << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
+                ;
+    }
+}
+
+void readVectorEnemy(std::string str, universe * u)
+{
     std::vector<std::string> vecs = split( str, '/' );
-    std::cout << "vecslen " << vecs.size() << std::endl;
 
     for(size_t i = 1; i < vecs.size(); ++i)
     {
@@ -79,8 +95,8 @@ void readVector(std::string str, universe * u)
         health = std::stof(stat[0]);
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
-
-        float radius = std::stof(stats[6]);
+        std::cout << "LOADING " << health << ", " << energy << ", " << shield << std::endl;
+        float radius = std::stof(stats[5]);
 
         enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team), radius);
         temp.setPos({pos.x,pos.y});
@@ -91,6 +107,47 @@ void readVector(std::string str, universe * u)
         temp.setEnergy(energy);
 
         u->getEnemies()->push_back(temp);
+    }
+}
+
+void readVectorAsteroid(std::string str, universe * u)
+{
+    std::vector<std::string> vecs = split( str, '/' );
+
+    for(size_t i = 1; i < vecs.size(); ++i)
+    {
+        std::string s = vecs[i];
+        std::vector<std::string> stats = split( s, '|' );
+        std::vector<std::string> stat;
+
+        int id;
+        id = std::stof(stats[1]);
+
+        vec2 pos;
+        stat = split(stats[2], ',');
+        pos.x = std::stof(stat[0]);
+        pos.y = std::stof(stat[1]);
+
+        vec2 vel;
+        stat = split(stats[3], ',');
+        vel.x = std::stof(stat[0]);
+        vel.y = std::stof(stat[1]);
+
+        float ang = std::stof(stats[4]);
+
+        float health, shield, energy;
+        stat = split(stats[5], ',');
+        health = std::stof(stat[0]);
+        shield = std::stof(stat[1]);
+        energy = std::stof(stat[1]);
+
+        ship temp(static_cast<ship_spec>(id));
+        temp.setPos({pos.x,pos.y});
+
+        temp.setAng(ang);
+        temp.setHealth(health);
+
+        u->getAsteroids()->push_back(temp);
     }
 }
 
@@ -136,10 +193,12 @@ void loadGame(universe * uni)
                 ply->setShield(shield);
                 ply->setEnergy(energy);
             }
-            else if(strings.at(i) == "enemies") { if(strings.size() > 1) readVector(strings.at(i + 1), uni); }
+            else if(strings.at(i) == "enemies") { if(strings.size() > 1) readVectorEnemy(strings.at(i + 1), uni); }
+            else if(strings.at(i) == "asteroids") { if(strings.size() > 1) readVectorAsteroid(strings.at(i + 1), uni); }
         }
     }
     save.close();
 
+    playSnd(SAVE_SND);
     std::cout << "LOADED" << std::endl;
 }

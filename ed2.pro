@@ -42,3 +42,4 @@ COMPILE_MODE_NGL
         include($(HOME)/NGL/UseNGL.pri)
     }
 }
+g

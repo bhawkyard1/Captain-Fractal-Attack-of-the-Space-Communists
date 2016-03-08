@@ -80,8 +80,6 @@ void enemy::steering()
         */
     float stoppingDistance = 4 * ( cSpd * cSpd );
 
-    //std::cout << stoppingDistance << std::endl;
-
     if(vecMul < 0.0f) stoppingDistance *= -1;
 
     //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its target, their distance apart, and whether the ship is moving towards the target, or away.
@@ -102,7 +100,7 @@ void enemy::steering()
     //Angle the ship towards its target.
     setTAng(clampRoll(computeAngle(p-tPos), -180.0f, 180.0f));
     //If we are angled towards the target...
-    //std::cout << "accelMul " << accelMul << " = " << dist << " - " << stoppingDistance << " - " << stopDist << " - " << target->getRadius() << std::endl;
+
     float tvMul = dotProd1(tVel, v);
     if( ( tvMul < 0.8f or tvMul > 1.2f or fabs(tvMul) <= 0.1f ) and getEnergy() / getMaxEnergy() > 0.1f and getCanMove() ) accelerate(utv, accelMul*angleMul);
     if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f and dist < 800.0f + target->getRadius() and ( curGoal == GOAL_ATTACK or curGoal == GOAL_TURRET ) and getEnergy() / getMaxEnergy() > 0.05f)

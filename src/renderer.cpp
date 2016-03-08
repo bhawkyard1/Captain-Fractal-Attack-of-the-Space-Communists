@@ -37,8 +37,6 @@ renderer::~renderer()
 
 int renderer::init()
 {
-    std::cout << "print1" << std::endl;
-
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
@@ -52,7 +50,6 @@ int renderer::init()
         SDL_Quit();
         return EXIT_FAILURE;
     }
-    std::cout << "print1" << std::endl;
     return 1;
 }
 
@@ -273,6 +270,8 @@ void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient
     SDL_SetTextureAlphaMod(m_textures[key][index], col[3]);
 
     SDL_RenderCopyEx(m_renderer, m_textures[key][index], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
+
+    SDL_SetTextureAlphaMod(m_textures[key][index], 255);
 }
 
 void renderer::drawLine(vec2 _start, vec2 _end, std::array<float, 4> _col)
@@ -504,7 +503,6 @@ void renderer::statusBars(player * ply)
 
 SDL_Surface * renderer::getSurface(std::string _path)
 {
-    //std::cout << "print1" << std::endl;
     SDL_Surface * s = IMG_Load( _path.c_str() );
     if(!s) std::cerr << "Surface get load error! " << SDL_GetError() << std::endl;
     return s;

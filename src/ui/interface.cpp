@@ -30,10 +30,10 @@ selectionReturn interface::handleInput(vec2 _pos)
 
 void interface::reset()
 {
-  for(auto i = m_elements.begin(); i != m_elements.end(); ++i) i->reset();
+  for(auto &i : m_elements) i.reset();
 }
 
 void interface::update(int _s)
 {
-  for(auto i = m_elements.begin(); i != m_elements.end(); ++i) i->update(_s);
+  for(auto &i : m_elements) i.update(_s);
 }

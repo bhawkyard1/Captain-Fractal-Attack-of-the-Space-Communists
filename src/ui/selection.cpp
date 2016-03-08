@@ -30,10 +30,10 @@ bool selection::click(vec2 p)
 
 void selection::reset()
 {
-  for(auto i = buttons.begin(); i != buttons.end(); ++i) i->reset();
+  for(auto &i : buttons) i.reset();
 }
 
 void selection::update(int _s)
 {
-  for(auto i = buttons.begin(); i != buttons.end(); ++i) i->update(_s);
+  for(auto &i : buttons) i.update(_s);
 }

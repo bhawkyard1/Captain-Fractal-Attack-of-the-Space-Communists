@@ -8,7 +8,7 @@ std::vector< std::vector<Mix_Chunk*> > snds;
 
 void loadSound(std::string _path, int _len)
 {
-  if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+  if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 1024 ) == -1 )
   {
           std::cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << std::endl;
           //SDL_Quit();
@@ -34,10 +34,13 @@ void loadSounds()
   loadSound(RESOURCE_LOC + "sfx/blue_laser_", 3);
   loadSound(RESOURCE_LOC + "sfx/explosion_", 3);
   loadSound(RESOURCE_LOC + "sfx/ricochet_", 1);
+  loadSound(RESOURCE_LOC + "sfx/save_", 1);
+  loadSound(RESOURCE_LOC + "sfx/place_", 4);
 }
 
-void playSnd(size_t snd)
+void playSnd(sound _snd)
 {
+  size_t snd = static_cast<size_t>(_snd);
   if(snd >= snds.size()) return;
 
   size_t size = snds.at(snd).size();

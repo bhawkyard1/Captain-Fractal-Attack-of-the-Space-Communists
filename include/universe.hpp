@@ -44,6 +44,7 @@ class universe
     float tColP[3];
     float gameplay_intensity = 1;
     bool paused;
+    int m_mouse_state;
 public:
     universe();
     void initUI();
@@ -91,7 +92,10 @@ public:
 
     interface * getUI() {return &m_ui;}
     bool upgradeCallback(int _sel, int _btn);
-    void upgradeSetLabels(int _sel, int _btn);
+    void upgradeSetLabels(int _sel, int _btn, int _plvl);
+
+    void setMouseState(int _i) {m_mouse_state = _i;}
+    int getMouseState() {return m_mouse_state;}
 
     //ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
 };
