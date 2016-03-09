@@ -107,13 +107,14 @@ void enemy::steering()
     //If we are angled towards the target...
 
     float tvMul = dotProd1(tVel, v);
-    if( ( tvMul < 0.8f or tvMul > 1.2f or fabs(tvMul) <= 0.1f )
+    if( ( tvMul < 0.8f or tvMul > 1.2f )
             and ( getEnergy() / getMaxEnergy() > 0.1f or curGoal == GOAL_CONGREGATE )
             and getCanMove()
             )
     {
         accelerate(utv, accelMul*angleMul);
     }
+
     if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f
             and dist < 800.0f + radius
             and ( curGoal == GOAL_ATTACK or curGoal == GOAL_TURRET )

@@ -481,7 +481,8 @@ void ship::update(float dt)
         energy -= energy_loss;
     }
 
-    if(!accelerating) energy = clamp(energy + 0.1f * generatorMul, 0.0f, maxEnergy);
+    //if(!accelerating)
+    energy = clamp(energy + 0.1f * generatorMul, 0.0f, maxEnergy);
 
     if(rand()%999 == 0) health = clamp(health + 0.5f, 0.0f, maxHealth);
 

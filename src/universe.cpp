@@ -361,15 +361,15 @@ void universe::update(float dt)
 
     //Set squad variables
     //Get the average position for each squad.
-    for(auto &s : m_squads) s.m_centerPoint = {0.0f, 0.0f};
+    for(auto &s : m_squads) {s.m_centerPoint = {0.0f, 0.0f}; s.m_averageVel = {0.0f, 0.0f};}
     for(auto &e : enemies)
     {
         //std::cout << e.getSquadID() << std::endl;
-        if(e.getSquadID() >= 0) m_squads[e.getSquadID()].m_centerPoint += e.getPos();
+        if(e.getSquadID() >= 0) {m_squads[e.getSquadID()].m_centerPoint += e.getPos(); m_squads[e.getSquadID()].m_averageVel += e.getVel();}
     }
     for(auto &s : m_squads)
     {
-        if(s.m_size > 0) s.m_centerPoint /= s.m_size;
+        if(s.m_size > 0) {s.m_centerPoint /= s.m_size; s.m_averageVel /= s.m_size;}
     }
 
     //Update live enemies.
@@ -485,6 +485,7 @@ void universe::update(float dt)
         {
             e.setTarget(nullptr);
             e.setTPos( m_squads[e.getSquadID()].m_centerPoint );
+            e.setTVel( m_squads[e.getSquadID()].m_averageVel );
             e.setGoal(GOAL_CONGREGATE);
         }
 
@@ -496,7 +497,7 @@ void universe::update(float dt)
     //Ship spawning functions.
     if(!GAME_OVER)
     {
-        if(rand() % 35000 <= DIFFICULTY * gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
+        if(rand() % 1024 <= DIFFICULTY * gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
         {
             int reps = clamp(rand() % (DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
             ai_team pteam;

@@ -1,5 +1,5 @@
-/*#ifndef RENDERER_HPP
-#define RENDERER_HPP
+#ifndef RENDERER_OPENGL_HPP
+#define RENDERER_OPENGL_HPP
 
 #include <string>
 #include <unordered_map>
@@ -26,7 +26,7 @@
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
 
-class renderer
+class renderer_ngl
 {
   //The window we'll be rendering to
   SDL_Window * m_window = NULL;
@@ -38,44 +38,49 @@ class renderer
   ngl::Mat4 m_project;
   ngl::Transformation m_transform;
   ngl::ShaderLib * shader;
+  SDL_GLContext m_gl_context;
   void loadMatricesToShader();
 public:
-  renderer(int,int);
-  ~renderer();
+  renderer_ngl(int,int);
+  ~renderer_ngl();
 
   int init();
-  /*void loadTextures();
+  void drawBackground();
+  void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
+  void swapWindow() const { SDL_GL_SwapWindow(m_window); }
 
-  void loadFontSpriteSheet(std::string name, std::string path, int size);
-  void loadSpriteSheet();
-  void loadTexture(std::string _key, std::string _path, SDL_BlendMode _b);
-  void loadTextureSet(std::string _key, std::string _set);
+  void loadTextures() {return;}
 
-  void setBlendMode (SDL_BlendMode _b) {SDL_SetRenderDrawBlendMode(m_renderer, _b);}
-  void clear();
-  void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod);
-  void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col);
-  void drawText(std::string text, std::string font, vec2 pos);
-  void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col );
-  void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col);
-  void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol);
-  void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire);
-  void drawCircle(int x, int y, int radius, std::array<float, 4> _col);
-  void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col);
-  void drawText(std::string text);
+  void loadFontSpriteSheet(std::string name, std::string path, int size) {return;}
+  void loadSpriteSheet() {return;}
+  void loadTexture(std::string _key, std::string _path, SDL_BlendMode _b) {return;}
+  void loadTextureSet(std::string _key, std::string _set) {return;}
 
-  void queryTexture(std::string identifier, int index, int * w, int * h);
-  float getTextureRadius(std::string _identifier);
+  void setBlendMode (SDL_BlendMode _b) {return;}
+  void clear() {return;}
+  void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod) {return;}
+  void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col) {return;}
+  void drawText(std::string text, std::string font, vec2 pos) {return;}
+  void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col ) {return;}
+  void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col) {return;}
+  void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol) {return;}
+  void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire) {return;}
+  void drawCircle(int x, int y, int radius, std::array<float, 4> _col) {return;}
+  void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col) {return;}
+  void drawText(std::string text) {return;}
+
+  void queryTexture(std::string identifier, int index, int * w, int * h) {return;}
+  float getTextureRadius(std::string _identifier) {return 0.0f;}
 
   //UI drawing
-  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
-  void statusBars(player * ply);
-  void drawWeaponStats(player * ply);
+  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp) {return;}
+  void statusBars(player * ply) {return;}
+  void drawWeaponStats(player * ply) {return;}
 
-  void finalise();
+  void finalise() {swapWindow();}
 
   SDL_Surface * getSurface(std::string path);
 };
 
 #endif
-*/
+

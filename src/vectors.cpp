@@ -346,12 +346,12 @@ float angle(vec2 vec)
 
 float deg(float ang)
 {
-    return ang * ( 180 / PI );
+    return ang * ( 180 / V_PI );
 }
 
 float rad(float ang)
 {
-    return ang * ( PI / 180 );
+    return ang * ( V_PI / 180 );
 }
 
 vec2 vec(float ang)
@@ -470,10 +470,10 @@ vec3 vec(ang3 ang)
 
 ang3 deg(ang3 ang)
 {
-    return ang * ( 180 / PI );
+    return ang * ( 180 / V_PI );
 }
 
 ang3 rad(ang3 ang)
 {
-    return ang * ( PI / 180 );
+    return ang * ( V_PI / 180 );
 }

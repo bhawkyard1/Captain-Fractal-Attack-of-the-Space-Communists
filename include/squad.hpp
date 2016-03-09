@@ -12,6 +12,7 @@ struct squad
     ai_team m_team;
     ai_goal m_squadGoal;
     vec2 m_centerPoint;
+    vec2 m_averageVel;
     float m_regroupDist = 2000.0f;
     float m_strength;
 };

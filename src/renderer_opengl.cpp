@@ -1,4 +1,4 @@
-/*#include "SDL.h"
+#include "SDL.h"
 
 #include <string>
 #include "renderer_opengl.hpp"
@@ -8,7 +8,7 @@
 #include "laser.hpp"
 #include "missile.hpp"
 
-renderer::renderer(int _w, int _h)
+renderer_ngl::renderer_ngl(int _w, int _h)
 {
     init();
 
@@ -35,14 +35,37 @@ renderer::renderer(int _w, int _h)
     m_gl_context = SDL_GL_CreateContext(m_window);
 
     //loadTextures();
+
+    m_project = ngl::perspective(45.0f,
+                                 float(_w / _h),
+                                 0.2f,
+                                 20.0f
+                                 );
+
+    shader = ngl::ShaderLib::instance();
+
+    shader->createShaderProgram("background");
+    shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
+    shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
+    shader->loadShaderSource("backgroundVertex", "shaders/backgroundVertex.glsl");
+    shader->loadShaderSource("backgroundFragment", "shaders/backgroundFragment.glsl");
+
+    shader->compileShader("backgroundVertex");
+    shader->compileShader("backgroundFragment");
+
+    shader->attachShaderToProgram("diffuse", "backgroundVertex");
+    shader->attachShaderToProgram("diffuse", "backgroundFragment");
+
+    shader->linkProgramObject("background");
+    shader->use("background");
 }
 
-renderer::~renderer()
+renderer_ngl::~renderer_ngl()
 {
     SDL_DestroyWindow( m_window );
 }
 
-int renderer::init()
+int renderer_ngl::init()
 {
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -52,6 +75,12 @@ int renderer::init()
     }
     return 1;
 }
+
+void renderer_ngl::drawBackground()
+{
+
+}
+
 /*
 void renderer::loadTextures()
 {
@@ -542,12 +571,12 @@ void renderer::drawWeaponStats(player * ply)
     float rate = 1.0f / ws[8];
     rateText += std::to_string( static_cast<int>( rate ) );
     drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
-}
+}*/
 
-void renderer::loadMatricesToShader()
+void renderer_ngl::loadMatricesToShader()
 {
   ngl::ShaderLib * shader = ngl::ShaderLib::instance();
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
   shader->setRegisteredUniform("MVP", MVP);
 }
-*/
+

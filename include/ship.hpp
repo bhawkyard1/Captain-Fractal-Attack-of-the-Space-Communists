@@ -74,7 +74,7 @@ public:
   std::array<float, 10> getWeap() {return m_weapons[curWeap];}
   int getCurWeap() {return curWeap;}
   bool isFiring() {return shooting;}
-  void setFiring(bool v) {shooting = v;}
+  void setFiring(bool v) {shooting = v; if(v) damageTimer = 3.0f;}
 
   void setMaxHealth(float h, bool match) {maxHealth = h; if(match) health = h;}
   void setMaxShield(float s, bool match) {maxShield = s; if(match) shield = s;}
