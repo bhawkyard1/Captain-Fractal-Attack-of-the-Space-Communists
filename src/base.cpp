@@ -1,15 +1,14 @@
 #include "base.hpp"
 #include "common.hpp"
 
-void base::updatePos(float dt)
+void base::updatePos(const float _dt)
 {
-	prevPos = pos; 
-	pos += (vel + wvel) * PIXEL_UNIT_CONVERSION * dt;
+    m_prevPos = m_pos;
+    m_pos += (m_vel + m_wvel) * g_PIXEL_UNIT_CONVERSION * _dt;
 }
 
-vec2 base::getInterpolatedPosition(float dt)
+vec2 base::getInterpolatedPosition(const float _dt)
 {
-  vec2 p = dt * getPos() + (1 - dt) * getPPos();
-
+  vec2 p = _dt * getPos() + (1 - _dt) * getPPos();
   return p;
 }

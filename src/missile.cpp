@@ -12,17 +12,17 @@ missile::missile(vec2 p, float _r): ship(p, ION_MISSILE_MKI, _r)
 
 void missile::steering()
 {
-  if(target != nullptr)
+  if(m_target != nullptr)
   {
-    vec2 tPos = target->getPos();
+    vec2 m_tPos = m_target->getPos();
 
-    float dist = mag(tPos - getPos());
+    float dist = mag(m_tPos - getPos());
 
-    float cSpd = mag(getVel() - target->getVel());
+    float cSpd = mag(getVel() - m_target->getVel());
 
     float frames = dist/cSpd;
 
-    vec2 tPPos = target->getPos() + target->getVel() * frames;
+    vec2 tPPos = m_target->getPos() + m_target->getVel() * frames;
     float tPPDist = mag(tPPos - getPos());
 
     float vecMul = dotProd1(unit(getVel()),computeVector(getTAng() + 90));
@@ -34,14 +34,14 @@ void missile::steering()
 
     float angleMul = (shortestAngle(getAng(), getTAng())+90)/90.0;
 
-    setTAng(clampRoll(computeAngle(getPos() - tPos),-180.0f,180.0f));
+    setTAng(clampRoll(computeAngle(getPos() - m_tPos),-180.0f,180.0f));
 
     if(fabs(shortestAngle(getAng(), getTAng())) <= 2.0f)
     {
       accelerate(accelMul*angleMul);
     }
 
-    if(magns(getPos() - target->getPos()) < 50*50*cSpd)
+    if(magns(getPos() - m_target->getPos()) < 50*50*cSpd)
     {
       det = true;
     }

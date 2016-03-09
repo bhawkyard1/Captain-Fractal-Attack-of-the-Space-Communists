@@ -3,7 +3,7 @@
 #include "ui/interface.hpp"
 #include <iostream>
 
-std::array< std::string, 10> roman_nums = {"I","II","III","IV","V","VI","VII","IX","X"};
+std::array< std::string, 10> g_ROMAN_NUMS = {"I","II","III","IV","V","VI","VII","IX","X"};
 
 interface::interface()
 {

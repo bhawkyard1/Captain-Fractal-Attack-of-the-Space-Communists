@@ -15,10 +15,10 @@ stardust::stardust(float alph)
 	col[3] = alph;
 }
 
-void stardust::updatePos(float dt)
+void stardust::updatePos(float _dt)
 {
 	setPPos(getPos()); 
-	setPos(getPos() + (getVel()+getWVel())* z);
+    setPos(getPos() + (getVel()+getWVel()) * z * g_PIXEL_UNIT_CONVERSION * _dt);
 }
 
 void stardust::gen(bool regen, float colp[])
@@ -51,7 +51,7 @@ void stardust::gen(bool regen, float colp[])
 	if(regen == false)
 	{
 		setVel( {randFloat(-0.1f, 0.1f), randFloat(-0.1f, 0.1f)} );
-		setPos({randFloat(-WIN_WIDTH / 2.0f, WIN_WIDTH / 2.0f), randFloat(-WIN_HEIGHT / 2.0f, WIN_HEIGHT / 2.0f)});
+        setPos({randFloat(-g_WIN_WIDTH / 2.0f, g_WIN_WIDTH / 2.0f), randFloat(-g_WIN_HEIGHT / 2.0f, g_WIN_HEIGHT / 2.0f)});
 		setPPos(getPos());
 	}
 	else
@@ -62,34 +62,34 @@ void stardust::gen(bool regen, float colp[])
 		if(side == 0)
 		{
 			//TOP
-			vec = randVec({-HALFWIN.x - 100.0f, -HALFWIN.y - 200.0f}, {HALFWIN.x + 100.0f, -HALFWIN.y});
-			vec *= BG_DENSITY;
+            vec = randVec({-g_HALFWIN.x - 100.0f, -g_HALFWIN.y - 200.0f}, {g_HALFWIN.x + 100.0f, -g_HALFWIN.y});
+            vec *= g_BG_DENSITY;
 			setPos(vec);
 			setPPos(getPos());
 		}
 		else if(side == 1)
 		{
 			//RIGHT
-			vec = randVec({HALFWIN.x, -HALFWIN.y - 100.0f}, {HALFWIN.x + 200.0f, HALFWIN.y + 100.0f});			
-			vec *= BG_DENSITY;
-			vec.x += WIN_WIDTH;
+            vec = randVec({g_HALFWIN.x, -g_HALFWIN.y - 100.0f}, {g_HALFWIN.x + 200.0f, g_HALFWIN.y + 100.0f});
+            vec *= g_BG_DENSITY;
+            vec.x += g_WIN_WIDTH;
 			setPos(vec);
 			setPPos(getPos());
 		}
 		else if(side == 2)
 		{
 			//BOTTOM
-			vec = randVec({-HALFWIN.x - 100.0f, HALFWIN.y}, {HALFWIN.x + 100.0f, HALFWIN.y + 200.0f});
-			vec *= BG_DENSITY;
-			vec.y += WIN_HEIGHT;
+            vec = randVec({-g_HALFWIN.x - 100.0f, g_HALFWIN.y}, {g_HALFWIN.x + 100.0f, g_HALFWIN.y + 200.0f});
+            vec *= g_BG_DENSITY;
+            vec.y += g_WIN_HEIGHT;
 			setPos(vec);
 			setPPos(getPos());
 		}
 		else if(side == 3)
 		{
 			//LEFT
-			vec = randVec({-HALFWIN.x - 200.0f, -HALFWIN.y - 100.0f}, {-HALFWIN.x, HALFWIN.y + 100.0f});
-			vec *= BG_DENSITY;
+            vec = randVec({-g_HALFWIN.x - 200.0f, -g_HALFWIN.y - 100.0f}, {-g_HALFWIN.x, g_HALFWIN.y + 100.0f});
+            vec *= g_BG_DENSITY;
 			setPos(vec);
 			setPPos(getPos());
 		}

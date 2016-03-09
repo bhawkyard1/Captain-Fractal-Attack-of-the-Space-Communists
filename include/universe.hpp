@@ -13,6 +13,7 @@
 #include "renderer.hpp"
 #include "ui/interface.hpp"
 #include "squad.hpp"
+#include "faction.hpp"
 
 struct col_partition
 {
@@ -36,6 +37,7 @@ class universe
     std::vector<ship> asteroids;
     std::vector<stardust_sprite> passive_sprites;
     std::vector<squad> m_squads;
+    std::vector<faction> m_factions;
 
     std::vector<int> m_factionCounts;
     std::vector<int> m_factionMaxCounts;
@@ -56,10 +58,10 @@ public:
     void initUI();
     player * getPly() {return &ply;}
     void setVel(vec2 v) {vel = v;}
-    void addShot(vec2 p, vec2 v, float ang, std::array<float, WEAPS_W> weap, ai_team team);
-    void addMissile(vec2 p, vec2 v, float angle, ai_team _team);
-    void spawnShip(ai_team t);
-    void spawnShip(ai_team t, vec2 p);
+    void addShot(vec2 p, vec2 v, float ang, std::array<float, WEAPS_W> weap, aiTeam team);
+    void addMissile(vec2 p, vec2 v, float angle, aiTeam _team);
+    void spawnShip(aiTeam t);
+    void spawnShip(aiTeam t, vec2 p);
     void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++;}
     void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
     void addBuild(vec2,ship_spec);
@@ -77,7 +79,7 @@ public:
     std::vector<laser>* getShots() {return &shots;}
     std::vector<missile>* getMissiles() {return &missiles;}
     std::vector<ship>* getAsteroids() {return &asteroids;}
-    ship * closestEnemy(vec2 p, ai_team t);
+    ship * closestEnemy(vec2 p, aiTeam t);
     void setScore(int _s) {score = _s; m_ui.update(score);}
     void addScore(int _s) {score += _s; m_ui.update(score);}
     int getScore() {return score;}
@@ -89,12 +91,12 @@ public:
     void setMaxWingmanCount(int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
     int getMaxMinerCount() {return m_factionMaxCounts[TEAM_PLAYER_MINER];}
     void setMaxMinerCount(int m) {m_factionMaxCounts[TEAM_PLAYER_MINER] = m;}
-    bool atMaxCount(ai_team _t) {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
+    bool atMaxCount(aiTeam _t) {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
 
     void reload(bool);
     void loadShips();
 
-    void pause() {paused = !paused;}
+    void pause() {paused = !paused; if(!paused) g_TIME_SCALE = 1;}
     bool isPaused() {return paused;}
 
     interface * getUI() {return &m_ui;}
@@ -107,6 +109,8 @@ public:
     void addToSquad(enemy * _e, squad * _s) {_e->setSquadID(_s->m_id); _s->m_size++;}
     void removeFromSquad(enemy * _e, squad * _s) {_e->setSquadID(-1); _s->m_size--;}
     //ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
+    void createFactions();
+    std::vector<faction> * getFactions() {return &m_factions;}
 };
 
 #endif

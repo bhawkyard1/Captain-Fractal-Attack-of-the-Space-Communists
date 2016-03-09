@@ -17,6 +17,7 @@
 #include "ship.hpp"
 #include "laser.hpp"
 #include "player.hpp"
+#include "faction.hpp"
 
 class renderer
 {
@@ -47,14 +48,14 @@ public:
   void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol);
   void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire);
   void drawCircle(int x, int y, int radius, std::array<float, 4> _col);
-  void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col);
+  void drawCircleUI(int x, int y, int radius, std::array<int, 4> _col);
   void drawText(std::string text);
 
   void queryTexture(std::string identifier, int index, int * w, int * h);
   float getTextureRadius(std::string _identifier);
 
   //UI drawing
-  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
+  void drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::vector<ship> * ap, std::vector<laser> * lp, std::vector<faction> * fp);
   void statusBars(player * ply);
   void drawWeaponStats(player * ply);
 

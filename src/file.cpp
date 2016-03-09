@@ -6,7 +6,7 @@
 
 void saveGame(universe * uni)
 {
-    std::ofstream save(RESOURCE_LOC + "save.txt");
+    std::ofstream save(g_RESOURCE_LOC + "save.txt");
 
     save 	<< "score " << uni->getScore() << std::endl
             << "mec " << uni->getMaxEnemyCount() << std::endl
@@ -17,7 +17,7 @@ void saveGame(universe * uni)
                      << uni->getPly()->getHealth() << ","
                      << uni->getPly()->getShield() << ","
                      << uni->getPly()->getEnergy() << std::endl
-            << "d " << DIFFICULTY << std::endl
+            << "d " << g_DIFFICULTY << std::endl
             << "u ";
 
     for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
@@ -95,9 +95,8 @@ void readVectorEnemy(std::string str, universe * u)
         health = std::stof(stat[0]);
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
-        std::cout << "LOADING " << health << ", " << energy << ", " << shield << std::endl;
 
-        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team));
+        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<aiTeam>(team));
         temp.setPos({pos.x,pos.y});
 
         temp.setAng(ang);
@@ -152,7 +151,7 @@ void readVectorAsteroid(std::string str, universe * u)
 
 void loadGame(universe * uni)
 {
-    std::ifstream save(RESOURCE_LOC + "save.txt");
+    std::ifstream save(g_RESOURCE_LOC + "save.txt");
     std::string cur;
 
     while(getline( save, cur ))
@@ -168,14 +167,16 @@ void loadGame(universe * uni)
             else if(strings.at(i) == "mwc") uni->setMaxWingmanCount( stoi(strings.at(i+1), nullptr, 10) );
             else if(strings.at(i) == "mmc") uni->setMaxMinerCount( stoi(strings.at(i+1), nullptr, 10) );
             else if(strings.at(i) == "nm") uni->getPly()->setMissiles( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings.at(i) == "d") DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+            else if(strings.at(i) == "d") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
             else if(strings.at(i) == "u")
             {
                 for(int j = 0; j < UPGRADES_LEN; ++j)
                 {
                     int lvl = stoi(strings.at(i + j + 1), nullptr, 10);
+                    std::cout << "READING, LEVEL IS " << lvl << std::endl;
                     uni->getPly()->setGrade(j, lvl);
-                    //setUpgradeTextures(lvl, j);
+                    uni->upgradeSetLabels(1, j, uni->getPly()->getUpgrade(j));
+                    std::cout << "PLAYER UPGRADE " << j << ", " << uni->getPly()->getUpgrade(j) << std::endl;
                 }
             }
             else if(strings.at(i) == "ps")

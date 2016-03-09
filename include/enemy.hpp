@@ -4,42 +4,43 @@
 #include "ship.hpp"
 #include "vectors.hpp"
 
-enum ai_goal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION};
-enum ai_team{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_PIRATES, NEUTRAL, NONE};
+enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION};
+enum aiTeam{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_PIRATES, NEUTRAL, NONE};
 
 class enemy: public ship
 {
-  vec2 tPos, tVel;
-  ai_goal m_squadGoal;
-  ai_goal curGoal;
-  ship * target;
-  float stopDist, confidence;
-  ai_team team;
-  int squadID;
+  vec2 m_tPos, m_tVel;
+  aiGoal m_squadGoal;
+  aiGoal m_curGoal;
+  ship * m_target;
+  float m_stopDist;
+  float m_confidence;
+  aiTeam m_team;
+  int m_squadID;
 public:
-  enemy(vec2, vec2, ship_spec, ai_team);
+  enemy(const vec2 _p, const vec2 _v, const ship_spec _type, const aiTeam _team);
 
-  void setGoal(ai_goal g) {curGoal = g;}
-  ai_goal getGoal() {return curGoal;}
+  void setGoal(aiGoal g) {m_curGoal = g;}
+  aiGoal getGoal() {return m_curGoal;}
 
   void behvrUpdate();
   void steering();
 
-  ai_team getTeam() {return team;}
-  void setTeam(ai_team t) {team = t;}
+  aiTeam getTeam() const {return m_team;}
+  void setTeam(const aiTeam _t) {m_team = _t;}
 
-  ship * getTarget() {return target;}
-  void setTarget(ship * t) {target = t;}
+  ship * getTarget() const {return m_target;}
+  void setTarget(ship * _t) {m_target = _t;}
 
-  float getConfidence() {return confidence;}
-  void setConfidence(float c) {confidence = c;}
-  void decrConfidence(float d) {confidence -= d;}
+  float getConfidence() {return m_confidence;}
+  void setConfidence(float c) {m_confidence = c;}
+  void decrConfidence(float d) {m_confidence -= d;}
 
-  int getSquadID() {return squadID;}
-  void setSquadID(int _id) {squadID = _id;}
+  int getSquadID() const {return m_squadID;}
+  void setSquadID(int _id) {m_squadID = _id;}
 
-  void setTPos(vec2 _tPos) {tPos = _tPos;}
-  void setTVel(vec2 _tVel) {tVel = _tVel;}
+  void setTPos(vec2 _tPos) {m_tPos = _tPos;}
+  void setTVel(vec2 _tVel) {m_tVel = _tVel;}
 };
 
 #endif

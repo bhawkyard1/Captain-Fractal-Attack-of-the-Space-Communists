@@ -4,24 +4,27 @@
 #include "vectors.hpp"
 class base
 {
-	vec2 prevPos, pos, vel, wvel;
+    vec2 m_prevPos;
+    vec2 m_pos;
+    vec2 m_vel;
+    vec2 m_wvel;
 public:
-	void setPos(vec2 val) {pos = val;}
-    vec2 getPos() const {return pos;}
-	
-	vec2 getPPos() {return prevPos;}
-	void setPPos(vec2 p) {prevPos = p;}
-	
-	void setVel(vec2 v) {vel = v;}
-	void setWVel(vec2 wv) {wvel = wv;}
-	void addVel(vec2 v) {vel += v;}
-	
-    vec2 getVel() const {return vel;}
-	vec2 getWVel() {return wvel;}
-	
-	void updatePos(float dt);
+    void setPos(const vec2 _val) {m_pos = _val;}
+    vec2 getPos() const {return m_pos;}
 
-  vec2 getInterpolatedPosition(float dt);
+    vec2 getPPos() const {return m_prevPos;}
+    void setPPos(const vec2 _p) {m_prevPos = _p;}
+
+    void setVel(const vec2 _v) {m_vel = _v;}
+    void setWVel(const vec2 _wv) {m_wvel = _wv;}
+    void addVel(const vec2 _v) {m_vel += _v;}
+
+    vec2 getVel() const {return m_vel;}
+    vec2 getWVel() const {return m_wvel;}
+
+    void updatePos(float _dt);
+
+    vec2 getInterpolatedPosition(const float _dt);
 };
 
 #endif

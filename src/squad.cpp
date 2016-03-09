@@ -2,7 +2,7 @@
 #include "squad.hpp"
 #include "util.hpp"
 
-squad createSquad(ai_team _t)
+squad createSquad(aiTeam _t)
 {
     squad r;
     r.m_team = _t;

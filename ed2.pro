@@ -1,4 +1,4 @@
-TARGET = SDLOpenGL
+m_target = SDLOpenGL
 
 OBJECTS_DIR = obj
 

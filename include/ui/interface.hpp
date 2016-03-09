@@ -6,7 +6,7 @@
 #include "vectors.hpp"
 #include "selection.hpp"
 
-extern std::array< std::string, 10> roman_nums;
+extern std::array< std::string, 10> g_ROMAN_NUMS;
 
 struct selectionReturn
 {

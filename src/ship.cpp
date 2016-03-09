@@ -50,6 +50,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(30.0f,true);
         setMaxEnergy(100.0f,true);
         inertia = 0.1f;
+        enginePower = 4.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
         curWeap = 0;
         break;
@@ -59,6 +60,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(60.0f,true);
         setMaxEnergy(100.0f,true);
         inertia = 0.09f;
+        enginePower = 5.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
         curWeap = 0;
         break;
@@ -68,6 +70,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(90.0f,true);
         setMaxEnergy(150.0f,true);
         inertia = 0.08f;
+        enginePower = 6.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
         curWeap = 0;
         break;
@@ -77,6 +80,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(120.0f,true);
         setMaxEnergy(200.0f,true);
         inertia = 0.15f;
+        enginePower = 7.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
         curWeap = 0;
         break;
@@ -86,6 +90,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(200.0f,true);
         setMaxEnergy(500.0f,true);
         inertia = 0.02f;
+        enginePower = 8.0f;
         m_weapons.push_back( weapons[rand() % 2 + 7] );
         curWeap = 0;
         break;
@@ -95,6 +100,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(40.0f,true);
         setMaxEnergy(90.0f,true);
         inertia = 0.15f;
+        enginePower = 4.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
         curWeap = 0;
         break;
@@ -104,6 +110,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(60.0f,true);
         setMaxEnergy(100.0f,true);
         inertia = 0.1f;
+        enginePower = 5.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
         curWeap = 0;
         break;
@@ -113,6 +120,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(70.0f,true);
         setMaxEnergy(120.0f,true);
         inertia = 0.05f;
+        enginePower = 6.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
         curWeap = 0;
         break;
@@ -122,6 +130,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(120.0f,true);
         setMaxEnergy(120.0f,true);
         inertia = 0.15f;
+        enginePower = 7.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
         curWeap = 0;
         break;
@@ -131,6 +140,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(120.0f,true);
         setMaxEnergy(150.0f,true);
         inertia = 0.05f;
+        enginePower = 8.0f;
         m_weapons.push_back( weapons[17] );
         curWeap = 0;
         break;
@@ -140,6 +150,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(100.0f,true);
         setMaxEnergy(100.0f,true);
         inertia = 0.07f;
+        enginePower = 5.0f;
         m_weapons.push_back( weapons[0] );
         m_weapons.push_back( weapons[1] );
         m_weapons.push_back( weapons[2] );
@@ -150,7 +161,8 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxHealth(100.0f,true);
         setMaxShield(100.0f,true);
         setMaxEnergy(100.0f,true);
-        inertia = 0.07f;
+        inertia = 0.2f;
+        enginePower = 4.0f;
         m_weapons.push_back( weapons[rand() % 3 + 9] );
         curWeap = 0;
         break;
@@ -159,7 +171,8 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxHealth(125.0f,true);
         setMaxShield(125.0f,true);
         setMaxEnergy(125.0f,true);
-        inertia = 0.07f;
+        inertia = 0.1f;
+        enginePower = 8.0f;
         m_weapons.push_back( weapons[rand() % 3 + 9] );
         curWeap = 0;
         break;
@@ -169,6 +182,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(150.0f,true);
         setMaxEnergy(150.0f,true);
         inertia = 0.07f;
+        enginePower = 10.0f;
         m_weapons.push_back( weapons[rand() % 3 + 9] );
         curWeap = 0;
         break;
@@ -177,13 +191,15 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxHealth(10.0f,true);
         setMaxShield(20.0f,true);
         setMaxEnergy(200.0f,true);
-        inertia = 0.07f;
+        inertia = 0.3f;
+        enginePower = 2.0f;
         m_weapons.push_back( weapons[12] );
         curWeap = 0;
         break;
     case ION_MISSILE_MKI:
         m_identifier = "ION_MISSILE_MKI";
         inertia = 0.1f;
+        enginePower = 6.0f;
         canShoot = false;
         break;
     case ASTEROID_SMALL:
@@ -193,6 +209,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxEnergy(0.0f,true);
         angVel = randFloat(-1.0f, 1.0f);
         inertia = 0.0f;
+        enginePower = 0.0f;
         canMove = false;
         canShoot = false;
         break;
@@ -203,6 +220,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxEnergy(0.0f,true);
         angVel = randFloat(-1.0f, 1.0f);
         inertia = 0.0f;
+        enginePower = 0.0f;
         canMove = false;
         canShoot = false;
         break;
@@ -213,6 +231,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxEnergy(0.0f,true);
         angVel = randFloat(-1.0f, 1.0f);
         inertia = 0.0f;
+        enginePower = 0.0f;
         canMove = false;
         canShoot = false;
         break;
@@ -222,6 +241,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
         inertia = 0.1f;
+        enginePower = 0.0f;
         m_weapons.push_back( weapons[13] );
         curWeap = 0;
         canMove = false;
@@ -233,6 +253,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxEnergy(100000.0f,true);
         angVel = randFloat(-0.1f, 0.1f);
         inertia = 0.0f;
+        enginePower = 0.0f;
         canMove = false;
         canShoot = false;
         break;
@@ -243,6 +264,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxEnergy(50000.0f,true);
         angVel = randFloat(-0.1f, 0.1f);
         inertia = 0.0f;
+        enginePower = 0.0f;
         canMove = false;
         canShoot = false;
         break;
@@ -253,6 +275,7 @@ ship::ship(vec2 p, ship_spec ptype, float _radius)
         setMaxEnergy(80000.0f,true);
         angVel = randFloat(-0.1f, 0.1f);
         inertia = 0.0f;
+        enginePower = 0.0f;
         canMove = false;
         canShoot = false;
         break;
@@ -297,6 +320,7 @@ ship::ship(ship &src, vec2 p)
     setMaxEnergy( src.getMaxEnergy(), true );
 
     inertia = src.getInertia();
+    enginePower = src.getEnginePower();
     angVel = src.getAngVel();
 
     m_identifier = src.getIdentifier();
@@ -393,7 +417,7 @@ void ship::accelerate(float _mult)
     }
 
     if(energy <= energyLoss) return;
-    vec2 add = vec(getAng() + 90.0f) * accelMult;
+    vec2 add = vec(getAng() + 90.0f) * accelMult * inertia * enginePower;
     addVel(add * _mult);
     energy -= energyLoss;
     engineGlow = clamp(engineGlow + 10.0f * accelMult,0.0f,255.0f);
@@ -417,7 +441,7 @@ void ship::accelerate(vec2 _dir, float _mult)
     }
 
     if(energy <= energyLoss) return;
-    addVel(_dir * _mult);
+    addVel(_dir * _mult * inertia * enginePower);
     energy -= energyLoss;
     engineGlow = clamp(engineGlow + 10.0f * accelMult,0.0f,255.0f);
 
@@ -441,23 +465,24 @@ void ship::dodge(float side)
 
     if(energy <= energyLoss) return;
     vec2 vec = computeVector(getAng());
-    addVel(vec*side*accelMult);
+    addVel(vec*side*accelMult*inertia*enginePower);
     energy -= energyLoss * fabs(side);
 }
 
 void ship::update(float dt)
 {
     float angDiff = clampRoll(targetAngle - angle, -180.0f, 180.0f);
+    float turnConst = 0.2f;
 
     if(angVel != 0.0f) setAng( clampRoll( angle + angVel, -180.0f, 180.0f ) );
     else if(angDiff < -1.0f)
     {
-        setAng(clampRoll(angle+clamp(angDiff * inertia, -9999.0f, -1.0f) * dt * PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        setAng(clampRoll(angle+clamp(angDiff * inertia * enginePower * turnConst, -9999.0f, -1.0f) * dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
         steeringGlow = clamp(steeringGlow + 20.0f, 0.0f, 255.0f);
     }
     else if(angDiff > 1.0f)
     {
-        setAng(clampRoll(angle + clamp(angDiff * inertia, 1.0f, 9999.0f) * dt * PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        setAng(clampRoll(angle + clamp(angDiff * inertia * enginePower * turnConst, 1.0f, 9999.0f) * dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
         steeringGlow = clamp(steeringGlow + 20.0f, 0.0f, 255.0f);
     }
 
@@ -558,7 +583,7 @@ int ship::upgrade(int i)
         generatorMul *= 1.2f;
         break;
     case 3:
-        inertia *= 1.2f;
+        enginePower *= 1.2f;
         break;
     case 4:
         missiles++;
@@ -566,7 +591,6 @@ int ship::upgrade(int i)
     case 5:
         break;
     }
-
     return upgrades[i];
 }
 

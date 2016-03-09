@@ -7,36 +7,37 @@
 
 class button
 {
-  bool selected = false;
-  std::array<int, 8> col;
-  std::array<int, 8> tcol;
+  bool m_selected = false;
+  std::array<int, 8> m_col;
+  std::array<int, 8> m_tcol;
   std::string m_initLabel;
   std::string m_label;
   int m_initCost;
-  int cost;
-  bool dark;
-  vec2 m_pos, m_dim;
+  int m_cost;
+  bool m_dark;
+  vec2 m_pos;
+  vec2 m_dim;
 public:
   button(std::string,std::array<int, 8>,std::array<int, 8>,vec2,vec2);
   button(std::string,std::array<int, 8>,std::array<int, 8>,vec2,vec2,int);
   void select();
-  bool isSelected() {return selected;}
+  bool isSelected() {return m_selected;}
   void updateText(std::string);
-  void set(bool s) {selected = s;}
-  bool on() {return selected;}
+  void set(bool s) {m_selected = s;}
+  bool on() {return m_selected;}
   void update(int _s);
 
-  int getCost() {return cost;}
-  void setCost(int pcost) {cost = pcost;}
+  int getCost() {return m_cost;}
+  void setCost(int pcost) {m_cost = pcost;}
 
-  void setDark(bool b) {dark = b;}
-  bool isDark() {return dark;}
+  void setDark(bool b) {m_dark = b;}
+  bool isDark() {return m_dark;}
 
   vec2 getPos() {return m_pos;}
   vec2 getDim() {return m_dim;}
 
-  std::array<int, 8> getCol() {return col;}
-  std::array<int, 8> getTCol() {return tcol;}
+  std::array<int, 8> getCol() {return m_col;}
+  std::array<int, 8> getTCol() {return m_tcol;}
 
   std::string getLabel() {return m_label;}
 

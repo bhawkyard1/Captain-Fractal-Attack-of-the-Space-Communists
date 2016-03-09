@@ -6,16 +6,16 @@
 
 class missile: public ship
 {
-    ai_team m_team;
-	ship * target;
+    aiTeam m_team;
+    ship * m_target;
 	bool det;
 public:
     missile(vec2 p, float _r);
-	void setTarget(ship * s) {target = s;}
-	ship * getTarget() {return target;}
+    void setTarget(ship * s) {m_target = s;}
+    ship * getTarget() {return m_target;}
 	void steering();
 	bool detonate() {return det;}
-    ai_team getTeam() {return m_team;}
+    aiTeam getTeam() {return m_team;}
 };
 
 #endif

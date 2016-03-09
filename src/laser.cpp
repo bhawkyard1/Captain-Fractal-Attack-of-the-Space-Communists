@@ -1,6 +1,6 @@
 #include "laser.hpp"
 
-laser::laser(vec2 p, vec2 v, float pAng, std::array<float, WEAPS_W> pData, ai_team pTeam)
+laser::laser(vec2 p, vec2 v, float pAng, std::array<float, WEAPS_W> pData, aiTeam pTeam)
 {
 	float temp_angle = pAng + randFloat(-pData[1],pData[1]);//rand()%(2*pData[1])-pData[1];
 	vec2 vAdd = computeVector(temp_angle);

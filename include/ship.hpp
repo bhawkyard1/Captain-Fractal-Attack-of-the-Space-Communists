@@ -34,7 +34,7 @@ class ship: public base
 {
   int targetAngle, curWeap, missiles;
   float angVel;
-  float inertia, health, maxHealth, shield, maxShield, angle, energy, maxEnergy, coolDown, radius, damageTimer;
+  float inertia, enginePower, health, maxHealth, shield, maxShield, angle, energy, maxEnergy, coolDown, radius, damageTimer;
   std::string m_identifier;
 
   std::vector< std::array<float, 10> > m_weapons;
@@ -56,7 +56,7 @@ public:
   ship(ship&, vec2);
   ship(ship_spec);
 
-  void addVelS(vec2 v) {if(canMove) addVel(v);}
+  void addVelS(vec2 v) {if(canMove) addVel(v*inertia*enginePower);}
   void accelerate(float mult);
   void accelerate(vec2 _dir, float _mult);
   void dodge(float side);
@@ -110,6 +110,9 @@ public:
 
   void setInertia(float in) {inertia = in;}
   float getInertia() {return inertia;}
+
+  void setEnginePower(float _val) {enginePower = _val;}
+  float getEnginePower() {return enginePower;}
 
   ship_spec getClassification() const {return classification;}
 

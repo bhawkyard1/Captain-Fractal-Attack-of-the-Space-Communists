@@ -14,19 +14,19 @@
 //void loadTextures();
 void loadConfig();
 
-extern std::string RESOURCE_LOC;
+extern std::string g_RESOURCE_LOC;
 
 extern double g_GLOBAL_TIME;
 
 std::vector<std::string> split(std::string, char);
 
-extern int WIN_POS_X, WIN_POS_Y, WIN_HEIGHT, WIN_WIDTH, BACKGROUND_DOTS, DIFFICULTY;
-extern vec2 HALFWIN;
-extern float MAX_DIM;
+extern int g_WIN_POS_X, g_WIN_POS_Y, g_WIN_HEIGHT, g_WIN_WIDTH, g_BACKGROUND_DOTS, g_DIFFICULTY;
+extern vec2 g_HALFWIN;
+extern float g_MAX_DIM;
 
-extern bool DEV_MODE, GAME_OVER;
+extern bool g_DEV_MODE, g_GAME_OVER;
 
-extern float TARG_ZOOM_LEVEL, ZOOM_LEVEL, PIXEL_UNIT_CONVERSION, TIME_SCALE;
-extern float BG_DENSITY;
+extern float g_TARG_ZOOM_LEVEL, g_ZOOM_LEVEL, g_PIXEL_UNIT_CONVERSION, g_TIME_SCALE;
+extern float g_BG_DENSITY;
 
 #endif

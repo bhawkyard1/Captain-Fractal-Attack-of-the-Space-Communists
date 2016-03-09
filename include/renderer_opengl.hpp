@@ -1,7 +1,7 @@
 #ifndef RENDERER_OPENGL_HPP
 #define RENDERER_OPENGL_HPP
 
-#include <string>
+/*#include <string>
 #include <unordered_map>
 
 #include <vector>
@@ -81,6 +81,6 @@ public:
 
   SDL_Surface * getSurface(std::string path);
 };
-
+*/
 #endif
 

@@ -1,17 +1,13 @@
 #ifndef FACTION_HPP
 #define FACTION_HPP
 
+#include <array>
 #include "squad.hpp"
 #include <vector>
 
-class faction
+struct faction
 {
-    std::vector<squad> squads;
-    std::vector<int> relationships;
-    float strength, aggression;
-public:
-    faction();
-    void update(float dt);
+    std::array<int, 4> m_colour;
 };
 
 #endif

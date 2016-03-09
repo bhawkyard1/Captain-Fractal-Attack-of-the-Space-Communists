@@ -3,14 +3,4 @@
 
 #include "faction.hpp"
 
-faction::faction()
-{
-	
-}
-
-void faction::update(float dt)
-{
-	
-}
-
 #endif

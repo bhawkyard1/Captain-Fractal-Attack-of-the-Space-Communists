@@ -29,13 +29,13 @@ void loadSound(std::string _path, int _len)
 
 void loadSounds()
 {
-  loadSound(RESOURCE_LOC + "sfx/red_laser_", 3);
-  loadSound(RESOURCE_LOC + "sfx/green_laser_", 3);
-  loadSound(RESOURCE_LOC + "sfx/blue_laser_", 3);
-  loadSound(RESOURCE_LOC + "sfx/explosion_", 3);
-  loadSound(RESOURCE_LOC + "sfx/ricochet_", 1);
-  loadSound(RESOURCE_LOC + "sfx/save_", 1);
-  loadSound(RESOURCE_LOC + "sfx/place_", 4);
+  loadSound(g_RESOURCE_LOC + "sfx/red_laser_", 3);
+  loadSound(g_RESOURCE_LOC + "sfx/green_laser_", 3);
+  loadSound(g_RESOURCE_LOC + "sfx/blue_laser_", 3);
+  loadSound(g_RESOURCE_LOC + "sfx/explosion_", 3);
+  loadSound(g_RESOURCE_LOC + "sfx/ricochet_", 1);
+  loadSound(g_RESOURCE_LOC + "sfx/save_", 1);
+  loadSound(g_RESOURCE_LOC + "sfx/place_", 4);
 }
 
 void playSnd(sound _snd)

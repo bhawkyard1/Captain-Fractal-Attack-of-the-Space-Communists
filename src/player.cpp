@@ -3,8 +3,8 @@
 void player::ctrlUpdate()
 {
 	vec2 p = getPos();
-	p *= ZOOM_LEVEL;
-	p += HALFWIN;
+    p *= g_ZOOM_LEVEL;
+    p += g_HALFWIN;
 	vec2 v = getVel();
 	setPos({v.x, v.y});
 	setPPos({v.x, v.y});

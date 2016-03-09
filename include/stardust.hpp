@@ -12,7 +12,7 @@ public:
 	stardust(float);
 	void gen(bool regen, float * colp);
 	
-	void updatePos(float dt);
+    void updatePos(float _dt);
 	
 	void setZ(float pz) {z = pz;}
 	float getZ() {return z;}

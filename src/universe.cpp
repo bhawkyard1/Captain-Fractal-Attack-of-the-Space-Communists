@@ -4,9 +4,9 @@
 #include "shapes.hpp"
 #include "common.hpp"
 
-bool emnityCheck(ai_team a, ai_team b);
+bool emnityCheck(aiTeam a, aiTeam b);
 
-universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
+universe::universe(): m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
     ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
 {	
     setVel({0,0});
@@ -16,8 +16,8 @@ universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
 
     m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
 
-    ply.setPos({WIN_WIDTH/2.0f,WIN_HEIGHT/2.0f});
-    ply.setPPos({WIN_WIDTH/2.0f,WIN_HEIGHT/2.0f});
+    ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
+    ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
 
     tColP[0] = 40.0f;
     tColP[1] = 90.0f;
@@ -27,12 +27,12 @@ universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
     cColP[1] = 90.0f;
     cColP[2] = 100.0f;
 
-    for(int i = 0; i < BACKGROUND_DOTS; i++)
+    for(int i = 0; i < g_BACKGROUND_DOTS; i++)
     {
         dots.push_back(stardust(cColP));
     }
 
-    for(int i = 0; i < BACKGROUND_DOTS; i++)
+    for(int i = 0; i < g_BACKGROUND_DOTS; i++)
     {
         std::string id;
         switch(rand()%4)
@@ -59,17 +59,19 @@ universe::universe(): m_drawer(WIN_WIDTH, WIN_HEIGHT),
         sparkles.push_back(stardust_sprite(id, cColP, w, h));
     }
     initUI();
-    if(DEV_MODE) setScore(100000);
+    if(g_DEV_MODE) setScore(100000);
     else setScore(0);
 
     paused = false;
     m_mouse_state = -1;
+
+    createFactions();
     loadShips();
     //for(int i = 0; i < 3; ++i) spawnShip(TEAM_PLAYER_MINER);
     //addStation();
 }
 
-void universe::addShot(vec2 p, vec2 v, float angle, std::array<float, WEAPS_W> weap, ai_team team)
+void universe::addShot(vec2 p, vec2 v, float angle, std::array<float, WEAPS_W> weap, aiTeam team)
 {
     int temp_angle = angle + 90;
     for(int i = 0; i < weap[0]; ++i)
@@ -80,7 +82,7 @@ void universe::addShot(vec2 p, vec2 v, float angle, std::array<float, WEAPS_W> w
     }
 }
 
-void universe::addMissile(vec2 p, vec2 v, float angle, ai_team _team)
+void universe::addMissile(vec2 p, vec2 v, float angle, aiTeam _team)
 {
     missile m(p, m_drawer.getTextureRadius("ION_MISSILE_MKI"));
     m.setVel(v + computeVector(angle + 90) * 5);
@@ -89,10 +91,10 @@ void universe::addMissile(vec2 p, vec2 v, float angle, ai_team _team)
 
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx,&my);
-    mx -= HALFWIN.x;
-    my -= HALFWIN.y;
+    mx -= g_HALFWIN.x;
+    my -= g_HALFWIN.y;
 
-    m.setTarget(closestEnemy({ (static_cast<float>(mx) - HALFWIN.x) / ZOOM_LEVEL, (static_cast<float>(my) - HALFWIN.y) / ZOOM_LEVEL}, _team));
+    m.setTarget(closestEnemy({ (static_cast<float>(mx) - g_HALFWIN.x) / g_ZOOM_LEVEL, (static_cast<float>(my) - g_HALFWIN.y) / g_ZOOM_LEVEL}, _team));
 
     missiles.push_back(m);
 }
@@ -120,7 +122,7 @@ void universe::update(float dt)
         tColP[2] = ( p2 / total ) * 250.0f;
     }
 
-    if(rand()%10000 == 0) BG_DENSITY = randFloat(1.0f,10.0f);
+    if(rand()%10000 == 0) g_BG_DENSITY = randFloat(1.0f,10.0f);
     if(rand()%10000 == 0) gameplay_intensity = randFloat(0.0f, 2.2f);
 
     ply.ctrlUpdate();
@@ -137,7 +139,7 @@ void universe::update(float dt)
         ply.setCooldown( ply.getCurWeapStat(COOLDOWN) );
     }
 
-    if(!DEV_MODE and ply.getHealth() <= 0.0f and !GAME_OVER)
+    if(!g_DEV_MODE and ply.getHealth() <= 0.0f and !g_GAME_OVER)
     {
         for(int p = 0; p < rand()%5 + 10; ++p)
         {
@@ -150,14 +152,14 @@ void universe::update(float dt)
         ply.setMaxShield(0, true);
         playSnd(EXPLOSION_SND);
 
-        GAME_OVER = true;
+        g_GAME_OVER = true;
     }
 
     for(auto &i : dots)
     {
         i.setWVel(vel);
         i.updatePos(dt);
-        if(isOffScreen(i.getPos(), clamp(MAX_DIM * BG_DENSITY / ZOOM_LEVEL, MAX_DIM, F_INF)))
+        if(isOffScreen(i.getPos(), clamp(g_MAX_DIM * g_BG_DENSITY / g_ZOOM_LEVEL, g_MAX_DIM, F_INF)))
         {
             i.gen(true, cColP);
         }
@@ -173,7 +175,7 @@ void universe::update(float dt)
         int h = 0;
         m_drawer.queryTexture(temp, 0, &w, &h);
 
-        if(isOffScreen(i.getPos(), clamp((MAX_DIM + std::max(w, h)) * BG_DENSITY * i.getZ() / ZOOM_LEVEL, (MAX_DIM + std::max(w, h)), F_INF )))
+        if(isOffScreen(i.getPos(), clamp((g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * i.getZ() / g_ZOOM_LEVEL, (g_MAX_DIM + std::max(w, h)), F_INF )))
         {
             i.spriteGen(cColP, w, h);
         }
@@ -349,7 +351,7 @@ void universe::update(float dt)
                     addpfx(pos, enemies.at(i).getVel(), vel, rand()%20 + 50, rand()%30 + 2);
                 }
                 addScore( enemies.at(i).getScore() );
-                if( rand() % 8 <= DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += DIFFICULTY + 1;
+                if( rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
                 playSnd(EXPLOSION_SND);
             }
             if(emnityCheck(enemies.at(i).getTeam(), TEAM_PLAYER)) m_factionCounts[GALACTIC_FEDERATION]--;
@@ -423,7 +425,7 @@ void universe::update(float dt)
             //Spawn wingman.
             if(rand() % 2048 == 0 and m_factionCounts[TEAM_PLAYER] < 20) spawnShip(TEAM_PLAYER, p);
         }
-        else if(e.getCanShoot()) //Default target acquisition
+        else if(e.getCanShoot()) //Default m_target acquisition
         {
             //Get closest enemy.
             for(auto &k : enemies)
@@ -456,13 +458,13 @@ void universe::update(float dt)
         }
         else if(e.getCanMove() and !emnityCheck( e.getTeam(), TEAM_PLAYER ) and ( nd > fd * fd or e.getTarget() == nullptr ) and !e.inCombat())
         {
-            //If the agent is non-hostile AND not in combat AND it either has no target, OR it is too far away, is follows the player.
+            //If the agent is non-hostile AND not in combat AND it either has no m_target, OR it is too far away, is follows the player.
             e.setTarget( (player*)&ply );
             e.setGoal( GOAL_CONGREGATE );
         }
         else if( e.getTarget() == nullptr )
         {
-            //If the agent has no target, it becomes idle.
+            //If the agent has no m_target, it becomes idle.
             e.setGoal( GOAL_IDLE );
         }
 
@@ -489,19 +491,19 @@ void universe::update(float dt)
             e.setGoal(GOAL_CONGREGATE);
         }
 
-        //Update behaviour, steer towards target.
+        //Update behaviour, steer towards m_target.
         e.behvrUpdate();
         e.steering();
     }
 
     //Ship spawning functions.
-    if(!GAME_OVER)
+    if(!g_GAME_OVER)
     {
-        if(rand() % 1024 <= DIFFICULTY * gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
+        if(rand() % 1024 <= g_DIFFICULTY * gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
         {
-            int reps = clamp(rand() % (DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
-            ai_team pteam;
-            if(rand() % 100 < 70) pteam = SPOOKY_SPACE_PIRATES;
+            int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
+            aiTeam pteam;
+            if(rand() % 100 < 55) pteam = SPOOKY_SPACE_PIRATES;
             else pteam = GALACTIC_FEDERATION;
             for(int i = 0; i < reps; i++)
             {
@@ -555,7 +557,7 @@ void universe::update(float dt)
         int h = 0;
         m_drawer.queryTexture(temp, 0, &w, &h);
 
-        if(alph < 0.0f or isOffScreen(passive_sprites.at(i).getPos(), (MAX_DIM + std::max(w, h)) * BG_DENSITY * passive_sprites.at(i).getZ() / ZOOM_LEVEL) or passive_sprites.at(i).getDim() <= 0.0f)
+        if(alph < 0.0f or isOffScreen(passive_sprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * passive_sprites.at(i).getZ() / g_ZOOM_LEVEL) or passive_sprites.at(i).getDim() <= 0.0f)
         {
             swapnpop(&passive_sprites, i);
             continue;
@@ -674,7 +676,7 @@ void universe::draw(float dt)
     }
     m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
 
-    /*if(DEV_MODE)
+    /*if(g_DEV_MODE)
     {
         for(auto i = partitions.rects.begin(); i != partitions.rects.end(); ++i)
         {
@@ -686,8 +688,8 @@ void universe::draw(float dt)
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
     vec2 dpos = {static_cast<float>(mx), static_cast<float>(my)};
-    dpos -= HALFWIN;
-    dpos /= ZOOM_LEVEL;
+    dpos -= g_HALFWIN;
+    dpos /= g_ZOOM_LEVEL;
 
     switch(m_mouse_state)
     {
@@ -719,7 +721,7 @@ void universe::drawUI()
     m_drawer.drawText("SCORE: " + std::to_string( score ),"pix",{260, 2});
     m_drawer.drawText("MISSILES: " + std::to_string( ply.getMissiles() ),"pix",{260, 20});
 
-    m_drawer.drawMap(&missiles, &enemies, &asteroids, &shots);
+    m_drawer.drawMap(&missiles, &enemies, &asteroids, &shots, &m_factions);
     m_drawer.statusBars(&ply);
     m_drawer.drawWeaponStats(&ply);
 
@@ -830,7 +832,7 @@ void universe::checkCollisions()
         {
             vec2 sp = partitions.lasers.at(p).at(l)->getPos();
             vec2 sv = partitions.lasers.at(p).at(l)->getVel();
-            vec2 spv = sp + sv;
+            vec2 spv = sp + sv * 1.5;
             float stop = partitions.lasers.at(p).at(l)->getStop();
 
             vec2 ep;
@@ -987,7 +989,7 @@ void universe::addpfx(vec2 p, vec2 v, vec2 wv, int no, float f)
     particles.push_back(pf);
 }
 
-ship * universe::closestEnemy(vec2 p, ai_team t)
+ship * universe::closestEnemy(vec2 p, aiTeam t)
 {
     float best_dist = F_MAX;
     ship * r = nullptr;
@@ -1022,7 +1024,7 @@ void universe::addParticleSprite(vec2 p, vec2 v, float m, std::string tex)
     passive_sprites.push_back(sm);
 }
 
-void universe::spawnShip(ai_team t)
+void universe::spawnShip(aiTeam t)
 {	
     int side = rand()%4;
     vec2 pass;
@@ -1035,7 +1037,7 @@ void universe::spawnShip(ai_team t)
     spawnShip(t, pass);
 }
 
-void universe::spawnShip(ai_team t, vec2 p)
+void universe::spawnShip(aiTeam t, vec2 p)
 {	
     int prob = rand()%100;
 
@@ -1102,7 +1104,7 @@ void universe::spawnShip(ai_team t, vec2 p)
     enemies.push_back(newShip);
 }
 
-bool emnityCheck(ai_team a, ai_team b)
+bool emnityCheck(aiTeam a, aiTeam b)
 {
     if(	(a == b) or
             (a == NEUTRAL or b == NEUTRAL) or
@@ -1195,70 +1197,70 @@ void universe::initUI()
     //Add buttons to the energy menu.
     std::array<int, 8> arr1 = {20,20,20,200,100,100,100,255};
     std::array<int, 8> arr2 = {100,100,100,200,250,250,250,255};
-    button energy_menu_neutral("BALANCED",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.35f},{128.0f,64.0f});
+    button energy_menu_neutral("BALANCED",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.35f},{128.0f,64.0f});
     energy_menu_neutral.set(true);
     energy_menu.add(energy_menu_neutral);
 
     arr1 = {12,24,26,200,27,95,232,255};
     arr2 = {45,67,188,200,119,156,238,255};
-    button energy_menu_shields("SHIELDS",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.45f},{128.0f,64.0f});
+    button energy_menu_shields("SHIELDS",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.45f},{128.0f,64.0f});
     energy_menu.add(energy_menu_shields);
 
     arr1 = {14,35,20,200,36,204,52,255};
     arr2 = {65,127,64,200,129,241,127,255};
-    button energy_menu_engines("ENGINES",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.55f},{128.0f,64.0f});
+    button energy_menu_engines("ENGINES",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.55f},{128.0f,64.0f});
     energy_menu.add(energy_menu_engines);
 
     arr1 = {35,23,23,200,232,31,31,255};
     arr2 = {124,33,33,200,217,116,116,255};
-    button energy_menu_guns("GUNS",arr1,arr2,{WIN_WIDTH * 0.9f, WIN_HEIGHT * 0.65f},{128.0f,64.0f});
+    button energy_menu_guns("GUNS",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.65f},{128.0f,64.0f});
     energy_menu.add(energy_menu_guns);
 
     //Add buttons to the upgrades menu.
     float w = 150.0f, h = 50.0f;
     arr1 = {100,50,50,200,250,200,200,255};
     arr2 = {100,50,50,200,250,200,200,255};
-    button upgrades_lasers("LASERS I (4)",arr1,arr2,{WIN_WIDTH * 0.0f, WIN_HEIGHT * 0.85f},{w,h},4);
+    button upgrades_lasers("LASERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.0f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_lasers);
 
     arr1 = {50,50,100,200,200,200,250,255};
     arr2 = {50,50,100,200,200,200,250,255};
-    button upgrades_shields("SHIELDS I (4)",arr1,arr2,{WIN_WIDTH * 0.15f, WIN_HEIGHT * 0.85f},{w,h},4);
+    button upgrades_shields("SHIELDS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.15f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_shields);
 
     arr1 = {50,100,50,200,200,250,200,255};
     arr2 = {50,100,50,200,200,250,200,255};
-    button upgrades_generators("GENERATORS I (4)",arr1,arr2,{WIN_WIDTH * 0.3f, WIN_HEIGHT * 0.85f},{w,h},4);
+    button upgrades_generators("GENERATORS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.3f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_generators);
 
     arr1 = {50,50,80,200,200,200,220,255};
     arr2 = {50,50,80,200,200,200,220,255};
-    button upgrades_thrusters("THRUSTERS I (4)",arr1,arr2,{WIN_WIDTH * 0.45f, WIN_HEIGHT * 0.85f},{w,h},4);
+    button upgrades_thrusters("THRUSTERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.45f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_thrusters);
 
     arr1 = {255,210,0,200,255,253,100,255};
     arr2 = {255,210,0,200,255,253,100,255};
-    button upgrades_missiles("MISSILE (4)",arr1,arr2,{WIN_WIDTH * 0.6f, WIN_HEIGHT * 0.85f},{w,h},4);
+    button upgrades_missiles("MISSILE (4)",arr1,arr2,{g_WIN_WIDTH * 0.6f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_missiles);
 
     arr1 = {100,210,255,200,180,220,255,255};
     arr2 = {100,210,255,200,180,220,255,255};
-    button upgrades_miner("MINER (16)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.85f},{w,h},16);
+    button upgrades_miner("MINER (16)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.85f},{w,h},16);
     upgrades_menu.add(upgrades_miner);
 
-    button upgrades_wingman("WINGMAN (32)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.79f},{w,h},32);
+    button upgrades_wingman("WINGMAN (32)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.79f},{w,h},32);
     upgrades_menu.add(upgrades_wingman);
 
-    button upgrades_turret("TURRET (32)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.73f},{w,h},32);
+    button upgrades_turret("TURRET (32)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.73f},{w,h},32);
     upgrades_menu.add(upgrades_turret);
 
-    button upgrades_gravwell("GRAVWELL (512)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.67f},{w,h},512);
+    button upgrades_gravwell("GRAVWELL (512)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.67f},{w,h},512);
     upgrades_menu.add(upgrades_gravwell);
 
-    button upgrades_barracks("BARRACKS (1024)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.61f},{w,h},1024);
+    button upgrades_barracks("BARRACKS (1024)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.61f},{w,h},1024);
     upgrades_menu.add(upgrades_barracks);
 
-    button upgrades_station("STATION (1024)",arr1,arr2,{WIN_WIDTH * 0.75f, WIN_HEIGHT * 0.55f},{w,h},1024);
+    button upgrades_station("STATION (1024)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.55f},{w,h},1024);
     upgrades_menu.add(upgrades_station);
 
     m_ui.add(energy_menu);
@@ -1317,7 +1319,7 @@ void universe::upgradeSetLabels(int _sel, int _btn, int _plvl)
         break;
     }
 
-    s1 += roman_nums.at(lvl);
+    s1 += g_ROMAN_NUMS.at(lvl);
 
     if(lvl < 8)
     {
@@ -1328,6 +1330,7 @@ void universe::upgradeSetLabels(int _sel, int _btn, int _plvl)
         s1 += ")";
     }
     if(lvl < 9) selectedButton->updateText(s1);
+    std::cout << "UPDATING... " << s1 << std::endl;
 }
 
 //This function loads all the ships in the game into a vector that we can copy from later.
@@ -1339,4 +1342,31 @@ void universe::loadShips()
         g_ship_templates.push_back(insert);
     }
     std::cout << "No of ship types: " << g_ship_templates.size() << std::endl;
+}
+
+void universe::createFactions()
+{
+    faction player;
+    player.m_colour = {0, 255, 0};
+    m_factions.push_back(player);
+
+    faction player_miner;
+    player_miner.m_colour = {0, 255, 0};
+    m_factions.push_back(player_miner);
+
+    faction galactic_fed;
+    galactic_fed.m_colour = {165, 14, 226};
+    m_factions.push_back(galactic_fed);
+
+    faction spooky_pirates;
+    spooky_pirates.m_colour = {240, 211, 10};
+    m_factions.push_back(spooky_pirates);
+
+    faction neutral;
+    neutral.m_colour = {200, 200, 200};
+    m_factions.push_back(neutral);
+
+    faction none;
+    none.m_colour = {0, 0, 0};
+    m_factions.push_back(none);
 }

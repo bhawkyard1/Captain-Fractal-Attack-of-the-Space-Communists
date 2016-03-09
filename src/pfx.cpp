@@ -35,7 +35,7 @@ pfx::pfx(vec2 p, vec2 v, vec2 wv, size_t no, float force, std::string _identifie
 
 void pfx::update(float dt)
 {
-	pos += (vel + wvel) * PIXEL_UNIT_CONVERSION * dt;
+    pos += (vel + wvel) * g_PIXEL_UNIT_CONVERSION * dt;
 		
 	bool done = true;
 	

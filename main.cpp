@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
       }
 
       //Ignore if the player is dead.
-      if(GAME_OVER) break;
+      if(g_GAME_OVER) break;
 
       //Input events.
       switch( incomingEvent.type )
@@ -118,17 +118,17 @@ int main(int argc, char* argv[])
     //Update the game in small time-steps (dependant on the timers fps).
     while(clock.getAcc() > clock.getFrame())
     {
-      uni.update(clock.getDiff() * TIME_SCALE);
+      uni.update(clock.getDiff() * g_TIME_SCALE);
       clock.incrAcc( -clock.getDiff() );
     }
 
     //Update the zoom level.
-    ZOOM_LEVEL += (TARG_ZOOM_LEVEL - ZOOM_LEVEL) * 0.125f;
+    g_ZOOM_LEVEL += (g_TARG_ZOOM_LEVEL - g_ZOOM_LEVEL) * 0.125f;
 
     //Draw the game.
     float diff_clamped = clock.getDiff();
     if(diff_clamped == 0.0f) diff_clamped = 0.01f;
-    uni.draw( clock.getAcc() / diff_clamped * TIME_SCALE );
+    uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
   }
   SDL_Quit();
 
@@ -218,8 +218,8 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
   if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
   vec2 pos = {static_cast<float>(mx), static_cast<float>(my)};
-  pos -= HALFWIN;
-  pos /= ZOOM_LEVEL;
+  pos -= g_HALFWIN;
+  pos /= g_ZOOM_LEVEL;
 
   switch(uni->getMouseState())
   {
@@ -281,9 +281,9 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     uni->setVel(-ply->getVel());
     break;
   case SDLK_ESCAPE:
-    if(!DEV_MODE) break;
+    if(!g_DEV_MODE) break;
     ply->setVel({0,0});
-    ply->setPos({WIN_WIDTH/2.0f,WIN_HEIGHT/2.0f});
+    ply->setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
     uni->setVel(-ply->getVel());
     break;
   case SDLK_EQUALS:
@@ -293,16 +293,16 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     ply->incrWeap(-1);
     break;
   case SDLK_p:
-    TARG_ZOOM_LEVEL = clamp(TARG_ZOOM_LEVEL + 0.1f, 0.1f, 2.0f);
+    g_TARG_ZOOM_LEVEL = clamp(g_TARG_ZOOM_LEVEL + 0.1f, 0.1f, 2.0f);
     break;
   case SDLK_o:
-    TARG_ZOOM_LEVEL = clamp(TARG_ZOOM_LEVEL - 0.1f, 0.1f, 2.0f);
+    g_TARG_ZOOM_LEVEL = clamp(g_TARG_ZOOM_LEVEL - 0.1f, 0.1f, 2.0f);
     break;
   case SDLK_LCTRL:
     *keymod = 1;
     break;
   case SDLK_g:
-    if(DEV_MODE) uni->addScore(100);
+    if(g_DEV_MODE) uni->addScore(100);
     break;
   case SDLK_n:
     if(*keymod == 1)
@@ -316,15 +316,19 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     {
       uni->reload(true);
       loadGame(uni);
-      for(int i = 0; i < UPGRADES_LEN; ++i)
-      {
-        uni->upgradeSetLabels(1, i, 0);
-      }
     }
     break;
   case SDLK_SPACE:
     uni->pause();
     break;
+  case SDLK_LEFTBRACKET:
+      g_TIME_SCALE = clamp(g_TIME_SCALE - 0.05f, 0.0f, 2.0f);
+      std::cout << "Timescale " << g_TIME_SCALE << std::endl;
+      break;
+  case SDLK_RIGHTBRACKET:
+      g_TIME_SCALE = clamp(g_TIME_SCALE + 0.05f, 0.0f, 2.0f);
+      std::cout << "Timescale " << g_TIME_SCALE << std::endl;
+      break;
   }
 }
 

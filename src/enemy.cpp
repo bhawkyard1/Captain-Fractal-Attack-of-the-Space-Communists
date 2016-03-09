@@ -1,47 +1,52 @@
 #include "enemy.hpp"
 
-enemy::enemy(vec2 p , vec2 v, ship_spec pType, ai_team t):
-    ship(pType)
+enemy::enemy(
+        const vec2 _p ,
+        const vec2 _v,
+        const ship_spec _type,
+        const aiTeam _team
+        ):
+        ship(_type)
 {	
-    curGoal = GOAL_IDLE;
-    setPos(p);
-    setVel(v);
-    stopDist = randFloat(200.0f,600.0f);
-    if(pType == PLAYER_MINER_DROID) stopDist = randFloat(20.0f, 60.0f);
-    target = nullptr;
-    curGoal = GOAL_IDLE;
-    team = t;
-    confidence = randFloat(5.0f, 20.0f);
-    squadID = -1;
+    m_curGoal = GOAL_IDLE;
+    setPos(_p);
+    setVel(_v);
+    m_stopDist = randFloat(200.0f,600.0f);
+    if(_type == PLAYER_MINER_DROID) m_stopDist = randFloat(20.0f, 60.0f);
+    m_target = nullptr;
+    m_curGoal = GOAL_IDLE;
+    m_team = _team;
+    m_confidence = randFloat(5.0f, 20.0f);
+    m_squadID = -1;
 }
 
 void enemy::behvrUpdate()
 {
-    if(target != nullptr)
+    if(m_target != nullptr)
     {
-        tPos = target->getPos();
-        tVel = target->getVel();
+        m_tPos = m_target->getPos();
+        m_tVel = m_target->getVel();
     }
 
-    if(curGoal == GOAL_FLEE)
+    if(m_curGoal == GOAL_FLEE)
     {
-        if(target != nullptr)
+        if(m_target != nullptr)
         {
-            tPos = getPos() + (getPos() - target->getPos()) * 100.0f;
-            tVel = {0.0f, 0.0f};
+            m_tPos = getPos() + (getPos() - m_target->getPos()) * 100.0f;
+            m_tVel = {0.0f, 0.0f};
         }
         else
         {
-            tPos = getPos();
-            tPos.y += 10000.0f;
-            tVel = {0.0f, 0.0f};
+            m_tPos = getPos();
+            m_tPos.y += 10000.0f;
+            m_tVel = {0.0f, 0.0f};
         }
     }
-    else if(curGoal == GOAL_IDLE)
+    else if(m_curGoal == GOAL_IDLE)
     {
-        tPos = {randFloat(-30000.0f, 30000.0f), randFloat(-30000.0f, 30000.0f)};
-        tVel = {0.0f, 0.0f};
-        curGoal = GOAL_IDLE;
+        m_tPos = {randFloat(-30000.0f, 30000.0f), randFloat(-30000.0f, 30000.0f)};
+        m_tVel = {0.0f, 0.0f};
+        m_curGoal = GOAL_IDLE;
     }
 }
 
@@ -49,26 +54,26 @@ void enemy::steering()
 {
     setFiring(false);
 
-    if(GAME_OVER or curGoal == GOAL_IDLE or curGoal == GOAL_SPACE_STATION) return;
+    if(g_GAME_OVER or m_curGoal == GOAL_IDLE or m_curGoal == GOAL_SPACE_STATION) return;
     vec2 p = getPos();
     vec2 v = getVel();
     vec2 uv = unit(v);
-    vec2 utv = unit(tPos - p);
+    vec2 utv = unit(m_tPos - p);
 
 
-    //This is the distance between the ship and its target position.
-    float dist = mag( p - tPos );
+    //This is the distance between the ship and its m_target position.
+    float dist = mag( p - m_tPos );
     float radius = 0.0f;
-    if(target != nullptr) radius = target->getRadius();
+    if(m_target != nullptr) radius = m_target->getRadius();
 
     if(dist < getRadius() and getCanMove()) accelerate(-1.0f);
 
     //This is the closing speed. Add player and ship vectors, find magnitude.
     //Initially I didn't know whether the vectors were converging or diverging.
-    //I solved it by multiplying by the dot of the ship and target vectors.
-    float cSpd = mag( v - tVel ) * dotProd1(utv, uv);
+    //I solved it by multiplying by the dot of the ship and m_target vectors.
+    float cSpd = mag( v - m_tVel ) * dotProd1(utv, uv);
 
-    //Whereas angleMul is all about the ships angle in relation to its target angle, this is about its vector in relation to its target angle.
+    //Whereas angleMul is all about the ships angle in relation to its m_target angle, this is about its vector in relation to its m_target angle.
     //ie where the ship is going vs where is should be going.
     float vecMul = dotProd1(uv, utv);
 
@@ -86,11 +91,11 @@ void enemy::steering()
 
     if(vecMul < 0.0f) stoppingDistance *= -1;
 
-    //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its target, their distance apart, and whether the ship is moving towards the target, or away.
-    float accelMul = clamp( (dist - stoppingDistance - stopDist - radius ) / 200,-1.0f, 0.5f);
+    //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
+    float accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 200,-1.0f, 0.5f);
 
-    //This varies between 1 (ship facing target) 0 (ship parallel to target) and -1 (ship facing away from target).
-    //It does this by taking the ship's angle and its target angle, and determining the angle between them.
+    //This varies between 1 (ship facing m_target) 0 (ship parallel to m_target) and -1 (ship facing away from m_target).
+    //It does this by taking the ship's angle and its m_target angle, and determining the angle between them.
     float angleMul = 1.0f;//(static_cast<float>(shortestAngle(getAng(), getTAng())) + 90.0f ) / 90.0f;
 
     //We need to compare the distance to the closing speed. If the two points are converging rapidly, the ship must slow down.
@@ -98,17 +103,17 @@ void enemy::steering()
     //Therefore, frames until collision: f = dist/cSpd
     //if dist - factorial(cSpd) < 0, ship will overshoot. > 0, is will undershoot, and = 0, it will arrive at the correct position.
 
-    //vec2 linePos = closest(tPos,unit(normal(v)),p);
+    //vec2 linePos = closest(m_tPos,unit(normal(v)),p);
 
-    //tPos -= unit(linePos - tPos) * cSpd * 3;
+    //m_tPos -= unit(linePos - m_tPos) * cSpd * 3;
 
-    //Angle the ship towards its target.
-    setTAng(clampRoll(computeAngle(p-tPos), -180.0f, 180.0f));
-    //If we are angled towards the target...
+    //Angle the ship towards its m_target.
+    setTAng(clampRoll(computeAngle(p-m_tPos), -180.0f, 180.0f));
+    //If we are angled towards the m_target...
 
-    float tvMul = dotProd1(tVel, v);
+    float tvMul = dotProd1(m_tVel, v);
     if( ( tvMul < 0.8f or tvMul > 1.2f )
-            and ( getEnergy() / getMaxEnergy() > 0.1f or curGoal == GOAL_CONGREGATE )
+            and ( getEnergy() / getMaxEnergy() > 0.1f or m_curGoal == GOAL_CONGREGATE )
             and getCanMove()
             )
     {
@@ -117,7 +122,7 @@ void enemy::steering()
 
     if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f
             and dist < 800.0f + radius
-            and ( curGoal == GOAL_ATTACK or curGoal == GOAL_TURRET )
+            and ( m_curGoal == GOAL_ATTACK or m_curGoal == GOAL_TURRET )
             and getEnergy() / getMaxEnergy() > 0.05f)
     {
         setFiring(true);
