@@ -96,9 +96,8 @@ void readVectorEnemy(std::string str, universe * u)
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
         std::cout << "LOADING " << health << ", " << energy << ", " << shield << std::endl;
-        float radius = std::stof(stats[5]);
 
-        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team), radius);
+        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<ai_team>(team));
         temp.setPos({pos.x,pos.y});
 
         temp.setAng(ang);

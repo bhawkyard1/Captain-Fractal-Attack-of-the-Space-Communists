@@ -1,5 +1,6 @@
 #include "shapes.hpp"
 #include <iostream>
+
 bool lineIntersectCircle(vec2 _start, vec2 _end, vec2 _pos, float _radius)
 {
   vec2 lineDir  = _end - _start;
@@ -15,7 +16,7 @@ bool pointOnLine(vec2 _start, vec2 _end, vec2 _point)
   vec2 startToPoint = _point - _start;
   vec2 startToEnd = _end - _start;
   float cp = crossProd(startToPoint, startToEnd);
-  return (fabs(cp) <= 0.0001f) and (abs(startToPoint.x) < abs(startToEnd.x));
+  return (fabs(cp) <= 0.01f) and (abs(startToPoint.x) <= abs(startToEnd.x));
 }
 
 bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim)

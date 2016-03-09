@@ -14,7 +14,7 @@ struct vec2
 	vec2 operator-=(vec2 rhs) { x -= rhs.x; y -= rhs.y; return *this; }
 	vec2& operator-=(float &rhs) { x -= rhs; y -= rhs; return *this; }
 	vec2& operator*=(float &rhs) { x *= rhs; y *= rhs; return *this; }
-	vec2& operator/=(float &rhs) { x /= rhs; y /= rhs; return *this; }
+    vec2& operator/=(float rhs) { x /= rhs; y /= rhs; return *this; }
 };
 
 vec2 operator +(const vec2 &lhs, const vec2 &rhs);

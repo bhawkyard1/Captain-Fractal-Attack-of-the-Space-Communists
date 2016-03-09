@@ -12,6 +12,7 @@
 #include "missile.hpp"
 #include "renderer.hpp"
 #include "ui/interface.hpp"
+#include "squad.hpp"
 
 struct col_partition
 {
@@ -34,12 +35,17 @@ class universe
     std::vector<missile> missiles;
     std::vector<ship> asteroids;
     std::vector<stardust_sprite> passive_sprites;
+    std::vector<squad> m_squads;
+
+    std::vector<int> m_factionCounts;
+    std::vector<int> m_factionMaxCounts;
+
     player ply;
     vec2 vel;
 
     col_partition partitions;
 
-    int score, max_enemies_count, max_wingmen_count, max_miner_count, enemy_count, wingmen_count, miner_count;
+    int score;
     float cColP[3];
     float tColP[3];
     float gameplay_intensity = 1;
@@ -54,8 +60,8 @@ public:
     void addMissile(vec2 p, vec2 v, float angle, ai_team _team);
     void spawnShip(ai_team t);
     void spawnShip(ai_team t, vec2 p);
-    void addWingman() {max_wingmen_count++;}
-    void addMiner() {max_miner_count++;}
+    void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++;}
+    void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
     void addBuild(vec2,ship_spec);
     void addBuild(ship_spec);
     void update(float);
@@ -77,12 +83,13 @@ public:
     int getScore() {return score;}
     int * getScorePt() {return &score;}
 
-    int getMaxEnemyCount() {return max_enemies_count;}
-    void setMaxEnemyCount(int m) {max_enemies_count = m;}
-    int getMaxWingmanCount() {return max_wingmen_count;}
-    void setMaxWingmanCount(int m) {max_wingmen_count = m;}
-    int getMaxMinerCount() {return max_miner_count;}
-    void setMaxMinerCount(int m) {max_miner_count = m;}
+    int getMaxEnemyCount() {return m_factionMaxCounts[GALACTIC_FEDERATION];}
+    void setMaxEnemyCount(int m) {m_factionMaxCounts[GALACTIC_FEDERATION] = m; m_factionMaxCounts[SPOOKY_SPACE_PIRATES] = m;}
+    int getMaxWingmanCount() {return m_factionMaxCounts[TEAM_PLAYER];}
+    void setMaxWingmanCount(int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
+    int getMaxMinerCount() {return m_factionMaxCounts[TEAM_PLAYER_MINER];}
+    void setMaxMinerCount(int m) {m_factionMaxCounts[TEAM_PLAYER_MINER] = m;}
+    bool atMaxCount(ai_team _t) {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
 
     void reload(bool);
     void loadShips();
@@ -97,6 +104,8 @@ public:
     void setMouseState(int _i) {m_mouse_state = _i;}
     int getMouseState() {return m_mouse_state;}
 
+    void addToSquad(enemy * _e, squad * _s) {_e->setSquadID(_s->m_id); _s->m_size++;}
+    void removeFromSquad(enemy * _e, squad * _s) {_e->setSquadID(-1); _s->m_size--;}
     //ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
 };
 

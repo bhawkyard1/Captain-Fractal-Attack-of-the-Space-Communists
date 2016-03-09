@@ -10,12 +10,14 @@ enum ai_team{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_P
 class enemy: public ship
 {
 	vec2 tPos, tVel;
+    ai_goal m_squadGoal;
 	ai_goal curGoal;
 	ship * target;
 	float stopDist, confidence;
 	ai_team team;
+    int squadID;
 public:
-    enemy(vec2, vec2, ship_spec, ai_team, float);
+    enemy(vec2, vec2, ship_spec, ai_team);
 	
 	void setGoal(ai_goal g) {curGoal = g;}
 	ai_goal getGoal() {return curGoal;}
@@ -32,6 +34,11 @@ public:
 	float getConfidence() {return confidence;}
 	void setConfidence(float c) {confidence = c;}
 	void decrConfidence(float d) {confidence -= d;}
+
+    int getSquadID() {return squadID;}
+    void setSquadID(int _id) {squadID = _id;}
+
+    void setTPos(vec2 _tPos) {tPos = _tPos;}
 };
 
 #endif

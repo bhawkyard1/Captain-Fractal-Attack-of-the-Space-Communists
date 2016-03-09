@@ -111,7 +111,7 @@ public:
   void setInertia(float in) {inertia = in;}
   float getInertia() {return inertia;}
 
-  ship_spec getClassification() {return classification;}
+  ship_spec getClassification() const {return classification;}
 
   float getRadius() {return radius;}
 

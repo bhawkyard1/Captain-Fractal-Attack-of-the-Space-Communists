@@ -1,26 +1,12 @@
 #include "squad.hpp"
 #include "util.hpp"
 
-squad::squad()
+squad createSquad(ai_team _t)
 {
-
-}
-
-void squad::populate(ai_team t, int n)
-{
-  size_t rn = randNum(2, n);
-  for(size_t i = 0; i < rn; ++i)
-  {
-
-  }
-}
-
-void squad::update(float dt)
-{
-  for(auto i = squaddies.begin(); i != squaddies.end(); ++i) i->update(dt);
-}
-
-void updateGoal()
-{
-
+    squad r;
+    r.m_team = _t;
+    r.m_regroupDist = randNum(500.0f, 3000.0f);
+    r.m_size = 0;
+    r.m_max_size = rand() % 5 + 20;
+    return r;
 }

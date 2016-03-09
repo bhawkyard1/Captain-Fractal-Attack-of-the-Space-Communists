@@ -1,4 +1,4 @@
-#include "SDL.h"
+/*#include "SDL.h"
 
 #include <string>
 #include "renderer_opengl.hpp"
@@ -542,7 +542,7 @@ void renderer::drawWeaponStats(player * ply)
     float rate = 1.0f / ws[8];
     rateText += std::to_string( static_cast<int>( rate ) );
     drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
-}*/
+}
 
 void renderer::loadMatricesToShader()
 {
@@ -550,3 +550,4 @@ void renderer::loadMatricesToShader()
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
   shader->setRegisteredUniform("MVP", MVP);
 }
+*/

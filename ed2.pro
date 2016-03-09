@@ -33,6 +33,8 @@ COMPILE_MODE_SDL {
         INCLUDEPATH += C:/SDL2/i686-w64-mingw32/include/SDL2
         LIBS += -L"C:/SDL2/i686-w64-mingw32/lib"
         LIBS += -lmingw32 -mwindows -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2main -lSDL2
+        SOURCES -= ./src/renderer_opengl.cpp
+        HEADERS -= ./include/renderer_opengl.hpp
     }
 }
 

@@ -1,4 +1,4 @@
-#ifndef RENDERER_HPP
+/*#ifndef RENDERER_HPP
 #define RENDERER_HPP
 
 #include <string>
@@ -32,8 +32,8 @@ class renderer
   SDL_Window * m_window = NULL;
   //SDL_Renderer * m_renderer = NULL;
   int m_w, m_h;
-  /*std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
-  std::unordered_map<std::string, sprite_sheet> m_letters;*/
+  std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
+  std::unordered_map<std::string, sprite_sheet> m_letters;
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
   ngl::Transformation m_transform;
@@ -74,7 +74,8 @@ public:
 
   void finalise();
 
-  SDL_Surface * getSurface(std::string path);*/
+  SDL_Surface * getSurface(std::string path);
 };
 
 #endif
+*/
