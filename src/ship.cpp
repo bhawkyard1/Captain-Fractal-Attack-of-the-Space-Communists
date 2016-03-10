@@ -15,382 +15,389 @@ std::vector<std::string> texture_keys = {
 
 std::vector<ship> g_ship_templates;
 
-std::string getTextureKey(ship_spec s) {return texture_keys[s];}
-ship_spec decrSpec(ship_spec s) {return static_cast<ship_spec>( static_cast<int>(s) - 1 );}
+std::string getTextureKey(ship_spec _s) {return texture_keys[_s];}
+ship_spec decrSpec(ship_spec _s) {return static_cast<ship_spec>( static_cast<int>(_s) - 1 );}
 
-ship::ship(vec2 p, ship_spec ptype, float _radius)
+ship::ship(
+        vec2 _p,
+        ship_spec _type,
+        float _radius
+        )
 {
-    coolDown = 0.0f;
-    shooting = false;
+    m_coolDown = 0.0f;
+    m_shooting = false;
 
-    setPos(p);
-    setPPos(p);
+    setPos(_p);
+    setPPos(_p);
 
     setVel({0.0f,0.0f});
     setWVel({0.0f,0.0f});
-    angle = 0.0f;
-    targetAngle = 0.0f;
+    m_angle = 0.0f;
+    m_targetAngle = 0.0f;
 
-    engineGlow = 0.0f;
-    steeringGlow = 0.0f;
-    shieldGlow = 0.0f;
-    drawShot = 0.0f;
-    angVel = 0.0f;
+    m_engineGlow = 0.0f;
+    m_steeringGlow = 0.0f;
+    m_shieldGlow = 0.0f;
+    m_drawShot = 0.0f;
+    m_angVel = 0.0f;
 
-    canMove = true;
-    canShoot = true;
+    m_canMove = true;
+    m_canShoot = true;
 
-    curWeap = 0;
+    m_curWeap = 0;
 
-    switch(ptype)
+    switch(_type)
     {
     case FEDERATION_MKI:
         m_identifier = "FEDERATION_MKI";
         setMaxHealth(50.0f,true);
         setMaxShield(30.0f,true);
         setMaxEnergy(100.0f,true);
-        inertia = 0.1f;
-        enginePower = 4.0f;
+        m_inertia = 0.1f;
+        m_enginePower = 4.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case FEDERATION_MKII:
         m_identifier = "FEDERATION_MKII";
         setMaxHealth(90.0f,true);
         setMaxShield(60.0f,true);
         setMaxEnergy(100.0f,true);
-        inertia = 0.09f;
-        enginePower = 5.0f;
+        m_inertia = 0.09f;
+        m_enginePower = 5.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case FEDERATION_MKIII:
         m_identifier = "FEDERATION_MKIII";
         setMaxHealth(120.0f,true);
         setMaxShield(90.0f,true);
         setMaxEnergy(150.0f,true);
-        inertia = 0.08f;
-        enginePower = 6.0f;
+        m_inertia = 0.08f;
+        m_enginePower = 6.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case FEDERATION_MKIV:
         m_identifier = "FEDERATION_MKIV";
         setMaxHealth(150.0f,true);
         setMaxShield(120.0f,true);
         setMaxEnergy(200.0f,true);
-        inertia = 0.15f;
-        enginePower = 7.0f;
+        m_inertia = 0.15f;
+        m_enginePower = 7.0f;
         m_weapons.push_back( weapons[rand() % 3 + 4] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case FEDERATION_GUNSHIP:
         m_identifier = "FEDERATION_GUNSHIP";
         setMaxHealth(500.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(500.0f,true);
-        inertia = 0.02f;
-        enginePower = 8.0f;
+        m_inertia = 0.02f;
+        m_enginePower = 8.0f;
         m_weapons.push_back( weapons[rand() % 2 + 7] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PIRATE_GNAT:
         m_identifier = "PIRATE_GNAT";
         setMaxHealth(80.0f,true);
         setMaxShield(40.0f,true);
         setMaxEnergy(90.0f,true);
-        inertia = 0.15f;
-        enginePower = 4.0f;
+        m_inertia = 0.15f;
+        m_enginePower = 4.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PIRATE_CRUISER:
         m_identifier = "PIRATE_CRUISER";
         setMaxHealth(100.0f,true);
         setMaxShield(60.0f,true);
         setMaxEnergy(100.0f,true);
-        inertia = 0.1f;
-        enginePower = 5.0f;
+        m_inertia = 0.1f;
+        m_enginePower = 5.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PIRATE_WRANGLER:
         m_identifier = "PIRATE_WRANGLER";
         setMaxHealth(140.0f,true);
         setMaxShield(70.0f,true);
         setMaxEnergy(120.0f,true);
-        inertia = 0.05f;
-        enginePower = 6.0f;
+        m_inertia = 0.05f;
+        m_enginePower = 6.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PIRATE_MARAUDER:
         m_identifier = "PIRATE_MARAUDER";
         setMaxHealth(120.0f,true);
         setMaxShield(120.0f,true);
         setMaxEnergy(120.0f,true);
-        inertia = 0.15f;
-        enginePower = 7.0f;
+        m_inertia = 0.15f;
+        m_enginePower = 7.0f;
         m_weapons.push_back( weapons[rand() % 3 + 14] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PIRATE_GUNSHIP:
         m_identifier = "PIRATE_GUNSHIP";
         setMaxHealth(200.0f,true);
         setMaxShield(120.0f,true);
         setMaxEnergy(150.0f,true);
-        inertia = 0.05f;
-        enginePower = 8.0f;
+        m_inertia = 0.05f;
+        m_enginePower = 8.0f;
         m_weapons.push_back( weapons[17] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PLAYER_SHIP:
         m_identifier = "PLAYER_SHIP";
         setMaxHealth(100.0f,true);
         setMaxShield(100.0f,true);
         setMaxEnergy(100.0f,true);
-        inertia = 0.07f;
-        enginePower = 5.0f;
+        m_inertia = 0.07f;
+        m_enginePower = 5.0f;
         m_weapons.push_back( weapons[0] );
         m_weapons.push_back( weapons[1] );
         m_weapons.push_back( weapons[2] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PLAYER_HUNTER:
         m_identifier = "PLAYER_HUNTER";
         setMaxHealth(100.0f,true);
         setMaxShield(100.0f,true);
         setMaxEnergy(100.0f,true);
-        inertia = 0.2f;
-        enginePower = 4.0f;
+        m_inertia = 0.2f;
+        m_enginePower = 4.0f;
         m_weapons.push_back( weapons[rand() % 3 + 9] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PLAYER_DEFENDER:
         m_identifier = "PLAYER_DEFENDER";
         setMaxHealth(125.0f,true);
         setMaxShield(125.0f,true);
         setMaxEnergy(125.0f,true);
-        inertia = 0.1f;
-        enginePower = 8.0f;
+        m_inertia = 0.1f;
+        m_enginePower = 8.0f;
         m_weapons.push_back( weapons[rand() % 3 + 9] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PLAYER_DESTROYER:
         m_identifier = "PLAYER_DESTROYER";
         setMaxHealth(150.0f,true);
         setMaxShield(150.0f,true);
         setMaxEnergy(150.0f,true);
-        inertia = 0.07f;
-        enginePower = 10.0f;
+        m_inertia = 0.07f;
+        m_enginePower = 10.0f;
         m_weapons.push_back( weapons[rand() % 3 + 9] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PLAYER_MINER_DROID:
         m_identifier = "PLAYER_MINER_DROID";
         setMaxHealth(10.0f,true);
         setMaxShield(20.0f,true);
         setMaxEnergy(200.0f,true);
-        inertia = 0.3f;
-        enginePower = 2.0f;
+        m_inertia = 0.3f;
+        m_enginePower = 2.0f;
         m_weapons.push_back( weapons[12] );
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case ION_MISSILE_MKI:
         m_identifier = "ION_MISSILE_MKI";
-        inertia = 0.1f;
-        enginePower = 6.0f;
-        canShoot = false;
+        m_inertia = 0.1f;
+        m_enginePower = 6.0f;
+        m_canShoot = false;
         break;
     case ASTEROID_SMALL:
         m_identifier = "ASTEROID_SMALL";
         setMaxHealth(500.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        angVel = randFloat(-1.0f, 1.0f);
-        inertia = 0.0f;
-        enginePower = 0.0f;
-        canMove = false;
-        canShoot = false;
+        m_angVel = randFloat(-1.0f, 1.0f);
+        m_inertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
         break;
     case ASTEROID_MID:
         m_identifier = "ASTEROID_MID";
         setMaxHealth(1000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        angVel = randFloat(-1.0f, 1.0f);
-        inertia = 0.0f;
-        enginePower = 0.0f;
-        canMove = false;
-        canShoot = false;
+        m_angVel = randFloat(-1.0f, 1.0f);
+        m_inertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
         break;
     case ASTEROID_LARGE:
         m_identifier = "ASTEROID_LARGE";
         setMaxHealth(2000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        angVel = randFloat(-1.0f, 1.0f);
-        inertia = 0.0f;
-        enginePower = 0.0f;
-        canMove = false;
-        canShoot = false;
+        m_angVel = randFloat(-1.0f, 1.0f);
+        m_inertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
         break;
     case PLAYER_TURRET:
         m_identifier = "PLAYER_TURRET";
         setMaxHealth(100.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
-        inertia = 0.1f;
-        enginePower = 0.0f;
+        m_inertia = 0.1f;
+        m_enginePower = 0.0f;
         m_weapons.push_back( weapons[13] );
-        curWeap = 0;
-        canMove = false;
+        m_curWeap = 0;
+        m_canMove = false;
         break;
     case PLAYER_STATION:
         m_identifier = "PLAYER_STATION";
         setMaxHealth(10000.0f,true);
         setMaxShield(10000.0f,true);
         setMaxEnergy(100000.0f,true);
-        angVel = randFloat(-0.1f, 0.1f);
-        inertia = 0.0f;
-        enginePower = 0.0f;
-        canMove = false;
-        canShoot = false;
+        m_angVel = randFloat(-0.1f, 0.1f);
+        m_inertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
         break;
     case PLAYER_GRAVWELL:
         m_identifier = "PLAYER_GRAVWELL";
         setMaxHealth(5000.0f,true);
         setMaxShield(5000.0f,true);
         setMaxEnergy(50000.0f,true);
-        angVel = randFloat(-0.1f, 0.1f);
-        inertia = 0.0f;
-        enginePower = 0.0f;
-        canMove = false;
-        canShoot = false;
+        m_angVel = randFloat(-0.1f, 0.1f);
+        m_inertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
         break;
     case PLAYER_BARRACKS:
         m_identifier = "PLAYER_BARRACKS";
         setMaxHealth(8000.0f,true);
         setMaxShield(8000.0f,true);
         setMaxEnergy(80000.0f,true);
-        angVel = randFloat(-0.1f, 0.1f);
-        inertia = 0.0f;
-        enginePower = 0.0f;
-        canMove = false;
-        canShoot = false;
+        m_angVel = randFloat(-0.1f, 0.1f);
+        m_inertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
         break;
     case SHIPS_END:
         break;
     }
 
-    priority = NONE;
+    m_priority = NONE;
 
-    for(short unsigned int i = 0; i < UPGRADES_LEN; i++) upgrades[i] = 0;
-    shieldMul = 1.0f;
-    generatorMul = 1.0f;
+    for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
+    m_shieldMul = 1.0f;
+    m_generatorMul = 1.0f;
 
-    classification = ptype;
+    m_classification = _type;
 
-    radius = _radius;
+    m_radius = _radius;
 }
 
-ship::ship(ship &src, vec2 p)
+ship::ship(
+        ship &_src,
+        vec2 _p
+        )
 {
-    coolDown = 0.0f;
-    shooting = false;
+    m_coolDown = 0.0f;
+    m_shooting = false;
 
-    setPos(p);
-    setPPos(p);
+    setPos(_p);
+    setPPos(_p);
 
     setVel({0.0f,0.0f});
     setWVel({0.0f,0.0f});
-    angle = 0.0f;
-    targetAngle = 0.0f;
+    m_angle = 0.0f;
+    m_targetAngle = 0.0f;
 
-    engineGlow = 0.0f;
-    steeringGlow = 0.0f;
-    shieldGlow = 0.0f;
-    drawShot = 0.0f;
+    m_engineGlow = 0.0f;
+    m_steeringGlow = 0.0f;
+    m_shieldGlow = 0.0f;
+    m_drawShot = 0.0f;
 
-    canMove = src.getCanMove();
-    canShoot = src.getCanShoot();
+    m_canMove = _src.getCanMove();
+    m_canShoot = _src.getCanShoot();
 
-    setMaxHealth( src.getMaxHealth(), true );
-    setMaxShield( src.getMaxShield(), true );
-    setMaxEnergy( src.getMaxEnergy(), true );
+    setMaxHealth( _src.getMaxHealth(), true );
+    setMaxShield( _src.getMaxShield(), true );
+    setMaxEnergy( _src.getMaxEnergy(), true );
 
-    inertia = src.getInertia();
-    enginePower = src.getEnginePower();
-    angVel = src.getAngVel();
+    m_inertia = _src.getInertia();
+    m_enginePower = _src.getEnginePower();
+    m_angVel = _src.getAngVel();
 
-    m_identifier = src.getIdentifier();
+    m_identifier = _src.getIdentifier();
 
-    priority = NONE;
+    m_priority = NONE;
 
-    for(short unsigned int i = 0; i < UPGRADES_LEN; i++) upgrades[i] = 0;
-    shieldMul = 1.0f;
-    generatorMul = 1.0f;
+    for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
+    m_shieldMul = 1.0f;
+    m_generatorMul = 1.0f;
 
-    classification = src.getClassification();
+    m_classification = _src.getClassification();
 
-    radius = src.getRadius();
+    m_radius = _src.getRadius();
 
-    curWeap = 0;
+    m_curWeap = 0;
 
-    for(size_t i = 0; i < src.getWeaps().size(); ++i)
+    for(size_t i = 0; i < _src.getWeaps().size(); ++i)
     {
-        m_weapons.push_back(src.getWeaps()[i]);
+        m_weapons.push_back(_src.getWeaps()[i]);
     }
 
-    switch(src.getClassification())
+    switch(_src.getClassification())
     {
     case FEDERATION_MKI:
-        curWeap = rand() % 3 + 4;
+        m_curWeap = rand() % 3 + 4;
         break;
     case FEDERATION_MKII:
-        curWeap = rand() % 3 + 4;
+        m_curWeap = rand() % 3 + 4;
         break;
     case FEDERATION_MKIII:
-        curWeap = rand() % 3 + 4;
+        m_curWeap = rand() % 3 + 4;
         break;
     case FEDERATION_MKIV:
-        curWeap = rand() % 3 + 4;
+        m_curWeap = rand() % 3 + 4;
         break;
     case FEDERATION_GUNSHIP:
-        curWeap = rand() % 2 + 7;
+        m_curWeap = rand() % 2 + 7;
         break;
     case PIRATE_GNAT:
-        curWeap = rand() % 3 + 14;
+        m_curWeap = rand() % 3 + 14;
         break;
     case PIRATE_CRUISER:
-        curWeap = rand() % 3 + 14;
+        m_curWeap = rand() % 3 + 14;
         break;
     case PIRATE_WRANGLER:
-        curWeap = rand() % 3 + 14;
+        m_curWeap = rand() % 3 + 14;
         break;
     case PIRATE_MARAUDER:
-        curWeap = rand() % 3 + 14;
+        m_curWeap = rand() % 3 + 14;
         break;
     case PIRATE_GUNSHIP:
-        curWeap = 17;
+        m_curWeap = 17;
         break;
     case PLAYER_SHIP:
-        curWeap = 0;
+        m_curWeap = 0;
         break;
     case PLAYER_HUNTER:
-        curWeap = rand() % 3 + 9;
+        m_curWeap = rand() % 3 + 9;
         break;
     case PLAYER_DEFENDER:
-        curWeap = rand() % 3 + 9;
+        m_curWeap = rand() % 3 + 9;
         break;
     case PLAYER_DESTROYER:
-        curWeap = rand() % 3 + 9;
+        m_curWeap = rand() % 3 + 9;
         break;
     case PLAYER_MINER_DROID:
-        curWeap = 12;
+        m_curWeap = 12;
         break;
     case PLAYER_TURRET:
-        curWeap = 13;
+        m_curWeap = 13;
     default:
         break;
     }
@@ -401,146 +408,149 @@ ship::ship(ship_spec _s)
     *this = g_ship_templates[_s];
 }
 
-void ship::accelerate(float _mult)
+void ship::accelerate(const float _mult)
 {
     float energyLoss = 0.6f, accelMult = 1.0f;
 
-    if(priority == ENGINES)
+    if(m_priority == ENGINES)
     {
         energyLoss = 1.2f;
         accelMult = 2.0f;
     }
-    else if(priority == GUNS)
+    else if(m_priority == GUNS)
     {
         energyLoss = 0.6f;
         accelMult = 0.8f;
     }
 
-    if(energy <= energyLoss) return;
-    vec2 add = vec(getAng() + 90.0f) * accelMult * inertia * enginePower;
+    if(m_energy <= energyLoss) return;
+    vec2 add = vec(getAng() + 90.0f) * accelMult * m_inertia * m_enginePower;
     addVel(add * _mult);
-    energy -= energyLoss;
-    engineGlow = clamp(engineGlow + 10.0f * accelMult,0.0f,255.0f);
+    m_energy -= energyLoss;
+    m_engineGlow = clamp(m_engineGlow + 10.0f * accelMult,0.0f,255.0f);
 
-    accelerating = true;
+    m_accelerating = true;
 }
 
-void ship::accelerate(vec2 _dir, float _mult)
+void ship::accelerate(
+        const vec2 _dir,
+        const float _mult
+        )
 {
     float energyLoss = 0.6f, accelMult = 1.0f;
 
-    if(priority == ENGINES)
+    if(m_priority == ENGINES)
     {
         energyLoss = 1.2f;
         accelMult = 2.0f;
     }
-    else if(priority == GUNS)
+    else if(m_priority == GUNS)
     {
         energyLoss = 0.6f;
         accelMult = 0.8f;
     }
 
-    if(energy <= energyLoss) return;
-    addVel(_dir * _mult * inertia * enginePower);
-    energy -= energyLoss;
-    engineGlow = clamp(engineGlow + 10.0f * accelMult,0.0f,255.0f);
+    if(m_energy <= energyLoss) return;
+    addVel(_dir * _mult * m_inertia * m_enginePower);
+    m_energy -= energyLoss;
+    m_engineGlow = clamp(m_engineGlow + 10.0f * accelMult,0.0f,255.0f);
 
-    accelerating = true;
+    m_accelerating = true;
 }
 
-void ship::dodge(float side)
+void ship::dodge(const float _side)
 {
     float energyLoss = 0.2, accelMult = 1;
 
-    if(priority == ENGINES)
+    if(m_priority == ENGINES)
     {
         energyLoss = 0.4;
         accelMult = 2;
     }
-    else if(priority == GUNS)
+    else if(m_priority == GUNS)
     {
         energyLoss = 0.08;
         accelMult = 0.8;
     }
 
-    if(energy <= energyLoss) return;
+    if(m_energy <= energyLoss) return;
     vec2 vec = computeVector(getAng());
-    addVel(vec*side*accelMult*inertia*enginePower);
-    energy -= energyLoss * fabs(side);
+    addVel(vec * _side * accelMult * m_inertia * m_enginePower);
+    m_energy -= energyLoss * fabs(_side);
 }
 
-void ship::update(float dt)
+void ship::update(const float _dt)
 {
-    float angDiff = clampRoll(targetAngle - angle, -180.0f, 180.0f);
+    float angDiff = clampRoll(m_targetAngle - m_angle, -180.0f, 180.0f);
     float turnConst = 0.2f;
 
-    if(angVel != 0.0f) setAng( clampRoll( angle + angVel, -180.0f, 180.0f ) );
+    if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel, -180.0f, 180.0f ) );
     else if(angDiff < -1.0f)
     {
-        setAng(clampRoll(angle+clamp(angDiff * inertia * enginePower * turnConst, -9999.0f, -1.0f) * dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
-        steeringGlow = clamp(steeringGlow + 20.0f, 0.0f, 255.0f);
+        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -9999.0f, -1.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
     else if(angDiff > 1.0f)
     {
-        setAng(clampRoll(angle + clamp(angDiff * inertia * enginePower * turnConst, 1.0f, 9999.0f) * dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
-        steeringGlow = clamp(steeringGlow + 20.0f, 0.0f, 255.0f);
+        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 1.0f, 9999.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
 
     float energy_loss = 0.05f, shield_add = 0.05f;
 
-    if(priority == SHIELDS)
+    if(m_priority == SHIELDS)
     {
         energy_loss = 0.3f;
         shield_add = 0.4f;
-        if(shield >= 0.0f) shieldGlow = 255.0f;
+        if(m_shield >= 0.0f) m_shieldGlow = 255.0f;
     }
-    else if(priority == GUNS or priority == ENGINES)
+    else if(m_priority == GUNS or m_priority == ENGINES)
     {
         energy_loss = 0.01f;
         shield_add = 0.03f;
     }
 
-    if(energy >= energy_loss and shield < maxShield)
+    if(m_energy >= energy_loss and m_shield < m_maxShield)
     {
-        shield = clamp(shield + shield_add * shieldMul, 0.0f, maxShield);
-        energy -= energy_loss;
+        m_shield = clamp(m_shield + shield_add * m_shieldMul, 0.0f, m_maxShield);
+        m_energy -= energy_loss;
     }
 
     //if(!accelerating)
-    energy = clamp(energy + 0.1f * generatorMul, 0.0f, maxEnergy);
+    m_energy = clamp(m_energy + 0.1f * m_generatorMul, 0.0f, m_maxEnergy);
 
-    if(rand()%999 == 0) health = clamp(health + 0.5f, 0.0f, maxHealth);
+    if(rand()%999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
-    steeringGlow = clamp(steeringGlow - 10.0f, 0.0f, 255.0f);
-    shieldGlow = clamp(shieldGlow - 10.0f, 0.0f, 255.0f);
-    engineGlow = clamp(engineGlow - 1.0f, 0.0f, 255.0f);
+    m_steeringGlow = clamp(m_steeringGlow - 10.0f, 0.0f, 255.0f);
+    m_shieldGlow = clamp(m_shieldGlow - 10.0f, 0.0f, 255.0f);
+    m_engineGlow = clamp(m_engineGlow - 1.0f, 0.0f, 255.0f);
 
-    coolDown = clamp(coolDown - dt, 0.0f, 999.0f);
-    damageTimer = clamp(damageTimer - dt, 0.0f, 10.0f);
+    m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
+    m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
-    accelerating = false;
+    m_accelerating = false;
 }
 
-void ship::damage(float d)
+void ship::damage(float _d)
 {
-    if(getShield() - d > 0) shieldGlow = 255.0f;
+    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
 
-    float shieldDmg = clamp(d, 0.0f, getShield());
-    d -= shieldDmg;
-    setShield(getShield()-shieldDmg);
+    float shieldDmg = clamp(_d, 0.0f, getShield());
+    _d -= shieldDmg;
+    setShield(getShield() - shieldDmg);
 
-    float healthDmg = clamp(d, 0.0f, getHealth());
-    d -= healthDmg;
+    float healthDmg = clamp(_d, 0.0f, getHealth());
+    _d -= healthDmg;
     setHealth(getHealth()-healthDmg);
 
-    damageTimer = 10.0f;
+    m_damageTimer = 10.0f;
 }
 
-int ship::upgrade(int i) 
+int ship::upgrade(const int _i)
 {
-    if(i < 4) upgrades[i]++;
+    if(_i < 4) m_upgrades[_i]++;
 
-    switch(i)
+    switch(_i)
     {
     case 0:
         /*
@@ -577,29 +587,32 @@ int ship::upgrade(int i)
         m_weapons[2][8] *= 0.95f;
         break;
     case 1:
-        shieldMul *= 1.2f;
+        m_shieldMul *= 1.2f;
         break;
     case 2:
-        generatorMul *= 1.2f;
+        m_generatorMul *= 1.2f;
         break;
     case 3:
-        enginePower *= 1.2f;
+        m_enginePower *= 1.2f;
         break;
     case 4:
-        missiles++;
+        m_missiles++;
         break;
     case 5:
         break;
     }
-    return upgrades[i];
+    return m_upgrades[_i];
 }
 
-void ship::setGrade(int i, int v)
+void ship::setGrade(
+        const int _i,
+        const int _v
+        )
 {
-    for(int k = 0; k < v; ++k) upgrade(i);
+    for(int k = 0; k < _v; ++k) upgrade(_i);
 }
 
 int ship::getScore()
 {
-    return static_cast<int>((maxHealth + maxShield + maxEnergy) / 100.0f);
+    return static_cast<int>((m_maxHealth + m_maxShield + m_maxEnergy) / 100.0f);
 }

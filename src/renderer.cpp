@@ -11,7 +11,10 @@
 #include "laser.hpp"
 #include "missile.hpp"
 
-renderer::renderer(int _w, int _h)
+renderer::renderer(
+        int _w,
+        int _h
+        )
 {
     init();
 
@@ -109,7 +112,10 @@ void renderer::loadTexture(std::string _key, std::string _path, SDL_BlendMode _b
     m_textures.insert({_key, temp});
 }
 
-void renderer::loadTextureSet(std::string _key, std::string _set)
+void renderer::loadTextureSet(
+        std::string _key,
+        std::string _set
+        )
 {
     std::vector<SDL_Surface*> temp_surf;
 
@@ -138,7 +144,11 @@ void renderer::loadTextureSet(std::string _key, std::string _set)
     m_textures.insert({_key, temp_tex});
 }
 
-void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _size)
+void renderer::loadFontSpriteSheet(
+        std::string _name,
+        std::string _path,
+        int _size
+        )
 {
     sprite_sheet sheet;
 
@@ -185,15 +195,20 @@ void renderer::loadFontSpriteSheet(std::string name, std::string _path, int _siz
 
     TTF_CloseFont(fnt);
 
-    m_letters.insert({name, sheet});
+    m_letters.insert({_name, sheet});
 }
 
-void renderer::queryTexture(std::string identifier, int index, int *w, int *h)
+void renderer::queryTexture(
+        std::string _identifier,
+        int index,
+        int *_w,
+        int *_h
+        )
 {
     int rw = 0, rh = 0;
-    SDL_QueryTexture( m_textures[identifier][index], NULL, NULL, &rw, &rh );
-    *w = rw;
-    *h = rh;
+    SDL_QueryTexture( m_textures[_identifier][index], NULL, NULL, &rw, &rh );
+    *_w = rw;
+    *_h = rh;
 }
 
 void renderer::loadSpriteSheet()
@@ -208,80 +223,103 @@ void renderer::clear()
     SDL_RenderClear( m_renderer );
 }
 
-void renderer::drawTextureSet(std::string key, vec2 pos, float orient, std::array<float,4> alphaMod)
+void renderer::drawTextureSet(
+        std::string _key,
+        vec2 _pos,
+        float _orient,
+        std::array<float,4> _alphaMod
+        )
 {
     int w, h;
-    SDL_QueryTexture(m_textures[key].at(0), NULL, NULL, &w, &h);
+    SDL_QueryTexture(m_textures[_key].at(0), NULL, NULL, &w, &h);
 
-    pos *= g_ZOOM_LEVEL;
-    pos += g_HALFWIN;
+    _pos *= g_ZOOM_LEVEL;
+    _pos += g_HALFWIN;
 
     w *= g_ZOOM_LEVEL / 2;
     h *= g_ZOOM_LEVEL / 2;
 
     SDL_Rect dst;
-    dst.x = pos.x - (w/2);
-    dst.y = pos.y - (h/2);
+    dst.x = _pos.x - (w/2);
+    dst.y = _pos.y - (h/2);
     dst.w = w;
     dst.h = h;
 
-    SDL_SetTextureAlphaMod(m_textures.at(key).at(1), alphaMod[0]);
-    SDL_SetTextureAlphaMod(m_textures.at(key).at(2), alphaMod[1]);
-    SDL_SetTextureAlphaMod(m_textures.at(key).at(3), alphaMod[2]);
-    SDL_SetTextureAlphaMod(m_textures.at(key).at(4), alphaMod[3]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(1), _alphaMod[0]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(2), _alphaMod[1]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(3), _alphaMod[2]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(4), _alphaMod[3]);
     //SDL_SetTextureColorMod(m_textures.at(key).at(3), weapons[curWeap][4], weapons[curWeap][5], weapons[curWeap][6]);
 
-    SDL_RenderCopyEx(m_renderer, m_textures[key][5], NULL, &dst, 0, NULL, SDL_FLIP_NONE);
-    for(int i = 0; i < 5; ++i) SDL_RenderCopyEx(m_renderer, m_textures[key][i], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(m_renderer, m_textures[_key][5], NULL, &dst, 0, NULL, SDL_FLIP_NONE);
+    for(int i = 0; i < 5; ++i) SDL_RenderCopyEx(m_renderer, m_textures[_key][i], NULL, &dst, _orient, NULL, SDL_FLIP_NONE);
 
 }
 
-void renderer::drawText(std::string text, std::string font, vec2 _pos)
+void renderer::drawText(
+        std::string _text,
+        std::string _font,
+        vec2 _pos
+        )
 {
-    sprite_sheet * tmp = &m_letters[font];
+    sprite_sheet * tmp = &m_letters[_font];
 
     SDL_Rect dst = {static_cast<int>(_pos.x), static_cast<int>(_pos.y), 0, 0};
-    for(int i = 0; i < text.length(); ++i)
+    for(int i = 0; i < _text.length(); ++i)
     {
-        SDL_Texture * draw = tmp->m_sheet[text[i]];
+        SDL_Texture * draw = tmp->m_sheet[_text[i]];
         SDL_QueryTexture( draw, NULL, NULL, &dst.w, &dst.h);
         SDL_RenderCopy( m_renderer, draw, NULL, &dst );
         dst.x += dst.w;
     }
 }
 
-void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float,4> col)
+void renderer::drawTexture(
+        std::string _key,
+        size_t _index,
+        vec2 _pos,
+        float _orient,
+        std::array<float,4> _col
+        )
 {
     int w, h;
-    SDL_QueryTexture(m_textures[key][index], NULL, NULL, &w, &h);
+    SDL_QueryTexture(m_textures[_key][_index], NULL, NULL, &w, &h);
 
-    pos *= g_ZOOM_LEVEL;
-    pos += g_HALFWIN;
+    _pos *= g_ZOOM_LEVEL;
+    _pos += g_HALFWIN;
 
     w *= g_ZOOM_LEVEL / 2;
     h *= g_ZOOM_LEVEL / 2;
 
     SDL_Rect dst;
-    dst.x = pos.x - (w/2);
-    dst.y = pos.y - (h/2);
+    dst.x = _pos.x - (w/2);
+    dst.y = _pos.y - (h/2);
     dst.w = w;
     dst.h = h;
 
-    SDL_SetTextureColorMod(m_textures[key][index], col[0], col[1], col[2]);
-    SDL_SetTextureAlphaMod(m_textures[key][index], col[3]);
+    SDL_SetTextureColorMod(m_textures[_key][_index], _col[0], _col[1], _col[2]);
+    SDL_SetTextureAlphaMod(m_textures[_key][_index], _col[3]);
 
-    SDL_RenderCopyEx(m_renderer, m_textures[key][index], NULL, &dst, orient, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(m_renderer, m_textures[_key][_index], NULL, &dst, _orient, NULL, SDL_FLIP_NONE);
 
-    SDL_SetTextureAlphaMod(m_textures[key][index], 255);
+    SDL_SetTextureAlphaMod(m_textures[_key][_index], 255);
 }
 
-void renderer::drawLine(vec2 _start, vec2 _end, std::array<float, 4> _col)
+void renderer::drawLine(
+        vec2 _start,
+        vec2 _end,
+        std::array<float, 4> _col
+        )
 {
     std::array<int, 4> _pcol = {static_cast<int>(_col[0]), static_cast<int>(_col[1]), static_cast<int>(_col[2]), static_cast<int>(_col[3])};
     drawLine(_start, _end, _pcol);
 }
 
-void renderer::drawLine(vec2 _start, vec2 _end, std::array<int, 4> _col)
+void renderer::drawLine(
+        vec2 _start,
+        vec2 _end,
+        std::array<int, 4> _col
+        )
 {
     _start *= g_ZOOM_LEVEL;
     _start += g_HALFWIN;
@@ -292,7 +330,12 @@ void renderer::drawLine(vec2 _start, vec2 _end, std::array<int, 4> _col)
     SDL_RenderDrawLine(m_renderer, _start.x, _start.y, _end.x, _end.y);
 }
 
-void renderer::drawLineGr(vec2 _start, vec2 _end, std::array<float, 4> _scol, std::array<float, 4> _ecol)
+void renderer::drawLineGr(
+        vec2 _start,
+        vec2 _end,
+        std::array<float, 4> _scol,
+        std::array<float, 4> _ecol
+        )
 {
     _start *= g_ZOOM_LEVEL;
     _start += g_HALFWIN;
@@ -356,18 +399,22 @@ void renderer::drawLineGr(vec2 _start, vec2 _end, std::array<float, 4> _scol, st
     }
 }
 
-void renderer::drawCircle(int x, int y, int radius, std::array<float, 4> _col)
+void renderer::drawCircle(int _x,
+        int _y,
+        int _radius,
+        std::array<float, 4> _col
+        )
 {
-    x = x * g_ZOOM_LEVEL + g_HALFWIN.x;
-    y = y * g_ZOOM_LEVEL + g_HALFWIN.y;
-    radius *= g_ZOOM_LEVEL;
+    _x = _x * g_ZOOM_LEVEL + g_HALFWIN.x;
+    _y = _y * g_ZOOM_LEVEL + g_HALFWIN.y;
+    _radius *= g_ZOOM_LEVEL;
 
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
-    for(int j = y - radius; j < y + radius; j++)
+    for(int j = _y - _radius; j < _y + _radius; j++)
     {
-        for(int i = x - radius; i < x + radius; i++)
+        for(int i = _x - _radius; i < _x + _radius; i++)
         {
-            if((i-x)*(i-x)+(j-y)*(j-y)<radius*radius)
+            if((i-_x)*(i-_x)+(j-_y)*(j-_y)<_radius*_radius)
             {
                 SDL_RenderDrawPoint(m_renderer,i,j);
             }
@@ -375,14 +422,19 @@ void renderer::drawCircle(int x, int y, int radius, std::array<float, 4> _col)
     }
 }
 
-void renderer::drawCircleUI(int x, int y, int radius, std::array<int, 4> _col)
+void renderer::drawCircleUI(
+        int _x,
+        int _y,
+        int _radius,
+        std::array<int, 4> _col
+        )
 {
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
-    for(int j = y - radius; j < y + radius; j++)
+    for(int j = _y - _radius; j < _y + _radius; j++)
     {
-        for(int i = x - radius; i < x + radius; i++)
+        for(int i = _x - _radius; i < _x + _radius; i++)
         {
-            if((i-x)*(i-x)+(j-y)*(j-y)<radius*radius)
+            if( sqr(i-_x) + sqr(j-_y) < sqr(_radius) )
             {
                 SDL_RenderDrawPoint(m_renderer,i,j);
             }
@@ -390,13 +442,18 @@ void renderer::drawCircleUI(int x, int y, int radius, std::array<int, 4> _col)
     }
 }
 
-void renderer::drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire)
+void renderer::drawRect(
+        vec2 _p,
+        vec2 _d,
+        std::array<int, 4> _col,
+        bool _wire
+        )
 {
     SDL_Rect r = {static_cast<int>(_p.x), static_cast<int>(_p.y), static_cast<int>(_d.x), static_cast<int>(_d.y)};
-    SDL_SetRenderDrawColor( m_renderer, col[0], col[1], col[2], col[3]);
+    SDL_SetRenderDrawColor( m_renderer, _col[0], _col[1], _col[2], _col[3]);
 
-    if(!wire) SDL_RenderFillRect( m_renderer, &r );
-    else if(wire) SDL_RenderDrawRect( m_renderer, &r );
+    if(!_wire) SDL_RenderFillRect( m_renderer, &r );
+    else if(_wire) SDL_RenderDrawRect( m_renderer, &r );
 }
 
 void renderer::finalise()
@@ -406,7 +463,12 @@ void renderer::finalise()
 }
 
 //UI CODE
-void renderer::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::vector<ship> *ap, std::vector<laser> *lp, std::vector<faction> * fp)
+void renderer::drawMap(std::vector<missile> *_mp,
+        std::vector<enemy> *_ep,
+        std::vector<ship> *_ap,
+        std::vector<laser> *_lp,
+        std::vector<faction> * _fp
+        )
 {
     SDL_Rect map;
     map.w = 256;
@@ -422,9 +484,9 @@ void renderer::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::ve
     SDL_RenderDrawLine(m_renderer, g_WIN_WIDTH-124, 128, g_WIN_WIDTH-132, 128);
 
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 255, 255);
-    for(unsigned int i = 0; i < lp->size(); i++)
+    for(unsigned int i = 0; i < _lp->size(); i++)
     {
-        vec2 lpp = lp->at(i).getPos();
+        vec2 lpp = _lp->at(i).getPos();
 
         double x = clamp(lpp.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
         double y = clamp(lpp.y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -433,9 +495,9 @@ void renderer::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::ve
     }
 
     SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
-    for(unsigned int i = 0; i < mp->size(); i++)
+    for(unsigned int i = 0; i < _mp->size(); i++)
     {
-        vec2 mpp = mp->at(i).getPos();
+        vec2 mpp = _mp->at(i).getPos();
 
         double x = clamp(mpp.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
         double y = clamp(mpp.y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -444,27 +506,27 @@ void renderer::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::ve
     }
 
     SDL_SetRenderDrawColor(m_renderer, 200, 200, 200, 255);
-    for(unsigned int i = 0; i < ap->size(); i++)
+    for(unsigned int i = 0; i < _ap->size(); i++)
     {
-        vec2 app = ap->at(i).getPos();
+        vec2 app = _ap->at(i).getPos();
 
         double x = clamp(app.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
         double y = clamp(app.y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         int radius = 1;
-        if(ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
-        else if(ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3;
+        if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
+        else if(_ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3;
 
         drawCircleUI(x, y, radius, {200,200,200,255});
     }
 
-    for(unsigned int i = 0; i < ep->size(); i++)
+    for(unsigned int i = 0; i < _ep->size(); i++)
     {
-        vec2 epp = ep->at(i).getPos();
-        int radius = clamp( ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
+        vec2 epp = _ep->at(i).getPos();
+        int radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
         std::array<int, 4> col;
-        col = fp->at(ep->at(i).getTeam()).m_colour;
+        col = _fp->at(_ep->at(i).getTeam()).m_colour;
         col[3] = 255;
 
         float x = clamp(epp.x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
@@ -474,7 +536,7 @@ void renderer::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::ve
     }
 }
 
-void renderer::statusBars(player * ply)
+void renderer::statusBars(player * _ply)
 {
     //health base
     std::array<int, 4> col = {100, 20, 20, 255};
@@ -482,7 +544,7 @@ void renderer::statusBars(player * ply)
 
     //health
     col = {230, 50, 50, 255};
-    drawRect({0,0}, {(ply->getHealth() / ply->getMaxHealth()) * 256, 16}, col, false);
+    drawRect({0,0}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, col, false);
 
     //shield base
     col = {20, 20, 100, 255};
@@ -490,7 +552,7 @@ void renderer::statusBars(player * ply)
 
     //shield
     col = {50, 50, 230, 255};
-    drawRect({0,16}, {(ply->getShield() / ply->getMaxShield()) * 256, 16}, col, false);
+    drawRect({0,16}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, col, false);
 
     //energy base
     col = {20, 100, 20, 255};
@@ -498,7 +560,7 @@ void renderer::statusBars(player * ply)
 
     //energy
     col = {50, 230, 50, 255};
-    drawRect({0,32}, {(ply->getEnergy() / ply->getMaxEnergy()) * 256, 16}, col, false);
+    drawRect({0,32}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, col, false);
 }
 
 SDL_Surface * renderer::getSurface(std::string _path)
@@ -515,7 +577,7 @@ float renderer::getTextureRadius(std::string _identifier)
     return static_cast<float>(std::max(w, h)) / 4.0f;
 }
 
-void renderer::drawWeaponStats(player * ply)
+void renderer::drawWeaponStats(player * _ply)
 {
     SDL_Rect weap;
     weap.w = g_WIN_WIDTH * 0.1;
@@ -523,7 +585,7 @@ void renderer::drawWeaponStats(player * ply)
     weap.x = g_WIN_WIDTH - weap.w;
     weap.y = g_WIN_HEIGHT - 1.4 * weap.h;
 
-    std::array<float, 10> ws = ply->getWeap();
+    std::array<float, 10> ws = _ply->getWeap();
 
     SDL_SetRenderDrawColor(m_renderer, ws[4] * 0.6, ws[5] * 0.6, ws[6] * 0.6, 255);
     SDL_RenderFillRect(m_renderer,&weap);

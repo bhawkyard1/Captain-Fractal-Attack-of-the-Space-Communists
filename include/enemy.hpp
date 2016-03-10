@@ -9,7 +9,8 @@ enum aiTeam{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_PI
 
 class enemy: public ship
 {
-  vec2 m_tPos, m_tVel;
+  vec2 m_tPos;
+  vec2 m_tVel;
   aiGoal m_squadGoal;
   aiGoal m_curGoal;
   ship * m_target;
@@ -20,7 +21,7 @@ class enemy: public ship
 public:
   enemy(const vec2 _p, const vec2 _v, const ship_spec _type, const aiTeam _team);
 
-  void setGoal(aiGoal g) {m_curGoal = g;}
+  void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
 
   void behvrUpdate();

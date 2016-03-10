@@ -10,7 +10,7 @@
 #include <sstream>
 #include <vector>
 
-void writeVector(std::ostream &file, universe * u, int v);
+void writeVector(std::ostream &_file, universe * u, int _v);
 
 void saveGame(universe * uni);
 

@@ -8,14 +8,14 @@ class missile: public ship
 {
     aiTeam m_team;
     ship * m_target;
-	bool det;
+    bool m_det;
 public:
-    missile(vec2 p, float _r);
-    void setTarget(ship * s) {m_target = s;}
-    ship * getTarget() {return m_target;}
+    missile(const vec2 _p, const float _r);
+    void setTarget(ship * _s) {m_target = _s;}
+    ship * getTarget() const {return m_target;}
 	void steering();
-	bool detonate() {return det;}
-    aiTeam getTeam() {return m_team;}
+    bool detonate() const {return m_det;}
+    aiTeam getTeam() const {return m_team;}
 };
 
 #endif

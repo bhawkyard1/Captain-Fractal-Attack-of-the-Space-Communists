@@ -1,32 +1,38 @@
 #include "laser.hpp"
 
-laser::laser(vec2 p, vec2 v, float pAng, std::array<float, WEAPS_W> pData, aiTeam pTeam)
+laser::laser(
+        vec2 _p,
+        vec2 _v,
+        float _ang,
+        std::array<float, WEAPS_W> _data,
+        aiTeam _team
+        )
 {
-	float temp_angle = pAng + randFloat(-pData[1],pData[1]);//rand()%(2*pData[1])-pData[1];
+    float temp_angle = _ang + randFloat(-_data[1], _data[1]);
 	vec2 vAdd = computeVector(temp_angle);
 		
-	setVel({v.x + vAdd.x * pData[3], v.y + vAdd.y * pData[3]});
-	setPos(p);
-	setPPos(p);
+    setVel({_v.x + vAdd.x * _data[3], _v.y + vAdd.y * _data[3]});
+    setPos(_p);
+    setPPos(_p);
 	
-	ang = temp_angle;
-	dmg = pData[2];
+    m_ang = temp_angle;
+    m_dmg = _data[2];
 
-	col[0] = pData[4];
-	col[1] = pData[5];
-	col[2] = pData[6];
+    m_col[0] = _data[4];
+    m_col[1] = _data[5];
+    m_col[2] = _data[6];
 	
-	spd = pData[3];
+    m_spd = _data[3];
 	
-	team = pTeam;
+    m_team = _team;
 	
-	power = 255.0f;
+    m_power = 255.0f;
 
-    stop = pData[9];
+    m_stop = _data[9];
 }
 
-void laser::update(float dt)
+void laser::update(float _dt)
 {
-    power -= 64.0f * dt;
-	updatePos(dt);
+    m_power -= 64.0f * _dt;
+    updatePos(_dt);
 }

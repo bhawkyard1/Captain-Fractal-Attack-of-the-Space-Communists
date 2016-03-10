@@ -4,7 +4,7 @@
 #include "shapes.hpp"
 #include "common.hpp"
 
-bool emnityCheck(aiTeam a, aiTeam b);
+bool emnityCheck(aiTeam _a, aiTeam _b);
 
 universe::universe(): m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
     ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
@@ -471,6 +471,7 @@ void universe::update(float dt)
         if(emnityCheck( e.getTeam(), TEAM_PLAYER ) and e.getHealth() < e.getConfidence() and e.getCanMove())
         {
             //If the enemy can move and is scared, runs away.
+            removeFromSquad(&e, getSquadFromID(e.getSquadID()));
             e.setGoal(GOAL_FLEE);
         }
 
@@ -799,7 +800,7 @@ void universe::detectCollisions(SDL_Rect _box, std::vector<enemy*> _ships, std::
         }
     }
 
-    if(count < 20 or _lvl > 4 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
+    if(count < 8 or _lvl > 4 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
     {
         partitions.ships.push_back(pships);
         partitions.lasers.push_back(plasers);
@@ -1104,11 +1105,18 @@ void universe::spawnShip(aiTeam t, vec2 p)
     enemies.push_back(newShip);
 }
 
-bool emnityCheck(aiTeam a, aiTeam b)
+bool emnityCheck(
+        aiTeam _a,
+        aiTeam _b
+        )
 {
-    if(	(a == b) or
-            (a == NEUTRAL or b == NEUTRAL) or
-            ( (a == TEAM_PLAYER and b == TEAM_PLAYER_MINER) or (a == TEAM_PLAYER_MINER and b == TEAM_PLAYER) )
+    if(
+            (_a == _b) or
+            (_a == NEUTRAL or _b == NEUTRAL) or
+            (
+                (_a == TEAM_PLAYER and _b == TEAM_PLAYER_MINER) or
+                (_a == TEAM_PLAYER_MINER and _b == TEAM_PLAYER)
+                )
             )
     {
         return false;
@@ -1116,7 +1124,7 @@ bool emnityCheck(aiTeam a, aiTeam b)
     return true;
 }
 
-void universe::reload(bool newGame)
+void universe::reload(bool _newGame)
 {
     enemies.clear();
     missiles.clear();
@@ -1138,7 +1146,7 @@ void universe::reload(bool newGame)
     partitions.rocks.clear();
     partitions.rects.clear();
 
-    if(!newGame) return;
+    if(!_newGame) return;
 
     for(int i = 0; i < UPGRADES_LEN; ++i)
     {
@@ -1148,7 +1156,7 @@ void universe::reload(bool newGame)
     setScore(0);
 }
 
-void universe::addBuild(ship_spec type)
+void universe::addBuild(ship_spec _type)
 {
     vec2 pass;
 
@@ -1158,15 +1166,15 @@ void universe::addBuild(ship_spec type)
     else if(side == 2) pass = {randFloat(-20000.0f, 20000.0f), 20000.0f};
     else if(side == 3) pass = {20000.0f, randFloat(-20000.0f, 20000.0f)};
 
-    addBuild(pass, type);
+    addBuild(pass, _type);
 }
 
-void universe::addBuild(vec2 p, ship_spec type)
+void universe::addBuild(vec2 _p, ship_spec _type)
 {
-    enemy newShip(p, {0.0f, 0.0f}, type, TEAM_PLAYER);
+    enemy newShip(_p, {0.0f, 0.0f}, _type, TEAM_PLAYER);
     enemies.push_back(newShip);
 
-    switch(type)
+    switch(_type)
     {
     case PLAYER_STATION:
         m_factionMaxCounts[GALACTIC_FEDERATION] += 25;
@@ -1183,8 +1191,8 @@ void universe::addBuild(vec2 p, ship_spec type)
     default:
         break;
     }
-    addpfx(p, {0,0}, {0,0}, rand()%20 + 50, rand()%30 + 2);
-    for(int q = 0; q < 50; ++q) addParticleSprite(p, randVec(6.0f), 0.0f, "SMOKE");
+    addpfx(_p, {0,0}, {0,0}, rand()%20 + 50, rand()%30 + 2);
+    for(int q = 0; q < 50; ++q) addParticleSprite(_p, randVec(6.0f), 0.0f, "SMOKE");
     playSnd(PLACE_SND);
 }
 
@@ -1369,4 +1377,15 @@ void universe::createFactions()
     faction none;
     none.m_colour = {0, 0, 0};
     m_factions.push_back(none);
+}
+
+squad * universe::getSquadFromID(int _id)
+{
+    for(auto &s : m_squads)
+    {
+        if(s.m_id == _id)
+        {
+            return &s;
+        }
+    }
 }

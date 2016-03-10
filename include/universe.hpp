@@ -111,6 +111,7 @@ public:
     //ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
     void createFactions();
     std::vector<faction> * getFactions() {return &m_factions;}
+    squad * getSquadFromID(int _id);
 };
 
 #endif

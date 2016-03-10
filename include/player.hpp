@@ -6,7 +6,7 @@
 class player: public ship
 {
 public:
-    player(vec2 p, float _r): ship(p, PLAYER_SHIP, _r) {setWeap(0); setMissiles(3);}
+    player(vec2 _p, float _r);
 	void ctrlUpdate();
 };
 

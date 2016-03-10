@@ -7,17 +7,21 @@
 
 class laser: public base
 {
-    int dmg, spd;
-    aiTeam team;
-    float ang, col[3], power, stop;
+    int m_dmg;
+    int m_spd;
+    aiTeam m_team;
+    float m_ang;
+    float m_col[3];
+    float m_power;
+    float m_stop;
 public:
-    laser(vec2,vec2,float,std::array<float, WEAPS_W> pData, aiTeam);
-    int getDmg() {return dmg;}
-    float getStop() {return stop;}
-    void update(float);
-    aiTeam getTeam() {return team;}
-    float getCol(int index) {return col[index];}
-    float getPower() {return power;}
+    laser(vec2 _p, vec2 _v, float _ang, std::array<float, WEAPS_W> _data, aiTeam _team);
+    int getDmg() const {return m_dmg;}
+    float getStop() const {return m_stop;}
+    void update(float _dt);
+    aiTeam getTeam() const  {return m_team;}
+    float getCol(int _index) const {return m_col[_index];}
+    float getPower() const {return m_power;}
 };
 
 #endif

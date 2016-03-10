@@ -1,5 +1,15 @@
 #include "player.hpp"
 
+player::player(
+        vec2 _p,
+        float _r)
+        :
+        ship(_p, PLAYER_SHIP, _r)
+{
+    setWeap(0);
+    setMissiles(3);
+}
+
 void player::ctrlUpdate()
 {
 	vec2 p = getPos();
