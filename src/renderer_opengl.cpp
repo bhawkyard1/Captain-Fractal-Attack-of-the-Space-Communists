@@ -11,9 +11,7 @@
 
 renderer_ngl::renderer_ngl(const int _w, const int _h)
 {
-    std::cout << "p1" << std::endl;
-
-    /*init();
+    init();
     m_w = _w;
     m_h = _h;
 
@@ -21,6 +19,11 @@ renderer_ngl::renderer_ngl(const int _w, const int _h)
                                 g_WIN_POS_X, g_WIN_POS_Y,
                                 g_WIN_HEIGHT, g_WIN_WIDTH,
                                 SDL_WINDOW_OPENGL );
+
+    if(!m_window)
+    {
+      errorExit("Unable to create window");
+    }
 
     //setting up the GL attributes before they can be used
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -36,30 +39,42 @@ renderer_ngl::renderer_ngl(const int _w, const int _h)
 
     m_gl_context = SDL_GL_CreateContext( m_window );
 
-    //loadTextures();
+    if(!m_gl_context)
+    {
+      errorExit("Unable to create GL context");
+    }
 
-    /*m_project = ngl::perspective(45.0f,
+    makeCurrent();
+    SDL_GL_SetSwapInterval(1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    swapWindow();
+
+    ngl::NGLInit::instance();
+
+    //loadTextures();
+    m_project = ngl::perspective(45.0f,
                                  float(_w / _h),
                                  0.2f,
                                  20.0f
                                  );
 
     shader = ngl::ShaderLib::instance();
-
+std::cout << "p1" << std::endl;
     shader->createShaderProgram("background");
     shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
     shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
-    shader->loadShaderSource("backgroundVertex", "shaders/backgroundVertex.glsl");
-    shader->loadShaderSource("backgroundFragment", "shaders/backgroundFragment.glsl");
+    shader->loadShaderSource("backgroundVertex", "shaders/DiffuseVertex.glsl");
+    shader->loadShaderSource("backgroundFragment", "shaders/DiffuseFragment.glsl");
 
     shader->compileShader("backgroundVertex");
     shader->compileShader("backgroundFragment");
 
-    shader->attachShaderToProgram("diffuse", "backgroundVertex");
-    shader->attachShaderToProgram("diffuse", "backgroundFragment");
+    shader->attachShaderToProgram("background", "backgroundVertex");
+    shader->attachShaderToProgram("background", "backgroundFragment");
 
     shader->linkProgramObject("background");
-    shader->use("background");*/
+    shader->use("background");
+    std::cout << "p1" << std::endl;
 }
 
 renderer_ngl::~renderer_ngl()
@@ -69,13 +84,10 @@ renderer_ngl::~renderer_ngl()
 
 int renderer_ngl::init()
 {
-    /*if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
-        SDL_Quit();
-        return EXIT_FAILURE;
+        errorExit("SDL initialisation failed");
     }
-    ngl::NGLInit::instance();*/
     return 1;
 }
 
@@ -614,3 +626,9 @@ void renderer_ngl::loadMatricesToShader()
   shader->setRegisteredUniform("MVP", MVP);*/
 }
 
+void renderer_ngl::errorExit(const std::string &_msg)
+{
+  std::cerr << &_msg << " " << SDL_GetError() << std::endl;
+  SDL_Quit();
+  exit(EXIT_FAILURE);
+}

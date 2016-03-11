@@ -18,38 +18,40 @@
 in vec4 fragCoord;
 in vec2 iResolution;
 in float iGlobalTime;
-int float zoom;
+in float zoom;
 out vec4 fragColour;
 
 void main()
 {
     //get coords and direction
-    vec2 uv=fragCoord.m_xy/iResolution.m_xy-.5;
-    uv.m_y*=iResolution.m_y/iResolution.m_x;
+    vec2 uv = fragCoord.xy / iResolution.xy - 0.5f;
+    uv.y *= iResolution.y / iResolution.x;
     vec3 dir=vec3(uv*zoom,1.);
-    float time=iGlobalTime*speed+.25;
+    float time = iGlobalTime * speed + 0.25f;
 
     //volumetric rendering
     float s=0.1,fade=1.;
     vec3 v=vec3(0.);
-    for (int r=0; r<volsteps; r++) {
-        vec3 p=from+s*dir*.5;
-        p = abs(vec3(tile)-mod(p,vec3(tile*2.))); // tiling fold
-        float pa,a=pa=0.;
-        for (int i=0; i<iterations; i++) {
-            p=abs(p)/dot(p,p)-formuparam; // the magic formula
-            a+=abs(length(p)-pa); // absolute sum of average change
-            pa=length(p);
+    for (int r = 0; r < volsteps; r++)
+    {
+        vec3 p = from + s * dir * 0.5f;
+        p = abs( vec3(tile) - mod(p, vec3(tile * 2.0f))); // tiling fold
+        float pa, a = pa = 0.0f;
+        for (int i = 0; i < iterations; i++)
+        {
+            p = abs(p) / dot(p, p) - formuparam; // the magic formula
+            a += abs(length(p) - pa); // absolute sum of average change
+            pa = length(p);
         }
-        float dm=max(0.,darkmatter-a*a*.001); //dark matter
-        a*=a*a; // add contrast
-        if (r>6) fade*=1.-dm; // dark matter, don't render near
+        float dm = max(0.0f, darkmatter - a * a * 0.001f); //dark matter
+        a *= a * a; // add contrast
+        if(r > 6) fade *= 1.0f - dm; // dark matter, don't render near
         //v+=vec3(dm,dm*.5,0.);
-        v+=fade;
-        v+=vec3(s,s*s,s*s*s*s)*a*brightness*fade; // coloring based on distance
-        fade*=distfading; // distance fading
-        s+=stepsize;
+        v += fade;
+        v += vec3(s, s * s, s * s * s * s) * a * brightness * fade; // coloring based on distance
+        fade *= distfading; // distance fading
+        s += stepsize;
     }
-    v=mix(vec3(length(v)),v,saturation); //color adjust
-    fragColor = vec4(v*.01,1.);
+    v = mix(vec3(length(v)), v, saturation); //color adjust
+    fragColor = vec4(v * 0.01f, 1.0f);
 }

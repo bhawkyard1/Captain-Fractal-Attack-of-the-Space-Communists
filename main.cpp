@@ -47,7 +47,6 @@
 #include <windows.h>
 #endif
 
-#include <ngl/NGLInit.h>
 
 //Function prototypes.
 void gameInit();
@@ -61,7 +60,6 @@ double diffClock(clock_t clock1, clock_t clock2);
 int main(int argc, char* argv[])
 {
   std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
-  ngl::NGLInit::instance();
 
   gameInit();
 
