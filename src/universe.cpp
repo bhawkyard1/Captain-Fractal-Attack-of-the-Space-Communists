@@ -767,7 +767,7 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
-
+  m_drawer.drawBackground(_dt);
 }
 
 void universe::drawUI()

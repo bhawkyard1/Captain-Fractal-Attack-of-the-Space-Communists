@@ -39,13 +39,13 @@ class renderer_ngl
   ngl::ShaderLib * shader;
   SDL_GLContext m_gl_context;
   GLuint m_vao;
-  void loadMatricesToShader();
+  void loadMatricesToShader(float _dt);
 public:
   renderer_ngl(const int _w, const int _h);
   ~renderer_ngl();
 
   int init();
-  void drawBackground();
+  void drawBackground(float _dt);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
   void swapWindow() const { SDL_GL_SwapWindow(m_window); }
   void errorExit(const std::string &_msg);

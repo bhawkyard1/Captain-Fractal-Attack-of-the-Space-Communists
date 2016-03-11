@@ -1,15 +1,10 @@
 #version 410 core
 
-in vec3 fragmentNormal;
-out vec4 fragmentColour;
-uniform vec4 colour;
-uniform vec3 lightPos;
-uniform vec4 lightDiffuse;
+in vec4 fragCoord;
+
+out vec4 fragColour;
 
 void main()
 {
-    fragmentColour = vec4(0.0);
-    vec3 N = normalize(fragmentNormal);
-    vec3 L = normalize(lightPos);
-    fragmentColour += colour * lightDiffuse * dot(L,N);
+    fragColour = vec4(1.0, 1.0, 1.0, 1.0);
 }

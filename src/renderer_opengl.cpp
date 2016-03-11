@@ -9,112 +9,123 @@
 #include "laser.hpp"
 #include "missile.hpp"
 
+#include <ngl/VAOPrimitives.h>
+
 renderer_ngl::renderer_ngl(const int _w, const int _h)
 {
-    init();
-    m_w = _w;
-    m_h = _h;
+  init();
+  m_w = _w;
+  m_h = _h;
 
-    m_window = SDL_CreateWindow("Ben is cool",
-                                g_WIN_POS_X, g_WIN_POS_Y,
-                                g_WIN_HEIGHT, g_WIN_WIDTH,
-                                SDL_WINDOW_OPENGL );
+  m_window = SDL_CreateWindow("Ben is cool",
+                              g_WIN_POS_X, g_WIN_POS_Y,
+                              g_WIN_HEIGHT, g_WIN_WIDTH,
+                              SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
 
-    if(!m_window)
-    {
-      errorExit("Unable to create window");
-    }
+  if(!m_window)
+  {
+    errorExit("Unable to create window");
+  }
 
-    //setting up the GL attributes before they can be used
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  //Setting up the GL attributes before they can be used
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    m_gl_context = SDL_GL_CreateContext( m_window );
+  m_gl_context = SDL_GL_CreateContext( m_window );
 
-    if(!m_gl_context)
-    {
-      errorExit("Unable to create GL context");
-    }
+  if(!m_gl_context)
+  {
+    errorExit("Unable to create GL context");
+  }
 
-    makeCurrent();
-    SDL_GL_SetSwapInterval(1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    swapWindow();
+  makeCurrent();
+  SDL_GL_SetSwapInterval(1);
 
-    ngl::NGLInit::instance();
+  glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  swapWindow();
 
-    //loadTextures();
-    m_project = ngl::perspective(45.0f,
-                                 float(_w / _h),
-                                 0.2f,
-                                 20.0f
-                                 );
+  ngl::NGLInit::instance();
 
-    shader = ngl::ShaderLib::instance();
-std::cout << "p1" << std::endl;
-    shader->createShaderProgram("background");
-    shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
-    shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
-    shader->loadShaderSource("backgroundVertex", "shaders/DiffuseVertex.glsl");
-    shader->loadShaderSource("backgroundFragment", "shaders/DiffuseFragment.glsl");
+  //loadTextures();
+  m_project = ngl::perspective(45.0f,
+                               float(_w / _h),
+                               0.2f,
+                               20.0f
+                               );
 
-    shader->compileShader("backgroundVertex");
-    shader->compileShader("backgroundFragment");
+  m_view = ngl::lookAt(ngl::Vec3(0,0,0),
+                       ngl::Vec3(0,0,0),
+                       ngl::Vec3(0,1,0));
 
-    shader->attachShaderToProgram("background", "backgroundVertex");
-    shader->attachShaderToProgram("background", "backgroundFragment");
+  shader = ngl::ShaderLib::instance();
+  std::cout << "p1" << std::endl;
+  shader->createShaderProgram("background");
+  shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
+  shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
+  //shader->loadShaderSource("backgroundVertex", "shaders/DiffuseVertex.glsl");
+  //shader->loadShaderSource("backgroundFragment", "shaders/DiffuseFragment.glsl");
+  shader->loadShaderSource("backgroundVertex", "shaders/backgroundVertex.glsl");
+  shader->loadShaderSource("backgroundFragment", "shaders/backgroundFragment.glsl");
 
-    shader->linkProgramObject("background");
-    shader->use("background");
-    std::cout << "p1" << std::endl;
+  shader->compileShader("backgroundVertex");
+  shader->compileShader("backgroundFragment");
+
+  shader->attachShaderToProgram("background", "backgroundVertex");
+  shader->attachShaderToProgram("background", "backgroundFragment");
+
+  shader->linkProgramObject("background");
+  shader->use("background");
+  std::cout << "p1" << std::endl;
 }
 
 renderer_ngl::~renderer_ngl()
 {
-    //SDL_DestroyWindow( m_window );
+  //SDL_DestroyWindow( m_window );
 }
 
 int renderer_ngl::init()
 {
-    if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
-    {
-        errorExit("SDL initialisation failed");
-    }
-    return 1;
+  if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
+  {
+    errorExit("SDL initialisation failed");
+  }
+  return 1;
 }
 
-void renderer_ngl::drawBackground()
+void renderer_ngl::drawBackground(float _dt)
 { 
-  /*std::array<ngl::Vec3, 4> quad = {
-    ngl::Vec3(-1.0f, -1.0f, 0.0f),
-    ngl::Vec3(-1.0f, 1.0f, 0.0f),
-    ngl::Vec3(1.0f, 1.0f, 0.0f),
-    ngl::Vec3(1.0f, 0.0f, 0.0f)
-                                  };
+  std::array<ngl::Vec3, 4> quad = {
+    ngl::Vec3(-0.8f, -0.8f, 0.0f),
+    ngl::Vec3(-0.8f, 0.8f, 0.0f),
+    ngl::Vec3(0.8f, 0.8f, 0.0f),
+    ngl::Vec3(0.8f, -0.8f, 0.0f)
+  };
+
   //Create a VAO
   glGenVertexArrays(1, &m_vao);
-
-  //make it active
+  //Make it active
   glBindVertexArray(m_vao);
 
   //Generate a VBO
-  GLuint VB_yo;
-  glGenBuffers(1, &VB_yo);
-  glBindBuffer(GL_ARRAY_BUFFER, VB_yo);
+  GLuint VBO;
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
   //Copy dat data
   glBufferData(GL_ARRAY_BUFFER,
                sizeof(ngl::Vec3) * quad.size(),
                &quad[0].m_x,
-               GL_STATIC_DRAW
-               );
+      GL_STATIC_DRAW
+      );
+
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
 
@@ -122,9 +133,11 @@ void renderer_ngl::drawBackground()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0, 0, m_w, m_h);
-
   glBindVertexArray(m_vao);
-  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);*/
+  loadMatricesToShader(_dt);
+  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+  swapWindow();
+  std::cout << "END" << std::endl;
 }
 
 /*
@@ -619,11 +632,15 @@ void renderer::drawWeaponStats(player * ply)
     drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
 }*/
 
-void renderer_ngl::loadMatricesToShader()
+void renderer_ngl::loadMatricesToShader(float _dt)
 {
-  /*ngl::ShaderLib * shader = ngl::ShaderLib::instance();
+  ngl::ShaderLib * shader = ngl::ShaderLib::instance();
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
-  shader->setRegisteredUniform("MVP", MVP);*/
+  shader->setRegisteredUniform("MVP", MVP);
+
+  shader->setRegisteredUniform("iResolution", ngl::Vec2(1920.0f, 1080.0f));
+  shader->setRegisteredUniform("iGlobalTime", _dt);
+  shader->setRegisteredUniform("zoom", 1.0f);
 }
 
 void renderer_ngl::errorExit(const std::string &_msg)
