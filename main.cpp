@@ -19,7 +19,9 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_opengl.h>
+
+//Including this causes conflicts with ngl, since this includes gl.h before it is supposed to be included or something.
+//#include <SDL2/SDL_opengl.h>
 
 //Keeps track of time
 #include "sim_time.hpp"

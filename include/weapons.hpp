@@ -11,7 +11,7 @@ enum WEAPON_STAT {LASER_COUNT, SPREAD, DAMAGE, SPEED, COLOUR_RED, COLOUR_GREEN, 
 
 //Weapon definitions.
 //0 Lasers per shot, 1 spread, 2 dmg, 3 speed, 4 red, 5 green, 6 blue, 7 energy cost, 8 cooldown, 9 stopping power.
-static std::array<std::array<float,10>,18> weapons =
+static std::array<std::array<float,10>,18> g_weapons =
 {{
      {{1.0f,	2.0f,               8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.008f}},//Laser cannon	0
      {{12.0f,	5.0f,               3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.01f}},//Shotgun			1
@@ -35,17 +35,17 @@ static std::array<std::array<float,10>,18> weapons =
 
 inline float getEnergyCost(int weap)
 {
-    return weapons[weap][7];
+    return g_weapons[weap][7];
 }
 
 inline float getCooldown(int weap)
 {
-    return weapons[weap][8];
+    return g_weapons[weap][8];
 }
 
 inline bool isOffScreen(vec2 pos, float dist)
 {
-    return (pos.x < -dist or pos.y < -dist or pos.x > dist or pos.y > dist);
+    return (pos.m_x < -dist or pos.m_y < -dist or pos.m_x > dist or pos.m_y > dist);
 }
 
 #endif

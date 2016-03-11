@@ -1,5 +1,6 @@
-/*#include "SDL.h"
+#include "SDL.h"
 
+#include <array>
 #include <string>
 #include "renderer_opengl.hpp"
 #include "util.hpp"
@@ -8,14 +9,14 @@
 #include "laser.hpp"
 #include "missile.hpp"
 
-renderer_ngl::renderer_ngl(int _w, int _h)
+renderer_ngl::renderer_ngl(const int _w, const int _h)
 {
     init();
 
     m_w = _w;
     m_h = _h;
 
-    m_window = SDL_CreateWindow("Elite: Dangerous v2.0",
+    m_window = SDL_CreateWindow("Ben is cool",
                                 g_WIN_POS_X, g_WIN_POS_Y,
                                 g_WIN_HEIGHT, g_WIN_WIDTH,
                                 SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL );
@@ -77,8 +78,39 @@ int renderer_ngl::init()
 }
 
 void renderer_ngl::drawBackground()
-{
+{ 
+  std::array<ngl::Vec3, 4> quad = {
+    ngl::Vec3(-1.0f, -1.0f, 0.0f),
+    ngl::Vec3(-1.0f, 1.0f, 0.0f),
+    ngl::Vec3(1.0f, 1.0f, 0.0f),
+    ngl::Vec3(1.0f, 0.0f, 0.0f)
+                                  };
+  //Create a VAO
+  glGenVertexArrays(1, &m_vao);
 
+  //make it active
+  glBindVertexArray(m_vao);
+
+  //Generate a VBO
+  GLuint VB_yo;
+  glGenBuffers(1, &VB_yo);
+  glBindBuffer(GL_ARRAY_BUFFER, VB_yo);
+  //Copy dat data
+  glBufferData(GL_ARRAY_BUFFER,
+               sizeof(ngl::Vec3) * quad.size(),
+               &quad[0].m_x,
+               GL_STATIC_DRAW
+               );
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
+
+  glBindVertexArray(0);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glViewport(0, 0, m_w, m_h);
+
+  glBindVertexArray(m_vao);
+  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 }
 
 /*
@@ -248,8 +280,8 @@ void renderer::drawTextureSet(std::string key, vec2 pos, float orient, std::arra
     h *= g_ZOOM_LEVEL / 2;
 
     SDL_Rect dst;
-    dst.x = pos.x - (w/2);
-    dst.y = pos.y - (h/2);
+    dst.m_x = pos.m_x - (w/2);
+    dst.m_y = pos.m_y - (h/2);
     dst.w = w;
     dst.h = h;
 
@@ -268,13 +300,13 @@ void renderer::drawText(std::string text, std::string font, vec2 _pos)
 {
     sprite_sheet * tmp = &m_letters[font];
 
-    SDL_Rect dst = {static_cast<int>(_pos.x), static_cast<int>(_pos.y), 0, 0};
+    SDL_Rect dst = {static_cast<int>(_pos.m_x), static_cast<int>(_pos.m_y), 0, 0};
     for(int i = 0; i < text.length(); ++i)
     {
         SDL_Texture * draw = tmp->m_sheet[text[i]];
         SDL_QueryTexture( draw, NULL, NULL, &dst.w, &dst.h);
         SDL_RenderCopy( m_renderer, draw, NULL, &dst );
-        dst.x += dst.w;
+        dst.m_x += dst.w;
     }
 }
 
@@ -290,8 +322,8 @@ void renderer::drawTexture(std::string key, size_t index, vec2 pos, float orient
     h *= g_ZOOM_LEVEL / 2;
 
     SDL_Rect dst;
-    dst.x = pos.x - (w/2);
-    dst.y = pos.y - (h/2);
+    dst.m_x = pos.m_x - (w/2);
+    dst.m_y = pos.m_y - (h/2);
     dst.w = w;
     dst.h = h;
 
@@ -317,7 +349,7 @@ void renderer::drawLine(vec2 _start, vec2 _end, std::array<int, 4> _col)
     _end *= g_ZOOM_LEVEL;
     _end += g_HALFWIN;
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
-    SDL_RenderDrawLine(m_renderer, _start.x, _start.y, _end.x, _end.y);
+    SDL_RenderDrawLine(m_renderer, _start.m_x, _start.m_y, _end.m_x, _end.m_y);
 }
 
 void renderer::drawLineGr(vec2 _start, vec2 _end, std::array<float, 4> _scol, std::array<float, 4> _ecol)
@@ -329,8 +361,8 @@ void renderer::drawLineGr(vec2 _start, vec2 _end, std::array<float, 4> _scol, st
     _end += g_HALFWIN;
 
     SDL_SetRenderDrawColor(m_renderer, _scol[0], _scol[1], _scol[2], _scol[3]);
-    int p0[2] = {static_cast<int>(_start.x), static_cast<int>(_start.y)};
-    int p1[2] = {static_cast<int>(_end.x), static_cast<int>(_end.y)};
+    int p0[2] = {static_cast<int>(_start.m_x), static_cast<int>(_start.m_y)};
+    int p1[2] = {static_cast<int>(_end.m_x), static_cast<int>(_end.m_y)};
     int dx = p1[0] - p0[0], dy = p1[1] - p0[1];
     int cur[2] = {0, 0};
 
@@ -386,8 +418,8 @@ void renderer::drawLineGr(vec2 _start, vec2 _end, std::array<float, 4> _scol, st
 
 void renderer::drawCircle(int x, int y, int radius, std::array<float, 4> _col)
 {
-    x = x * g_ZOOM_LEVEL + g_HALFWIN.x;
-    y = y * g_ZOOM_LEVEL + g_HALFWIN.y;
+    x = x * g_ZOOM_LEVEL + g_HALFWIN.m_x;
+    y = y * g_ZOOM_LEVEL + g_HALFWIN.m_y;
     radius *= g_ZOOM_LEVEL;
 
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
@@ -420,7 +452,7 @@ void renderer::drawCircleUI(int x, int y, int radius, std::array<float, 4> _col)
 
 void renderer::drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire)
 {
-    SDL_Rect r = {static_cast<int>(_p.x), static_cast<int>(_p.y), static_cast<int>(_d.x), static_cast<int>(_d.y)};
+    SDL_Rect r = {static_cast<int>(_p.m_x), static_cast<int>(_p.m_y), static_cast<int>(_d.m_x), static_cast<int>(_d.m_y)};
     SDL_SetRenderDrawColor( m_renderer, col[0], col[1], col[2], col[3]);
 
     if(!wire) SDL_RenderFillRect( m_renderer, &r );
@@ -439,8 +471,8 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     SDL_Rect map;
     map.w = 256;
     map.h = 256;
-    map.x = g_WIN_WIDTH - 256;
-    map.y = 0;
+    map.m_x = g_WIN_WIDTH - 256;
+    map.m_y = 0;
 
     SDL_SetRenderDrawColor(m_renderer, 200, 200, 255, 100);
     SDL_RenderFillRect(m_renderer,&map);
@@ -454,8 +486,8 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     {
         vec2 lpp = lp->at(i).getPos();
 
-        double x = clamp(lpp.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        double y = clamp(lpp.y / 156.0f + 128.0f,  0.0f,  256.0f);
+        double x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+        double y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         SDL_RenderDrawPoint(m_renderer, x, y);
     }
@@ -465,8 +497,8 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     {
         vec2 mpp = mp->at(i).getPos();
 
-        double x = clamp(mpp.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        double y = clamp(mpp.y / 156.0f + 128.0f,  0.0f,  256.0f);
+        double x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+        double y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         SDL_RenderDrawPoint(m_renderer, x, y);
     }
@@ -476,8 +508,8 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
     {
         vec2 app = ap->at(i).getPos();
 
-        double x = clamp(app.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        double y = clamp(app.y / 156.0f + 128.0f,  0.0f,  256.0f);
+        double x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+        double y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         int radius = 1;
         if(ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
@@ -496,8 +528,8 @@ void renderer::drawMap(std::vector<missile> * mp, std::vector<enemy> * ep, std::
         else if(ep->at(i).getTeam() == TEAM_PLAYER_MINER) col = {0, 255, 0, 255};
         else if(ep->at(i).getTeam() == GALACTIC_FEDERATION or ep->at(i).getTeam() == SPOOKY_SPACE_PIRATES) col = {255, 0, 0, 255};
 
-        float x = clamp(epp.x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
-        float y = clamp(epp.y / 156.0f + 128.0f, 0.0f, 256.0f);
+        float x = clamp(epp.m_x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
+        float y = clamp(epp.m_y / 156.0f + 128.0f, 0.0f, 256.0f);
 
         drawCircleUI(x,y,radius,col);
     }
@@ -549,8 +581,8 @@ void renderer::drawWeaponStats(player * ply)
     SDL_Rect weap;
     weap.w = g_WIN_WIDTH * 0.1;
     weap.h = g_WIN_HEIGHT * 0.2;
-    weap.x = g_WIN_WIDTH - weap.w;
-    weap.y = g_WIN_HEIGHT - 1.4 * weap.h;
+    weap.m_x = g_WIN_WIDTH - weap.w;
+    weap.m_y = g_WIN_HEIGHT - 1.4 * weap.h;
 
     std::array<float, 10> ws = ply->getWeap();
 
@@ -572,11 +604,11 @@ void renderer::drawWeaponStats(player * ply)
     rateText += std::to_string( static_cast<int>( rate ) );
     drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
 }*/
-/*
+
 void renderer_ngl::loadMatricesToShader()
 {
   ngl::ShaderLib * shader = ngl::ShaderLib::instance();
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
   shader->setRegisteredUniform("MVP", MVP);
-}*/
+}
 

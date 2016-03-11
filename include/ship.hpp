@@ -72,73 +72,73 @@ class ship: public base
   float m_shieldMul;
   float m_generatorMul;
 public:
-  ship(vec2 _p, ship_spec _type, float);
-  ship(ship&, vec2);
-  ship(ship_spec);
+  ship(const vec2 _p, const ship_spec _type, const float);
+  ship(const ship& _src, const vec2 _p);
+  ship(const ship_spec _type);
 
-  void addVelS(vec2 _v) {if(m_canMove) addVel(_v * m_inertia * m_enginePower);}
-  void accelerate(float _mult);
-  void accelerate(vec2 _dir, float _mult);
-  void dodge(float _side);
+  void addVelS(const vec2 _v) {if(m_canMove) addVel(_v * m_inertia * m_enginePower);}
+  void accelerate(const float _mult);
+  void accelerate(const vec2 _dir, const float _mult);
+  void dodge(const float _side);
 
-  void update(float _dt);
-  void setTAng(float _ang) {m_targetAngle = _ang;}
+  void update(const float _dt);
+  void setTAng(const float _ang) {m_targetAngle = _ang;}
   float getTAng() const {return m_targetAngle;}
-  void setAng(float _ang) {m_angle = _ang;}
+  void setAng(const float _ang) {m_angle = _ang;}
   float getAng() const {return m_angle;}
   void setShooting() {m_drawShot = 255;}
-  void setWeap(int _val) {m_curWeap = _val;}
-  void incrWeap(int _val) {m_curWeap = clampRoll(m_curWeap + _val, 0, static_cast<int>(m_weapons.size()) - 1 );}
+  void setWeap(const int _val) {m_curWeap = _val;}
+  void incrWeap(const int _val) {m_curWeap = clampRoll(m_curWeap + _val, 0, static_cast<int>(m_weapons.size()) - 1 );}
   float getCurWeapStat(WEAPON_STAT _stat) const {return m_weapons[m_curWeap][_stat];}
   std::vector<std::array<float, 10>> getWeaps() const {return m_weapons;}
   std::array<float, 10> getWeap() const {return m_weapons[m_curWeap];}
   int getCurWeap() const {return m_curWeap;}
   bool isFiring() const {return m_shooting;}
-  void setFiring(bool _v) {m_shooting = _v; if(_v) m_damageTimer = 3.0f;}
+  void setFiring(const bool _v) {m_shooting = _v; if(_v) m_damageTimer = 3.0f;}
 
-  void setMaxHealth(float _h, bool _match) {m_maxHealth = _h; if(_match) m_health = _h;}
-  void setMaxShield(float _s, bool _match) {m_maxShield = _s; if(_match) m_shield = _s;}
-  void setMaxEnergy(float _e, bool _match) {m_maxEnergy = _e; if(_match) m_energy = _e;}
+  void setMaxHealth(const float _h, const bool _match) {m_maxHealth = _h; if(_match) m_health = _h;}
+  void setMaxShield(const float _s, const bool _match) {m_maxShield = _s; if(_match) m_shield = _s;}
+  void setMaxEnergy(const float _e, const bool _match) {m_maxEnergy = _e; if(_match) m_energy = _e;}
   float getMaxHealth() const {return m_maxHealth;}
   float getMaxShield() const {return m_maxShield;}
   float getMaxEnergy() const {return m_maxEnergy;}
 
-  void setHealth(float _h) {m_health = _h;}
+  void setHealth(const float _h) {m_health = _h;}
   float getHealth() const {return m_health;}
-  void incrHealth(float _v) {m_health += _v;}
-  void setShield(float _s) {m_shield = _s;}
+  void incrHealth(const float _v) {m_health += _v;}
+  void setShield(const float _s) {m_shield = _s;}
   float getShield() const {return m_shield;}
-  void setEnergy(float _e) {m_energy = _e;}
+  void setEnergy(const float _e) {m_energy = _e;}
   float getEnergy() const {return m_energy;}
   float getCooldown() const {return m_coolDown;}
-  void setCooldown(float _f) {m_coolDown = _f;}
+  void setCooldown(const float _f) {m_coolDown = _f;}
 
-  void setMissiles(int _m) {m_missiles = _m;}
-  void incrMissiles(int _m) {m_missiles += _m;}
+  void setMissiles(const int _m) {m_missiles = _m;}
+  void incrMissiles(const int _m) {m_missiles += _m;}
   int getMissiles() const {return m_missiles;}
 
-  void setEnergyPriority(int _v) {m_priority = static_cast<energyPriority>(_v);}
+  void setEnergyPriority(const int _v) {m_priority = static_cast<energyPriority>(_v);}
 
-  void damage(float _d);
+  void damage(const float _d);
 
   ship * getSelf() {return this;}
 
-  int getUpgrade(int _index) {if(_index < UPGRADES_LEN) return m_upgrades[_index]; return -1;}
-  void setGradeArr(int _i, int _v) {m_upgrades[_i] = _v;}
-  void setGrade(int _i, int _v);
-  int upgrade(int io_i);
+  int getUpgrade(const int _index) {if(_index < UPGRADES_LEN) return m_upgrades[_index]; return -1;}
+  void setGradeArr(const int _i, const int _v) {m_upgrades[_i] = _v;}
+  void setGrade(const int _i, const int _v);
+  int upgrade(const int _i);
 
-  void setInertia(float _in) {m_inertia = _in;}
+  void setInertia(const float _in) {m_inertia = _in;}
   float getInertia() const {return m_inertia;}
 
-  void setEnginePower(float _val) {m_enginePower = _val;}
+  void setEnginePower(const float _val) {m_enginePower = _val;}
   float getEnginePower() const {return m_enginePower;}
 
   ship_spec getClassification() const {return m_classification;}
 
   float getRadius() const {return m_radius;}
 
-  int getScore();
+  int getScore() const;
 
   float getAngVel() const {return m_angVel;}
 

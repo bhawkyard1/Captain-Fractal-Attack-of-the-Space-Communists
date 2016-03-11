@@ -17,7 +17,7 @@ QMAKE_CXXFLAGS += -std=c++11
 OTHER_FILES += readme.md \
             += ./shaders/*.glsl
 
-CONFIG += COMPILE_MODE_SDL
+CONFIG += COMPILE_MODE_NGL
 
 COMPILE_MODE_SDL {
 }

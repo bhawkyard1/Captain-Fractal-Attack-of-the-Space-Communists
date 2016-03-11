@@ -1,12 +1,10 @@
 #ifndef RENDERER_OPENGL_HPP
 #define RENDERER_OPENGL_HPP
 
-/*#include <string>
+#include <string>
 #include <unordered_map>
 
 #include <vector>
-
-#include <SDL_image.h>
 
 #include "sprite_sheet.hpp"
 #include "vectors.hpp"
@@ -39,9 +37,10 @@ class renderer_ngl
   ngl::Transformation m_transform;
   ngl::ShaderLib * shader;
   SDL_GLContext m_gl_context;
+  GLuint m_vao;
   void loadMatricesToShader();
 public:
-  renderer_ngl(int,int);
+  renderer_ngl(const int _w, const int _h);
   ~renderer_ngl();
 
   int init();
@@ -49,7 +48,7 @@ public:
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
   void swapWindow() const { SDL_GL_SwapWindow(m_window); }
 
-  void loadTextures() {return;}
+  /*void loadTextures() {return;}
 
   void loadFontSpriteSheet(std::string name, std::string path, int size) {return;}
   void loadSpriteSheet() {return;}
@@ -75,12 +74,12 @@ public:
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp) {return;}
   void statusBars(player * ply) {return;}
-  void drawWeaponStats(player * ply) {return;}
+  void drawWeaponStats(player * ply) {return;}*/
 
   void finalise() {swapWindow();}
 
   SDL_Surface * getSurface(std::string path);
 };
-*/
+
 #endif
 

@@ -16,10 +16,10 @@ void player::ctrlUpdate()
     p *= g_ZOOM_LEVEL;
     p += g_HALFWIN;
 	vec2 v = getVel();
-	setPos({v.x, v.y});
-	setPPos({v.x, v.y});
+	setPos({v.m_x, v.m_y});
+	setPPos({v.m_x, v.m_y});
 	int mx = 0, my = 0;
 	SDL_GetMouseState(&mx,&my);
-    vec2 t = {p.x - mx, p.y - my};
+    vec2 t = {p.m_x - mx, p.m_y - my};
     setTAng(deg(-ang(t)));
 }

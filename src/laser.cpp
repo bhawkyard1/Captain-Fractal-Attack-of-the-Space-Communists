@@ -11,7 +11,7 @@ laser::laser(
     float temp_angle = _ang + randFloat(-_data[1], _data[1]);
 	vec2 vAdd = computeVector(temp_angle);
 		
-    setVel({_v.x + vAdd.x * _data[3], _v.y + vAdd.y * _data[3]});
+    setVel({_v.m_x + vAdd.m_x * _data[3], _v.m_y + vAdd.m_y * _data[3]});
     setPos(_p);
     setPPos(_p);
 	

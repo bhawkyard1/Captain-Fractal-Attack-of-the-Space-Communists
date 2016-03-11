@@ -24,8 +24,8 @@ out vec4 fragColour;
 void main()
 {
     //get coords and direction
-    vec2 uv=fragCoord.xy/iResolution.xy-.5;
-    uv.y*=iResolution.y/iResolution.x;
+    vec2 uv=fragCoord.m_xy/iResolution.m_xy-.5;
+    uv.m_y*=iResolution.m_y/iResolution.m_x;
     vec3 dir=vec3(uv*zoom,1.);
     float time=iGlobalTime*speed+.25;
 

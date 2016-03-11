@@ -38,7 +38,7 @@ void enemy::behvrUpdate()
         else
         {
             m_tPos = getPos();
-            m_tPos.y += 10000.0f;
+            m_tPos.m_y += 10000.0f;
             m_tVel = {0.0f, 0.0f};
         }
     }

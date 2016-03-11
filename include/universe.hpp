@@ -1,19 +1,32 @@
 #ifndef UNIVERSE_HPP
 #define UNIVERSE_HPP
 
-#include "weapons.hpp"
+#define RENDER_MODE 1
+
+#include <array>
+
+#include "common.hpp"
+#include "enemy.hpp"
+#include "faction.hpp"
+#include "laser.hpp"
+#include "missile.hpp"
+#include "pfx.hpp"
+#include "player.hpp"
+
+#if RENDER_MODE == 0
+  #include "renderer.hpp"
+#elif RENDER_MODE == 1
+  #include "renderer_opengl.hpp"
+#endif
+
+#include "renderer_opengl.hpp"
+
+#include "ship.hpp"
+#include "squad.hpp"
 #include "stardust.hpp"
 #include "stardust_sprite.hpp"
-#include "ship.hpp"
-#include "enemy.hpp"
-#include "laser.hpp"
-#include "player.hpp"
-#include "pfx.hpp"
-#include "missile.hpp"
-#include "renderer.hpp"
 #include "ui/interface.hpp"
-#include "squad.hpp"
-#include "faction.hpp"
+#include "weapons.hpp"
 
 struct col_partition
 {
@@ -27,87 +40,91 @@ struct col_partition
 class universe
 {
     interface m_ui;
-    renderer m_drawer;
-    std::vector<stardust> dots;
-    std::vector<stardust_sprite> sparkles;
-    std::vector<laser> shots;
-    std::vector<enemy> enemies;
-    std::vector<pfx> particles;
-    std::vector<missile> missiles;
-    std::vector<ship> asteroids;
-    std::vector<stardust_sprite> passive_sprites;
+    #if RENDER_MODE == 0
+      renderer m_drawer;
+    #elif RENDER_MODE == 1
+      renderer_ngl m_drawer;
+    #endif
+    std::vector<stardust> m_dots;
+    std::vector<stardust_sprite> m_sparkles;
+    std::vector<laser> m_shots;
+    std::vector<enemy> m_agents;
+    std::vector<pfx> m_particles;
+    std::vector<missile> m_missiles;
+    std::vector<ship> m_asteroids;
+    std::vector<stardust_sprite> m_passive_sprites;
     std::vector<squad> m_squads;
     std::vector<faction> m_factions;
 
     std::vector<int> m_factionCounts;
     std::vector<int> m_factionMaxCounts;
 
-    player ply;
-    vec2 vel;
+    player m_ply;
+    vec2 m_vel;
 
-    col_partition partitions;
+    col_partition m_partitions;
 
-    int score;
-    float cColP[3];
-    float tColP[3];
-    float gameplay_intensity = 1;
-    bool paused;
+    int m_score;
+    std::array<float, 3> m_cCol;
+    std::array<float, 3> m_tCol;
+    float m_gameplay_intensity = 1;
+    bool m_paused;
     int m_mouse_state;
 public:
     universe();
     void initUI();
-    player * getPly() {return &ply;}
-    void setVel(vec2 v) {vel = v;}
-    void addShot(vec2 p, vec2 v, float ang, std::array<float, WEAPS_W> weap, aiTeam team);
-    void addMissile(vec2 p, vec2 v, float angle, aiTeam _team);
-    void spawnShip(aiTeam t);
-    void spawnShip(aiTeam t, vec2 p);
+    player * getPly() {return &m_ply;}
+    void setVel(const vec2 v) {m_vel = v;}
+    void addShot(const vec2 _p, const vec2 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team);
+    void addMissile(const vec2 _p, const vec2 _v, const float _angle, const aiTeam _team);
+    void spawnShip(const aiTeam t);
+    void spawnShip(const aiTeam t, const vec2 p);
     void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++;}
     void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
-    void addBuild(vec2,ship_spec);
-    void addBuild(ship_spec);
-    void update(float);
-    void draw(float);
+    void addBuild(const vec2 _p,const ship_spec _type);
+    void addBuild(const ship_spec _type);
+    void update(const float _dt);
+    void draw(const float _dt);
     void drawUI();
 
-    void detectCollisions(SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, unsigned short int _lvl);
+    void detectCollisions(const SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, unsigned short int _lvl);
     void checkCollisions();
 
-    void addpfx(vec2,vec2,vec2,int,float);
-    void addParticleSprite(vec2,vec2, float, std::string);
-    std::vector<enemy>* getEnemies() {return &enemies;}
-    std::vector<laser>* getShots() {return &shots;}
-    std::vector<missile>* getMissiles() {return &missiles;}
-    std::vector<ship>* getAsteroids() {return &asteroids;}
-    ship * closestEnemy(vec2 p, aiTeam t);
-    void setScore(int _s) {score = _s; m_ui.update(score);}
-    void addScore(int _s) {score += _s; m_ui.update(score);}
-    int getScore() {return score;}
-    int * getScorePt() {return &score;}
+    void addpfx(const vec2 _p, const vec2 _v, const vec2 _wv, const int _no, const float _f);
+    void addParticleSprite(const vec2 _p, const vec2 _v, const float _m, const std::string _tex);
+    std::vector<enemy>* getAgents() {return &m_agents;}
+    std::vector<laser>* getShots() {return &m_shots;}
+    std::vector<missile>* getMissiles() {return &m_missiles;}
+    std::vector<ship>* getAsteroids() {return &m_asteroids;}
+    ship * closestEnemy(const vec2 _p, const aiTeam _t);
+    void setScore(const int _s) {m_score = _s; m_ui.update(m_score);}
+    void addScore(const int _s) {m_score += _s; m_ui.update(m_score);}
+    int getScore() const  {return m_score;}
+    int * getScorePt() {return &m_score;}
 
-    int getMaxEnemyCount() {return m_factionMaxCounts[GALACTIC_FEDERATION];}
-    void setMaxEnemyCount(int m) {m_factionMaxCounts[GALACTIC_FEDERATION] = m; m_factionMaxCounts[SPOOKY_SPACE_PIRATES] = m;}
-    int getMaxWingmanCount() {return m_factionMaxCounts[TEAM_PLAYER];}
-    void setMaxWingmanCount(int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
-    int getMaxMinerCount() {return m_factionMaxCounts[TEAM_PLAYER_MINER];}
-    void setMaxMinerCount(int m) {m_factionMaxCounts[TEAM_PLAYER_MINER] = m;}
-    bool atMaxCount(aiTeam _t) {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
+    int getMaxEnemyCount() const {return m_factionMaxCounts[GALACTIC_FEDERATION];}
+    void setMaxEnemyCount(const int m) {m_factionMaxCounts[GALACTIC_FEDERATION] = m; m_factionMaxCounts[SPOOKY_SPACE_PIRATES] = m;}
+    int getMaxWingmanCount() const {return m_factionMaxCounts[TEAM_PLAYER];}
+    void setMaxWingmanCount(const int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
+    int getMaxMinerCount() const {return m_factionMaxCounts[TEAM_PLAYER_MINER];}
+    void setMaxMinerCount(const int m) {m_factionMaxCounts[TEAM_PLAYER_MINER] = m;}
+    bool atMaxCount(aiTeam _t) const {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
 
-    void reload(bool);
+    void reload(const bool _newGame);
     void loadShips();
 
-    void pause() {paused = !paused; if(!paused) g_TIME_SCALE = 1;}
-    bool isPaused() {return paused;}
+    void pause() {m_paused = !m_paused; if(!m_paused) g_TIME_SCALE = 1;}
+    bool isPaused() const {return m_paused;}
 
     interface * getUI() {return &m_ui;}
-    bool upgradeCallback(int _sel, int _btn);
-    void upgradeSetLabels(int _sel, int _btn, int _plvl);
+    bool upgradeCallback(const int _sel, const int _btn);
+    void upgradeSetLabels(const int _sel, const int _btn, const int _plvl);
 
-    void setMouseState(int _i) {m_mouse_state = _i;}
-    int getMouseState() {return m_mouse_state;}
+    void setMouseState(const int _i) {m_mouse_state = _i;}
+    int getMouseState() const {return m_mouse_state;}
 
     void addToSquad(enemy * _e, squad * _s) {_e->setSquadID(_s->m_id); _s->m_size++;}
-    void removeFromSquad(enemy * _e, squad * _s) {_e->setSquadID(-1); _s->m_size--;}
+    void removeFromSquad(enemy * _e, squad * _s) {_e->setSquadID(-1); if(_s != nullptr) _s->m_size--;}
     //ship& getShipTemplate(ship_spec i) {return m_ship_templates[i];}
     void createFactions();
     std::vector<faction> * getFactions() {return &m_factions;}

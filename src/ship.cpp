@@ -55,7 +55,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKII:
@@ -65,7 +65,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.09f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKIII:
@@ -75,7 +75,7 @@ ship::ship(
         setMaxEnergy(150.0f,true);
         m_inertia = 0.08f;
         m_enginePower = 6.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKIV:
@@ -85,7 +85,7 @@ ship::ship(
         setMaxEnergy(200.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 7.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
         m_curWeap = 0;
         break;
     case FEDERATION_GUNSHIP:
@@ -95,7 +95,7 @@ ship::ship(
         setMaxEnergy(500.0f,true);
         m_inertia = 0.02f;
         m_enginePower = 8.0f;
-        m_weapons.push_back( weapons[rand() % 2 + 7] );
+        m_weapons.push_back( g_weapons[rand() % 2 + 7] );
         m_curWeap = 0;
         break;
     case PIRATE_GNAT:
@@ -105,7 +105,7 @@ ship::ship(
         setMaxEnergy(90.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
         m_curWeap = 0;
         break;
     case PIRATE_CRUISER:
@@ -115,7 +115,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
         m_curWeap = 0;
         break;
     case PIRATE_WRANGLER:
@@ -125,7 +125,7 @@ ship::ship(
         setMaxEnergy(120.0f,true);
         m_inertia = 0.05f;
         m_enginePower = 6.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
         m_curWeap = 0;
         break;
     case PIRATE_MARAUDER:
@@ -135,7 +135,7 @@ ship::ship(
         setMaxEnergy(120.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 7.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
         m_curWeap = 0;
         break;
     case PIRATE_GUNSHIP:
@@ -145,7 +145,7 @@ ship::ship(
         setMaxEnergy(150.0f,true);
         m_inertia = 0.05f;
         m_enginePower = 8.0f;
-        m_weapons.push_back( weapons[17] );
+        m_weapons.push_back( g_weapons[17] );
         m_curWeap = 0;
         break;
     case PLAYER_SHIP:
@@ -155,9 +155,9 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.07f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( weapons[0] );
-        m_weapons.push_back( weapons[1] );
-        m_weapons.push_back( weapons[2] );
+        m_weapons.push_back( g_weapons[0] );
+        m_weapons.push_back( g_weapons[1] );
+        m_weapons.push_back( g_weapons[2] );
         m_curWeap = 0;
         break;
     case PLAYER_HUNTER:
@@ -167,7 +167,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.2f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 9] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 9] );
         m_curWeap = 0;
         break;
     case PLAYER_DEFENDER:
@@ -177,7 +177,7 @@ ship::ship(
         setMaxEnergy(125.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 8.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 9] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 9] );
         m_curWeap = 0;
         break;
     case PLAYER_DESTROYER:
@@ -187,7 +187,7 @@ ship::ship(
         setMaxEnergy(150.0f,true);
         m_inertia = 0.07f;
         m_enginePower = 10.0f;
-        m_weapons.push_back( weapons[rand() % 3 + 9] );
+        m_weapons.push_back( g_weapons[rand() % 3 + 9] );
         m_curWeap = 0;
         break;
     case PLAYER_MINER_DROID:
@@ -197,7 +197,7 @@ ship::ship(
         setMaxEnergy(200.0f,true);
         m_inertia = 0.3f;
         m_enginePower = 2.0f;
-        m_weapons.push_back( weapons[12] );
+        m_weapons.push_back( g_weapons[12] );
         m_curWeap = 0;
         break;
     case ION_MISSILE_MKI:
@@ -246,7 +246,7 @@ ship::ship(
         setMaxEnergy(300.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 0.0f;
-        m_weapons.push_back( weapons[13] );
+        m_weapons.push_back( g_weapons[13] );
         m_curWeap = 0;
         m_canMove = false;
         break;
@@ -299,8 +299,8 @@ ship::ship(
 }
 
 ship::ship(
-        ship &_src,
-        vec2 _p
+        const ship &_src,
+        const vec2 _p
         )
 {
     m_coolDown = 0.0f;
@@ -612,7 +612,7 @@ void ship::setGrade(
     for(int k = 0; k < _v; ++k) upgrade(_i);
 }
 
-int ship::getScore()
+int ship::getScore() const
 {
     return static_cast<int>((m_maxHealth + m_maxShield + m_maxEnergy) / 100.0f);
 }

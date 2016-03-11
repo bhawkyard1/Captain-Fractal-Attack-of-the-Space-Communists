@@ -240,8 +240,8 @@ void renderer::drawTextureSet(
     h *= g_ZOOM_LEVEL / 2;
 
     SDL_Rect dst;
-    dst.x = _pos.x - (w/2);
-    dst.y = _pos.y - (h/2);
+    dst.x = _pos.m_x - (w/2);
+    dst.y = _pos.m_y - (h/2);
     dst.w = w;
     dst.h = h;
 
@@ -264,7 +264,7 @@ void renderer::drawText(
 {
     sprite_sheet * tmp = &m_letters[_font];
 
-    SDL_Rect dst = {static_cast<int>(_pos.x), static_cast<int>(_pos.y), 0, 0};
+    SDL_Rect dst = {static_cast<int>(_pos.m_x), static_cast<int>(_pos.m_y), 0, 0};
     for(int i = 0; i < _text.length(); ++i)
     {
         SDL_Texture * draw = tmp->m_sheet[_text[i]];
@@ -292,8 +292,8 @@ void renderer::drawTexture(
     h *= g_ZOOM_LEVEL / 2;
 
     SDL_Rect dst;
-    dst.x = _pos.x - (w/2);
-    dst.y = _pos.y - (h/2);
+    dst.x = _pos.m_x - (w/2);
+    dst.y = _pos.m_y - (h/2);
     dst.w = w;
     dst.h = h;
 
@@ -327,7 +327,7 @@ void renderer::drawLine(
     _end *= g_ZOOM_LEVEL;
     _end += g_HALFWIN;
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
-    SDL_RenderDrawLine(m_renderer, _start.x, _start.y, _end.x, _end.y);
+    SDL_RenderDrawLine(m_renderer, _start.m_x, _start.m_y, _end.m_x, _end.m_y);
 }
 
 void renderer::drawLineGr(
@@ -344,8 +344,8 @@ void renderer::drawLineGr(
     _end += g_HALFWIN;
 
     SDL_SetRenderDrawColor(m_renderer, _scol[0], _scol[1], _scol[2], _scol[3]);
-    int p0[2] = {static_cast<int>(_start.x), static_cast<int>(_start.y)};
-    int p1[2] = {static_cast<int>(_end.x), static_cast<int>(_end.y)};
+    int p0[2] = {static_cast<int>(_start.m_x), static_cast<int>(_start.m_y)};
+    int p1[2] = {static_cast<int>(_end.m_x), static_cast<int>(_end.m_y)};
     int dx = p1[0] - p0[0], dy = p1[1] - p0[1];
     int cur[2] = {0, 0};
 
@@ -405,8 +405,8 @@ void renderer::drawCircle(int _x,
         std::array<float, 4> _col
         )
 {
-    _x = _x * g_ZOOM_LEVEL + g_HALFWIN.x;
-    _y = _y * g_ZOOM_LEVEL + g_HALFWIN.y;
+    _x = _x * g_ZOOM_LEVEL + g_HALFWIN.m_x;
+    _y = _y * g_ZOOM_LEVEL + g_HALFWIN.m_y;
     _radius *= g_ZOOM_LEVEL;
 
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
@@ -449,7 +449,7 @@ void renderer::drawRect(
         bool _wire
         )
 {
-    SDL_Rect r = {static_cast<int>(_p.x), static_cast<int>(_p.y), static_cast<int>(_d.x), static_cast<int>(_d.y)};
+    SDL_Rect r = {static_cast<int>(_p.m_x), static_cast<int>(_p.m_y), static_cast<int>(_d.m_x), static_cast<int>(_d.m_y)};
     SDL_SetRenderDrawColor( m_renderer, _col[0], _col[1], _col[2], _col[3]);
 
     if(!_wire) SDL_RenderFillRect( m_renderer, &r );
@@ -488,8 +488,8 @@ void renderer::drawMap(std::vector<missile> *_mp,
     {
         vec2 lpp = _lp->at(i).getPos();
 
-        double x = clamp(lpp.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        double y = clamp(lpp.y / 156.0f + 128.0f,  0.0f,  256.0f);
+        double x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+        double y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         SDL_RenderDrawPoint(m_renderer, x, y);
     }
@@ -499,8 +499,8 @@ void renderer::drawMap(std::vector<missile> *_mp,
     {
         vec2 mpp = _mp->at(i).getPos();
 
-        double x = clamp(mpp.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        double y = clamp(mpp.y / 156.0f + 128.0f,  0.0f,  256.0f);
+        double x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+        double y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         SDL_RenderDrawPoint(m_renderer, x, y);
     }
@@ -510,8 +510,8 @@ void renderer::drawMap(std::vector<missile> *_mp,
     {
         vec2 app = _ap->at(i).getPos();
 
-        double x = clamp(app.x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        double y = clamp(app.y / 156.0f + 128.0f,  0.0f,  256.0f);
+        double x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+        double y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
         int radius = 1;
         if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
@@ -529,8 +529,8 @@ void renderer::drawMap(std::vector<missile> *_mp,
         col = _fp->at(_ep->at(i).getTeam()).m_colour;
         col[3] = 255;
 
-        float x = clamp(epp.x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
-        float y = clamp(epp.y / 156.0f + 128.0f, 0.0f, 256.0f);
+        float x = clamp(epp.m_x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
+        float y = clamp(epp.m_y / 156.0f + 128.0f, 0.0f, 256.0f);
 
         drawCircleUI(x,y,radius,col);
     }

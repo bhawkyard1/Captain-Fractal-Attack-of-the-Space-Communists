@@ -16,14 +16,14 @@ bool pointOnLine(vec2 _start, vec2 _end, vec2 _point)
   vec2 startToPoint = _point - _start;
   vec2 startToEnd = _end - _start;
   float cp = crossProd(startToPoint, startToEnd);
-  return (fabs(cp) <= 0.01f) and (abs(startToPoint.x) <= abs(startToEnd.x));
+  return (fabs(cp) <= 0.01f) and (abs(startToPoint.m_x) <= abs(startToEnd.m_x));
 }
 
 bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim)
 {
   vec2 closest = _min;
-  closest.x = clamp(_pos.x, _min.x, _min.x + _dim.x);
-  closest.y = clamp(_pos.y, _min.y, _min.y + _dim.y);
+  closest.m_x = clamp(_pos.m_x, _min.m_x, _min.m_x + _dim.m_x);
+  closest.m_y = clamp(_pos.m_y, _min.m_y, _min.m_y + _dim.m_y);
   vec2 dc = _pos - closest;
   return magns(dc) < _r;
 }

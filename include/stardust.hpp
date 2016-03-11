@@ -2,22 +2,23 @@
 #define STARDUST_HPP
 
 #include "base.hpp"
+#include <array>
 
 class stardust: public base
 {
-	float z;
-	float col[4];
+  float m_z;
+  float m_col[4];
 public:
-	stardust(float*);
-	stardust(float);
-	void gen(bool regen, float * colp);
-	
-    void updatePos(float _dt);
-	
-	void setZ(float pz) {z = pz;}
-	float getZ() {return z;}
-	float getCol(int i) {return col[i];}
-	void setCol(int i, float v) {col[i] = v;}
+  stardust(const std::array<float, 3> &_col);
+  stardust(float _alpha);
+  void gen(bool _regen, const std::array<float, 3> &_col);
+
+  void updatePos(float _dt);
+
+  void setZ(float _z) {m_z = _z;}
+  float getZ() {return m_z;}
+  float getCol(int _i) {return m_col[_i];}
+  void setCol(int _i, float _v) {m_col[_i] = _v;}
 };
 
 #endif

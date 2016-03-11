@@ -12,7 +12,7 @@ float toRad(float deg)
 
 float computeAngle(vec2 v)
 {
-  return -toDeg(atan2(v.x,v.y));
+  return -toDeg(atan2(v.m_x,v.m_y));
 }
 
 vec2 computeVector(float angle)
@@ -88,13 +88,13 @@ double diffClock(clock_t clock1, clock_t clock2)
 
 bool pointInRect(vec2 p, SDL_Rect * r)
 {
-  if(p.x > r->x and p.x < r->x + r->w and p.y > r->y and p.y < r->y + r->h) return true;
+  if(p.m_x > r->x and p.m_x < r->x + r->w and p.m_y > r->y and p.m_y < r->y + r->h) return true;
   return false;
 }
 
 bool pointInRect(vec2 p, vec2 r_pos, vec2 r_dim)
 {
-  if(p.x > r_pos.x and p.x < r_pos.x + r_dim.x and p.y > r_pos.y and p.y < r_pos.y + r_dim.y) return true;
+  if(p.m_x > r_pos.m_x and p.m_x < r_pos.m_x + r_dim.m_x and p.m_y > r_pos.m_y and p.m_y < r_pos.m_y + r_dim.m_y) return true;
   return false;
 }
 
@@ -120,7 +120,7 @@ vec2 randVec(float f)
 
 vec2 randVec(vec2 min, vec2 max)
 {
-  return {randFloat(min.x, max.x), randFloat(min.y, max.y)};
+  return {randFloat(min.m_x, max.m_x), randFloat(min.m_y, max.m_y)};
 }
 
 void toOctant(int * x, int * y, int octant)

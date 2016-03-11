@@ -17,10 +17,10 @@ button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _
         m_tcol[i] = _t_col[i];
     }
 
-    m_pos.x = _pos.x;
-    m_pos.y = _pos.y;
-    m_dim.x = _dim.x;
-    m_dim.y = _dim.y;
+    m_pos.m_x = _pos.m_x;
+    m_pos.m_y = _pos.m_y;
+    m_dim.m_x = _dim.m_x;
+    m_dim.m_y = _dim.m_y;
 
     m_initCost = 0;
     m_cost = 0;
@@ -43,10 +43,10 @@ button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _
         m_tcol[i] = _t_col[i];
     }
 
-    m_pos.x = _pos.x;
-    m_pos.y = _pos.y;
-    m_dim.x = _dim.x;
-    m_dim.y = _dim.y;
+    m_pos.m_x = _pos.m_x;
+    m_pos.m_y = _pos.m_y;
+    m_dim.m_x = _dim.m_x;
+    m_dim.m_y = _dim.m_y;
 
     m_initCost = _pcost;
     m_cost = _pcost;
