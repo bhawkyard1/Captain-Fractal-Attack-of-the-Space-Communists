@@ -10,7 +10,7 @@ universe::universe()
   :
     m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
     m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
-{	
+{
     setVel({0,0});
 
     m_factionCounts.assign(6, 0);

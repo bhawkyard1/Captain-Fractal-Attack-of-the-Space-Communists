@@ -33,11 +33,11 @@ class renderer_ngl
   std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
   std::unordered_map<std::string, sprite_sheet> m_letters;
   ngl::Mat4 m_view;
-  ngl::Mat4 m_project;
-  ngl::Transformation m_transform;
-  ngl::ShaderLib * shader;
-  SDL_GLContext m_gl_context;
-  GLuint m_vao;
+  //ngl::Mat4 m_project;
+  //ngl::Transformation m_transform;
+  //ngl::ShaderLib * shader;
+  //SDL_GLContext m_gl_context;
+  //GLuint m_vao;
   void loadMatricesToShader();
 public:
   renderer_ngl(const int _w, const int _h);
@@ -45,8 +45,8 @@ public:
 
   int init();
   void drawBackground();
-  void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
-  void swapWindow() const { SDL_GL_SwapWindow(m_window); }
+  //void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
+  //void swapWindow() const { SDL_GL_SwapWindow(m_window); }
 
   /*void loadTextures() {return;}
 
@@ -67,16 +67,16 @@ public:
   void drawCircle(int x, int y, int radius, std::array<float, 4> _col) {return;}
   void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col) {return;}
   void drawText(std::string text) {return;}
-
-  void queryTexture(std::string identifier, int index, int * w, int * h) {return;}
+*/
+  void queryTexture(std::string identifier, int index, int * w, int * h) {*w = 32.0f; *h = 32.0f;}
   float getTextureRadius(std::string _identifier) {return 0.0f;}
-
+/*
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp) {return;}
   void statusBars(player * ply) {return;}
   void drawWeaponStats(player * ply) {return;}*/
 
-  void finalise() {swapWindow();}
+  //void finalise() {swapWindow();}
 
   SDL_Surface * getSurface(std::string path);
 };

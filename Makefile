@@ -918,19 +918,8 @@ obj/renderer.o: src/renderer.cpp include/renderer.hpp \
 		include/squad.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/renderer.o src/renderer.cpp
 
-obj/renderer_opengl.o: src/renderer_opengl.cpp include/renderer_opengl.hpp \
-		include/sprite_sheet.hpp \
-		include/vectors.hpp \
-		include/common.hpp \
-		include/missile.hpp \
-		include/ship.hpp \
-		include/weapons.hpp \
-		include/util.hpp \
-		include/base.hpp \
-		include/enemy.hpp \
-		include/laser.hpp \
-		include/player.hpp \
-		/home/i7620560/NGL/include/ngl/Camera.h \
+obj/renderer_opengl.o: src/renderer_opengl.cpp /home/i7620560/NGL/include/ngl/NGLInit.h \
+		/home/i7620560/NGL/include/ngl/Singleton.h \
 		/home/i7620560/NGL/include/ngl/Types.h \
 		/home/i7620560/NGL/include/ngl/glew.h \
 		/opt/qt/5.5/gcc_64/include/QtOpenGL/QGLContext \
@@ -1048,15 +1037,29 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp include/renderer_opengl.hpp \
 		/opt/qt/5.5/gcc_64/include/QtOpenGL/qtopenglglobal.h \
 		/opt/qt/5.5/gcc_64/include/QtGui/QSurfaceFormat \
 		/opt/qt/5.5/gcc_64/include/QtGui/qsurfaceformat.h \
+		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
+		/home/i7620560/NGL/include/ngl/Vec3.h \
+		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
+		include/renderer_opengl.hpp \
+		include/sprite_sheet.hpp \
+		include/vectors.hpp \
+		include/common.hpp \
+		include/missile.hpp \
+		include/ship.hpp \
+		include/weapons.hpp \
+		include/util.hpp \
+		include/base.hpp \
+		include/enemy.hpp \
+		include/laser.hpp \
+		include/player.hpp \
+		/home/i7620560/NGL/include/ngl/Camera.h \
 		/home/i7620560/NGL/include/ngl/Vec4.h \
 		/home/i7620560/NGL/include/ngl/Vec2.h \
-		/home/i7620560/NGL/include/ngl/Vec3.h \
 		/home/i7620560/NGL/include/ngl/Mat4.h \
 		/home/i7620560/NGL/include/ngl/RibExport.h \
 		/home/i7620560/NGL/include/ngl/Plane.h \
 		/home/i7620560/NGL/include/ngl/AABB.h \
 		/home/i7620560/NGL/include/ngl/BBox.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
 		/home/i7620560/NGL/include/ngl/Colour.h \
 		/home/i7620560/NGL/include/ngl/Light.h \
 		/home/i7620560/NGL/include/ngl/Transformation.h \
@@ -1068,7 +1071,6 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp include/renderer_opengl.hpp \
 		/home/i7620560/NGL/include/ngl/Shader.h \
 		/home/i7620560/NGL/include/ngl/ShaderProgram.h \
 		/home/i7620560/NGL/include/ngl/Util.h \
-		/home/i7620560/NGL/include/ngl/Singleton.h \
 		/home/i7620560/NGL/include/ngl/Mat3.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/renderer_opengl.o src/renderer_opengl.cpp
 

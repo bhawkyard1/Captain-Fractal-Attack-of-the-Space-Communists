@@ -11,15 +11,16 @@
 
 renderer_ngl::renderer_ngl(const int _w, const int _h)
 {
-    init();
+    std::cout << "p1" << std::endl;
 
+    /*init();
     m_w = _w;
     m_h = _h;
 
     m_window = SDL_CreateWindow("Ben is cool",
                                 g_WIN_POS_X, g_WIN_POS_Y,
                                 g_WIN_HEIGHT, g_WIN_WIDTH,
-                                SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL );
+                                SDL_WINDOW_OPENGL );
 
     //setting up the GL attributes before they can be used
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -33,11 +34,11 @@ renderer_ngl::renderer_ngl(const int _w, const int _h)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    m_gl_context = SDL_GL_CreateContext(m_window);
+    m_gl_context = SDL_GL_CreateContext( m_window );
 
     //loadTextures();
 
-    m_project = ngl::perspective(45.0f,
+    /*m_project = ngl::perspective(45.0f,
                                  float(_w / _h),
                                  0.2f,
                                  20.0f
@@ -58,28 +59,29 @@ renderer_ngl::renderer_ngl(const int _w, const int _h)
     shader->attachShaderToProgram("diffuse", "backgroundFragment");
 
     shader->linkProgramObject("background");
-    shader->use("background");
+    shader->use("background");*/
 }
 
 renderer_ngl::~renderer_ngl()
 {
-    SDL_DestroyWindow( m_window );
+    //SDL_DestroyWindow( m_window );
 }
 
 int renderer_ngl::init()
 {
-    if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
+    /*if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return EXIT_FAILURE;
     }
+    ngl::NGLInit::instance();*/
     return 1;
 }
 
 void renderer_ngl::drawBackground()
 { 
-  std::array<ngl::Vec3, 4> quad = {
+  /*std::array<ngl::Vec3, 4> quad = {
     ngl::Vec3(-1.0f, -1.0f, 0.0f),
     ngl::Vec3(-1.0f, 1.0f, 0.0f),
     ngl::Vec3(1.0f, 1.0f, 0.0f),
@@ -110,7 +112,7 @@ void renderer_ngl::drawBackground()
   glViewport(0, 0, m_w, m_h);
 
   glBindVertexArray(m_vao);
-  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);*/
 }
 
 /*
@@ -607,8 +609,8 @@ void renderer::drawWeaponStats(player * ply)
 
 void renderer_ngl::loadMatricesToShader()
 {
-  ngl::ShaderLib * shader = ngl::ShaderLib::instance();
+  /*ngl::ShaderLib * shader = ngl::ShaderLib::instance();
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
-  shader->setRegisteredUniform("MVP", MVP);
+  shader->setRegisteredUniform("MVP", MVP);*/
 }
 

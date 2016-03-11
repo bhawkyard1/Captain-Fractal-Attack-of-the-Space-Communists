@@ -10,10 +10,6 @@
 #include <fstream>
 #include <sstream>
 
-//openGL headers
-//#include <GL/glew.h>
-//#include <GL/glu.h>
-
 //SDL headers
 #include "SDL2/SDL.h"
 #include <SDL2/SDL_image.h>
@@ -51,6 +47,8 @@
 #include <windows.h>
 #endif
 
+#include <ngl/NGLInit.h>
+
 //Function prototypes.
 void gameInit();
 void handleUserKeyDownInput(int, player*, universe*, int*);
@@ -62,6 +60,9 @@ double diffClock(clock_t clock1, clock_t clock2);
 
 int main(int argc, char* argv[])
 {
+  std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
+  ngl::NGLInit::instance();
+
   gameInit();
 
   //Create the universe.
