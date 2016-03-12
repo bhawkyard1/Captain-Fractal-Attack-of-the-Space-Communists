@@ -1185,11 +1185,11 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp C:/SDL2/i686-w64-mingw32/include/
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_system.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_timer.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
-		include/renderer_opengl.hpp \
-		include/sprite_sheet.hpp \
-		include/vectors.hpp \
 		include/common.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
+		include/vectors.hpp \
+		include/renderer_opengl.hpp \
+		include/sprite_sheet.hpp \
 		include/missile.hpp \
 		include/ship.hpp \
 		include/weapons.hpp \

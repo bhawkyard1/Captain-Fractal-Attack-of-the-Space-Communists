@@ -8,8 +8,12 @@ enum sound {RED_LASER_SND, GREEN_LASER_SND, BLUE_LASER_SND, EXPLOSION_SND, RICOC
 
 extern std::vector< std::vector<Mix_Chunk*> > g_snds;
 
+void sfxInit();
+
 void loadSounds();
 
 void playSnd(sound _snd);
+
+void deleteSounds();
 
 #endif

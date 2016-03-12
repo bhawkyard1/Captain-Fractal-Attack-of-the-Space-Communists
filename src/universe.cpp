@@ -752,6 +752,7 @@ void universe::drawUI()
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
+        if(!i->isVisible()) continue;
         for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
         {
             std::array<int, 8> col = j->getCol();

@@ -11,7 +11,7 @@ class laser: public base
     int m_spd;
     aiTeam m_team;
     float m_ang;
-    float m_col[3];
+    std::array<int, 3> m_col;
     float m_power;
     float m_stop;
 public:

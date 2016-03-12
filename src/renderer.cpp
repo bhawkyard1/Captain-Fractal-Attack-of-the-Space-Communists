@@ -36,7 +36,30 @@ renderer::renderer(
 
 renderer::~renderer()
 {
+    //Destroy sprites.
+    for(auto &i : m_textures)
+    {
+        for(auto &j : i.second)
+        {
+            SDL_DestroyTexture( j );
+        }
+        i.second.clear();
+    }
+    m_textures.clear();
+
+    for(auto &i : m_letters)
+    {
+        i.second.destroy();
+        i.second.m_sheet.clear();
+    }
+    m_letters.clear();
+
+    //Destroy the renderer.
+    SDL_DestroyRenderer( m_renderer );
+    //Destroy the window.
     SDL_DestroyWindow( m_window );
+    //Quit SDL.
+    SDL_Quit();
 }
 
 int renderer::init()
@@ -45,14 +68,14 @@ int renderer::init()
     {
         std::cerr << "SDL_Init() failed: " << SDL_GetError() << std::endl;
         SDL_Quit();
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
     if(TTF_Init() != 0)
     {
         std::cerr << "TTF_Init() failed: " << TTF_GetError() << std::endl;
         SDL_Quit();
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
     return 1;
 }
@@ -96,20 +119,25 @@ void renderer::loadTextures()
     loadTexture("SMOKE", "smoke_1", SDL_BLENDMODE_BLEND);
     loadTexture("SKY", "sky", SDL_BLENDMODE_NONE);
 
-    loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 18);
-    loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 18);
+    loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
+    loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 25);
 }
 
 void renderer::loadTexture(std::string _key, std::string _path, SDL_BlendMode _b)
 {
     std::vector<SDL_Texture*> temp;
+
     SDL_Surface * s = IMG_Load( (g_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() );
     if(!s) std::cerr << "Texture load error! " << SDL_GetError() << std::endl;
+
     SDL_Texture * t = SDL_CreateTextureFromSurface(m_renderer, IMG_Load( (g_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() ) );
     SDL_SetTextureBlendMode(t, _b);
     if(!t) std::cerr << "Texture load error! " << SDL_GetError() << std::endl;
+
     temp.push_back( t );
     m_textures.insert({_key, temp});
+
+    SDL_FreeSurface(s);
 }
 
 void renderer::loadTextureSet(
@@ -127,19 +155,19 @@ void renderer::loadTextureSet(
     temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_static.png") );
 
     std::vector<SDL_Texture*> temp_tex;
-    for(size_t i = 0; i < temp_surf.size(); ++i)
+    for(auto &i : temp_surf)
     {
-        if(temp_surf.at(i) != nullptr)
+        if(i)
         {
-            SDL_Texture * t = SDL_CreateTextureFromSurface( m_renderer, temp_surf.at(i) );
+            SDL_Texture * t = SDL_CreateTextureFromSurface( m_renderer, i );
             if(!t) std::cerr << "Texture set load error! " << SDL_GetError() << std::endl;
             temp_tex.push_back( t );
-            SDL_FreeSurface(temp_surf.at(i));
         }
         else
         {
             temp_tex.push_back( nullptr );
         }
+        SDL_FreeSurface(i);
     }
     m_textures.insert({_key, temp_tex});
 }
@@ -153,9 +181,11 @@ void renderer::loadFontSpriteSheet(
     sprite_sheet sheet;
 
     TTF_Font * fnt = TTF_OpenFont(_path.c_str(), _size);
+
     if(!fnt)
     {
         std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+        TTF_CloseFont(fnt);
         return;
     }
 
@@ -176,19 +206,21 @@ void renderer::loadFontSpriteSheet(
         if(!surf)
         {
             std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+            SDL_FreeSurface(surf);
             return;
         }
 
         SDL_Texture * texture = SDL_CreateTextureFromSurface(m_renderer, surf);
 
+        //Clean up the surface.
+        SDL_FreeSurface(surf);
+
         if(!texture)
         {
             std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+            SDL_DestroyTexture(texture);
             return;
         }
-
-        //Clean up the surface and font
-        SDL_FreeSurface(surf);
 
         sheet.m_sheet.push_back(texture);
     }
@@ -566,7 +598,11 @@ void renderer::statusBars(player * _ply)
 SDL_Surface * renderer::getSurface(std::string _path)
 {
     SDL_Surface * s = IMG_Load( _path.c_str() );
-    if(!s) std::cerr << "Surface get load error! " << SDL_GetError() << std::endl;
+    if(!s)
+    {
+        std::cerr << "Surface get load error! " << SDL_GetError() << std::endl;
+        SDL_FreeSurface(s);
+    }
     return s;
 }
 

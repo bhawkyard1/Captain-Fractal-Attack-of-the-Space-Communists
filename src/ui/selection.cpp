@@ -4,6 +4,11 @@
 namespace ui
 {
 
+selection::selection()
+{
+    m_visible = true;
+}
+
 bool selection::click(vec2 p)
 {
   bool any = false;

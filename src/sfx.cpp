@@ -4,17 +4,20 @@
 #include <string>
 #include "common.hpp"
 
-std::vector< std::vector<Mix_Chunk*> > snds;
+std::vector< std::vector<Mix_Chunk*> > g_snds;
 
-void loadSound(std::string _path, int _len)
+void sfxInit()
 {
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 1024 ) == -1 )
     {
         std::cerr << "Mix_OpenAudio() failed! " << SDL_GetError() << std::endl;
         //SDL_Quit();
-        //return 1;
+        //exit(EXIT_FAILURE);
     }
+}
 
+void loadSound(std::string _path, int _len)
+{
     std::vector<Mix_Chunk*> temp_vec;
     for(int i = 0; i < _len; i++)
     {
@@ -24,7 +27,7 @@ void loadSound(std::string _path, int _len)
         if(!temp) std::cerr << name + ": Sound loading error! " << SDL_GetError() << std::endl;
         temp_vec.push_back(temp);
     }
-    snds.push_back(temp_vec);
+    g_snds.push_back(temp_vec);
 }
 
 void loadSounds()
@@ -42,11 +45,24 @@ void playSnd(sound _snd)
 {
     if(g_GAME_STATE == MODE_MENU) return;
     size_t snd = static_cast<size_t>(_snd);
-    if(snd >= snds.size()) return;
+    if(snd >= g_snds.size()) return;
 
-    size_t size = snds.at(snd).size();
+    size_t size = g_snds.at(snd).size();
 
-    Mix_Chunk * to_play = snds.at(snd).at(rand()%size);
+    Mix_Chunk * to_play = g_snds.at(snd).at(rand()%size);
 
     Mix_PlayChannel( -1, to_play, 0 );
+}
+
+void deleteSounds()
+{
+    for(auto &i : g_snds)
+    {
+        for(auto &j : i)
+        {
+            Mix_FreeChunk(j);
+        }
+    }
+    g_snds.clear();
+    Mix_CloseAudio();
 }

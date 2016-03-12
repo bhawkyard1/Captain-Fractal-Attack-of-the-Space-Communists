@@ -66,26 +66,35 @@ int main(int argc, char* argv[])
 {
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
 
+#ifdef _WIN32
+    AllocConsole() ;
+    AttachConsole( GetCurrentProcessId() );
+    freopen( "CON", "w", stdout );
+    freopen( "CON", "w", stdin );
+    freopen( "CON", "w", stderr );
+#endif
+
     while(g_GAME_STATE != MODE_QUIT)
     {
         if(g_GAME_STATE == MODE_MENU)
         {
             gameInit();
             mainMenu();
+            deleteSounds();
         }
         else if(g_GAME_STATE == MODE_TUTORIAL)
         {
             gameInit();
             playTutorial();
+            deleteSounds();
         }
         else if(g_GAME_STATE == MODE_GAME)
         {
             gameInit();
             playGame();
+            deleteSounds();
         }
     }
-    SDL_Quit();
-
     return 0;
 }
 
@@ -101,15 +110,19 @@ void mainMenu()
     ui::selection mainMenuSelection;
     std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
     std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
-    ui::button play ("Play Game", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    ui::button tut ("Play Tutorial", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
-    ui::button opt ("Options", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
-    ui::button quit ("Quit", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 250.0f}, {200.0f, 80.0f});
+    ui::button play ("PLAY GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    ui::button tut ("PLAY TUTORIAL", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
+    ui::button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    ui::button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 250.0f}, {200.0f, 80.0f});
     mainMenuSelection.add(play);
     mainMenuSelection.add(tut);
     mainMenuSelection.add(opt);
     mainMenuSelection.add(quit);
     uni.getUI()->add(mainMenuSelection);
+
+    ui::selection optionsHeader;
+    std::array<int, 8> blank = {0, 0, 0, 0, 0, 0, 0, 0};
+    ui::button optionsHeaderBtn("OPTIONS", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
 
     g_TARG_ZOOM_LEVEL = 0.3f;
     g_DIFFICULTY = 20;
@@ -150,12 +163,9 @@ void mainMenu()
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
 
-    //Is the game running?
-    bool active = true;
-
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
-    while(active == true)
+    while(g_GAME_STATE == MODE_MENU)
     {
         //Event handling.
         SDL_Event incomingEvent;
@@ -165,7 +175,6 @@ void mainMenu()
             switch( incomingEvent.type )
             {
             case SDL_QUIT:
-                active = false;
                 g_GAME_STATE = MODE_QUIT;
                 break;
             }
@@ -233,17 +242,15 @@ void playGame()
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
     //Create the universe.
     universe uni;
+    g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
 
-    //Is the game running?
-    bool active = true;
-
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
-    while(active == true)
+    while(g_GAME_STATE == MODE_GAME)
     {
         //Event handling.
         SDL_Event incomingEvent;
@@ -253,7 +260,6 @@ void playGame()
             switch( incomingEvent.type )
             {
             case SDL_QUIT:
-                active = false;
                 g_GAME_STATE = MODE_QUIT;
                 break;
             }
@@ -343,6 +349,23 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
                 else if(ret.m_button_val == 9) uni->setMouseState(9);
                 else if(ret.m_button_val == 10) uni->setMouseState(10);
             }
+            else if(ret.m_sel_val == 2)
+            {
+                switch(ret.m_button_val)
+                {
+                case 0:
+                    g_GAME_STATE = MODE_MENU;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    g_GAME_STATE = MODE_QUIT;
+                    break;
+                default:
+                    break;
+
+                }
+            }
         }
         return;
     }
@@ -350,16 +373,9 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
 
 void gameInit()
 {
-#ifdef _WIN32
-    AllocConsole() ;
-    AttachConsole( GetCurrentProcessId() );
-    freopen( "CON", "w", stdout );
-    freopen( "CON", "w", stdin );
-    freopen( "CON", "w", stderr );
-#endif
-
     loadConfig();
 
+    sfxInit();
     loadSounds();
 
     srand (static_cast <unsigned> (time(0)));
@@ -428,9 +444,9 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     ui::selection escMenuSelection;
     std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
     std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
-    ui::button resume ("Play Game", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    ui::button opt ("Options", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
-    ui::button quit ("Quit", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    ui::button resume ("MAIN MENU", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    ui::button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
+    ui::button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
     escMenuSelection.add(resume);
     escMenuSelection.add(opt);
     escMenuSelection.add(quit);
@@ -460,13 +476,14 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     case SDLK_ESCAPE:
         uni->setPause(true);
         uni->escMenuTog();
-        if(!uni->isEscMenuShown())
+        if(uni->isEscMenuShown())
         {
             *keymod = 1;
             uni->getUI()->add(escMenuSelection);
         }
         else
         {
+            uni->setPause(false);
             *keymod = 0;
             uni->getUI()->pop();
         }
