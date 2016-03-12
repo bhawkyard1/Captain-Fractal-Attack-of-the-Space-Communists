@@ -13,7 +13,7 @@ struct vec2
   vec2 operator+=(vec2 _rhs) { m_x += _rhs.m_x; m_y += _rhs.m_y; return *this; }
   vec2 operator-=(vec2 _rhs) { m_x -= _rhs.m_x; m_y -= _rhs.m_y; return *this; }
   vec2& operator-=(float &_rhs) { m_x -= _rhs; m_y -= _rhs; return *this; }
-  vec2& operator*=(float &_rhs) { m_x *= _rhs; m_y *= _rhs; return *this; }
+  vec2& operator*=(const float &_rhs) { m_x *= _rhs; m_y *= _rhs; return *this; }
   vec2& operator/=(float _rhs) { m_x /= _rhs; m_y /= _rhs; return *this; }
 };
 

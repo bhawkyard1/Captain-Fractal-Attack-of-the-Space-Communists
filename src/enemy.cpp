@@ -54,7 +54,7 @@ void enemy::steering()
 {
     setFiring(false);
 
-    if(g_GAME_OVER or m_curGoal == GOAL_IDLE or m_curGoal == GOAL_SPACE_STATION) return;
+    if(m_curGoal == GOAL_IDLE or m_curGoal == GOAL_SPACE_STATION) return;
     vec2 p = getPos();
     vec2 v = getVel();
     vec2 uv = unit(v);

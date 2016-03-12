@@ -11,8 +11,13 @@
 
 #include "vectors.hpp"
 
+#define RENDER_MODE 0
+
 //void loadTextures();
 void loadConfig();
+
+enum game_mode {MODE_MENU, MODE_TUTORIAL, MODE_GAME, MODE_QUIT};
+extern game_mode g_GAME_STATE;
 
 extern std::string g_RESOURCE_LOC;
 

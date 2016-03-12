@@ -2,6 +2,9 @@
 
 #include <array>
 #include <string>
+
+#if RENDER_MODE == 1
+
 #include "renderer_opengl.hpp"
 #include "util.hpp"
 
@@ -649,3 +652,5 @@ void renderer_ngl::errorExit(const std::string &_msg)
   SDL_Quit();
   exit(EXIT_FAILURE);
 }
+
+#endif

@@ -12,6 +12,7 @@ player::player(
 
 void player::ctrlUpdate()
 {
+    if(g_GAME_OVER) return;
 	vec2 p = getPos();
     p *= g_ZOOM_LEVEL;
     p += g_HALFWIN;

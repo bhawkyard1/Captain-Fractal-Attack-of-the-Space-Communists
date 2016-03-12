@@ -39,6 +39,7 @@ unix {
  win32 {
     INCLUDEPATH += C:/SDL2/i686-w64-mingw32/include
     INCLUDEPATH += C:/SDL2/i686-w64-mingw32/include/SDL2
+    INCLUDEPATH += C:/ngl/include
     LIBS += -L"C:/SDL2/i686-w64-mingw32/lib"
     LIBS += -lmingw32 -mwindows -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lSDL2main -lSDL2
 }

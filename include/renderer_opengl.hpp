@@ -16,6 +16,8 @@
 #include "laser.hpp"
 #include "player.hpp"
 
+#if RENDER_MODE == 1
+
 #include <ngl/NGLInit.h>
 #include <ngl/Camera.h>
 #include <ngl/Colour.h>
@@ -81,6 +83,8 @@ public:
 
   SDL_Surface * getSurface(std::string path);
 };
+
+#endif
 
 #endif
 

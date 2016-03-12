@@ -7,9 +7,9 @@
 bool emnityCheck(const aiTeam _a, const aiTeam _b);
 
 universe::universe()
-  :
-    m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
-    m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
+    :
+      m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
+      m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
 {
     setVel({0,0});
 
@@ -74,12 +74,12 @@ universe::universe()
 }
 
 void universe::addShot(
-    const vec2 _p,
-    const vec2 _v,
-    const float _angle,
-    const std::array<float, WEAPS_W> _weap,
-    const aiTeam _team
-    )
+        const vec2 _p,
+        const vec2 _v,
+        const float _angle,
+        const std::array<float, WEAPS_W> _weap,
+        const aiTeam _team
+        )
 {
     int temp_angle = _angle + 90;
     for(int i = 0; i < _weap[0]; ++i)
@@ -91,11 +91,11 @@ void universe::addShot(
 }
 
 void universe::addMissile(
-    const vec2 _p,
-    const vec2 _v,
-    const float _angle,
-    const aiTeam _team
-    )
+        const vec2 _p,
+        const vec2 _v,
+        const float _angle,
+        const aiTeam _team
+        )
 {
     missile m(_p, m_drawer.getTextureRadius("ION_MISSILE_MKI"));
     m.setVel(_v + computeVector(_angle + 90) * 5);
@@ -138,11 +138,14 @@ void universe::update(const float _dt)
     if(rand()%10000 == 0) g_BG_DENSITY = randFloat(1.0f,10.0f);
     if(rand()%10000 == 0) m_gameplay_intensity = randFloat(0.0f, 2.2f);
 
-    m_ply.ctrlUpdate();
-    m_ply.update(_dt);
+    if(!g_GAME_OVER)
+    {
+        m_ply.ctrlUpdate();
+        m_ply.update(_dt);
+    }
 
     //If player health is below 25%, emit smoke.
-    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getHealth() / m_ply.getMaxHealth(), "SMOKE");
+    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getHealth() / m_ply.getMaxHealth(), "SMOKE");
 
     if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
     {
@@ -164,6 +167,8 @@ void universe::update(const float _dt)
         m_ply.setMaxEnergy(0, true);
         m_ply.setMaxShield(0, true);
         playSnd(EXPLOSION_SND);
+
+        m_ply.setPos({F_INF, F_INF});
 
         g_GAME_OVER = true;
     }
@@ -461,7 +466,7 @@ void universe::update(const float _dt)
         else if(e.getTeam() == TEAM_PLAYER_MINER) fd = 20000.0f;
         float nd = magns(m_ply.getPos() - e.getPos());
 
-        if(emnityCheck( e.getTeam(), TEAM_PLAYER ) and nd < minDist )
+        if(emnityCheck( e.getTeam(), TEAM_PLAYER ) and nd < minDist and !g_GAME_OVER )
         {
             //If the given agent is hostile, and the players distance is the closest ship.
             e.setTarget( (player*)&m_ply );
@@ -510,47 +515,43 @@ void universe::update(const float _dt)
     }
 
     //Ship spawning functions.
-    if(!g_GAME_OVER)
+
+    if(rand() % 1024 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
     {
-        if(rand() % 1024 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
-        {
-            int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
-            aiTeam pteam;
-            if(rand() % 100 < 55) pteam = SPOOKY_SPACE_PIRATES;
-            else pteam = GALACTIC_FEDERATION;
-            for(int i = 0; i < reps; i++)
-            {
-                spawnShip(pteam);
-            }
-        }
-        if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER))
-        {
-            spawnShip(TEAM_PLAYER);
-        }
-        if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER_MINER))
-        {
-            spawnShip(TEAM_PLAYER_MINER);
-        }
-        if(rand() % 1024 == 0 and m_asteroids.size() < 10)
-        {
-            ship_spec size = ASTEROID_MID;
-            int prob = rand() % 100;
-
-            if(prob > 50 and prob <= 80) size = ASTEROID_SMALL;
-            else if(prob > 80 and prob <= 99) size = ASTEROID_LARGE;
-
-            vec2 ppos;
-            int side = rand() %4 ;
-            if(side == 0) ppos = {randFloat(-20000.0f,20000.0f), -20000.0f};
-            else if(side == 1) ppos = {randFloat(-20000.0f,20000.0f), 20000.0f};
-            else if(side == 2) ppos = {-20000.0f, randFloat(-20000.0f,20000.0f)};
-            else if(side == 3) ppos = {20000.0f, randFloat(-20000.0f,20000.0f)};
-            ship a(ppos, size, m_drawer.getTextureRadius( getTextureKey(size) ));
-            a.setVel( randVec(64.0f) );
-            a.update(_dt);
-            m_asteroids.push_back(a);
-        }
+        int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
+        aiTeam pteam;
+        if(rand() % 100 < 55) pteam = SPOOKY_SPACE_PIRATES;
+        else pteam = GALACTIC_FEDERATION;
+        spawnSquad(pteam, 10000.0f, 20000.0f, reps);
     }
+    if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER))
+    {
+        spawnShip(TEAM_PLAYER);
+    }
+    if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER_MINER))
+    {
+        spawnShip(TEAM_PLAYER_MINER);
+    }
+    if(rand() % 1024 == 0 and m_asteroids.size() < 10)
+    {
+        ship_spec size = ASTEROID_MID;
+        int prob = rand() % 100;
+
+        if(prob > 50 and prob <= 80) size = ASTEROID_SMALL;
+        else if(prob > 80 and prob <= 99) size = ASTEROID_LARGE;
+
+        vec2 ppos;
+        int side = rand() %4 ;
+        if(side == 0) ppos = {randFloat(-20000.0f,20000.0f), -20000.0f};
+        else if(side == 1) ppos = {randFloat(-20000.0f,20000.0f), 20000.0f};
+        else if(side == 2) ppos = {-20000.0f, randFloat(-20000.0f,20000.0f)};
+        else if(side == 3) ppos = {20000.0f, randFloat(-20000.0f,20000.0f)};
+        ship a(ppos, size, m_drawer.getTextureRadius( getTextureKey(size) ));
+        a.setVel( randVec(64.0f) );
+        a.update(_dt);
+        m_asteroids.push_back(a);
+    }
+
     for(int i = m_particles.size() - 1; i >= 0; i--)
     {
         m_particles.at(i).setWVel(m_vel);
@@ -642,9 +643,12 @@ void universe::draw(float _dt)
         m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
     }
 
-    vec2 ppos = m_ply.getInterpolatedPosition(_dt);
-    std::array<float, 4> palpha = m_ply.getAlphaStats();
-    m_drawer.drawTextureSet(m_ply.getIdentifier(), ppos, m_ply.getAng(), palpha);
+    if(!g_GAME_OVER)
+    {
+        vec2 ppos = m_ply.getInterpolatedPosition(_dt);
+        std::array<float, 4> palpha = m_ply.getAlphaStats();
+        m_drawer.drawTextureSet(m_ply.getIdentifier(), ppos, m_ply.getAng(), palpha);
+    }
 
     for(auto i = m_missiles.begin(); i != m_missiles.end(); ++i)
     {
@@ -726,7 +730,7 @@ void universe::draw(float _dt)
     }
 
     //Draw the ui
-    drawUI();
+    if(!g_GAME_OVER) drawUI();
 
     m_drawer.finalise();
     std::cout << "p2" << std::endl;
@@ -767,7 +771,7 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
-  m_drawer.drawBackground(_dt);
+    m_drawer.drawBackground(_dt);
 }
 
 void universe::drawUI()
@@ -777,13 +781,13 @@ void universe::drawUI()
 #endif
 
 void universe::detectCollisions(
-    SDL_Rect _box,
-    std::vector<enemy*> _ships,
-    std::vector<laser*> _lasers,
-    std::vector<missile*> _rockets,
-    std::vector<ship*> _rocks,
-    unsigned short int _lvl
-    )
+        SDL_Rect _box,
+        std::vector<enemy*> _ships,
+        std::vector<laser*> _lasers,
+        std::vector<missile*> _rockets,
+        std::vector<ship*> _rocks,
+        unsigned short int _lvl
+        )
 {
     size_t count = 0;
     std::vector<enemy*> pships;
@@ -1019,12 +1023,12 @@ void universe::checkCollisions()
 }
 
 void universe::addpfx(
-    const vec2 _p,
-    const vec2 _v,
-    const vec2 _wv,
-    const int _no,
-    const float _f
-    )
+        const vec2 _p,
+        const vec2 _v,
+        const vec2 _wv,
+        const int _no,
+        const float _f
+        )
 {
     pfx pf(_p, _v, _wv, _no, _f, "EXPLOSION");
     m_particles.push_back(pf);
@@ -1050,11 +1054,11 @@ ship * universe::closestEnemy(vec2 p, aiTeam t)
 }
 
 void universe::addParticleSprite(
-    const vec2 _p,
-    const vec2 _v,
-    const float _m,
-    const std::string _tex
-    )
+        const vec2 _p,
+        const vec2 _v,
+        const float _m,
+        const std::string _tex
+        )
 {
     float col;
     if( _tex == "SMOKE" ) col = randFloat(200.0f, 220.0f) * (1.0f - _m);
@@ -1084,9 +1088,9 @@ void universe::spawnShip(const aiTeam _t)
 }
 
 void universe::spawnShip(
-    const aiTeam _t,
-    const vec2 _p
-    )
+        const aiTeam _t,
+        const vec2 _p
+        )
 {	
     int prob = rand()%100;
 
@@ -1151,6 +1155,19 @@ void universe::spawnShip(
     addToSquad(&newShip, &temp);
     m_squads.push_back(temp);
     m_agents.push_back(newShip);
+}
+
+void universe::spawnSquad(
+        const aiTeam _t,
+        const float _min,
+        const float _max,
+        const int _i)
+{
+    vec2 p = randVec(_min, _max);
+    for(int i = 0; i < _i; ++i)
+    {
+        spawnShip(_t, p + randVec(512.0f));
+    }
 }
 
 bool emnityCheck(
@@ -1218,9 +1235,9 @@ void universe::addBuild(const ship_spec _type)
 }
 
 void universe::addBuild(
-    const vec2 _p,
-    const ship_spec _type
-    )
+        const vec2 _p,
+        const ship_spec _type
+        )
 {
     enemy newShip(_p, {0.0f, 0.0f}, _type, TEAM_PLAYER);
     m_agents.push_back(newShip);
@@ -1327,9 +1344,9 @@ void universe::initUI()
 }
 
 bool universe::upgradeCallback(
-    int _sel,
-    int _btn
-    )
+        int _sel,
+        int _btn
+        )
 {
     //This function takes the selected button, looks at the cost vs the score, updates relevant values,
     //then returns a bool representing whether the upgrade was successful or unsuccessful.
@@ -1354,10 +1371,10 @@ bool universe::upgradeCallback(
 }
 
 void universe::upgradeSetLabels(
-    int _sel,
-    int _btn,
-    int _plvl
-    )
+        int _sel,
+        int _btn,
+        int _plvl
+        )
 {
     button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
 

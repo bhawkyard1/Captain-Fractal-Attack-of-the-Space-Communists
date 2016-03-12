@@ -1,8 +1,6 @@
 #ifndef UNIVERSE_HPP
 #define UNIVERSE_HPP
 
-#define RENDER_MODE 1
-
 #include <array>
 
 #include "common.hpp"
@@ -78,7 +76,8 @@ public:
     void addShot(const vec2 _p, const vec2 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team);
     void addMissile(const vec2 _p, const vec2 _v, const float _angle, const aiTeam _team);
     void spawnShip(const aiTeam t);
-    void spawnShip(const aiTeam t, const vec2 p);
+    void spawnShip(const aiTeam _t, const vec2 _p);
+    void spawnSquad(const aiTeam _t, const float _min, const float _max, const int _i);
     void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++;}
     void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
     void addBuild(const vec2 _p,const ship_spec _type);
@@ -129,6 +128,8 @@ public:
     void createFactions();
     std::vector<faction> * getFactions() {return &m_factions;}
     squad * getSquadFromID(int _id);
+
+    renderer * getRenderer() {return &m_drawer;}
 };
 
 #endif
