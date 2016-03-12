@@ -69,6 +69,7 @@ class universe
     bool m_paused;
     int m_mouse_state;
     bool m_escMenuShown;
+    double m_time_elapsed;
 public:
     universe();
     void initUI();
@@ -132,7 +133,11 @@ public:
     std::vector<faction> * getFactions() {return &m_factions;}
     squad * getSquadFromID(int _id);
 
+#if RENDER_MODE == 0
     renderer * getRenderer() {return &m_drawer;}
+#elif RENDER_MODE == 1
+    renderer_ngl * getRenderer() {return &m_drawer;}
+#endif
     bool isEscMenuShown() {return m_escMenuShown;}
     void escMenuTog() {m_escMenuShown = !m_escMenuShown;}
 };

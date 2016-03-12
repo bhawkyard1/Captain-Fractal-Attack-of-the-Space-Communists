@@ -38,19 +38,24 @@ class renderer_ngl
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
   ngl::Transformation m_transform;
-  ngl::ShaderLib * shader;
+  ngl::ShaderLib * m_shader;
   SDL_GLContext m_gl_context;
   GLuint m_vao;
-  void loadMatricesToShader(float _dt);
+  void loadMatricesToShader();
 public:
-  renderer_ngl(const int _w, const int _h);
+  renderer_ngl(int _w, int _h);
   ~renderer_ngl();
 
   int init();
-  void drawBackground(float _dt);
+  void drawBackground(float _dt, vec2 _v);
+  void drawRect(const vec2 _p, const vec2 _d);
+  void drawTri(const vec2 _p, const float _d, const float _ang);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
   void swapWindow() const { SDL_GL_SwapWindow(m_window); }
+  void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
   void errorExit(const std::string &_msg);
+
+  void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}
 
   void loadFontSpriteSheet(std::string name, std::string path, int size) {return;}
@@ -66,7 +71,6 @@ public:
   void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col ) {return;}
   void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col) {return;}
   void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol) {return;}
-  void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire) {return;}
   void drawCircle(int x, int y, int radius, std::array<float, 4> _col) {return;}
   void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col) {return;}
   void drawText(std::string text) {return;}

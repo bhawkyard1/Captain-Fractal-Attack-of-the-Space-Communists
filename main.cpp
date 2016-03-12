@@ -123,14 +123,14 @@ void mainMenu()
 
     for(int i = 0; i < 360; i += 6)
     {
-        vec2 pos = {cos(rad(i)), sin(rad(i))};
+        vec2 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i)))};
         pos *= 1100.0f;
         pos += {600.0f, 300.0f};
         uni.addBuild(pos, PLAYER_TURRET);
     }
     for(int i = 3; i < 360; i += 6)
     {
-        vec2 pos = {cos(rad(i)), sin(rad(i))};
+        vec2 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i)))};
         pos *= 1150.0f;
         pos += {600.0f, 300.0f};
         uni.addBuild(pos, PLAYER_TURRET);
@@ -233,7 +233,7 @@ void playGame()
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
     //Create the universe.
     universe uni;
-
+    g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);

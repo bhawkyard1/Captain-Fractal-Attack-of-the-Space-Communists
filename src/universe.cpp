@@ -11,6 +11,7 @@ universe::universe()
       m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
       m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
 {
+    m_time_elapsed = 0.0;
     setVel({0,0});
 
     m_factionCounts.assign(6, 0);
@@ -117,6 +118,7 @@ void universe::update(const float _dt)
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
+    m_time_elapsed += _dt;
     //Interpolate towards desired background colour.
     m_cCol[0] += clamp(m_tCol[0] - m_cCol[0], -1.0f, 1.0f);
     m_cCol[1] += clamp(m_tCol[1] - m_cCol[1], -1.0f, 1.0f);
@@ -774,7 +776,15 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
-    m_drawer.drawBackground(_dt);
+    m_drawer.clear();
+
+    m_drawer.useShader("background");
+    m_drawer.drawBackground(m_time_elapsed, -m_vel);
+
+    m_drawer.useShader("plain");
+    m_drawer.drawTri(m_ply.getPos(), 0.02f, 0.0f);
+
+    m_drawer.swapWindow();
 }
 
 void universe::drawUI()

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "common.hpp"
 
-game_mode g_GAME_STATE = MODE_MENU;
+game_mode g_GAME_STATE = MODE_GAME;
 
 std::string g_RESOURCE_LOC = "../resources/";
 

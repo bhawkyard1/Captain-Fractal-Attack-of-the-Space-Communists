@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 
+#include "common.hpp"
+
 #if RENDER_MODE == 1
 
 #include "renderer_opengl.hpp"
@@ -14,7 +16,7 @@
 
 #include <ngl/VAOPrimitives.h>
 
-renderer_ngl::renderer_ngl(const int _w, const int _h)
+renderer_ngl::renderer_ngl(int _w, int _h)
 {
   init();
   m_w = _w;
@@ -69,30 +71,45 @@ renderer_ngl::renderer_ngl(const int _w, const int _h)
                        ngl::Vec3(0,0,0),
                        ngl::Vec3(0,1,0));
 
-  shader = ngl::ShaderLib::instance();
+  m_shader = ngl::ShaderLib::instance();
   std::cout << "p1" << std::endl;
-  shader->createShaderProgram("background");
-  shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
-  shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
-  //shader->loadShaderSource("backgroundVertex", "shaders/DiffuseVertex.glsl");
-  //shader->loadShaderSource("backgroundFragment", "shaders/DiffuseFragment.glsl");
-  shader->loadShaderSource("backgroundVertex", "shaders/backgroundVertex.glsl");
-  shader->loadShaderSource("backgroundFragment", "shaders/backgroundFragment.glsl");
+  m_shader->createShaderProgram("background");
+  m_shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
+  m_shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
 
-  shader->compileShader("backgroundVertex");
-  shader->compileShader("backgroundFragment");
+  m_shader->loadShaderSource("backgroundVertex", "shaders/backgroundVertex.glsl");
+  m_shader->loadShaderSource("backgroundFragment", "shaders/backgroundFragment.glsl");
 
-  shader->attachShaderToProgram("background", "backgroundVertex");
-  shader->attachShaderToProgram("background", "backgroundFragment");
+  m_shader->compileShader("backgroundVertex");
+  m_shader->compileShader("backgroundFragment");
 
-  shader->linkProgramObject("background");
-  shader->use("background");
+  m_shader->attachShaderToProgram("background", "backgroundVertex");
+  m_shader->attachShaderToProgram("background", "backgroundFragment");
+
+  m_shader->linkProgramObject("background");
+
+  m_shader->createShaderProgram("plain");
+  m_shader->attachShader("DiffuseVertex", ngl::ShaderType::VERTEX);
+  m_shader->attachShader("DiffuseFragment", ngl::ShaderType::FRAGMENT);
+
+  m_shader->loadShaderSource("DiffuseVertex", "shaders/DiffuseVertex.glsl");
+  m_shader->loadShaderSource("DiffuseFragment", "shaders/DiffuseFragment.glsl");
+
+  m_shader->compileShader("DiffuseVertex");
+  m_shader->compileShader("DiffuseFragment");
+
+  m_shader->attachShaderToProgram("plain", "DiffuseVertex");
+  m_shader->attachShaderToProgram("plain", "DiffuseFragment");
+
+  m_shader->linkProgramObject("plain");
+
+  m_shader->use("background");
   std::cout << "p1" << std::endl;
 }
 
 renderer_ngl::~renderer_ngl()
 {
-  //SDL_DestroyWindow( m_window );
+  SDL_DestroyWindow( m_window );
 }
 
 int renderer_ngl::init()
@@ -104,43 +121,16 @@ int renderer_ngl::init()
   return 1;
 }
 
-void renderer_ngl::drawBackground(float _dt)
+void renderer_ngl::drawBackground(float _dt, vec2 _v)
 { 
-  std::array<ngl::Vec3, 4> quad = {
-    ngl::Vec3(-0.8f, -0.8f, 0.0f),
-    ngl::Vec3(-0.8f, 0.8f, 0.0f),
-    ngl::Vec3(0.8f, 0.8f, 0.0f),
-    ngl::Vec3(0.8f, -0.8f, 0.0f)
-  };
+  std::cout << "uni vel! " << _v.m_x << ", " << _v.m_y << std::endl;
+  m_shader->use("background");
+  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  m_shader->setRegisteredUniform("iGlobalTime", _dt);
+  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
+  m_shader->setRegisteredUniform("unidir", ngl::Vec3(_v.m_x, -_v.m_y, 0.0f));
 
-  //Create a VAO
-  glGenVertexArrays(1, &m_vao);
-  //Make it active
-  glBindVertexArray(m_vao);
-
-  //Generate a VBO
-  GLuint VBO;
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  //Copy dat data
-  glBufferData(GL_ARRAY_BUFFER,
-               sizeof(ngl::Vec3) * quad.size(),
-               &quad[0].m_x,
-      GL_STATIC_DRAW
-      );
-
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
-
-  glBindVertexArray(0);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, m_w, m_h);
-  glBindVertexArray(m_vao);
-  loadMatricesToShader(_dt);
-  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
-  swapWindow();
-  std::cout << "END" << std::endl;
+  drawRect({-1.0f, -1.0f}, {2.0f, 2.0f});
 }
 
 /*
@@ -479,16 +469,83 @@ void renderer::drawCircleUI(int x, int y, int radius, std::array<float, 4> _col)
         }
     }
 }
+*/
 
-void renderer::drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire)
+void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
 {
-    SDL_Rect r = {static_cast<int>(_p.m_x), static_cast<int>(_p.m_y), static_cast<int>(_d.m_x), static_cast<int>(_d.m_y)};
-    SDL_SetRenderDrawColor( m_renderer, col[0], col[1], col[2], col[3]);
+  m_shader->setRegisteredUniform("win_dim", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  std::array<ngl::Vec3, 3> tri = {
+    ngl::Vec3(_p.m_x - (_d / 2),  _p.m_y - _d,  0.0f),
+    ngl::Vec3(_p.m_x,           _p.m_y + _d,  0.0f),
+    ngl::Vec3(_p.m_x + (_d / 2),  _p.m_y - _d,  0.0f)
+  };
 
-    if(!wire) SDL_RenderFillRect( m_renderer, &r );
-    else if(wire) SDL_RenderDrawRect( m_renderer, &r );
+  //Create a VAO
+  glGenVertexArrays(1, &m_vao);
+  //Make it active
+  glBindVertexArray(m_vao);
+
+  //Generate a VBO
+  GLuint VBO;
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  //Copy dat data
+  glBufferData(GL_ARRAY_BUFFER,
+               sizeof(ngl::Vec3) * tri.size(),
+               &tri[0].m_x,
+      GL_STATIC_DRAW
+      );
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
+
+  glBindVertexArray(0);
+
+  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glViewport(0, 0, m_w, m_h);
+  glBindVertexArray(m_vao);
+  loadMatricesToShader();
+  glDrawArraysEXT(GL_TRIANGLES, 0, 3);
 }
 
+void renderer_ngl::drawRect(const vec2 _p, const vec2 _d)
+{
+  m_shader->setRegisteredUniform("win_dim", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  std::array<ngl::Vec3, 4> quad = {
+    ngl::Vec3(_p.m_x,           _p.m_y,           0.0f),
+    ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y,           0.0f),
+    ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y + _d.m_y,  0.0f),
+    ngl::Vec3(_p.m_x,           _p.m_y + _d.m_y,  0.0f)
+  };
+
+  //Create a VAO
+  glGenVertexArrays(1, &m_vao);
+  //Make it active
+  glBindVertexArray(m_vao);
+
+  //Generate a VBO
+  GLuint VBO;
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  //Copy dat data
+  glBufferData(GL_ARRAY_BUFFER,
+               sizeof(ngl::Vec3) * quad.size(),
+               &quad[0].m_x,
+      GL_STATIC_DRAW
+      );
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
+
+  glBindVertexArray(0);
+
+  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glViewport(0, 0, m_w, m_h);
+  glBindVertexArray(m_vao);
+  loadMatricesToShader();
+  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+}
+/*
 void renderer::finalise()
 {
     //Show the contents of the renderer.
@@ -635,15 +692,11 @@ void renderer::drawWeaponStats(player * ply)
     drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
 }*/
 
-void renderer_ngl::loadMatricesToShader(float _dt)
+void renderer_ngl::loadMatricesToShader()
 {
   ngl::ShaderLib * shader = ngl::ShaderLib::instance();
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
-  shader->setRegisteredUniform("MVP", MVP);
-
-  shader->setRegisteredUniform("iResolution", ngl::Vec2(1920.0f, 1080.0f));
-  shader->setRegisteredUniform("iGlobalTime", _dt);
-  shader->setRegisteredUniform("zoom", 1.0f);
+  m_shader->setRegisteredUniform("MVP", MVP);
 }
 
 void renderer_ngl::errorExit(const std::string &_msg)
