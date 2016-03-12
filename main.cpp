@@ -45,6 +45,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#undef interface
 #endif
 
 
@@ -65,20 +66,21 @@ int main(int argc, char* argv[])
 {
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
 
-    gameInit();
-
     while(g_GAME_STATE != MODE_QUIT)
     {
         if(g_GAME_STATE == MODE_MENU)
         {
+            gameInit();
             mainMenu();
         }
         else if(g_GAME_STATE == MODE_TUTORIAL)
         {
+            gameInit();
             playTutorial();
         }
         else if(g_GAME_STATE == MODE_GAME)
         {
+            gameInit();
             playGame();
         }
     }
@@ -89,13 +91,27 @@ int main(int argc, char* argv[])
 
 void mainMenu()
 {
-    g_GAME_OVER = true;
     //Create the universe.
     universe uni;
-
+    g_GAME_OVER = true;
     uni.getPly()->setHealth(-1);
+    uni.update(0.1f);
+    uni.getUI()->clear();
 
-    g_TARG_ZOOM_LEVEL = 0.2f;
+    ui::selection mainMenuSelection;
+    std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
+    std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
+    ui::button play ("Play Game", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    ui::button tut ("Play Tutorial", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
+    ui::button opt ("Options", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    ui::button quit ("Quit", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 250.0f}, {200.0f, 80.0f});
+    mainMenuSelection.add(play);
+    mainMenuSelection.add(tut);
+    mainMenuSelection.add(opt);
+    mainMenuSelection.add(quit);
+    uni.getUI()->add(mainMenuSelection);
+
+    g_TARG_ZOOM_LEVEL = 0.3f;
     g_DIFFICULTY = 20;
 
     vec2 scrollVel = randVec(0.5f, 2.0f);
@@ -155,14 +171,43 @@ void mainMenu()
             }
 
             //Input events.
+            //This is different to the main game, we only want the user to be able to select from the main menu, i.e no shooting etc.
             switch( incomingEvent.type )
             {
             if( uni.isPaused() and incomingEvent.type != SDL_KEYDOWN and incomingEvent.button.button != SDLK_SPACE ) break;
             case SDL_MOUSEBUTTONDOWN:
-                handleUserMouseDownInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
+                switch(incomingEvent.button.button)
+                {
+                case SDL_BUTTON_LEFT:
+                    int mx = 0, my = 0;
+                    SDL_GetMouseState(&mx, &my);
+                    ui::selectionReturn mainMenuSelected = uni.getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    if(mainMenuSelected.m_sel_val == 0)
+                    {
+                        switch(mainMenuSelected.m_button_val)
+                        {
+                        case 0:
+                            g_GAME_STATE = MODE_GAME;
+                            return;
+                        case 1:
+                            g_GAME_STATE = MODE_TUTORIAL;
+                            return;
+                        case 2:
+                            g_GAME_STATE = MODE_QUIT;
+                            return;
+                        case 3:
+                            g_GAME_STATE = MODE_QUIT;
+                            return;
+                        default:
+                            break;
+                        }
+                    }
+                    break;
+                }
                 break;
             }
         }
+
         //Set current time (timer keeps track of time since cur time was last set).
         clock.setCur();
 
@@ -185,6 +230,7 @@ void mainMenu()
 
 void playGame()
 {
+    std::cout << "LAUNCHING MAIN GAME..." << std::endl;
     //Create the universe.
     universe uni;
 
@@ -281,7 +327,7 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
         {
             int x = 0, y = 0;
             SDL_GetMouseState(&x,&y);
-            selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
+            ui::selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
             if(ret.m_sel_val == 0)
             {
                 ply->setEnergyPriority(ret.m_button_val);
@@ -317,6 +363,8 @@ void gameInit()
     loadSounds();
 
     srand (static_cast <unsigned> (time(0)));
+
+    g_GAME_OVER = false;
 }
 
 void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
@@ -335,7 +383,7 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
 
-    selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+    ui::selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
     vec2 pos = {static_cast<float>(mx), static_cast<float>(my)};
@@ -376,7 +424,16 @@ void handleUserScroll(int y, player * ply)
 
 void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
 {
-    //int ang = ply->getAng();
+    //The menu to appear when the user presses escape.
+    ui::selection escMenuSelection;
+    std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
+    std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
+    ui::button resume ("Play Game", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    ui::button opt ("Options", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
+    ui::button quit ("Quit", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    escMenuSelection.add(resume);
+    escMenuSelection.add(opt);
+    escMenuSelection.add(quit);
 
     switch (sym)
     {
@@ -390,7 +447,6 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         {
             ply->accelerate(-1);
             uni->setVel(-ply->getVel());
-            //uni->addParticleSprite( ply->getPos(), ply->getVel(), 0.0f, "EXPLOSION");
         }
         break;
     case SDLK_a:
@@ -402,10 +458,18 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         uni->setVel(-ply->getVel());
         break;
     case SDLK_ESCAPE:
-        if(!g_DEV_MODE) break;
-        ply->setVel({0,0});
-        ply->setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
-        uni->setVel(-ply->getVel());
+        uni->setPause(true);
+        uni->escMenuTog();
+        if(!uni->isEscMenuShown())
+        {
+            *keymod = 1;
+            uni->getUI()->add(escMenuSelection);
+        }
+        else
+        {
+            *keymod = 0;
+            uni->getUI()->pop();
+        }
         break;
     case SDLK_EQUALS:
         ply->incrWeap(1);

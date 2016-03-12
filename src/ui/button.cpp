@@ -1,6 +1,18 @@
+#include <array>
+#include <string>
+
 #include "ui/button.hpp"
 
-button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _t_col, vec2 _pos, vec2 _dim)
+namespace ui
+{
+
+button::button(
+        const std::string _txt,
+        const std::array<int, 8> _b_col,
+        const std::array<int, 8> _t_col,
+        const vec2 _pos,
+        const vec2 _dim
+        )
 {
     m_dark = false;
     m_selected = false;
@@ -26,7 +38,14 @@ button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _
     m_cost = 0;
 }
 
-button::button(std::string _txt, std::array<int, 8> _b_col, std::array<int, 8> _t_col, vec2 _pos, vec2 _dim, int _pcost)
+button::button(
+        const std::string _txt,
+        const std::array<int, 8> _b_col,
+        const std::array<int, 8> _t_col,
+        const vec2 _pos,
+        const vec2 _dim,
+        const int _pcost
+        )
 {
     m_dark = true;
     m_selected = false;
@@ -79,4 +98,6 @@ void button::reset()
 {
     m_label = m_initLabel;
     m_cost = m_initCost;
+}
+
 }

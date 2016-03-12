@@ -69,8 +69,8 @@ universe::universe()
 
     createFactions();
     loadShips();
-    //for(int i = 0; i < 3; ++i) spawnShip(TEAM_PLAYER_MINER);
-    //addStation();
+
+    m_escMenuShown = false;
 }
 
 void universe::addShot(
@@ -169,6 +169,8 @@ void universe::update(const float _dt)
         playSnd(EXPLOSION_SND);
 
         m_ply.setPos({F_INF, F_INF});
+
+        m_ui.clear();
 
         g_GAME_OVER = true;
     }
@@ -585,7 +587,6 @@ void universe::update(const float _dt)
 #if RENDER_MODE == 0
 void universe::draw(float _dt)
 {	
-    std::cout << "p1" << std::endl;
     if(m_paused) _dt = 0.0f;
 
     m_drawer.clear();
@@ -730,20 +731,22 @@ void universe::draw(float _dt)
     }
 
     //Draw the ui
-    if(!g_GAME_OVER) drawUI();
+    drawUI();
 
     m_drawer.finalise();
-    std::cout << "p2" << std::endl;
 }
 
 void universe::drawUI()
 {
-    m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2});
-    m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20});
+    if(!g_GAME_OVER)
+    {
+        m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2});
+        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20});
 
-    m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
-    m_drawer.statusBars(&m_ply);
-    m_drawer.drawWeaponStats(&m_ply);
+        m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
+        m_drawer.statusBars(&m_ply);
+        m_drawer.drawWeaponStats(&m_ply);
+    }
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
@@ -1266,6 +1269,8 @@ void universe::addBuild(
 
 void universe::initUI()
 {
+    using ui::selection;
+    using ui::button;
     //Initialise the two selection menus.
     selection energy_menu;
     selection upgrades_menu;
@@ -1351,7 +1356,7 @@ bool universe::upgradeCallback(
     //This function takes the selected button, looks at the cost vs the score, updates relevant values,
     //then returns a bool representing whether the upgrade was successful or unsuccessful.
 
-    button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
+    ui::button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
     int lvl = m_ply.getUpgrade( _btn );
 
     selectedButton->set(false);
@@ -1376,7 +1381,7 @@ void universe::upgradeSetLabels(
         int _plvl
         )
 {
-    button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
+    ui::button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
 
     std::string s1;
     int lvl;

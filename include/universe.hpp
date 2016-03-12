@@ -37,7 +37,7 @@ struct col_partition
 
 class universe
 {
-    interface m_ui;
+    ui::interface m_ui;
     #if RENDER_MODE == 0
       renderer m_drawer;
     #elif RENDER_MODE == 1
@@ -68,6 +68,7 @@ class universe
     float m_gameplay_intensity = 1;
     bool m_paused;
     int m_mouse_state;
+    bool m_escMenuShown;
 public:
     universe();
     void initUI();
@@ -113,9 +114,11 @@ public:
     void loadShips();
 
     void pause() {m_paused = !m_paused; if(!m_paused) g_TIME_SCALE = 1;}
+    void setPause(bool _p) {m_paused = _p;}
     bool isPaused() const {return m_paused;}
 
-    interface * getUI() {return &m_ui;}
+    ui::interface * getUI() {return &m_ui;}
+    ui::interface setUI(ui::interface _i) {m_ui = _i;}
     bool upgradeCallback(const int _sel, const int _btn);
     void upgradeSetLabels(const int _sel, const int _btn, const int _plvl);
 
@@ -130,6 +133,8 @@ public:
     squad * getSquadFromID(int _id);
 
     renderer * getRenderer() {return &m_drawer;}
+    bool isEscMenuShown() {return m_escMenuShown;}
+    void escMenuTog() {m_escMenuShown = !m_escMenuShown;}
 };
 
 #endif

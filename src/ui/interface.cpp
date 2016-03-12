@@ -5,6 +5,9 @@
 
 std::array< std::string, 10> g_ROMAN_NUMS = {"I","II","III","IV","V","VI","VII","IX","X"};
 
+namespace ui
+{
+
 interface::interface()
 {
 
@@ -36,4 +39,6 @@ void interface::reset()
 void interface::update(int _s)
 {
   for(auto &i : m_elements) i.update(_s);
+}
+
 }

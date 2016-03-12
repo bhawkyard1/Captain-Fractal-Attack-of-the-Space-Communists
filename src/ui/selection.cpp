@@ -1,13 +1,16 @@
 #include "util.hpp"
 #include "ui/selection.hpp"
 
+namespace ui
+{
+
 bool selection::click(vec2 p)
 {
   bool any = false;
-  for(size_t i = 0; i < buttons.size(); i++)
+  for(auto &i : m_buttons)
   {
-    if(buttons.at(i).isDark()) continue;
-    if(pointInRect(p, buttons.at(i).getPos(), buttons.at(i).getDim()))
+    if(i.isDark()) continue;
+    if(pointInRect(p, i.getPos(), i.getDim()))
     {
       any = true;
     }
@@ -15,14 +18,14 @@ bool selection::click(vec2 p)
 
   if(!any) return false;
 
-  for(size_t i = 0; i < buttons.size(); i++)
+  for(size_t i = 0; i < m_buttons.size(); ++i)
   {
-    buttons.at(i).set(false);
-    if(buttons.at(i).isDark()) continue;
-    if(pointInRect(p, buttons.at(i).getPos(), buttons.at(i).getDim()))
+    m_buttons.at(i).set(false);
+    if(m_buttons.at(i).isDark()) continue;
+    if(pointInRect(p, m_buttons.at(i).getPos(), m_buttons.at(i).getDim()))
     {
-      buttons.at(i).select();
-      selected = i;
+      m_buttons.at(i).select();
+      m_selected = i;
     }
   }
   return true;
@@ -30,10 +33,12 @@ bool selection::click(vec2 p)
 
 void selection::reset()
 {
-  for(auto &i : buttons) i.reset();
+  for(auto &i : m_buttons) i.reset();
 }
 
 void selection::update(int _s)
 {
-  for(auto &i : buttons) i.update(_s);
+  for(auto &i : m_buttons) i.update(_s);
+}
+
 }

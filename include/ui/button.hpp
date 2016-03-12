@@ -5,6 +5,9 @@
 #include <string>
 #include "vectors.hpp"
 
+namespace ui
+{
+
 class button
 {
   bool m_selected = false;
@@ -18,7 +21,7 @@ class button
   vec2 m_pos;
   vec2 m_dim;
 public:
-  button(std::string,std::array<int, 8>,std::array<int, 8>,vec2,vec2);
+  button(const std::string _label,const std::array<int, 8> _pcol,const std::array<int, 8> _tcol,const vec2 _pos,const vec2 _dim);
   button(std::string,std::array<int, 8>,std::array<int, 8>,vec2,vec2,int);
   void select();
   bool isSelected() {return m_selected;}
@@ -44,4 +47,5 @@ public:
   void reset();
 };
 
+}
 #endif

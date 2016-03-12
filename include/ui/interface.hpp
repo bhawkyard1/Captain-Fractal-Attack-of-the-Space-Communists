@@ -5,8 +5,12 @@
 #include <array>
 #include "vectors.hpp"
 #include "selection.hpp"
+#include "util.hpp"
 
 extern std::array< std::string, 10> g_ROMAN_NUMS;
+
+namespace ui
+{
 
 struct selectionReturn
 {
@@ -25,6 +29,11 @@ public:
   selection getElement(size_t _i) {return m_elements.at(_i);}
   void reset();
   void update(int _s);
+  void clear() {m_elements.clear();}
+  void remove(int _i) {swapnpop(&m_elements, _i);}
+  void pop() {m_elements.pop_back();}
 };
+
+}
 
 #endif
