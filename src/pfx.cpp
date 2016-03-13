@@ -46,7 +46,7 @@ void pfx::update(float _dt)
 
     bool done = true;
 
-    for(size_t i = 0; i < m_alphas.size(); i++)
+    for(size_t i = 0; i < m_alphas.size(); ++i)
     {
         m_particles.at(i).updatePos( _dt );
 
@@ -58,5 +58,5 @@ void pfx::update(float _dt)
     }
 
     if(done) m_active = false;
-    m_glowA = clamp(m_glowA - randFloat(15.0f,18.0f), 0.0f, 255.0f);
+    m_glowA = clamp(m_glowA - 16.0f, 0.0f, 255.0f);
 }

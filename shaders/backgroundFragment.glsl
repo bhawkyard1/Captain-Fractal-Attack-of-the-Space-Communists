@@ -1,9 +1,14 @@
 #version 410 core
 
 #define iterations 12
+
+//This variable does some really weird shit, yo.
+//At low values, looks like a big space city.
+//Really trippy stuff.
+//TO-DO: Delete before Jon reads these comments.
 #define formuparam 0.53
 
-#define volsteps 20
+#define volsteps 10
 #define stepsize 0.1
 
 #define tile   0.850
@@ -35,15 +40,18 @@ void main()
     float speed = unidir.length() / 200.0;
     float time = iGlobalTime * speed;
 
-    vec3 from = unidir * iGlobalTime / 200.0;
-    //vec3 from = vec3(0.5, 0.5,0.0);
-    //from += vec3(time * 2.0, time, -2.0);
+    //This controls the direction.
+    //from.z controls background changing.
+    vec3 from = unidir
+    from *= iGlobalTime / 200.0;
 
     //volumetric rendering
-    float s = 0.1, fade = 1.0;
+    //S and fade control brightness. High s makes everything very blue.
+    float s = 0.2, fade = 1.0;
     vec3 v = vec3(0.0);
     for (int r = 0; r < volsteps; r++)
     {
+        //P controls how close we are. If wo are too far out, we will see the tiling!
         vec3 p = from + s * uvzoom;//* 0.5;
         p = abs( vec3(tile) - mod(p, vec3(tile * 2.0))); // tiling fold
         float pa, a = pa = 0.0;
@@ -62,5 +70,13 @@ void main()
         s += stepsize;
     }
     v = mix( vec3(length(v)), v, saturation); //color adjust
+
     fragColour = vec4(v * 0.01, 1.0);
+
+    //FROM : http://casual-effects.blogspot.co.uk/2013/08/starfield-shader.html
+    // Motion blur; increases temporal coherence of undersampled flickering stars
+    // and provides temporal filtering under true motion.
+    float3 oldValue = texelFetch(oldImage, int2(gl_FragCoord.xy), 0).rgb;
+    gl_FragColor.rgb = lerp(oldValue - vec3(0.004), gl_FragColor.rgb, 0.5);
+    gl_FragColor.a = 1.0;
 }

@@ -48,7 +48,6 @@
 #undef interface
 #endif
 
-
 //Function prototypes.
 void gameInit();
 void handleUserKeyDownInput(int, player*, universe*, int*);
@@ -62,6 +61,8 @@ void mainMenu();
 void playGame();
 void playTutorial();
 
+universe uni;
+
 int main(int argc, char* argv[])
 {
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
@@ -74,6 +75,7 @@ int main(int argc, char* argv[])
     freopen( "CON", "w", stderr );
 #endif
 
+    playMusic(0);
     while(g_GAME_STATE != MODE_QUIT)
     {
         if(g_GAME_STATE == MODE_MENU)
@@ -101,8 +103,9 @@ int main(int argc, char* argv[])
 void mainMenu()
 {
     //Create the universe.
-    universe uni;
     g_GAME_OVER = true;
+
+    uni.reload(true);
     uni.getPly()->setHealth(-1);
     uni.update(0.1f);
     uni.getUI()->clear();
@@ -162,7 +165,6 @@ void mainMenu()
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
-
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
     while(g_GAME_STATE == MODE_MENU)
@@ -240,8 +242,9 @@ void mainMenu()
 void playGame()
 {
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
-    //Create the universe.
-    universe uni;
+
+    g_GAME_OVER = false;
+    uni.reload(true);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.

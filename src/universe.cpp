@@ -115,6 +115,7 @@ void universe::addMissile(
 
 void universe::update(const float _dt)
 {
+    //std::cout << 1/_dt << "fps" << std::endl;
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
@@ -575,13 +576,14 @@ void universe::update(const float _dt)
         int h = 0;
         m_drawer.queryTexture(temp, 0, &w, &h);
 
-        if(alph < 0.0f or isOffScreen(m_passive_sprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passive_sprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passive_sprites.at(i).getDim() <= 0.0f)
+        if(alph <= 0.0f or isOffScreen(m_passive_sprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passive_sprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passive_sprites.at(i).getDim() <= 0.0f)
         {
+            //std::cout <<"popit" << std::endl;
             swapnpop(&m_passive_sprites, i);
             continue;
         }
-        alph *= 0.94f;
-        alph -= 0.1f;
+        alph *= 0.9f;
+        alph -= 0.2f;
         m_passive_sprites.at(i).setCol(3, alph);
     }
 }
@@ -589,6 +591,8 @@ void universe::update(const float _dt)
 #if RENDER_MODE == 0
 void universe::draw(float _dt)
 {	
+    //std::cout << 1/_dt << " fps" << std::endl;
+    std::cout << m_passive_sprites.size() << std::endl;
     if(m_paused) _dt = 0.0f;
 
     m_drawer.clear();
@@ -852,7 +856,7 @@ void universe::detectCollisions(
         }
     }
 
-    if(count < 8 or _lvl > 4 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
+    if(count < 40 or _lvl > 4 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
     {
         m_partitions.ships.push_back(pships);
         m_partitions.lasers.push_back(plasers);
@@ -1217,13 +1221,28 @@ void universe::reload(const bool _newGame)
     m_ply.setEnergy( m_ply.getMaxEnergy() );
     m_ply.setVel({0, 0});
 
+    m_ui.clear();
+    initUI();
     m_ui.reset();
+    m_paused = false;
 
     m_partitions.ships.clear();
     m_partitions.lasers.clear();
     m_partitions.rockets.clear();
     m_partitions.rocks.clear();
     m_partitions.rects.clear();
+
+    m_time_elapsed = 0.0;
+    setVel({0,0});
+
+    m_factionCounts.assign(6, 0);
+    m_factionMaxCounts.assign(6, 0);
+
+    m_mouse_state = -1;
+
+    m_escMenuShown = false;
+
+    m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
 
     if(!_newGame) return;
 
