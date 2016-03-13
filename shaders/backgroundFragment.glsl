@@ -17,7 +17,7 @@
 #define darkmatter 0.300
 
 //Higher= brigwhter/less faded.
-#define distfading 0.430
+#define distfading 0.730
 
 #define saturation 0.850
 
