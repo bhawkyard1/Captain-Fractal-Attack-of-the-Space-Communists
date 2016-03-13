@@ -520,7 +520,37 @@ void universe::update(const float _dt)
     }
 
     //Ship spawning functions.
+    for(int i = m_particles.size() - 1; i >= 0; i--)
+    {
+        m_particles.at(i).setWVel(m_vel);
+        m_particles.at(i).update(_dt);
+        if(m_particles.at(i).done()) swapnpop(&m_particles, i);
 
+    }
+    for(int i = m_passive_sprites.size() - 1; i >= 0; --i)
+    {
+        float alph = m_passive_sprites.at(i).getCol(3);
+
+        m_passive_sprites.at(i).setWVel(m_vel);
+        m_passive_sprites.at(i).updateSprite(_dt);
+
+        std::string temp = m_passive_sprites.at(i).getIdentifier();
+        int w = 0;
+        int h = 0;
+        m_drawer.queryTexture(temp, 0, &w, &h);
+
+        if(alph <= 0.0f or isOffScreen(m_passive_sprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passive_sprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passive_sprites.at(i).getDim() <= 0.0f)
+        {
+            //std::cout <<"popit" << std::endl;
+            swapnpop(&m_passive_sprites, i);
+            continue;
+        }
+        alph *= 0.9f;
+        alph -= 0.2f;
+        m_passive_sprites.at(i).setCol(3, alph);
+    }
+
+    if(g_DIFFICULTY == 0) return;
     if(rand() % 1024 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
@@ -556,43 +586,13 @@ void universe::update(const float _dt)
         a.update(_dt);
         m_asteroids.push_back(a);
     }
-
-    for(int i = m_particles.size() - 1; i >= 0; i--)
-    {
-        m_particles.at(i).setWVel(m_vel);
-        m_particles.at(i).update(_dt);
-        if(m_particles.at(i).done()) swapnpop(&m_particles, i);
-
-    }
-    for(int i = m_passive_sprites.size() - 1; i >= 0; --i)
-    {
-        float alph = m_passive_sprites.at(i).getCol(3);
-
-        m_passive_sprites.at(i).setWVel(m_vel);
-        m_passive_sprites.at(i).updateSprite(_dt);
-
-        std::string temp = m_passive_sprites.at(i).getIdentifier();
-        int w = 0;
-        int h = 0;
-        m_drawer.queryTexture(temp, 0, &w, &h);
-
-        if(alph <= 0.0f or isOffScreen(m_passive_sprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passive_sprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passive_sprites.at(i).getDim() <= 0.0f)
-        {
-            //std::cout <<"popit" << std::endl;
-            swapnpop(&m_passive_sprites, i);
-            continue;
-        }
-        alph *= 0.9f;
-        alph -= 0.2f;
-        m_passive_sprites.at(i).setCol(3, alph);
-    }
 }
 
 #if RENDER_MODE == 0
 void universe::draw(float _dt)
 {	
     //std::cout << 1/_dt << " fps" << std::endl;
-    std::cout << m_passive_sprites.size() << std::endl;
+    //std::cout << m_passive_sprites.size() << std::endl;
     if(m_paused) _dt = 0.0f;
 
     m_drawer.clear();

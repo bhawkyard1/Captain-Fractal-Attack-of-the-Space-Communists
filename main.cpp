@@ -52,7 +52,7 @@
 void gameInit();
 void handleUserKeyDownInput(int, player*, universe*, int*);
 void handleUserKeyUpInput(int,int*);
-void handleUserMouseDownInput(int,int,player*,universe*);
+void handleUserMouseDownInput(int, int *, player*, universe*);
 void handleUserMouseUpInput(int,int,player*,universe*);
 void handleUserScroll(int,player*);
 double diffClock(clock_t clock1, clock_t clock2);
@@ -275,7 +275,7 @@ void playGame()
             {
             if( uni.isPaused() and incomingEvent.type != SDL_KEYDOWN and incomingEvent.button.button != SDLK_SPACE ) break;
             case SDL_MOUSEBUTTONDOWN:
-                handleUserMouseDownInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
+                handleUserMouseDownInput(incomingEvent.button.button, &keymod, uni.getPly(), &uni);
                 break;
             case SDL_MOUSEBUTTONUP:
                 handleUserMouseUpInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
@@ -311,9 +311,9 @@ void playGame()
     }
 }
 
-void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
+void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
 {
-    if(keymod == 0)
+    if(*keymod == 0)
     {
         if(btn == SDL_BUTTON_LEFT)
         {
@@ -330,7 +330,7 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
             }
         }
     }
-    else if(keymod == 1)
+    else if(*keymod == 1)
     {
         if(btn == SDL_BUTTON_LEFT)
         {
@@ -357,11 +357,31 @@ void handleUserMouseDownInput(int btn, int keymod, player *ply, universe *uni)
                 switch(ret.m_button_val)
                 {
                 case 0:
-                    g_GAME_STATE = MODE_MENU;
+                    *keymod = 0;
+                    uni->setPause(false);
+                    uni->escMenuTog();
+                    uni->getUI()->pop();
                     break;
                 case 1:
+                    *keymod = 0;
+                    saveGame(uni);
+                    uni->setPause(false);
+                    uni->escMenuTog();
+                    uni->getUI()->pop();
                     break;
                 case 2:
+                    *keymod = 0;
+                    uni->reload(true);
+                    uni->setPause(false);
+                    uni->escMenuTog();
+                    uni->getUI()->pop();
+                    uni->initUI();
+                    loadGame(uni);
+                    break;
+                case 3:
+                    g_GAME_STATE = MODE_MENU;
+                    break;
+                case 4:
                     g_GAME_STATE = MODE_QUIT;
                     break;
                 default:
@@ -447,11 +467,16 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     ui::selection escMenuSelection;
     std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
     std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
-    ui::button resume ("MAIN MENU", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    ui::button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
+    ui::button resume ("RESUME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f}, {200.0f, 80.0f});
+    ui::button sGame ("SAVE GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    ui::button lGame ("LOAD GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 80.0f});
+    ui::button mm ("MAIN MENU", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 80.0f});
     ui::button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+
     escMenuSelection.add(resume);
-    escMenuSelection.add(opt);
+    escMenuSelection.add(sGame);
+    escMenuSelection.add(lGame);
+    escMenuSelection.add(mm);
     escMenuSelection.add(quit);
 
     switch (sym)
@@ -549,7 +574,76 @@ void handleUserKeyUpInput(int sym, int * keymod)
 
 void playTutorial()
 {
+    std::cout << "LAUNCHING TUTORIAL..." << std::endl;
 
+    g_DIFFICULTY = 0;
+
+    g_GAME_OVER = false;
+    uni.reload(true);
+    g_ZOOM_LEVEL = 0.0f;
+    g_TARG_ZOOM_LEVEL = 0.8f;
+    //Timer used to keep track of game time.
+    //The argument is the fps of the updates, higher = more detailed.
+    sim_time clock(120.0f);
+
+    //Keypress modifiers (shift, ctrl etc).
+    int keymod = 0;
+    while(g_GAME_STATE == MODE_TUTORIAL)
+    {
+        //Event handling.
+        SDL_Event incomingEvent;
+        while( SDL_PollEvent( &incomingEvent ) )
+        {
+            //Quit event.
+            switch( incomingEvent.type )
+            {
+            case SDL_QUIT:
+                g_GAME_STATE = MODE_QUIT;
+                break;
+            }
+
+            //Ignore if the player is dead.
+            if(g_GAME_OVER) break;
+
+            //Input events.
+            switch( incomingEvent.type )
+            {
+            if( uni.isPaused() and incomingEvent.type != SDL_KEYDOWN and incomingEvent.button.button != SDLK_SPACE ) break;
+            case SDL_MOUSEBUTTONDOWN:
+                handleUserMouseDownInput(incomingEvent.button.button, &keymod, uni.getPly(), &uni);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                handleUserMouseUpInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
+                break;
+            case SDL_MOUSEWHEEL:
+                handleUserScroll(incomingEvent.wheel.y, uni.getPly());
+                break;
+            case SDL_KEYDOWN:
+                handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
+                break;
+            case SDL_KEYUP:
+                handleUserKeyUpInput(incomingEvent.key.keysym.sym, &keymod);
+                break;
+            }
+        }
+        //Set current time (timer keeps track of time since cur time was last set).
+        clock.setCur();
+
+        //Update the game in small time-steps (dependant on the timers fps).
+        while(clock.getAcc() > clock.getFrame())
+        {
+            uni.update(clock.getDiff() * g_TIME_SCALE);
+            clock.incrAcc( -clock.getDiff() );
+        }
+
+        //Update the zoom level.
+        g_ZOOM_LEVEL += (g_TARG_ZOOM_LEVEL - g_ZOOM_LEVEL) * 0.125f;
+
+        //Draw the game.
+        float diff_clamped = clock.getDiff();
+        if(diff_clamped == 0.0f) diff_clamped = 0.01f;
+        uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
+    }
 }
 
 /*
