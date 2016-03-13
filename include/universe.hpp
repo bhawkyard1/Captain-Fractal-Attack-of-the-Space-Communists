@@ -59,6 +59,7 @@ class universe
 
     player m_ply;
     vec2 m_vel;
+    vec2 m_pos;
 
     col_partition m_partitions;
 
@@ -74,7 +75,7 @@ public:
     universe();
     void initUI();
     player * getPly() {return &m_ply;}
-    void setVel(const vec2 v) {m_vel = v;}
+    void setVel(const vec2 _v) {m_vel = _v;}
     void addShot(const vec2 _p, const vec2 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team);
     void addMissile(const vec2 _p, const vec2 _v, const float _angle, const aiTeam _team);
     void spawnShip(const aiTeam t);

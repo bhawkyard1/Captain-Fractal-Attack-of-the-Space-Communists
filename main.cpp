@@ -57,16 +57,14 @@ void handleUserMouseUpInput(int,int,player*,universe*);
 void handleUserScroll(int,player*);
 double diffClock(clock_t clock1, clock_t clock2);
 
-void mainMenu();
-void playGame();
-void playTutorial();
-
-universe uni;
+void mainMenu(universe &uni);
+void playGame(universe &uni);
+void playTutorial(universe &uni);
 
 int main(int argc, char* argv[])
 {
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
-
+    universe uni;
 #ifdef _WIN32
     AllocConsole() ;
     AttachConsole( GetCurrentProcessId() );
@@ -81,27 +79,28 @@ int main(int argc, char* argv[])
         if(g_GAME_STATE == MODE_MENU)
         {
             gameInit();
-            mainMenu();
+            mainMenu(uni);
             deleteSounds();
         }
         else if(g_GAME_STATE == MODE_TUTORIAL)
         {
             gameInit();
-            playTutorial();
+            playTutorial(uni);
             deleteSounds();
         }
         else if(g_GAME_STATE == MODE_GAME)
         {
             gameInit();
-            playGame();
+            playGame(uni);
             deleteSounds();
         }
     }
     return 0;
 }
 
-void mainMenu()
+void mainMenu(universe &uni)
 {
+    //universe uni;
     //Create the universe.
     g_GAME_OVER = true;
 
@@ -127,7 +126,7 @@ void mainMenu()
     std::array<int, 8> blank = {0, 0, 0, 0, 0, 0, 0, 0};
     ui::button optionsHeaderBtn("OPTIONS", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
 
-    g_TARG_ZOOM_LEVEL = 0.3f;
+    g_TARG_ZOOM_LEVEL = 2.0f;
     g_DIFFICULTY = 20;
 
     vec2 scrollVel = randVec(0.5f, 2.0f);
@@ -239,8 +238,9 @@ void mainMenu()
     }
 }
 
-void playGame()
+void playGame(universe &uni)
 {
+    //universe uni;
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
 
     g_GAME_OVER = false;
@@ -572,8 +572,9 @@ void handleUserKeyUpInput(int sym, int * keymod)
     }
 }
 
-void playTutorial()
+void playTutorial(universe &uni)
 {
+    //universe uni;
     std::cout << "LAUNCHING TUTORIAL..." << std::endl;
 
     g_DIFFICULTY = 0;

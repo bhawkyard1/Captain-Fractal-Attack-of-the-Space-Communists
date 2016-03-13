@@ -8,21 +8,24 @@
 //TO-DO: Delete before Jon reads these comments.
 #define formuparam 0.53
 
-#define volsteps 10
-#define stepsize 0.1
+#define volsteps 12
+#define stepsize 0.2
 
 #define tile   0.850
 
 #define brightness 0.0015
 #define darkmatter 0.300
-#define distfading 0.730
+
+//Higher= brigwhter/less faded.
+#define distfading 0.430
+
 #define saturation 0.850
 
 in vec4 gl_FragCoord;
 uniform vec2 iResolution;
 uniform float iGlobalTime;
 uniform float zoom;
-uniform vec3 unidir;
+uniform vec2 unidir;
 out vec4 fragColour;
 
 void main()
@@ -34,16 +37,15 @@ void main()
     uv.y *= iResolution.y / iResolution.x;
 
     //Don't know what this does. Seems to kind of link together current uv pos and the zoom level.
-    vec3 uvzoom = vec3(uv * zoom, 1.0);
-
-    //Derive speed from the universe velocity.
-    float speed = unidir.length() / 200.0;
-    float time = iGlobalTime * speed;
+    vec3 uvzoom = vec3(uv * zoom, 20.0);
 
     //This controls the direction.
     //from.z controls background changing.
-    vec3 from = unidir
-    from *= iGlobalTime / 200.0;
+    //vec3 from = vec3(12.0,1.0,0.001);
+    //vec3 from = vec3( cos(iGlobalTime), 0.0f, 0.001);
+    vec3 from = vec3(unidir.xy + 1., 0.001);
+    from.xy /= 20000.0;
+    from.z *= iGlobalTime;
 
     //volumetric rendering
     //S and fade control brightness. High s makes everything very blue.
@@ -76,7 +78,7 @@ void main()
     //FROM : http://casual-effects.blogspot.co.uk/2013/08/starfield-shader.html
     // Motion blur; increases temporal coherence of undersampled flickering stars
     // and provides temporal filtering under true motion.
-    float3 oldValue = texelFetch(oldImage, int2(gl_FragCoord.xy), 0).rgb;
+    /*float3 oldValue = texelFetch(oldImage, int2(gl_FragCoord.xy), 0).rgb;
     gl_FragColor.rgb = lerp(oldValue - vec3(0.004), gl_FragColor.rgb, 0.5);
-    gl_FragColor.a = 1.0;
+    gl_FragColor.a = 1.0;*/
 }

@@ -19,6 +19,7 @@
 #if RENDER_MODE == 1
 
 #include <ngl/NGLInit.h>
+#include <ngl/VertexArrayObject.h>
 #include <ngl/Camera.h>
 #include <ngl/Colour.h>
 #include <ngl/Light.h>
@@ -49,7 +50,8 @@ public:
   int init();
   void drawBackground(float _dt, vec2 _v);
   void drawRect(const vec2 _p, const vec2 _d);
-  void drawTri(const vec2 _p, const float _d, const float _ang);
+  void drawTri(const vec2 _p, const float _d, const float _ang, const std::array<float, 4> _col);
+  void drawLine(const vec2 _start, const vec2 _end);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
   void swapWindow() const { SDL_GL_SwapWindow(m_window); }
   void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}

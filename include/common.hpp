@@ -11,7 +11,7 @@
 
 #include "vectors.hpp"
 
-#define RENDER_MODE 0
+#define RENDER_MODE 1
 
 //void loadTextures();
 void loadConfig();
