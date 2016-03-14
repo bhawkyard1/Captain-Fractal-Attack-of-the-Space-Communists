@@ -748,8 +748,8 @@ void universe::drawUI()
 {
   if(!g_GAME_OVER)
   {
-    m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2});
-    m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20});
+    m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2}, false);
+    m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false);
 
     m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
     m_drawer.statusBars(&m_ply);
@@ -770,7 +770,7 @@ void universe::drawUI()
       {
         m_drawer.drawRect(j->getPos(), j->getDim(), {col[4], col[5], col[6], col[7]}, false);
       }
-      m_drawer.drawText(j->getLabel(), "pix", j->getPos());
+      m_drawer.drawText(j->getLabel(), "pix", j->getPos(), false);
 
       if(j->isDark())
       {
@@ -1223,7 +1223,7 @@ bool emnityCheck(
   return true;
 }
 
-void universe::reload(const bool _newGame)
+void universe::reload()
 {
   m_agents.clear();
   m_missiles.clear();
@@ -1260,8 +1260,11 @@ void universe::reload(const bool _newGame)
 
   m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
 
-  if(!_newGame) return;
+  m_ply.setWeapData(0,0);
+  m_ply.setWeapData(1,1);
+  m_ply.setWeapData(2,2);
 
+  m_ply.setEnginePower(5.0f);
   for(int i = 0; i < UPGRADES_LEN; ++i)
   {
     m_ply.setGradeArr(i, 0);
@@ -1452,18 +1455,19 @@ void universe::upgradeSetLabels(
     return;
     break;
   }
-
-  s1 += g_ROMAN_NUMS.at(lvl);
+  s1 += g_ROMAN_NUMS[lvl];
 
   if(lvl < 8)
   {
+    selectedButton->setCost(pow(2.0, lvl + 1) * 2);
     s1 += " (";
     std::stringstream ss;
     ss << selectedButton->getCost();
     s1 += ss.str();
     s1 += ")";
   }
-  if(lvl < 9) selectedButton->updateText(s1);
+
+  selectedButton->updateText(s1);
   std::cout << "UPDATING... " << s1 << std::endl;
 }
 

@@ -3,7 +3,7 @@
 #include "ui/interface.hpp"
 #include <iostream>
 
-std::array< std::string, 10> g_ROMAN_NUMS = {"I","II","III","IV","V","VI","VII","IX","X"};
+std::array< std::string, 10> g_ROMAN_NUMS = {"I","II","III","IV","V","VI","VII","IX","X","X"};
 
 namespace ui
 {
@@ -18,10 +18,11 @@ selectionReturn interface::handleInput(vec2 _pos)
   selectionReturn r = {-1, -1};
   for(size_t i = 0; i < m_elements.size(); ++i)
   {
+    if(!m_elements[i].isVisible()) continue;
     for(size_t j = 0; j < m_elements[i].getButtons()->size(); ++j)
     {
-      button b = m_elements[i].getButtons()->at(j);
-      if(pointInRect(_pos, b.getPos(), b.getDim()))
+      button * b = m_elements[i].getAt(j);
+      if(pointInRect(_pos, b->getPos(), b->getDim()))
       {
         r.m_sel_val = i;
         r.m_button_val = j;

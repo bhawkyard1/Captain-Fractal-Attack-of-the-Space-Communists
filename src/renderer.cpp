@@ -293,9 +293,16 @@ void renderer::drawTextureSet(
 void renderer::drawText(
         std::string _text,
         std::string _font,
-        vec2 _pos
+        vec2 _pos,
+        bool _ss
         )
 {
+    if(_ss)
+    {
+        _pos *= g_ZOOM_LEVEL;
+        _pos += g_HALFWIN;
+    }
+
     sprite_sheet * tmp = &m_letters[_font];
 
     SDL_Rect dst = {static_cast<int>(_pos.m_x), static_cast<int>(_pos.m_y), 0, 0};
@@ -303,6 +310,11 @@ void renderer::drawText(
     {
         SDL_Texture * draw = tmp->m_sheet[_text[i]];
         SDL_QueryTexture( draw, NULL, NULL, &dst.w, &dst.h);
+        if(_ss)
+        {
+            dst.w *= g_ZOOM_LEVEL * 2.0f;
+            dst.h *= g_ZOOM_LEVEL * 2.0f;
+        }
         SDL_RenderCopy( m_renderer, draw, NULL, &dst );
         dst.x += dst.w;
     }
@@ -434,10 +446,10 @@ void renderer::drawLineGr(
 }
 
 void renderer::drawCircle(int _x,
-        int _y,
-        int _radius,
-        std::array<float, 4> _col
-        )
+                          int _y,
+                          int _radius,
+                          std::array<float, 4> _col
+                          )
 {
     _x = _x * g_ZOOM_LEVEL + g_HALFWIN.m_x;
     _y = _y * g_ZOOM_LEVEL + g_HALFWIN.m_y;
@@ -498,11 +510,11 @@ void renderer::finalise()
 
 //UI CODE
 void renderer::drawMap(std::vector<missile> *_mp,
-        std::vector<enemy> *_ep,
-        std::vector<ship> *_ap,
-        std::vector<laser> *_lp,
-        std::vector<faction> * _fp
-        )
+                       std::vector<enemy> *_ep,
+                       std::vector<ship> *_ap,
+                       std::vector<laser> *_lp,
+                       std::vector<faction> * _fp
+                       )
 {
     SDL_Rect map;
     map.w = 256;
@@ -630,16 +642,16 @@ void renderer::drawWeaponStats(player * _ply)
 
     float fWIN_WIDTH = static_cast<float>(g_WIN_WIDTH), fWIN_HEIGHT = static_cast<float>(g_WIN_HEIGHT);
     std::string damageText = "Damage " + std::to_string(ws[2]);
-    drawText(damageText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.4f * weap.h});
+    drawText(damageText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.4f * weap.h}, false);
 
     std::string noText = "\nLasers " + std::to_string(static_cast<int>(ws[0]));
-    drawText(noText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.2f * weap.h});
+    drawText(noText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.2f * weap.h}, false);
 
     std::string spreadText = "\nSpread " + std::to_string(ws[1]);
-    drawText(spreadText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.0f * weap.h});
+    drawText(spreadText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.0f * weap.h}, false);
 
     std::string rateText = "\nRate ";
     float rate = 1.0f / ws[8];
     rateText += std::to_string( static_cast<int>( rate ) );
-    drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h});
+    drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h}, false);
 }

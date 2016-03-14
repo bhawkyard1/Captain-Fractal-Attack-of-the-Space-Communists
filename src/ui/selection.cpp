@@ -11,6 +11,7 @@ selection::selection()
 
 bool selection::click(vec2 p)
 {
+  if(!m_visible) return false;
   bool any = false;
   for(auto &i : m_buttons)
   {

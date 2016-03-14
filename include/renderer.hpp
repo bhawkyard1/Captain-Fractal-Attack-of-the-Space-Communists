@@ -43,7 +43,7 @@ public:
   void clear();
   void drawTextureSet(std::string _key, vec2 _pos, float _orient, std::array<float, 4> _alphaMod);
   void drawTexture(std::string _key, size_t _index, vec2 _pos, float _orient, std::array<float, 4> _col);
-  void drawText(std::string _text, std::string _font, vec2 _pos);
+  void drawText(std::string _text, std::string _font, vec2 _pos, bool _ss);
   void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col );
   void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col);
   void drawLineGr(vec2, vec2, std::array<float, 4> _scol, std::array<float, 4> _ecol);

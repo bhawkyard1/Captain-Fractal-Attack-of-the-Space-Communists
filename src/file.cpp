@@ -157,7 +157,6 @@ void loadGame(universe * uni)
     while(getline( save, cur ))
     {
         if(cur.length() == 0) continue;
-
         std::vector<std::string> strings = split(cur, ' ');
 
         for(size_t i = 0; i < strings.size(); i++)
@@ -174,9 +173,9 @@ void loadGame(universe * uni)
                 {
                     int lvl = stoi(strings.at(i + j + 1), nullptr, 10);
                     std::cout << "READING, LEVEL IS " << lvl << std::endl;
-                    uni->getPly()->setGrade(j, lvl);
+                    uni->getPly()->setGrade(j, clamp(lvl,0,9));
+
                     uni->upgradeSetLabels(1, j, uni->getPly()->getUpgrade(j));
-                    std::cout << "PLAYER UPGRADE " << j << ", " << uni->getPly()->getUpgrade(j) << std::endl;
                 }
             }
             else if(strings.at(i) == "ps")

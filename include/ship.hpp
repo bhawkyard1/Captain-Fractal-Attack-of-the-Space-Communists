@@ -87,6 +87,7 @@ public:
   void setAng(const float _ang) {m_angle = _ang;}
   float getAng() const {return m_angle;}
   void setShooting() {m_drawShot = 255;}
+  void setWeapData(const int _val, const int _src) {m_weapons[_val] = g_weapons[_src];}
   void setWeap(const int _val) {m_curWeap = _val;}
   void incrWeap(const int _val) {m_curWeap = clampRoll(m_curWeap + _val, 0, static_cast<int>(m_weapons.size()) - 1 );}
   float getCurWeapStat(WEAPON_STAT _stat) const {return m_weapons[m_curWeap][_stat];}

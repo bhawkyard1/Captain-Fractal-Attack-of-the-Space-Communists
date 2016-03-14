@@ -24,7 +24,7 @@ class interface
 public:
   interface();
   selectionReturn handleInput(vec2 _pos);
-  void add(selection _s) {m_elements.push_back(_s);}
+  void add(const selection _s) {m_elements.push_back(_s);}
   std::vector<selection> * getElements() {return &m_elements;}
   selection getElement(size_t _i) {return m_elements.at(_i);}
   void reset();

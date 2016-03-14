@@ -73,6 +73,8 @@ int main(int argc, char* argv[])
     freopen( "CON", "w", stderr );
 #endif
 
+    sfxInit();
+    loadSounds();
     playMusic(0);
     while(g_GAME_STATE != MODE_QUIT)
     {
@@ -80,38 +82,39 @@ int main(int argc, char* argv[])
         {
             gameInit();
             mainMenu(uni);
-            deleteSounds();
         }
         else if(g_GAME_STATE == MODE_TUTORIAL)
         {
             gameInit();
             playTutorial(uni);
-            deleteSounds();
         }
         else if(g_GAME_STATE == MODE_GAME)
         {
             gameInit();
             playGame(uni);
-            deleteSounds();
         }
     }
+    deleteSounds();
     return 0;
 }
 
 void mainMenu(universe &uni)
 {
+    playSnd(MENU_SELECT_SND);
     //universe uni;
     //Create the universe.
     g_GAME_OVER = true;
 
-    uni.reload(true);
+    uni.reload();
     uni.getPly()->setHealth(-1);
     uni.update(0.1f);
     uni.getUI()->clear();
 
+    std::array<int, 8> btncol = {20, 220, 255, 220, 20, 200, 255, 220};
+    std::array<int, 8> quitcol = {255, 25, 40, 220, 255, 5, 30, 220};
+    std::array<int, 8> blank = {0, 0, 0, 0, 0, 0, 0, 0};
+
     ui::selection mainMenuSelection;
-    std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
-    std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
     ui::button play ("PLAY GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
     ui::button tut ("PLAY TUTORIAL", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
     ui::button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
@@ -123,8 +126,48 @@ void mainMenu(universe &uni)
     uni.getUI()->add(mainMenuSelection);
 
     ui::selection optionsHeader;
-    std::array<int, 8> blank = {0, 0, 0, 0, 0, 0, 0, 0};
-    ui::button optionsHeaderBtn("OPTIONS", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    ui::button optionsHeaderBtn("OPTIONS", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 20.0f});
+    ui::button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 20.0f});
+    ui::button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 20.0f});
+    ui::button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 20.0f});
+    ui::button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 200.0f}, {200.0f, 80.0f});
+    optionsHeader.add(optionsHeaderBtn);
+    optionsHeader.add(resolutionHeaderBtn);
+    optionsHeader.add(graphicsHeaderBtn);
+    optionsHeader.add(difficultyHeaderBtn);
+    optionsHeader.add(backToMainMenu);
+    optionsHeader.setVisible(false);
+    uni.getUI()->add(optionsHeader);
+
+    float w = 90.0f, h = 50.0f;
+    ui::selection resolutionOptions;
+    resolutionOptions.add(ui::button("1280 x 720", btncol, btncol, {g_HALFWIN.m_x - 400.0f, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.add(ui::button("1280 x 1024", btncol, btncol, {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.add(ui::button("1366 x 768", btncol, btncol, {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.add(ui::button("1440 x 900", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.add(ui::button("1600 x 900", btncol, btncol, {g_HALFWIN.m_x, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.add(ui::button("1920 x 1080", btncol, btncol, {g_HALFWIN.m_x + 100.0f, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.add(ui::button("1920 x 1200", btncol, btncol, {g_HALFWIN.m_x + 200.0f, g_HALFWIN.m_y - 80.0f}, {w, h}));
+    resolutionOptions.setVisible(false);
+    uni.getUI()->add(resolutionOptions);
+
+    ui::selection qualityOptions;
+    qualityOptions.add(ui::button("Potato", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 30.0f}, {w, h}));
+    qualityOptions.add(ui::button("Medium Rare", btncol, btncol, {g_HALFWIN.m_x, g_HALFWIN.m_y + 30.0f}, {w, h}));
+    qualityOptions.add(ui::button("Da Vinci", btncol, btncol, {g_HALFWIN.m_x + 100.0f, g_HALFWIN.m_y + 30.0f}, {w, h}));
+    qualityOptions.setVisible(false);
+    uni.getUI()->add(qualityOptions);
+
+    w = 140.0f;
+    h = 50.0f;
+    ui::selection difficultyOptions;
+    difficultyOptions.add(ui::button("Cadet", btncol, btncol, {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y + 130.0f}, {w, h}));
+    difficultyOptions.add(ui::button("Cosmonaut", btncol, btncol, {g_HALFWIN.m_x - 150.0f, g_HALFWIN.m_y + 130.0f}, {w, h}));
+    difficultyOptions.add(ui::button("Captain", btncol, btncol, {g_HALFWIN.m_x, g_HALFWIN.m_y + 130.0f}, {w, h}));
+    difficultyOptions.add(ui::button("Commander", btncol, btncol, {g_HALFWIN.m_x + 150.0f, g_HALFWIN.m_y + 130.0f}, {w, h}));
+    difficultyOptions.add(ui::button("Computing for Animation 1", btncol, btncol, {g_HALFWIN.m_x + 300.0f, g_HALFWIN.m_y + 130.0f}, {w, h}));
+    difficultyOptions.setVisible(false);
+    uni.getUI()->add(difficultyOptions);
 
     g_TARG_ZOOM_LEVEL = 2.0f;
     g_DIFFICULTY = 20;
@@ -192,8 +235,10 @@ void mainMenu(universe &uni)
                     int mx = 0, my = 0;
                     SDL_GetMouseState(&mx, &my);
                     ui::selectionReturn mainMenuSelected = uni.getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    std::cout << "CLICK : " << mainMenuSelected.m_sel_val << ", " << mainMenuSelected.m_button_val << std::endl;
                     if(mainMenuSelected.m_sel_val == 0)
                     {
+                        playSnd(MENU_SELECT_SND);
                         switch(mainMenuSelected.m_button_val)
                         {
                         case 0:
@@ -203,13 +248,28 @@ void mainMenu(universe &uni)
                             g_GAME_STATE = MODE_TUTORIAL;
                             return;
                         case 2:
-                            g_GAME_STATE = MODE_QUIT;
-                            return;
+                            //std::cout << "OPTIONS MENU YO" << std::endl;
+                            for(size_t i = 0; i < uni.getUI()->getElements()->size(); ++i)
+                            {
+                                (*uni.getUI()->getElements())[i].toggleVisible();
+                            }
+                            break;
                         case 3:
                             g_GAME_STATE = MODE_QUIT;
                             return;
                         default:
                             break;
+                        }
+                    }
+                    else if(mainMenuSelected.m_sel_val == 1)
+                    {
+                        playSnd(MENU_SELECT_SND);
+                        if(mainMenuSelected.m_button_val == 4)
+                        {
+                            for(size_t i = 0; i < uni.getUI()->getElements()->size(); ++i)
+                            {
+                                (*uni.getUI()->getElements())[i].toggleVisible();
+                            }
                         }
                     }
                     break;
@@ -240,11 +300,12 @@ void mainMenu(universe &uni)
 
 void playGame(universe &uni)
 {
+    playSnd(MENU_SELECT_SND);
     //universe uni;
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
 
     g_GAME_OVER = false;
-    uni.reload(true);
+    uni.reload();
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
@@ -339,10 +400,12 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             ui::selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
             if(ret.m_sel_val == 0)
             {
+                playSnd(MENU_SELECT_SND);
                 ply->setEnergyPriority(ret.m_button_val);
             }
             else if(ret.m_sel_val == 1)
             {
+                playSnd(MENU_SELECT_SND);
                 if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
                 ply->upgrade(ret.m_button_val);
                 if(ret.m_button_val == 5) uni->addMiner();
@@ -354,6 +417,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             }
             else if(ret.m_sel_val == 2)
             {
+                playSnd(MENU_SELECT_SND);
                 switch(ret.m_button_val)
                 {
                 case 0:
@@ -371,7 +435,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
                     break;
                 case 2:
                     *keymod = 0;
-                    uni->reload(true);
+                    uni->reload();
                     uni->setPause(false);
                     uni->escMenuTog();
                     uni->getUI()->pop();
@@ -397,9 +461,6 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
 void gameInit()
 {
     loadConfig();
-
-    sfxInit();
-    loadSounds();
 
     srand (static_cast <unsigned> (time(0)));
 
@@ -537,14 +598,14 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     case SDLK_n:
         if(*keymod == 1)
         {
-            uni->reload(true);
+            uni->reload();
             //for(int i = 0; i < UPGRADES_LEN; ++i) setUpgradeTextures(0, i);
         }
         break;
     case SDLK_l:
         if(*keymod == 1)
         {
-            uni->reload(true);
+            uni->reload();
             loadGame(uni);
         }
         break;
@@ -574,19 +635,30 @@ void handleUserKeyUpInput(int sym, int * keymod)
 
 void playTutorial(universe &uni)
 {
+    enum stage {
+        STAGE_BEGIN, STAGE_BEGIN_UNPAUSED,
+        STAGE_MOVEMENT_INTRO,
+        STAGE_SHOOTING_INTRO, STAGE_SHOOTING,
+        STAGE_ENERGY_LEVELS_PAUSE, STAGE_ENERGY_LEVELS,
+        STAGE_COMPLETE
+    };
+    stage tutStage = STAGE_BEGIN;
+    playSnd(MENU_SELECT_SND);
     //universe uni;
     std::cout << "LAUNCHING TUTORIAL..." << std::endl;
 
     g_DIFFICULTY = 0;
 
     g_GAME_OVER = false;
-    uni.reload(true);
+    uni.reload();
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
 
+    std::array<bool, 4> directionsTravelled = {false, false, false, false};
+    float timer = 0.0f;
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
     while(g_GAME_STATE == MODE_TUTORIAL)
@@ -611,6 +683,17 @@ void playTutorial(universe &uni)
             {
             if( uni.isPaused() and incomingEvent.type != SDL_KEYDOWN and incomingEvent.button.button != SDLK_SPACE ) break;
             case SDL_MOUSEBUTTONDOWN:
+                switch(incomingEvent.button.button)
+                {
+                case SDL_BUTTON_LEFT:
+                    if(tutStage == STAGE_SHOOTING)
+                    {
+                        timer = 0.0f;
+                        tutStage = STAGE_ENERGY_LEVELS;
+                    }
+                default:
+                    break;
+                }
                 handleUserMouseDownInput(incomingEvent.button.button, &keymod, uni.getPly(), &uni);
                 break;
             case SDL_MOUSEBUTTONUP:
@@ -620,6 +703,30 @@ void playTutorial(universe &uni)
                 handleUserScroll(incomingEvent.wheel.y, uni.getPly());
                 break;
             case SDL_KEYDOWN:
+                switch(incomingEvent.key.keysym.sym)
+                {
+                case SDLK_w:
+                    if(tutStage == STAGE_MOVEMENT_INTRO) directionsTravelled[0] = true;
+                    break;
+                case SDLK_a:
+                    if(tutStage == STAGE_MOVEMENT_INTRO) directionsTravelled[1] = true;
+                    break;
+                case SDLK_s:
+                    if(tutStage == STAGE_MOVEMENT_INTRO) directionsTravelled[2] = true;
+                    break;
+                case SDLK_d:
+                    if(tutStage == STAGE_MOVEMENT_INTRO) directionsTravelled[3] = true;
+                    break;
+                case SDLK_SPACE:
+                    if(tutStage == STAGE_BEGIN_UNPAUSED)
+                    {
+                        tutStage = STAGE_MOVEMENT_INTRO;
+                        timer = 0.0f;
+                    }
+                    break;
+                default:
+                    break;
+                }
                 handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
                 break;
             case SDL_KEYUP:
@@ -630,6 +737,7 @@ void playTutorial(universe &uni)
         //Set current time (timer keeps track of time since cur time was last set).
         clock.setCur();
 
+        timer += clock.getDiff() * g_TIME_SCALE;
         //Update the game in small time-steps (dependant on the timers fps).
         while(clock.getAcc() > clock.getFrame())
         {
@@ -644,6 +752,66 @@ void playTutorial(universe &uni)
         float diff_clamped = clock.getDiff();
         if(diff_clamped == 0.0f) diff_clamped = 0.01f;
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
+
+        if(tutStage == STAGE_BEGIN and timer > 1.0f)
+        {
+            uni.setPause(true);
+            tutStage = STAGE_BEGIN_UNPAUSED;
+        }
+        else if(tutStage == STAGE_BEGIN_UNPAUSED)
+        {
+            uni.getRenderer()->drawText("WELCOME TO ELITE DANGEROUS V2.0", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
+            uni.getRenderer()->drawText("THIS TUTORIAL WILL GUIDE YOU THROUGH SOME OF THE GAMES SYSTEMS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
+            uni.getRenderer()->drawText("PRESS 'SPACE' TO UNPAUSE", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            uni.getRenderer()->finalise();
+        }
+        else if(tutStage == STAGE_MOVEMENT_INTRO)
+        {
+            vec2 ppos = uni.getPly()->getPos();
+            float ang = uni.getPly()->getAng();
+            uni.getRenderer()->drawText("OKAY, FIRST UP, MOVEMENT:", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
+            uni.getRenderer()->drawText("YOU ALWAYS CHASE THE MOUSE", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
+            uni.getRenderer()->drawText("TRY MOVING IN ALL FOUR DIRECTIONS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            if(!directionsTravelled[0]) uni.getRenderer()->drawText("W", "pix", ppos + vec(ang + 90) * 100.0f, true);
+            if(!directionsTravelled[1]) uni.getRenderer()->drawText("A", "pix", ppos + vec(ang) * 100.0f, true);
+            if(!directionsTravelled[2]) uni.getRenderer()->drawText("S", "pix", ppos + vec(ang - 90) * 100.0f, true);
+            if(!directionsTravelled[3]) uni.getRenderer()->drawText("D", "pix", ppos + vec(ang + 180) * 100.0f, true);
+            uni.getRenderer()->finalise();
+            if(std::all_of(
+                        std::begin(directionsTravelled),
+                        std::end(directionsTravelled),
+                        [](bool i)
+                        {
+                           return i;
+                        }) and timer > 2.0f)
+            {
+                tutStage = STAGE_SHOOTING_INTRO;
+            }
+        }
+        else if(tutStage == STAGE_SHOOTING_INTRO)
+        {
+            uni.setPause(true);
+            tutStage = STAGE_SHOOTING;
+        }
+        else if(tutStage == STAGE_SHOOTING)
+        {
+            uni.getRenderer()->drawText("SO YOU CAN MOVE, BUT CAN YOU SHOOT?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
+            uni.getRenderer()->drawText("PRESSING LMB WILL SHOOT A LASER IN THE DIRECTION YOU ARE FACING", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
+            uni.getRenderer()->drawText("TRY IT OUT!", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            uni.getRenderer()->finalise();
+        }
+        else if(tutStage == STAGE_ENERGY_LEVELS_PAUSE)
+        {
+            uni.setPause(true);
+            tutStage = STAGE_ENERGY_LEVELS;
+        }
+        else if(tutStage == STAGE_ENERGY_LEVELS and timer > 2.0f)
+        {
+            uni.getRenderer()->drawText("PRETTY COOL, RIGHT?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
+            uni.getRenderer()->drawText("YOU CAN'T JUST SHOOT FOREVER THOUGH, YOU HAVE TO THINK ABOUT YOUR HEALTH, SHIELDS AND ENERGY", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
+            uni.getRenderer()->drawText("YOU CAN SEE ALL THIS IN THE TOP-LEFT", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            uni.getRenderer()->finalise();
+        }
     }
 }
 
