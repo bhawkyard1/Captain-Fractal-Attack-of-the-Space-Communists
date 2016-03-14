@@ -9,7 +9,7 @@
 #define formuparam 0.53
 
 #define volsteps 8
-#define stepsize 0.2
+#define stepsize 0.3
 
 #define tile   0.850
 
@@ -17,15 +17,17 @@
 #define darkmatter 0.300
 
 //Higher= brigwhter/less faded.
-#define distfading 0.730
+#define distfading 0.5
 
-#define saturation 0.850
+#define saturation 0.6
 
 in vec4 gl_FragCoord;
+
 uniform vec2 iResolution;
 uniform float iGlobalTime;
 uniform float zoom;
 uniform vec2 unidir;
+
 out vec4 fragColour;
 
 void main()
@@ -43,7 +45,7 @@ void main()
     //from.z controls background changing.
     //vec3 from = vec3(12.0,1.0,0.001);
     //vec3 from = vec3( cos(iGlobalTime), 0.0f, 0.001);
-    vec3 from = vec3(unidir.xy + 1., 0.001);
+    vec3 from = vec3(unidir.xy + 1., 0.0001);
     from.xy /= 20000.0;
     from.z *= iGlobalTime;
 

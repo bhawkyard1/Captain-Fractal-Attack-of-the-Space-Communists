@@ -60,14 +60,10 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   ngl::NGLInit::instance();
 
+  float divz = 2.0f * g_ZOOM_LEVEL;
   //loadTextures();
-  m_project = ngl::perspective(45.0f,
-                               float(_w / _h),
-                               0.2f,
-                               20.0f
-                               );
 
-  m_view = ngl::lookAt(ngl::Vec3(0,0,0),
+  m_view = ngl::lookAt(ngl::Vec3(0,0,2),
                        ngl::Vec3(0,0,0),
                        ngl::Vec3(0,1,0));
 
@@ -104,8 +100,6 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   m_shader->linkProgramObject("plain");
 
   m_shader->use("background");
-
-  m_prim = ngl::VAOPrimitives::instance()->createSphere("sphere", 0.2, 12);
 }
 
 renderer_ngl::~renderer_ngl()
@@ -122,6 +116,17 @@ int renderer_ngl::init()
   return 1;
 }
 
+void renderer_ngl::update()
+{
+  float divz = 2.0f * g_ZOOM_LEVEL;
+  m_project = ngl::ortho(
+        -g_WIN_WIDTH / divz,
+        g_WIN_WIDTH / divz,
+        g_WIN_HEIGHT / divz,
+        -g_WIN_HEIGHT / divz
+        );
+}
+
 void renderer_ngl::drawBackground(float _dt, vec2 _v)
 { 
   //std::cout << "uni vel! " << _v.m_x << ", " << _v.m_y << std::endl;
@@ -130,7 +135,7 @@ void renderer_ngl::drawBackground(float _dt, vec2 _v)
   m_shader->use("background");
   m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   m_shader->setRegisteredUniform("iGlobalTime", _dt);
-  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
+  m_shader->setRegisteredUniform("zoom", 0.06f / g_ZOOM_LEVEL);
   m_shader->setRegisteredUniform("unidir", conv);
 
   drawRect({-1.0f, -1.0f}, {2.0f, 3.0f});
@@ -147,73 +152,50 @@ void renderer_ngl::genVBO()
   glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
 }
 
-void renderer_ngl::packVerts(std::vector<vec2> _verts, const int _slot)
+void renderer_ngl::addVerts(std::vector<vec3> _verts)
 {
-  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
-
-  glVertexAttribPointer(_slot, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-  //Copy the data into an NGL Vec2.
-  std::vector<ngl::Vec2> data;
+  //Copy the data into an NGL Vec3.
   for(auto i: _verts)
   {
-    data.push_back(ngl::Vec2(i.m_x, i.m_y));
+    m_verts.push_back(ngl::Vec3(i.m_x, i.m_y, i.m_z));
   }
-
-  //Copy vert data to VBO.
-  glBufferData(
-        GL_ARRAY_BUFFER,
-        sizeof(ngl::Vec2) * data.size(),
-        &data[0].m_x,
-      GL_STATIC_DRAW
-      );
 }
 
-void renderer_ngl::packVerts(const std::vector<vec3> _verts, const int _slot)
+void renderer_ngl::packVerts(const int _slot)
 {
-  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
-
+  //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  //m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
+  //std::cout << "NO OF VERTS " << m_verts.size() << std::endl;
   glVertexAttribPointer(_slot, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-  //Copy the data into an NGL Vec2.
-  std::vector<ngl::Vec3> data;
-  for(auto i: _verts)
-  {
-    data.push_back(ngl::Vec3(i.m_x, i.m_y, i.m_z));
-  }
-
   //Copy vert data to VBO.
   glBufferData(
         GL_ARRAY_BUFFER,
-        sizeof(ngl::Vec3) * data.size(),
-        &data[0].m_x,
+        sizeof(ngl::Vec4) * m_verts.size(),
+        &m_verts[0].m_x,
       GL_STATIC_DRAW
       );
 }
 
-void renderer_ngl::packVerts(const std::vector<vec3> _verts, const float _alpha, const int _slot)
-{
-
-}
-
-void renderer_ngl::drawVerts(const GLenum _mode, const size_t _size)
+void renderer_ngl::drawVerts(const GLenum _mode)
 {
   loadMatricesToShader();
 
-  glDrawArraysEXT(_mode, 0, _size);
+  glDrawArraysEXT(_mode, 0, m_verts.size());
   glDisableVertexAttribArray(0);
+
+  m_verts.clear();
 }
 
-void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, const std::array<float, 4> _col)
+void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
 {
-  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
-  std::array<ngl::Vec3, 3> tri = {
-    ngl::Vec3(-(_d / 2), _d,  0.0f),
-    ngl::Vec3(0.0f,            -_d,  0.0f),
-    ngl::Vec3((_d / 2), _d,  0.0f)
+  m_shader->use("plain");
+  //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  //m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
+  std::array<ngl::Vec4, 3> tri = {
+    ngl::Vec4(-(_d / 2), _d,  0.0f, 1.0f),
+    ngl::Vec4(0.0f,            -_d,  0.0f, 1.0f),
+    ngl::Vec4((_d / 2), _d,  0.0f, 1.0f)
   };
 
   for(auto &i : tri)
@@ -222,15 +204,6 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, cons
     float ty = i.m_x * sin(rad(_ang)) + i.m_y * cos(rad(_ang));
     i.m_x = tx + _p.m_x;
     i.m_y = ty + _p.m_y;
-  }
-
-  std::array<ngl::Vec4, 3> tricol;
-  for(auto &i : tricol)
-  {
-    for(size_t j = 0; j < 4; ++j)
-    {
-      i[j] = _col[j];
-    }
   }
 
   //Create a VAO
@@ -244,7 +217,7 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, cons
   glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
   //Copy vert data.
   glBufferData(GL_ARRAY_BUFFER,
-               sizeof(ngl::Vec3) * tri.size(),
+               sizeof(ngl::Vec4) * tri.size(),
                &tri[0].m_x,
       GL_STATIC_DRAW
       );
@@ -253,22 +226,7 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, cons
   glEnableVertexAttribArray(0);
   //glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  //Generate a VBO
-  GLuint VBOcol;
-  glGenBuffers(1, &VBOcol);
-  glBindBuffer(GL_ARRAY_BUFFER, VBOcol);
-  //Copy vert data.
-  glBufferData(GL_ARRAY_BUFFER,
-               sizeof(ngl::Vec4) * tricol.size(),
-               &tricol[0].m_x,
-      GL_STATIC_DRAW
-      );
-
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(1);
-  glBindVertexArray(1);
+  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   //glViewport(0, 0, m_w, m_h);
@@ -300,7 +258,7 @@ std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, cons
 
 void renderer_ngl::drawRect(const vec2 _p, const vec2 _d)
 {
-  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   std::array<ngl::Vec3, 4> quad = {
     ngl::Vec3(_p.m_x,           _p.m_y,           0.0f),
     ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y,           0.0f),
@@ -334,6 +292,7 @@ void renderer_ngl::drawRect(const vec2 _p, const vec2 _d)
   glBindVertexArray(m_vao);
   //loadMatricesToShader();
   glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+  glDisableVertexAttribArray(0);
 }
 
 void renderer_ngl::drawLine(
@@ -341,7 +300,7 @@ void renderer_ngl::drawLine(
     const vec2 _end
     )
 {
-  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   std::array<ngl::Vec3, 2> line = {
     ngl::Vec3(_start.m_x,_start.m_y,0.0f),
     ngl::Vec3(_end.m_x,  _end.m_y,  0.0f)

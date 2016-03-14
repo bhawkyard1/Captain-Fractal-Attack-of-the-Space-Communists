@@ -38,9 +38,12 @@ class renderer_ngl
   std::unordered_map<std::string, sprite_sheet> m_letters;
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
-  ngl::VAOPrimitives * m_prim;
   ngl::Transformation m_transform;
   ngl::ShaderLib * m_shader;
+
+  std::vector<ngl::Vec3> m_verts;
+  std::vector<ngl::Colour> m_colours;
+
   SDL_GLContext m_gl_context;
   GLuint m_vao;
   void loadMatricesToShader();
@@ -50,15 +53,16 @@ public:
 
   int init();
 
+  void update();
+
   void genVBO();
-  void packVerts(const std::vector<vec2> _verts, const int _slot);
-  void packVerts(const std::vector<vec3> _verts, const int _slot);
-  void packVerts(const std::vector<vec3> _verts, const float _alpha, const int _slot);
-  void drawVerts(const GLenum _mode, const size_t _size);
+  void addVerts(const std::vector<vec3> _verts);
+  void packVerts(const int _slot);
+  void drawVerts(const GLenum _mode);
 
   void drawBackground(float _dt, vec2 _v);
   void drawRect(const vec2 _p, const vec2 _d);
-  void drawTri(const vec2 _p, const float _d, const float _ang, const std::array<float, 4> _col);
+  void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void drawLine(const vec2 _start, const vec2 _end);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
@@ -75,7 +79,6 @@ public:
   void loadTextureSet(std::string _key, std::string _set) {return;}
 */
   void setBlendMode (SDL_BlendMode _b) {return;}
-  void clear() {return;}
   void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod) {return;}
   void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col) {return;}
   void drawText(std::string text, std::string font, vec2 pos) {return;}

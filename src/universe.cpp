@@ -783,22 +783,24 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
+  m_drawer.update();
   m_drawer.clear();
 
-  m_drawer.useShader("background");
   m_drawer.drawBackground(m_time_elapsed, m_pos);
 
-  m_drawer.useShader("plain");
-  m_drawer.genVBO();
+  m_drawer.drawTri(m_ply.getInterpolatedPosition(_dt), 20.0f, m_ply.getAng());
+  //m_drawer.genVBO();
 
-  m_drawer.packVerts(m_drawer.constructTri(m_ply.getPos(), 20.0f, m_ply.getAng()), 0);
+  //m_drawer.addVerts(m_drawer.constructTri(m_ply.getPos(), 20.0f, m_ply.getAng()));
 
   for(auto &i : m_agents)
   {
-    m_drawer.packVerts(m_drawer.constructTri(i.getPos(), 20.0f, i.getAng()), 0);
+    m_drawer.drawTri(i.getPos(), 20.0f, i.getAng());
+    //m_drawer.addVerts(m_drawer.constructTri(i.getInterpolatedPosition(_dt), 20.0f, i.getAng()));
   }
 
-  m_drawer.drawVerts(GL_TRIANGLES, (m_agents.size() + 1) * 3);
+  //m_drawer.packVerts(0);
+  //m_drawer.drawVerts(GL_TRIANGLES);
 
   for(auto &i : m_shots)
   {

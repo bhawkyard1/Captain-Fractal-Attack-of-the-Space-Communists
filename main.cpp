@@ -64,6 +64,7 @@ void playTutorial(universe &uni);
 int main(int argc, char* argv[])
 {
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
+    loadConfig();
     universe uni;
 #ifdef _WIN32
     AllocConsole() ;
@@ -169,7 +170,7 @@ void mainMenu(universe &uni)
     difficultyOptions.setVisible(false);
     uni.getUI()->add(difficultyOptions);
 
-    g_TARG_ZOOM_LEVEL = 2.0f;
+    g_TARG_ZOOM_LEVEL = 0.4f;
     g_DIFFICULTY = 20;
 
     vec2 scrollVel = randVec(0.5f, 2.0f);
