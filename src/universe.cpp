@@ -789,12 +789,16 @@ void universe::draw(float _dt)
   m_drawer.drawBackground(m_time_elapsed, m_pos);
 
   m_drawer.useShader("plain");
-  m_drawer.drawTri(m_ply.getPos(), 20.0f, m_ply.getAng(), {1.0f,1.0f,1.0f,1.0f});
+  m_drawer.genVBO();
+
+  m_drawer.packVerts(m_drawer.constructTri(m_ply.getPos(), 20.0f, m_ply.getAng()), 0);
 
   for(auto &i : m_agents)
   {
-    m_drawer.drawTri(i.getPos(), 20.0f, i.getAng(), {1.0f,0.0f,0.0f,1.0f});
+    m_drawer.packVerts(m_drawer.constructTri(i.getPos(), 20.0f, i.getAng()), 0);
   }
+
+  m_drawer.drawVerts(GL_TRIANGLES, (m_agents.size() + 1) * 3);
 
   for(auto &i : m_shots)
   {

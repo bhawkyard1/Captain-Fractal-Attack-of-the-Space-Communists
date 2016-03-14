@@ -8,7 +8,7 @@
 //TO-DO: Delete before Jon reads these comments.
 #define formuparam 0.53
 
-#define volsteps 12
+#define volsteps 8
 #define stepsize 0.2
 
 #define tile   0.850

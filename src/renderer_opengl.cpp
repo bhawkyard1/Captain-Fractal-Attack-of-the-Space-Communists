@@ -72,8 +72,6 @@ renderer_ngl::renderer_ngl(int _w, int _h)
                        ngl::Vec3(0,1,0));
 
   m_shader = ngl::ShaderLib::instance();
-  std::cout << "p1" << std::endl;
-
 
   m_shader->createShaderProgram("background");
   m_shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
@@ -106,7 +104,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   m_shader->linkProgramObject("plain");
 
   m_shader->use("background");
-  std::cout << "p1" << std::endl;
+
+  m_prim = ngl::VAOPrimitives::instance()->createSphere("sphere", 0.2, 12);
 }
 
 renderer_ngl::~renderer_ngl()
@@ -137,6 +136,75 @@ void renderer_ngl::drawBackground(float _dt, vec2 _v)
   drawRect({-1.0f, -1.0f}, {2.0f, 3.0f});
 }
 
+void renderer_ngl::genVBO()
+{
+  //Generate a VBO
+  GLuint VBOvert;
+  glGenBuffers(1, &VBOvert);
+  glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
+
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
+}
+
+void renderer_ngl::packVerts(std::vector<vec2> _verts, const int _slot)
+{
+  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
+
+  glVertexAttribPointer(_slot, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  //Copy the data into an NGL Vec2.
+  std::vector<ngl::Vec2> data;
+  for(auto i: _verts)
+  {
+    data.push_back(ngl::Vec2(i.m_x, i.m_y));
+  }
+
+  //Copy vert data to VBO.
+  glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(ngl::Vec2) * data.size(),
+        &data[0].m_x,
+      GL_STATIC_DRAW
+      );
+}
+
+void renderer_ngl::packVerts(const std::vector<vec3> _verts, const int _slot)
+{
+  m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+  m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
+
+  glVertexAttribPointer(_slot, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  //Copy the data into an NGL Vec2.
+  std::vector<ngl::Vec3> data;
+  for(auto i: _verts)
+  {
+    data.push_back(ngl::Vec3(i.m_x, i.m_y, i.m_z));
+  }
+
+  //Copy vert data to VBO.
+  glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(ngl::Vec3) * data.size(),
+        &data[0].m_x,
+      GL_STATIC_DRAW
+      );
+}
+
+void renderer_ngl::packVerts(const std::vector<vec3> _verts, const float _alpha, const int _slot)
+{
+
+}
+
+void renderer_ngl::drawVerts(const GLenum _mode, const size_t _size)
+{
+  loadMatricesToShader();
+
+  glDrawArraysEXT(_mode, 0, _size);
+  glDisableVertexAttribArray(0);
+}
 
 void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, const std::array<float, 4> _col)
 {
@@ -188,7 +256,7 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, cons
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
   //Generate a VBO
-  /*GLuint VBOcol;
+  GLuint VBOcol;
   glGenBuffers(1, &VBOcol);
   glBindBuffer(GL_ARRAY_BUFFER, VBOcol);
   //Copy vert data.
@@ -200,7 +268,7 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, cons
 
   glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(1);
-  glBindVertexArray(1);*/
+  glBindVertexArray(1);
 
   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   //glViewport(0, 0, m_w, m_h);
@@ -209,6 +277,25 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang, cons
 
   glDrawArraysEXT(GL_TRIANGLES, 0, 3);
   glDisableVertexAttribArray(0);
+}
+
+std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, const float _ang)
+{
+  std::vector<vec3> tri = {
+    {-(_d / 2), _d,  0.0f},
+    {0.0f,            -_d,  0.0f},
+    {(_d / 2), _d,  0.0f}
+  };
+
+  for(auto &i : tri)
+  {
+    float tx = i.m_x * cos(rad(_ang)) + i.m_y * -sin(rad(_ang));
+    float ty = i.m_x * sin(rad(_ang)) + i.m_y * cos(rad(_ang));
+    i.m_x = tx + _p.m_x;
+    i.m_y = ty + _p.m_y;
+  }
+
+  return tri;
 }
 
 void renderer_ngl::drawRect(const vec2 _p, const vec2 _d)
