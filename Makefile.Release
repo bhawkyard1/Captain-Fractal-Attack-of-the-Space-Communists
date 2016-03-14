@@ -913,11 +913,11 @@ obj/laser.o: src/laser.cpp include/laser.hpp \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_version.h \
 		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_image.h \
 		include/vectors.hpp \
+		include/util.hpp \
+		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		include/base.hpp \
 		include/enemy.hpp \
-		include/ship.hpp \
-		include/util.hpp \
-		C:/SDL2/i686-w64-mingw32/include/SDL2/SDL_ttf.h
+		include/ship.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj\laser.o src\laser.cpp
 
 obj/missile.o: src/missile.cpp include/missile.hpp \

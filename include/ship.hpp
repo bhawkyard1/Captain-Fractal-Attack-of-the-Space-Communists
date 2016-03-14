@@ -119,6 +119,7 @@ public:
   int getMissiles() const {return m_missiles;}
 
   void setEnergyPriority(const int _v) {m_priority = static_cast<energyPriority>(_v);}
+  int getEnergyPriority() const {return static_cast<int>(m_priority);}
 
   void damage(const float _d);
 

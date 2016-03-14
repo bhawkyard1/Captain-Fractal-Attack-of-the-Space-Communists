@@ -550,6 +550,8 @@ int ship::upgrade(const int _i)
 {
     if(_i < 4) m_upgrades[_i]++;
 
+    std::cout << "UPGRADING SLOT " << _i << " to " << m_upgrades[_i] << std::endl;
+
     switch(_i)
     {
     case 0:

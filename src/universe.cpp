@@ -748,8 +748,8 @@ void universe::drawUI()
 {
   if(!g_GAME_OVER)
   {
-    m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2}, false);
-    m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false);
+    m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2}, false, 1.0f);
+    m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false, 1.0f);
 
     m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
     m_drawer.statusBars(&m_ply);
@@ -770,7 +770,7 @@ void universe::drawUI()
       {
         m_drawer.drawRect(j->getPos(), j->getDim(), {col[4], col[5], col[6], col[7]}, false);
       }
-      m_drawer.drawText(j->getLabel(), "pix", j->getPos(), false);
+      m_drawer.drawText(j->getLabel(), "pix", j->getPos(), false, 1.0f);
 
       if(j->isDark())
       {
@@ -1424,6 +1424,7 @@ bool universe::upgradeCallback(
     if(_btn < 4) selectedButton->setCost(selectedButton->getCost() * 2);
   }
 
+  m_ply.upgrade(_btn);
   upgradeSetLabels(_sel, _btn, -1);
   if(_btn > 3) return true;
 
@@ -1474,7 +1475,7 @@ void universe::upgradeSetLabels(
   }
 
   selectedButton->updateText(s1);
-  std::cout << "UPDATING... " << s1 << std::endl;
+  std::cout << "UPDATING... " << s1 << "(" << lvl << ")" << std::endl;
 }
 
 //This function loads all the ships in the game into a vector that we can copy from later.

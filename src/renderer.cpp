@@ -294,7 +294,8 @@ void renderer::drawText(
         std::string _text,
         std::string _font,
         vec2 _pos,
-        bool _ss
+        bool _ss,
+        const float _mul
         )
 {
     if(_ss)
@@ -312,9 +313,11 @@ void renderer::drawText(
         SDL_QueryTexture( draw, NULL, NULL, &dst.w, &dst.h);
         if(_ss)
         {
-            dst.w *= g_ZOOM_LEVEL * 2.0f;
-            dst.h *= g_ZOOM_LEVEL * 2.0f;
+            dst.w *= g_ZOOM_LEVEL;
+            dst.h *= g_ZOOM_LEVEL;
         }
+        dst.w *= _mul;
+        dst.h *= _mul;
         SDL_RenderCopy( m_renderer, draw, NULL, &dst );
         dst.x += dst.w;
     }
@@ -642,16 +645,16 @@ void renderer::drawWeaponStats(player * _ply)
 
     float fWIN_WIDTH = static_cast<float>(g_WIN_WIDTH), fWIN_HEIGHT = static_cast<float>(g_WIN_HEIGHT);
     std::string damageText = "Damage " + std::to_string(ws[2]);
-    drawText(damageText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.4f * weap.h}, false);
+    drawText(damageText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.4f * weap.h}, false, 1.0f);
 
     std::string noText = "\nLasers " + std::to_string(static_cast<int>(ws[0]));
-    drawText(noText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.2f * weap.h}, false);
+    drawText(noText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.2f * weap.h}, false, 1.0f);
 
     std::string spreadText = "\nSpread " + std::to_string(ws[1]);
-    drawText(spreadText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.0f * weap.h}, false);
+    drawText(spreadText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 1.0f * weap.h}, false, 1.0f);
 
     std::string rateText = "\nRate ";
     float rate = 1.0f / ws[8];
     rateText += std::to_string( static_cast<int>( rate ) );
-    drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h}, false);
+    drawText(rateText, "minimal", {fWIN_WIDTH - weap.w, fWIN_HEIGHT - 0.8f * weap.h}, false, 1.0f);
 }

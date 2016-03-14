@@ -408,7 +408,6 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             {
                 playSnd(MENU_SELECT_SND);
                 if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
-                ply->upgrade(ret.m_button_val);
                 if(ret.m_button_val == 5) uni->addMiner();
                 else if(ret.m_button_val == 6) uni->addWingman();
                 else if(ret.m_button_val == 7) uni->setMouseState(7);
@@ -639,8 +638,12 @@ void playTutorial(universe &uni)
     enum stage {
         STAGE_BEGIN, STAGE_BEGIN_UNPAUSED,
         STAGE_MOVEMENT_INTRO,
-        STAGE_SHOOTING_INTRO, STAGE_SHOOTING,
-        STAGE_ENERGY_LEVELS_PAUSE, STAGE_ENERGY_LEVELS,
+        STAGE_ZOOM_OUT, STAGE_ZOOM_IN,
+        STAGE_SHOOTING,
+        STAGE_ENERGY_LEVELS_PAUSE, STAGE_ENERGY_LEVELS, STAGE_ENERGY_LEVELS_2,
+        STAGE_ASTEROID_1, STAGE_ASTEROID_2,
+        STAGE_UPGRADES,
+        STAGE_COMBAT_1, STAGE_COMBAT_2,
         STAGE_COMPLETE
     };
     stage tutStage = STAGE_BEGIN;
@@ -687,15 +690,20 @@ void playTutorial(universe &uni)
                 switch(incomingEvent.button.button)
                 {
                 case SDL_BUTTON_LEFT:
-                    if(tutStage == STAGE_SHOOTING)
+                    if(tutStage == STAGE_SHOOTING and !uni.isPaused())
                     {
                         timer = 0.0f;
-                        tutStage = STAGE_ENERGY_LEVELS;
+                        tutStage = STAGE_ENERGY_LEVELS_PAUSE;
                     }
                 default:
                     break;
                 }
                 handleUserMouseDownInput(incomingEvent.button.button, &keymod, uni.getPly(), &uni);
+                if(tutStage == STAGE_ENERGY_LEVELS_2 and uni.getPly()->getEnergyPriority() == 3)
+                {
+                    tutStage = STAGE_ASTEROID_1;
+                    timer = 0.0f;
+                }
                 break;
             case SDL_MOUSEBUTTONUP:
                 handleUserMouseUpInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
@@ -749,6 +757,12 @@ void playTutorial(universe &uni)
         //Update the zoom level.
         g_ZOOM_LEVEL += (g_TARG_ZOOM_LEVEL - g_ZOOM_LEVEL) * 0.125f;
 
+        if(tutStage == STAGE_ZOOM_IN or tutStage == STAGE_ZOOM_OUT)
+        {
+            g_TARG_ZOOM_LEVEL = clamp(g_TARG_ZOOM_LEVEL, 0.3f, 1.0f);
+            g_ZOOM_LEVEL = clamp(g_ZOOM_LEVEL, 0.3f, 1.0f);
+        }
+
         //Draw the game.
         float diff_clamped = clock.getDiff();
         if(diff_clamped == 0.0f) diff_clamped = 0.01f;
@@ -761,22 +775,22 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_BEGIN_UNPAUSED)
         {
-            uni.getRenderer()->drawText("WELCOME TO ELITE DANGEROUS V2.0", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
-            uni.getRenderer()->drawText("THIS TUTORIAL WILL GUIDE YOU THROUGH SOME OF THE GAMES SYSTEMS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
-            uni.getRenderer()->drawText("PRESS 'SPACE' TO UNPAUSE", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            uni.getRenderer()->drawText("WELCOME TO ELITE DANGEROUS V2.0", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 2.0f);
+            uni.getRenderer()->drawText("THIS TUTORIAL WILL GUIDE YOU THROUGH SOME OF THE GAMES SYSTEMS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("PRESS 'SPACE' TO UNPAUSE", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
             uni.getRenderer()->finalise();
         }
         else if(tutStage == STAGE_MOVEMENT_INTRO)
         {
             vec2 ppos = uni.getPly()->getPos();
             float ang = uni.getPly()->getAng();
-            uni.getRenderer()->drawText("OKAY, FIRST UP, MOVEMENT:", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
-            uni.getRenderer()->drawText("YOU ALWAYS CHASE THE MOUSE", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
-            uni.getRenderer()->drawText("TRY MOVING IN ALL FOUR DIRECTIONS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
-            if(!directionsTravelled[0]) uni.getRenderer()->drawText("W", "pix", ppos + vec(ang + 90) * 100.0f, true);
-            if(!directionsTravelled[1]) uni.getRenderer()->drawText("A", "pix", ppos + vec(ang) * 100.0f, true);
-            if(!directionsTravelled[2]) uni.getRenderer()->drawText("S", "pix", ppos + vec(ang - 90) * 100.0f, true);
-            if(!directionsTravelled[3]) uni.getRenderer()->drawText("D", "pix", ppos + vec(ang + 180) * 100.0f, true);
+            uni.getRenderer()->drawText("OKAY, FIRST UP, MOVEMENT:", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+            uni.getRenderer()->drawText("YOU ALWAYS CHASE THE MOUSE", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("TRY MOVING IN ALL FOUR DIRECTIONS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
+            if(!directionsTravelled[0]) uni.getRenderer()->drawText("W", "pix", ppos + vec(ang + 90) * 100.0f, true, 2.0f);
+            if(!directionsTravelled[1]) uni.getRenderer()->drawText("A", "pix", ppos + vec(ang) * 100.0f, true, 2.0f);
+            if(!directionsTravelled[2]) uni.getRenderer()->drawText("S", "pix", ppos + vec(ang - 90) * 100.0f, true, 2.0f);
+            if(!directionsTravelled[3]) uni.getRenderer()->drawText("D", "pix", ppos + vec(ang + 180) * 100.0f, true, 2.0f);
             uni.getRenderer()->finalise();
             if(std::all_of(
                         std::begin(directionsTravelled),
@@ -786,32 +800,132 @@ void playTutorial(universe &uni)
                            return i;
                         }) and timer > 2.0f)
             {
-                tutStage = STAGE_SHOOTING_INTRO;
+                tutStage = STAGE_ZOOM_OUT;
+                timer = 0.0f;
             }
         }
-        else if(tutStage == STAGE_SHOOTING_INTRO)
+        else if(tutStage == STAGE_ZOOM_OUT)
         {
-            uni.setPause(true);
-            tutStage = STAGE_SHOOTING;
+            uni.getRenderer()->drawText("PRESS 'O' TO ZOOM OUT", "pix", {200.0f, -300.0f}, true, 2.0f);
+            uni.getRenderer()->drawText("AND 'P' TO ZOOM BACK IN", "pix", {-2000.0f, 2000.0f}, true, 20.0f);
+            uni.getRenderer()->finalise();
+            if(g_ZOOM_LEVEL <= 0.3f) tutStage = STAGE_ZOOM_IN;
         }
-        else if(tutStage == STAGE_SHOOTING)
+        else if(tutStage == STAGE_ZOOM_IN)
         {
-            uni.getRenderer()->drawText("SO YOU CAN MOVE, BUT CAN YOU SHOOT?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
-            uni.getRenderer()->drawText("PRESSING LMB WILL SHOOT A LASER IN THE DIRECTION YOU ARE FACING", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
-            uni.getRenderer()->drawText("TRY IT OUT!", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            uni.getRenderer()->drawText("AND   'P'   TO   ZOOM   BACK   IN", "pix", {-2000.0f, 500.0f}, true, 20.0f);
+            uni.getRenderer()->finalise();
+            if(g_ZOOM_LEVEL >= 0.9f) tutStage = STAGE_SHOOTING;
+        }
+        else if(tutStage == STAGE_SHOOTING and timer > 1.5f)
+        {
+            uni.getRenderer()->drawText("OF COURSE, A SPACE GAME WITHOUT LASERS WOULD BE TERRIBLE", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+            uni.getRenderer()->drawText("PRESSING LMB WILL SHOOT IN THE DIRECTION YOU ARE FACING", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("TRY IT OUT!", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
             uni.getRenderer()->finalise();
         }
-        else if(tutStage == STAGE_ENERGY_LEVELS_PAUSE)
+        else if(tutStage == STAGE_ENERGY_LEVELS_PAUSE and timer > 1.0f)
         {
-            uni.setPause(true);
             tutStage = STAGE_ENERGY_LEVELS;
         }
-        else if(tutStage == STAGE_ENERGY_LEVELS and timer > 2.0f)
+        else if(tutStage == STAGE_ENERGY_LEVELS)
         {
-            uni.getRenderer()->drawText("PRETTY COOL, RIGHT?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false);
-            uni.getRenderer()->drawText("YOU CAN'T JUST SHOOT FOREVER THOUGH, YOU HAVE TO THINK ABOUT YOUR HEALTH, SHIELDS AND ENERGY", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false);
-            uni.getRenderer()->drawText("YOU CAN SEE ALL THIS IN THE TOP-LEFT", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false);
+            uni.getRenderer()->drawText("PRETTY COOL, RIGHT?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+            uni.getRenderer()->drawText("YOU CAN'T JUST SHOOT FOREVER THOUGH; YOU HAVE TO THINK ABOUT YOUR HEALTH, SHIELDS AND ENERGY", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("YOU CAN SEE ALL THIS IN THE TOP-LEFT", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
             uni.getRenderer()->finalise();
+            if(timer > 10.0f)
+            {
+                tutStage = STAGE_ENERGY_LEVELS_2;
+            }
+        }
+        else if(tutStage == STAGE_ENERGY_LEVELS_2)
+        {
+            uni.getRenderer()->drawText("THE RED BAR IS YOUR HEALTH, BLUE IS SHIELDS, AND GREEN IS ENERGY", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+            uni.getRenderer()->drawText("SHOOTING, MOVING AND RECHARGING SHIELDS ALL USE ENERGY, SO YOU HAVE TO BE CAREFUL", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("USE THE BUTTONS ON THE RIGHT TO PRIORITISE CERTAIN SYSTEMS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("CTRL CLICK SET THE PRIORITY TO 'GUNS'", "pix", {g_HALFWIN.m_x, g_HALFWIN.m_y - 80.0f}, false, 1.2f);
+            uni.getRenderer()->finalise();
+        }
+        else if(tutStage == STAGE_ASTEROID_1 and timer > 1.0f)
+        {
+            ship asteroid(ASTEROID_SMALL);
+            asteroid.setPos({0.0f, - 300.0f});
+            asteroid.setVel(uni.getPly()->getVel());
+            asteroid.setHealth(10);
+            playSnd(PLACE_SND);
+            uni.getAsteroids()->push_back(asteroid);
+            tutStage = STAGE_ASTEROID_2;
+            timer = 0.0f;
+        }
+        else if(tutStage == STAGE_ASTEROID_2)
+        {
+            vec2 tPos = (*uni.getAsteroids())[0].getPos();
+            uni.getRenderer()->drawText("NOW BLOW UP THIS ROCK", "pix", {tPos.m_x + 100, tPos.m_y}, true, 2.0f);
+            uni.getRenderer()->finalise();
+
+            if(uni.getAsteroids()->size() == 0 and uni.getScore() >= 10)
+            {
+                tutStage = STAGE_UPGRADES;
+                timer = 0.0f;
+            }
+            else if(uni.getAsteroids()->size() == 0 and uni.getScore() < 10)
+            {
+                tutStage = STAGE_ASTEROID_1;
+            }
+        }
+        else if(tutStage == STAGE_UPGRADES)
+        {
+            if(timer < 4.0f)
+            {
+                uni.getRenderer()->drawText("WHOA, YOU GOT TEN POINTS!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+                uni.getRenderer()->finalise();
+            }
+            else
+            {
+                uni.getRenderer()->drawText("YOU CAN USE YOUR POINTS TO IMPROVE YOUR SHIP, AND TO BUY STRUCTURES AND WINGMEN", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
+                uni.getRenderer()->drawText("YOU CAN GET POINTS BY BLOWING UP ASTEROIDS OR ENEMY SHIPS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
+                uni.getRenderer()->drawText("CTRL-CLICK ON THE LOWER MENU TO GET YOURSELF SOME UPGRADES", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
+                uni.getRenderer()->finalise();
+            }
+
+            if(uni.getScore() < 4)
+            {
+                tutStage = STAGE_COMBAT_1;
+                timer = 0.0f;
+            }
+        }
+        else if(tutStage == STAGE_COMBAT_1)
+        {
+            if(timer < 3.0f)
+            {
+                uni.getRenderer()->drawText("UH-OH! IT LOOKS LIKE SOME SPACE PIRATES ARE COMING TO STEAL YOUR BOOTY", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+                uni.getRenderer()->finalise();
+            }
+            else if(timer >= 3.0f and timer < 6.0f)
+            {
+                uni.getRenderer()->drawText("WE'D BETTER SHOW THEM WHO'S BOSS", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
+                uni.getRenderer()->finalise();
+            }
+            else if(timer > 6.0f)
+            {
+                uni.spawnSquad(SPOOKY_SPACE_PIRATES, 12000.0f, 18000.0f, 2);
+                tutStage = STAGE_COMBAT_2;
+                timer = 0.0f;
+            }
+        }
+        else if(tutStage == STAGE_COMBAT_2)
+        {
+            if(timer < 2.0f)
+            {
+                uni.getRenderer()->drawText("SCROLL TO SWITCH WEAPON!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
+                uni.getRenderer()->finalise();
+            }
+            else if(timer > 2.0f and timer < 4.5f)
+            {
+                uni.getRenderer()->drawText("USE THE MINIMAP TO LOCATE ENEMIES!", "pix", {g_WIN_WIDTH - 512.0f, 200.0f}, false, 1.0f);
+                uni.getRenderer()->finalise();
+            }
         }
     }
 }
