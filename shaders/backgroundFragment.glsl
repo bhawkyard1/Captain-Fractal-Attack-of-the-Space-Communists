@@ -1,6 +1,6 @@
 #version 410 core
 
-#define iterations 12
+#define iterations 10
 
 //This variable does some really weird shit, yo.
 //At low values, looks like a big space city.
@@ -8,7 +8,7 @@
 //TO-DO: Delete before Jon reads these comments.
 #define formuparam 0.53
 
-#define volsteps 8
+#define volsteps 10
 #define stepsize 0.3
 
 #define tile   0.850
@@ -17,7 +17,7 @@
 #define darkmatter 0.300
 
 //Higher= brigwhter/less faded.
-#define distfading 0.5
+#define distfading 0.4
 
 #define saturation 0.6
 
@@ -43,15 +43,15 @@ void main()
 
     //This controls the direction.
     //from.z controls background changing.
-    //vec3 from = vec3(12.0,1.0,0.001);
     //vec3 from = vec3( cos(iGlobalTime), 0.0f, 0.001);
-    vec3 from = vec3(unidir.xy + 1., 0.0001);
+    vec3 from = vec3(unidir.xy + 20., 0.0001);
     from.xy /= 20000.0;
+    from += vec3(12.0, 1.0, 0.0);
     from.z *= iGlobalTime;
 
     //volumetric rendering
     //S and fade control brightness. High s makes everything very blue.
-    float s = 0.2, fade = 1.0;
+    float s = 0.5, fade = 1.0;
     vec3 v = vec3(0.0);
     for (int r = 0; r < volsteps; r++)
     {

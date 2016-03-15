@@ -1,7 +1,9 @@
-#include "file.hpp"
-#include <string>
-#include <sstream>
+#include <cstdio>
 #include <fstream>
+#include <sstream>
+#include <string>
+
+#include "file.hpp"
 #include "sfx.hpp"
 
 void saveGame(universe * uni)
@@ -200,4 +202,62 @@ void loadGame(universe * uni)
 
     playSnd(SAVE_SND);
     std::cout << "LOADED" << std::endl;
+}
+
+void loadConfig()
+{
+  std::ifstream config( g_RESOURCE_LOC + "config.txt" );
+  std::string cur;
+
+  while(getline( config, cur ))
+  {
+    if(cur.length() == 0) continue;
+
+    std::vector<std::string> strings = split(cur, ' ');
+
+    for(size_t i = 0; i < strings.size(); i++)
+    {
+      if(strings.at(i) == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings.at(i) == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings.at(i) == "background_detail") g_BACKGROUND_DOTS = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings.at(i) == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
+      else if(strings.at(i) == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+    }
+  }
+  config.close();
+  g_HALFWIN = {g_WIN_WIDTH / 2.0f, g_WIN_HEIGHT / 2.0f};
+  g_MAX_DIM = std::max( g_WIN_WIDTH, g_WIN_HEIGHT );
+  std::cout << "g_HALFWIN is " << g_HALFWIN.m_x << ", " << g_HALFWIN.m_y << std::endl;
+
+  std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;
+  std::cout << "g_DIFFICULTY: " << g_DIFFICULTY << std::endl;
+  std::cout << "Background Particles: " << g_BACKGROUND_DOTS << std::endl;
+  std::cout << "Devmode: " << g_DEV_MODE << std::endl;
+}
+
+void setConfigValue(const std::string _entry, const int _val)
+{
+  std::ifstream src(g_RESOURCE_LOC + "config.txt");
+  std::ofstream config(g_RESOURCE_LOC + "temp.txt");
+  std::string cur;
+
+  while(getline( src, cur ))
+  {
+      if(cur.length() == 0) continue;
+      std::vector<std::string> strings = split(cur, ' ');
+
+      if(strings[0] == _entry)
+      {
+        config << _entry << " " << _val << std::endl;
+      }
+      else
+      {
+        config << cur << std::endl;
+      }
+  }
+  src.close();
+  config.close();
+
+  std::remove((g_RESOURCE_LOC + "config.txt").c_str());
+  std::rename((g_RESOURCE_LOC + "temp.txt").c_str(), (g_RESOURCE_LOC + "config.txt").c_str());
 }

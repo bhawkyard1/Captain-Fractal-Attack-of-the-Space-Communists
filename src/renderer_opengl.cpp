@@ -22,7 +22,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   m_w = _w;
   m_h = _h;
 
-  m_window = SDL_CreateWindow("Ben is cool",
+  m_window = SDL_CreateWindow("Elite Dangerous v2.0",
                               g_WIN_POS_X, g_WIN_POS_Y,
                               g_WIN_HEIGHT, g_WIN_WIDTH,
                               SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
@@ -44,6 +44,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+  glViewport(0, 0, m_w, m_h);
+
   m_gl_context = SDL_GL_CreateContext( m_window );
 
   if(!m_gl_context)
@@ -60,46 +62,40 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   ngl::NGLInit::instance();
 
-  float divz = 2.0f * g_ZOOM_LEVEL;
   //loadTextures();
 
-  m_view = ngl::lookAt(ngl::Vec3(0,0,2),
+  m_view = ngl::lookAt(ngl::Vec3(0,0,1),
                        ngl::Vec3(0,0,0),
                        ngl::Vec3(0,1,0));
 
+
+  float divz = 1 / g_ZOOM_LEVEL;
+  m_project = ngl::ortho(
+        -g_HALFWIN.m_x * divz,
+        g_HALFWIN.m_x * divz,
+        g_HALFWIN.m_y * divz,
+        -g_HALFWIN.m_y * divz
+        );
+
+
+  //m_project = ngl::perspective(200.0f, float(g_WIN_WIDTH / g_WIN_HEIGHT), 0.01f, 200.0f);
+
   m_shader = ngl::ShaderLib::instance();
 
-  m_shader->createShaderProgram("background");
-  m_shader->attachShader("backgroundVertex", ngl::ShaderType::VERTEX);
-  m_shader->attachShader("backgroundFragment", ngl::ShaderType::FRAGMENT);
-
-  m_shader->loadShaderSource("backgroundVertex", "shaders/backgroundVertex.glsl");
-  m_shader->loadShaderSource("backgroundFragment", "shaders/backgroundFragment.glsl");
-
-  m_shader->compileShader("backgroundVertex");
-  m_shader->compileShader("backgroundFragment");
-
-  m_shader->attachShaderToProgram("background", "backgroundVertex");
-  m_shader->attachShaderToProgram("background", "backgroundFragment");
-
-  m_shader->linkProgramObject("background");
-
-  m_shader->createShaderProgram("plain");
-  m_shader->attachShader("DiffuseVertex", ngl::ShaderType::VERTEX);
-  m_shader->attachShader("DiffuseFragment", ngl::ShaderType::FRAGMENT);
-
-  m_shader->loadShaderSource("DiffuseVertex", "shaders/DiffuseVertex.glsl");
-  m_shader->loadShaderSource("DiffuseFragment", "shaders/DiffuseFragment.glsl");
-
-  m_shader->compileShader("DiffuseVertex");
-  m_shader->compileShader("DiffuseFragment");
-
-  m_shader->attachShaderToProgram("plain", "DiffuseVertex");
-  m_shader->attachShaderToProgram("plain", "DiffuseFragment");
-
-  m_shader->linkProgramObject("plain");
+  createShaderProgram("background", "backgroundVertex", "backgroundFragment");
+  createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
+  createShaderProgram("textured", "textureVertex", "textureFragment");
 
   m_shader->use("background");
+
+  m_test_ship = new ngl::Obj(g_RESOURCE_LOC + "/models/player.obj", g_RESOURCE_LOC + "textures/player/player.png");
+  m_test_ship->createVAO();
+
+  //m_test_texture.loadImage(g_RESOURCE_LOC + "textures/player/player.png");
+ // m_test_texture_id = m_test_texture.setTextureGL();
+
+  ngl::Texture t(g_RESOURCE_LOC + "textures/player/player.png");
+  t.setTextureGL();
 }
 
 renderer_ngl::~renderer_ngl()
@@ -116,15 +112,44 @@ int renderer_ngl::init()
   return 1;
 }
 
+void renderer_ngl::createShaderProgram(const std::string _name, const std::string _vert, const std::string _frag)
+{
+  m_shader->createShaderProgram(_name);
+  m_shader->attachShader(_vert, ngl::ShaderType::VERTEX);
+  m_shader->attachShader(_frag, ngl::ShaderType::FRAGMENT);
+
+  m_shader->loadShaderSource(_vert, "shaders/" + _vert + ".glsl");
+  m_shader->loadShaderSource(_frag, "shaders/" + _frag + ".glsl");
+
+  m_shader->compileShader(_vert);
+  m_shader->compileShader(_frag);
+
+  m_shader->attachShaderToProgram(_name, _vert);
+  m_shader->attachShaderToProgram(_name, _frag);
+
+  m_shader->linkProgramObject(_name);
+}
+
 void renderer_ngl::update()
 {
-  float divz = 2.0f * g_ZOOM_LEVEL;
+  float divz = 1 / g_ZOOM_LEVEL;
+  /*m_project = ngl::ortho(
+        static_cast<float>(-g_WIN_WIDTH) * divz,
+        static_cast<float>(g_WIN_WIDTH) * divz,
+        static_cast<float>(g_WIN_HEIGHT) * divz,
+        static_cast<float>(-g_WIN_HEIGHT) * divz
+        );*/
+
   m_project = ngl::ortho(
-        -g_WIN_WIDTH / divz,
-        g_WIN_WIDTH / divz,
-        g_WIN_HEIGHT / divz,
-        -g_WIN_HEIGHT / divz
+        -g_HALFWIN.m_x * divz,
+        g_HALFWIN.m_x * divz,
+        g_HALFWIN.m_y * divz,
+        -g_HALFWIN.m_y * divz,
+        -20.0,
+        200.0
         );
+
+  //m_project = ngl::ortho(-1,1,-1,1,0.1f,100.0f);
 }
 
 void renderer_ngl::drawBackground(float _dt, vec2 _v)
@@ -141,50 +166,25 @@ void renderer_ngl::drawBackground(float _dt, vec2 _v)
   drawRect({-1.0f, -1.0f}, {2.0f, 3.0f});
 }
 
-void renderer_ngl::genVBO()
+void renderer_ngl::drawOBJ(const vec2 _p, const float _ang)
 {
-  //Generate a VBO
-  GLuint VBOvert;
-  glGenBuffers(1, &VBOvert);
-  glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
+  m_shader->use("textured");
+  //m_shader->setRegisteredUniform1i("diffuse", m_test_texture_id);
+  //m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
+  //m_transform.setRotation(90.0f, 0.0f, 0.0f);
+  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
+  m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
+  //m_transform.loadGlobalAndCurrentMatrixToShader("MVP", m_transform);
 
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
-}
+  /*m_shader->setRegisteredUniform("normalMatrix", m_transform.getInverseMatrix().transpose());
+  m_shader->setRegisteredUniform("Colour", ngl::Vec4(1.0));
+  m_shader->setRegisteredUniform("lightPos", ngl::Vec3(0.0, 0.0, -0.1));
+  m_shader->setRegisteredUniform("lightDiffuse", ngl::Vec4(1.0));*/
 
-void renderer_ngl::addVerts(std::vector<vec3> _verts)
-{
-  //Copy the data into an NGL Vec3.
-  for(auto i: _verts)
-  {
-    m_verts.push_back(ngl::Vec3(i.m_x, i.m_y, i.m_z));
-  }
-}
-
-void renderer_ngl::packVerts(const int _slot)
-{
-  //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-  //m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
-  //std::cout << "NO OF VERTS " << m_verts.size() << std::endl;
-  glVertexAttribPointer(_slot, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-  //Copy vert data to VBO.
-  glBufferData(
-        GL_ARRAY_BUFFER,
-        sizeof(ngl::Vec4) * m_verts.size(),
-        &m_verts[0].m_x,
-      GL_STATIC_DRAW
-      );
-}
-
-void renderer_ngl::drawVerts(const GLenum _mode)
-{
   loadMatricesToShader();
-
-  glDrawArraysEXT(_mode, 0, m_verts.size());
-  glDisableVertexAttribArray(0);
-
-  m_verts.clear();
+  m_test_ship->draw();
+  m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
+  m_transform.setRotation(0.0f, 0.0f, 0.0f);
 }
 
 void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
@@ -198,13 +198,8 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
     ngl::Vec4((_d / 2), _d,  0.0f, 1.0f)
   };
 
-  for(auto &i : tri)
-  {
-    float tx = i.m_x * cos(rad(_ang)) + i.m_y * -sin(rad(_ang));
-    float ty = i.m_x * sin(rad(_ang)) + i.m_y * cos(rad(_ang));
-    i.m_x = tx + _p.m_x;
-    i.m_y = ty + _p.m_y;
-  }
+  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
+  m_transform.setRotation(0.0f, 0.0f, _ang);
 
   //Create a VAO
   glGenVertexArrays(1, &m_vao);
@@ -229,12 +224,25 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //glViewport(0, 0, m_w, m_h);
+  glViewport(0, 0, m_w, m_h);
   //glBindVertexArray(m_vao);
   loadMatricesToShader();
 
   glDrawArraysEXT(GL_TRIANGLES, 0, 3);
   glDisableVertexAttribArray(0);
+
+  m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
+  m_transform.setRotation(0.0f, 0.0f, 0.0f);
+}
+
+void renderer_ngl::loadAsset(const std::string _key, const std::string _model, const std::string _texture)
+{
+  //Load object and texture.
+  ngl::Obj * tempObj = new ngl::Obj::(g_RESOURCE_LOC + "/models/" + _model + ".obj");
+  ngl::Texture tempTexture(g_RESOURCE_LOC + "textures/" + _texture + "/" + _texture + ".png");
+
+  m_models.insert(_key, tempObj);
+  m_textures.insert(_key, tempTexture);
 }
 
 std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, const float _ang)
@@ -300,9 +308,10 @@ void renderer_ngl::drawLine(
     const vec2 _end
     )
 {
+  m_shader->use("plain");
   //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   std::array<ngl::Vec3, 2> line = {
-    ngl::Vec3(_start.m_x,_start.m_y,0.0f),
+    ngl::Vec3(_start.m_x, _start.m_y,0.0f),
     ngl::Vec3(_end.m_x,  _end.m_y,  0.0f)
   };
 
@@ -328,7 +337,7 @@ void renderer_ngl::drawLine(
   glBindVertexArray(0);
 
   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, m_w, m_h);
+  loadMatricesToShader();
   glBindVertexArray(m_vao);
   //loadMatricesToShader();
   glDrawArraysEXT(GL_LINES, 0, 2);
@@ -337,6 +346,7 @@ void renderer_ngl::drawLine(
 void renderer_ngl::loadMatricesToShader()
 {
   ngl::ShaderLib * shader = ngl::ShaderLib::instance();
+  //ngl::Mat4 MVP = m_project * m_view * m_transform.getMatrix();
   ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
   m_shader->setRegisteredUniform("MVP", MVP);
 }

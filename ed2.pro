@@ -1,4 +1,4 @@
-m_target = SDLOpenGL
+TARGET = "Elite Dangerous v2.0"
 
 OBJECTS_DIR = obj
 

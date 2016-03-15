@@ -22,4 +22,8 @@ void readVectorAsteroid(std::string str, universe * u);
 
 void loadGame(universe * uni);
 
+void loadConfig();
+
+void setConfigValue(const std::string _entry, const int _val);
+
 #endif

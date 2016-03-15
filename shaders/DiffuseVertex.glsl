@@ -9,9 +9,7 @@ uniform mat4 MVP;
 
 void main()
 {
-    gl_Position = inPosition * MVP;
-    //gl_Position = vec4((inPosition.x + 960.0)/ 1920.0, (inPosition.y + 600.0) / 1200.0, inPosition.zw);
-    //gl_Position = inPosition;
-    //float frac = 1920.0 / 1200.0;
-    //gl_Position.xy += 1.0;
+    gl_Position = MVP * inPosition;
+    //gl_Position = inPosition * MVP;
+    //gl_Position = vec4(inPosition.x / 960.0, inPosition.y + 600.0, inPosition.zw);
 }

@@ -11,10 +11,7 @@
 
 #include "vectors.hpp"
 
-#define RENDER_MODE 0
-
-//void loadTextures();
-void loadConfig();
+#define RENDER_MODE 1
 
 enum game_mode {MODE_MENU, MODE_TUTORIAL, MODE_GAME, MODE_QUIT};
 extern game_mode g_GAME_STATE;

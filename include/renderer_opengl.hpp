@@ -27,6 +27,7 @@
 #include <ngl/Text.h>
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
+#include <ngl/Obj.h>
 
 class renderer_ngl
 {
@@ -34,15 +35,19 @@ class renderer_ngl
   SDL_Window * m_window = NULL;
   //SDL_Renderer * m_renderer = NULL;
   int m_w, m_h;
-  std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
+  //std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
   std::unordered_map<std::string, sprite_sheet> m_letters;
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
   ngl::Transformation m_transform;
   ngl::ShaderLib * m_shader;
 
-  std::vector<ngl::Vec3> m_verts;
-  std::vector<ngl::Colour> m_colours;
+  std::unordered_map<std::string, ngl::Obj*> m_models;
+  std::unordered_map<std::string, ngl::Texture> m_textures;
+
+  ngl::Obj * m_test_ship;
+  ngl::Texture m_test_texture;
+  GLuint m_test_texture_id;
 
   SDL_GLContext m_gl_context;
   GLuint m_vao;
@@ -53,12 +58,10 @@ public:
 
   int init();
 
+  void createShaderProgram(const std::string _name, const std::string _vert, const std::string _frag);
   void update();
 
-  void genVBO();
-  void addVerts(const std::vector<vec3> _verts);
-  void packVerts(const int _slot);
-  void drawVerts(const GLenum _mode);
+  void drawOBJ(const vec2 _p, const float _ang);
 
   void drawBackground(float _dt, vec2 _v);
   void drawRect(const vec2 _p, const vec2 _d);
@@ -69,6 +72,8 @@ public:
   void swapWindow() const { SDL_GL_SwapWindow(m_window); }
   void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
   void errorExit(const std::string &_msg);
+
+  void loadAsset(const std::string _model, const std::string _texture);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}
@@ -81,7 +86,7 @@ public:
   void setBlendMode (SDL_BlendMode _b) {return;}
   void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod) {return;}
   void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col) {return;}
-  void drawText(std::string text, std::string font, vec2 pos) {return;}
+  void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s) {return;}
   void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col ) {return;}
   void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col) {return;}
   void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol) {return;}
