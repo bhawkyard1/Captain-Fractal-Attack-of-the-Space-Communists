@@ -64,7 +64,16 @@ void enemy::steering()
     //This is the distance between the ship and its m_target position.
     float dist = mag( p - m_tPos );
     float radius = 0.0f;
-    if(m_target != nullptr) radius = m_target->getRadius();
+    if(m_target != nullptr)
+    {
+        radius = m_target->getRadius();
+    }
+
+    /*vec2 goPos = m_tPos;
+    if(m_curGoal = GOAL_ATTACK)
+    {
+        goPos += (vec(m_target->getAng()) * 100);
+    }*/
 
     if(dist < getRadius() and getCanMove()) accelerate(-1.0f);
 
@@ -108,7 +117,10 @@ void enemy::steering()
     //m_tPos -= unit(linePos - m_tPos) * cSpd * 3;
 
     //Angle the ship towards its m_target.
-    setTAng(clampRoll(computeAngle(p-m_tPos), -180.0f, 180.0f));
+    setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
+    //If we are close to the target, aim towards it.
+    //if( dist < 800.0f + radius ) setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
+
     //If we are angled towards the m_target...
 
     float tvMul = dotProd1(m_tVel, v);

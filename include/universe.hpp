@@ -112,7 +112,7 @@ public:
     void setMaxMinerCount(const int m) {m_factionMaxCounts[TEAM_PLAYER_MINER] = m;}
     bool atMaxCount(aiTeam _t) const {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
 
-    void reload();
+    void reload(const bool _newGame);
     void loadShips();
 
     void pause() {m_paused = !m_paused; if(!m_paused) g_TIME_SCALE = 1;}

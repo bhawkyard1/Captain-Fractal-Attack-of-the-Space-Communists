@@ -106,7 +106,7 @@ void mainMenu(universe &uni)
     //Create the universe.
     g_GAME_OVER = true;
 
-    uni.reload();
+    uni.reload(true);
     uni.getPly()->setHealth(-1);
     uni.update(0.1f);
     uni.getUI()->clear();
@@ -306,7 +306,7 @@ void playGame(universe &uni)
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
 
     g_GAME_OVER = false;
-    uni.reload();
+    uni.reload(true);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
@@ -435,7 +435,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
                     break;
                 case 2:
                     *keymod = 0;
-                    uni->reload();
+                    uni->reload(true);
                     uni->setPause(false);
                     uni->escMenuTog();
                     uni->getUI()->pop();
@@ -598,14 +598,14 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     case SDLK_n:
         if(*keymod == 1)
         {
-            uni->reload();
+            uni->reload(true);
             //for(int i = 0; i < UPGRADES_LEN; ++i) setUpgradeTextures(0, i);
         }
         break;
     case SDLK_l:
         if(*keymod == 1)
         {
-            uni->reload();
+            uni->reload(true);
             loadGame(uni);
         }
         break;
@@ -644,7 +644,8 @@ void playTutorial(universe &uni)
         STAGE_ASTEROID_1, STAGE_ASTEROID_2,
         STAGE_UPGRADES,
         STAGE_COMBAT_1, STAGE_COMBAT_2,
-        STAGE_COMPLETE
+        STAGE_COMPLETE,
+        STAGE_COMBAT_2_DIED
     };
     stage tutStage = STAGE_BEGIN;
     playSnd(MENU_SELECT_SND);
@@ -654,7 +655,7 @@ void playTutorial(universe &uni)
     g_DIFFICULTY = 0;
 
     g_GAME_OVER = false;
-    uni.reload();
+    uni.reload(true);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
@@ -809,13 +810,13 @@ void playTutorial(universe &uni)
             uni.getRenderer()->drawText("PRESS 'O' TO ZOOM OUT", "pix", {200.0f, -300.0f}, true, 2.0f);
             uni.getRenderer()->drawText("AND 'P' TO ZOOM BACK IN", "pix", {-2000.0f, 2000.0f}, true, 20.0f);
             uni.getRenderer()->finalise();
-            if(g_ZOOM_LEVEL <= 0.3f) tutStage = STAGE_ZOOM_IN;
+            if(g_ZOOM_LEVEL <= 0.4f) tutStage = STAGE_ZOOM_IN;
         }
         else if(tutStage == STAGE_ZOOM_IN)
         {
             uni.getRenderer()->drawText("AND   'P'   TO   ZOOM   BACK   IN", "pix", {-2000.0f, 500.0f}, true, 20.0f);
             uni.getRenderer()->finalise();
-            if(g_ZOOM_LEVEL >= 0.9f) tutStage = STAGE_SHOOTING;
+            if(g_ZOOM_LEVEL >= 0.8f) tutStage = STAGE_SHOOTING;
         }
         else if(tutStage == STAGE_SHOOTING and timer > 1.5f)
         {
@@ -925,6 +926,38 @@ void playTutorial(universe &uni)
             {
                 uni.getRenderer()->drawText("USE THE MINIMAP TO LOCATE ENEMIES!", "pix", {g_WIN_WIDTH - 512.0f, 200.0f}, false, 1.0f);
                 uni.getRenderer()->finalise();
+            }
+
+            if(uni.getPly()->getHealth() <= 0.0f)
+            {
+                tutStage = STAGE_COMBAT_2_DIED;
+                timer = 0.0f;
+            }
+        }
+        else if(tutStage == STAGE_COMBAT_2_DIED)
+        {
+            if(timer < 3.0f)
+            {
+                uni.getRenderer()->drawText("OH, IT LOOKS LIKE THINGS DIDN'T QUITE WORK OUT", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+                uni.getRenderer()->finalise();
+            }
+            else if(timer > 3.0f and uni.getPly()->getHealth() <= 0.0f)
+            {
+                uni.getPly()->setMaxHealth(100.0f, true);
+                uni.getPly()->setMaxShield(100.0f, true);
+                uni.getPly()->setMaxEnergy(100.0f, true);
+                g_GAME_OVER = false;
+                uni.reload(false);
+            }
+            else if(timer < 6.0f)
+            {
+                uni.getRenderer()->drawText("RIGHT, LET'S GIVE THAT ANOTHER GO, SHALL WE?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+                uni.getRenderer()->finalise();
+            }
+            else
+            {
+                tutStage = STAGE_COMBAT_1;
+                timer = 10.0f;
             }
         }
     }

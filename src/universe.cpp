@@ -918,6 +918,8 @@ void universe::checkCollisions()
       vec2 ev;
       float er;
 
+      vec2 d_dir;
+
       //cout << "ENEMY CHECK" << endl;
       for(int s = m_partitions.ships.at(p).size() - 1; s >= 0; s--)
       {
@@ -933,6 +935,7 @@ void universe::checkCollisions()
           addpfx(ep + randVec(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
           harm = m_partitions.lasers.at(p).at(l)->getDmg();
 
+          d_dir = m_partitions.lasers.at(p).at(l)->getVel();
           //Delete m_shots if they match the ones in the universe vector.
           for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers.at(p).at(l)) swapnpop(&m_shots, i);
           //Pop the partition pointer.
@@ -941,7 +944,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.ships.at(p).at(s)->damage(harm);
+          m_partitions.ships.at(p).at(s)->damage(harm, d_dir);
           m_partitions.ships.at(p).at(s)->addVelS( (sv - ev) * stop );
           break;
         }
@@ -1022,6 +1025,7 @@ void universe::checkCollisions()
           addpfx(sp + randVec(32.0f), m_ply.getVel(), m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
           harm = m_partitions.lasers.at(p).at(l)->getDmg();
 
+          d_dir = m_partitions.lasers.at(p).at(l)->getVel();
           for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers.at(p).at(l)) swapnpop(&m_shots, i);
           swapnpop(&m_partitions.lasers.at(p), l);
 
@@ -1029,7 +1033,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_ply.damage(harm);
+          m_ply.damage(harm, d_dir);
           //std::cout << "ADDING VEL (" << sv.m_x << "," << sv.m_y << " - " << ev.m_x << "," << ev.m_y << ") * " << stop << " = (" << ( (sv - ev) * stop ).m_x << ", " << ( (sv - ev) * stop ).m_y << ")" << std::endl;
           m_ply.addVel( (sv - ev) * stop );
           setVel(-m_ply.getVel());
@@ -1229,7 +1233,7 @@ bool emnityCheck(
   return true;
 }
 
-void universe::reload()
+void universe::reload(const bool _newGame)
 {
   m_agents.clear();
   m_missiles.clear();
@@ -1271,6 +1275,9 @@ void universe::reload()
   m_ply.setWeapData(2,2);
 
   m_ply.setEnginePower(5.0f);
+
+  if(!_newGame) return;
+
   for(int i = 0; i < UPGRADES_LEN; ++i)
   {
     m_ply.setGradeArr(i, 0);
@@ -1462,7 +1469,7 @@ void universe::upgradeSetLabels(
     return;
     break;
   }
-  s1 += g_ROMAN_NUMS[lvl];
+  s1 += g_ROMAN_NUMS[clamp(lvl, 0, 9)];
 
   if(lvl < 8)
   {

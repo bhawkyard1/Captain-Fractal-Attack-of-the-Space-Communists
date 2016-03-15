@@ -532,7 +532,26 @@ void ship::update(const float _dt)
 }
 
 void ship::damage(float _d)
+{           
+    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
+
+    float shieldDmg = clamp(_d, 0.0f, getShield());
+    _d -= shieldDmg;
+    setShield(getShield() - shieldDmg);
+
+    float healthDmg = clamp(_d, 0.0f, getHealth());
+    _d -= healthDmg;
+    setHealth(getHealth()-healthDmg);
+
+    m_damageTimer = 10.0f;
+}
+
+void ship::damage(float _d, const vec2 _v)
 {
+    //std::cout << " dot " << dotProd1( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
+    //Shots to the rear do more damage.
+    if(m_canMove) _d *= dotProd1( vec(m_angle + 90), unit(_v) ) + 1.5f;
+
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;
 
     float shieldDmg = clamp(_d, 0.0f, getShield());

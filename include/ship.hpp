@@ -122,6 +122,7 @@ public:
   int getEnergyPriority() const {return static_cast<int>(m_priority);}
 
   void damage(const float _d);
+  void damage(const float _d, const vec2 _v);
 
   ship * getSelf() {return this;}
 

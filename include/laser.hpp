@@ -22,6 +22,7 @@ public:
     aiTeam getTeam() const  {return m_team;}
     float getCol(int _index) const {return m_col[_index];}
     float getPower() const {return m_power;}
+    float getAng() const {return m_ang;}
 };
 
 #endif
