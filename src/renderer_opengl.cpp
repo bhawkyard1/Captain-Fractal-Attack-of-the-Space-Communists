@@ -88,14 +88,44 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   m_shader->use("background");
 
+  loadAsset("player", "player", "player");
+  loadAsset("federation_1", "enemy_1", "enemy_1");
+
   m_test_ship = new ngl::Obj(g_RESOURCE_LOC + "/models/player.obj", g_RESOURCE_LOC + "textures/player/player.png");
   m_test_ship->createVAO();
 
   //m_test_texture.loadImage(g_RESOURCE_LOC + "textures/player/player.png");
- // m_test_texture_id = m_test_texture.setTextureGL();
+  // m_test_texture_id = m_test_texture.setTextureGL();
 
-  ngl::Texture t(g_RESOURCE_LOC + "textures/player/player.png");
-  t.setTextureGL();
+  //ngl::Texture t(g_RESOURCE_LOC + "textures/player/player.png");
+  //t.setTextureGL();
+}
+
+void renderer_ngl::loadAsset(const std::string _key, const std::string _model, const std::string _texture)
+{
+  //Load object and texture.
+  ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "/models/" + _model + ".obj");
+  tempObj->createVAO();
+
+  ngl::Texture tempTexture(g_RESOURCE_LOC + "textures/" + _texture + "/" + _texture + ".png");
+
+  m_models.insert({_key, tempObj});
+  m_textures.insert({_key, tempTexture});
+}
+
+void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string _asset)
+{
+  m_shader->use("textured");
+  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
+  m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
+
+  m_textures[_asset].setTextureGL();
+
+  loadMatricesToShader();
+  m_models[_asset]->draw();
+
+  m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
+  m_transform.setRotation(0.0f, 0.0f, 0.0f);
 }
 
 renderer_ngl::~renderer_ngl()
@@ -233,16 +263,6 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
 
   m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
   m_transform.setRotation(0.0f, 0.0f, 0.0f);
-}
-
-void renderer_ngl::loadAsset(const std::string _key, const std::string _model, const std::string _texture)
-{
-  //Load object and texture.
-  ngl::Obj * tempObj = new ngl::Obj::(g_RESOURCE_LOC + "/models/" + _model + ".obj");
-  ngl::Texture tempTexture(g_RESOURCE_LOC + "textures/" + _texture + "/" + _texture + ".png");
-
-  m_models.insert(_key, tempObj);
-  m_textures.insert(_key, tempTexture);
 }
 
 std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, const float _ang)

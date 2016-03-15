@@ -73,7 +73,8 @@ public:
   void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
   void errorExit(const std::string &_msg);
 
-  void loadAsset(const std::string _model, const std::string _texture);
+  void loadAsset(const std::string _key, const std::string _model, const std::string _texture);
+  void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}

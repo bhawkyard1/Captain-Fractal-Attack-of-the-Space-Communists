@@ -789,7 +789,8 @@ void universe::draw(float _dt)
   m_drawer.drawBackground(m_time_elapsed, m_pos);
 
   //m_drawer.drawTri(m_ply.getInterpolatedPosition(_dt), 20.0f, m_ply.getAng());
-  m_drawer.drawOBJ(m_ply.getInterpolatedPosition(_dt), m_ply.getAng());
+  //m_drawer.drawOBJ(m_ply.getInterpolatedPosition(_dt), m_ply.getAng());
+  m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), "federation_1");
   //m_drawer.genVBO();
 
   //m_drawer.addVerts(m_drawer.constructTri(m_ply.getPos(), 20.0f, m_ply.getAng()));
@@ -797,7 +798,8 @@ void universe::draw(float _dt)
   for(auto &i : m_agents)
   {
     //m_drawer.drawTri(i.getInterpolatedPosition(_dt), 20.0f, i.getAng());
-    m_drawer.drawOBJ(i.getPos(), i.getAng());
+    m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), "federation_1");
+    //m_drawer.drawOBJ(i.getPos(), i.getAng());
     //m_drawer.addVerts(m_drawer.constructTri(i.getInterpolatedPosition(_dt), 20.0f, i.getAng()));
   }
 
