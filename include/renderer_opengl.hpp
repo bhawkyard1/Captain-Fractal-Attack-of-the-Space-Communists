@@ -39,6 +39,7 @@ class renderer_ngl
   std::unordered_map<std::string, sprite_sheet> m_letters;
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
+  ngl::Mat4 m_VP;
   ngl::Transformation m_transform;
   ngl::ShaderLib * m_shader;
 
@@ -61,7 +62,7 @@ public:
   void createShaderProgram(const std::string _name, const std::string _vert, const std::string _frag);
   void update();
 
-  void drawOBJ(const vec2 _p, const float _ang);
+  void setShader(const std::string _shader) {m_shader->use(_shader);}
 
   void drawBackground(float _dt, vec2 _v);
   void drawRect(const vec2 _p, const vec2 _d);
@@ -73,7 +74,7 @@ public:
   void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
   void errorExit(const std::string &_msg);
 
-  void loadAsset(const std::string _key, const std::string _model, const std::string _texture);
+  void loadAsset(const std::string _key, const std::string _path);
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}

@@ -82,9 +82,7 @@ int renderer::init()
 
 void renderer::loadTextures()
 {
-    std::cout << "p1" << std::endl;
     loadTextureSet("FEDERATION_MKI",      "enemy_1");
-    std::cout << "p2" << std::endl;
     loadTextureSet("FEDERATION_MKII",     "enemy_2");
     loadTextureSet("FEDERATION_MKIII",    "enemy_3");
     loadTextureSet("FEDERATION_MKIV",     "enemy_4");

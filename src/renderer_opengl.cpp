@@ -88,11 +88,32 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   m_shader->use("background");
 
-  loadAsset("player", "player", "player");
-  loadAsset("federation_1", "enemy_1", "enemy_1");
+  loadAsset("FEDERATION_MKI",      "enemy_1");
+  loadAsset("FEDERATION_MKII",     "enemy_2");
+  loadAsset("FEDERATION_MKIII",    "enemy_3");
+  loadAsset("FEDERATION_MKIV",     "enemy_4");
+  loadAsset("FEDERATION_GUNSHIP",  "enemy_5");
 
-  m_test_ship = new ngl::Obj(g_RESOURCE_LOC + "/models/player.obj", g_RESOURCE_LOC + "textures/player/player.png");
-  m_test_ship->createVAO();
+  loadAsset("PIRATE_GNAT",         "pirate_1");
+  loadAsset("PIRATE_CRUISER",      "pirate_2");
+  loadAsset("PIRATE_WRANGLER",     "pirate_3");
+  loadAsset("PIRATE_MARAUDER",     "pirate_4");
+  loadAsset("PIRATE_GUNSHIP",      "pirate_5");
+
+  loadAsset("PLAYER_SHIP",         "player");
+  loadAsset("PLAYER_HUNTER",       "wingman_1");
+  loadAsset("PLAYER_DEFENDER",     "wingman_2");
+  loadAsset("PLAYER_DESTROYER",    "wingman_3");
+  loadAsset("PLAYER_MINER_DROID",  "miner_1");
+  loadAsset("PLAYER_TURRET",       "turret_1");
+  loadAsset("PLAYER_STATION",      "station_1");
+  loadAsset("PLAYER_GRAVWELL",     "well_1");
+  loadAsset("PLAYER_BARRACKS",     "barracks_1");
+
+  loadAsset("ION_MISSILE_MKI",     "missile");
+
+  //m_test_ship = new ngl::Obj(g_RESOURCE_LOC + "/models/player.obj", g_RESOURCE_LOC + "textures/player/player.png");
+  //m_test_ship->createVAO();
 
   //m_test_texture.loadImage(g_RESOURCE_LOC + "textures/player/player.png");
   // m_test_texture_id = m_test_texture.setTextureGL();
@@ -101,13 +122,13 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   //t.setTextureGL();
 }
 
-void renderer_ngl::loadAsset(const std::string _key, const std::string _model, const std::string _texture)
+void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
 {
   //Load object and texture.
-  ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "/models/" + _model + ".obj");
+  ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "/models/" + _path + ".obj");
   tempObj->createVAO();
 
-  ngl::Texture tempTexture(g_RESOURCE_LOC + "textures/" + _texture + "/" + _texture + ".png");
+  ngl::Texture tempTexture(g_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png");
 
   m_models.insert({_key, tempObj});
   m_textures.insert({_key, tempTexture});
@@ -115,7 +136,6 @@ void renderer_ngl::loadAsset(const std::string _key, const std::string _model, c
 
 void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string _asset)
 {
-  m_shader->use("textured");
   m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
   m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
 
@@ -163,23 +183,17 @@ void renderer_ngl::createShaderProgram(const std::string _name, const std::strin
 void renderer_ngl::update()
 {
   float divz = 1 / g_ZOOM_LEVEL;
-  /*m_project = ngl::ortho(
-        static_cast<float>(-g_WIN_WIDTH) * divz,
-        static_cast<float>(g_WIN_WIDTH) * divz,
-        static_cast<float>(g_WIN_HEIGHT) * divz,
-        static_cast<float>(-g_WIN_HEIGHT) * divz
-        );*/
 
   m_project = ngl::ortho(
         -g_HALFWIN.m_x * divz,
         g_HALFWIN.m_x * divz,
         g_HALFWIN.m_y * divz,
         -g_HALFWIN.m_y * divz,
-        -20.0,
-        200.0
+        -256.0,
+        256.0
         );
 
-  //m_project = ngl::ortho(-1,1,-1,1,0.1f,100.0f);
+  m_VP = m_view * m_project;
 }
 
 void renderer_ngl::drawBackground(float _dt, vec2 _v)
@@ -196,26 +210,6 @@ void renderer_ngl::drawBackground(float _dt, vec2 _v)
   drawRect({-1.0f, -1.0f}, {2.0f, 3.0f});
 }
 
-void renderer_ngl::drawOBJ(const vec2 _p, const float _ang)
-{
-  m_shader->use("textured");
-  //m_shader->setRegisteredUniform1i("diffuse", m_test_texture_id);
-  //m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
-  //m_transform.setRotation(90.0f, 0.0f, 0.0f);
-  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
-  m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
-  //m_transform.loadGlobalAndCurrentMatrixToShader("MVP", m_transform);
-
-  /*m_shader->setRegisteredUniform("normalMatrix", m_transform.getInverseMatrix().transpose());
-  m_shader->setRegisteredUniform("Colour", ngl::Vec4(1.0));
-  m_shader->setRegisteredUniform("lightPos", ngl::Vec3(0.0, 0.0, -0.1));
-  m_shader->setRegisteredUniform("lightDiffuse", ngl::Vec4(1.0));*/
-
-  loadMatricesToShader();
-  m_test_ship->draw();
-  m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
-  m_transform.setRotation(0.0f, 0.0f, 0.0f);
-}
 
 void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
 {
@@ -247,15 +241,11 @@ void renderer_ngl::drawTri(const vec2 _p, const float _d, const float _ang)
       GL_STATIC_DRAW
       );
 
-  //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
-  //glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, VBOvert);
   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0, 0, m_w, m_h);
-  //glBindVertexArray(m_vao);
   loadMatricesToShader();
 
   glDrawArraysEXT(GL_TRIANGLES, 0, 3);
@@ -367,7 +357,7 @@ void renderer_ngl::loadMatricesToShader()
 {
   ngl::ShaderLib * shader = ngl::ShaderLib::instance();
   //ngl::Mat4 MVP = m_project * m_view * m_transform.getMatrix();
-  ngl::Mat4 MVP = m_transform.getMatrix() * m_view * m_project;
+  ngl::Mat4 MVP = m_transform.getMatrix() * m_VP;
   m_shader->setRegisteredUniform("MVP", MVP);
 }
 
