@@ -552,15 +552,6 @@ void universe::update(const float _dt)
     m_passive_sprites.at(i).setCol(3, alph);
   }
 
-  if(g_DIFFICULTY == 0) return;
-  if(rand() % 1024 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
-  {
-    int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
-    aiTeam pteam;
-    if(rand() % 100 < 55) pteam = SPOOKY_SPACE_PIRATES;
-    else pteam = GALACTIC_FEDERATION;
-    spawnSquad(pteam, 10000.0f, 20000.0f, reps);
-  }
   if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER))
   {
     spawnShip(TEAM_PLAYER);
@@ -568,6 +559,17 @@ void universe::update(const float _dt)
   if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER_MINER))
   {
     spawnShip(TEAM_PLAYER_MINER);
+  }
+
+  if(g_DIFFICULTY == 0) return;
+
+  if(rand() % 1024 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
+  {
+    int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
+    aiTeam pteam;
+    if(rand() % 100 < 50) pteam = SPOOKY_SPACE_PIRATES;
+    else pteam = GALACTIC_FEDERATION;
+    spawnSquad(pteam, 10000.0f, 20000.0f, reps);
   }
   if(rand() % 1024 == 0 and m_asteroids.size() < 10)
   {
@@ -948,8 +950,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.ships.at(p).at(s)->damage(harm, d_dir);
-          m_partitions.ships.at(p).at(s)->addVelS( (sv - ev) * stop );
+          m_partitions.ships.at(p).at(s)->damage(harm, d_dir * stop);
           break;
         }
       }
@@ -970,6 +971,7 @@ void universe::checkCollisions()
           for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + randVec(6.0f), 0.0f, "SMOKE");
           harm = m_partitions.lasers.at(p).at(l)->getDmg();
 
+          d_dir = m_partitions.lasers.at(p).at(l)->getVel();
           for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers.at(p).at(l)) swapnpop(&m_shots, i);//m_shots.erase(m_shots.begin() + i);
           swapnpop(&m_partitions.lasers.at(p), l);
 
@@ -977,8 +979,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.rocks.at(p).at(r)->damage(harm);
-          m_partitions.rocks.at(p).at(r)->addVel( (sv - ev) * stop );
+          m_partitions.rocks.at(p).at(r)->damage(harm, d_dir * stop);
           break;
         }
       }
@@ -1000,6 +1001,7 @@ void universe::checkCollisions()
 
           harm = m_shots.at(l).getDmg();
 
+          d_dir = m_partitions.lasers.at(p).at(l)->getVel();
           for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers.at(p).at(l)) m_shots.erase(m_shots.begin() + i);
           swapnpop(&m_partitions.lasers.at(p), l);
 
@@ -1007,8 +1009,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.rockets.at(p).at(m)->damage(harm);
-          m_partitions.rockets.at(p).at(m)->addVel( (sv - ev) * stop );
+          m_partitions.rockets.at(p).at(m)->damage(harm, d_dir * stop);
           break;
         }
       }
@@ -1037,9 +1038,8 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_ply.damage(harm, d_dir);
+          m_ply.damage(harm, d_dir * stop);
           //std::cout << "ADDING VEL (" << sv.m_x << "," << sv.m_y << " - " << ev.m_x << "," << ev.m_y << ") * " << stop << " = (" << ( (sv - ev) * stop ).m_x << ", " << ( (sv - ev) * stop ).m_y << ")" << std::endl;
-          m_ply.addVel( (sv - ev) * stop );
           setVel(-m_ply.getVel());
         }
       }

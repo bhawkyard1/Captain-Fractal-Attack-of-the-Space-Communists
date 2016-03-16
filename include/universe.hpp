@@ -105,6 +105,7 @@ public:
     int * getScorePt() {return &m_score;}
 
     int getMaxEnemyCount() const {return m_factionMaxCounts[GALACTIC_FEDERATION];}
+    int getEnemyCount() const {return m_factionCounts[GALACTIC_FEDERATION];}
     void setMaxEnemyCount(const int m) {m_factionMaxCounts[GALACTIC_FEDERATION] = m; m_factionMaxCounts[SPOOKY_SPACE_PIRATES] = m;}
     int getMaxWingmanCount() const {return m_factionMaxCounts[TEAM_PLAYER];}
     void setMaxWingmanCount(const int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
