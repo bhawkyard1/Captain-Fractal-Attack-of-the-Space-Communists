@@ -58,6 +58,11 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
+
+  //Don't draw further fragments over closer ones.
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
   swapWindow();
 
   ngl::NGLInit::instance();
@@ -77,6 +82,9 @@ renderer_ngl::renderer_ngl(int _w, int _h)
         -g_HALFWIN.m_y * divz
         );
 
+  m_cameraShake = 0.0f;
+  m_cameraShakeTargetOffset = {0.0f, 0.0f};
+  m_cameraShakeOffset = {0.0f, 0.0f};
 
   //m_project = ngl::perspective(200.0f, float(g_WIN_WIDTH / g_WIN_HEIGHT), 0.01f, 200.0f);
 
@@ -85,6 +93,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   createShaderProgram("background", "backgroundVertex", "backgroundFragment");
   createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
   createShaderProgram("textured", "textureVertex", "textureFragment");
+  createShaderProgram("majorLazer", "laserVertex", "laserFragment");
 
   m_shader->use("background");
 
@@ -106,11 +115,16 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   loadAsset("PLAYER_DESTROYER",    "wingman_3");
   loadAsset("PLAYER_MINER_DROID",  "miner_1");
   loadAsset("PLAYER_TURRET",       "turret_1");
+
   loadAsset("PLAYER_STATION",      "station_1");
   loadAsset("PLAYER_GRAVWELL",     "well_1");
   loadAsset("PLAYER_BARRACKS",     "barracks_1");
 
   loadAsset("ION_MISSILE_MKI",     "missile");
+
+  loadAsset("ASTEROID_SMALL",      "asteroid_1");
+  loadAsset("ASTEROID_MID",        "asteroid_2");
+  loadAsset("ASTEROID_LARGE",      "asteroid_3");
 
   //m_test_ship = new ngl::Obj(g_RESOURCE_LOC + "/models/player.obj", g_RESOURCE_LOC + "textures/player/player.png");
   //m_test_ship->createVAO();
@@ -120,12 +134,15 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   //ngl::Texture t(g_RESOURCE_LOC + "textures/player/player.png");
   //t.setTextureGL();
+
+  glEnable(GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
 {
   //Load object and texture.
-  ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "/models/" + _path + ".obj");
+  ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "models/" + _path + ".obj");
   tempObj->createVAO();
 
   ngl::Texture tempTexture(g_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png");
@@ -146,6 +163,66 @@ void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string 
 
   m_transform.setPosition(ngl::Vec3(0.0f, 0.0f, 0.0f));
   m_transform.setRotation(0.0f, 0.0f, 0.0f);
+}
+
+void renderer_ngl::drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol)
+{
+  m_shader->setRegisteredUniform("shootingLightCol", ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3]));
+  drawAsset(_p, _ang, _asset);
+}
+
+void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol)
+{
+  glGenVertexArrays(1, &m_vao);
+  glBindVertexArray(m_vao);
+
+  std::array<ngl::Vec3, 2> line = {
+    ngl::Vec3(_start.m_x, _start.m_y,10.0f),
+    ngl::Vec3(_end.m_x,  _end.m_y,  10.0f)
+  };
+
+  /*std::array<float, 8> vertCol = {
+    _lCol[0], _lCol[1], _lCol[2], 1.0f,
+    _lCol[0], _lCol[1], _lCol[2], 0.0f
+  };*/
+
+  std::array<ngl::Vec4, 2> vertCol = {
+    ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], 0.0f),
+    ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], 1.0f)
+  };
+
+  //Generate a VBO
+  GLuint vertBuffer;
+  glGenBuffers(1, &vertBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               sizeof(ngl::Vec3) * line.size(),
+               &line[0].m_x,
+      GL_STATIC_DRAW
+      );
+
+  glEnableVertexAttribArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+  glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+
+
+  GLuint colourBuffer;
+  glGenBuffers(1, &colourBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+  glBufferData(GL_ARRAY_BUFFER,
+        sizeof(ngl::Vec4) * vertCol.size(),
+        &vertCol[0].m_x,
+      GL_STATIC_DRAW
+      );
+
+  glEnableVertexAttribArray(1);
+  glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+  glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+  loadMatricesToShader();
+  glDrawArraysEXT(GL_LINES, 0, 2);
+
+  //drawLine(_start, _end);
 }
 
 renderer_ngl::~renderer_ngl()
@@ -180,15 +257,27 @@ void renderer_ngl::createShaderProgram(const std::string _name, const std::strin
   m_shader->linkProgramObject(_name);
 }
 
-void renderer_ngl::update()
+void renderer_ngl::update(const float _dt)
 {
+  m_cameraShake = clamp(m_cameraShake - _dt, 0.0f, 15.0f);
+
+  //m_cameraShake = 15.0f;
+
+  if(magns(m_cameraShakeTargetOffset - m_cameraShakeOffset) < 40.0f)
+  {
+    m_cameraShakeTargetOffset = randVec(m_cameraShake);
+  }
+  m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * clamp(_dt * 0.5f, 0.0f, 1.0f);
+
+  g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;
+
   float divz = 1 / g_ZOOM_LEVEL;
 
   m_project = ngl::ortho(
-        -g_HALFWIN.m_x * divz,
-        g_HALFWIN.m_x * divz,
-        g_HALFWIN.m_y * divz,
-        -g_HALFWIN.m_y * divz,
+        -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
+        g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
+        g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
+        -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
         -256.0,
         256.0
         );
@@ -198,7 +287,7 @@ void renderer_ngl::update()
 
 void renderer_ngl::drawBackground(float _dt, vec2 _v)
 { 
-  //std::cout << "uni vel! " << _v.m_x << ", " << _v.m_y << std::endl;
+  _v += m_cameraShakeOffset;
   ngl::Vec2 conv = ngl::Vec2(-_v.m_x, _v.m_y);
   //std::cout << "converted! " << conv.m_x << ", " << conv.m_y << std::endl;
   m_shader->use("background");
@@ -207,7 +296,7 @@ void renderer_ngl::drawBackground(float _dt, vec2 _v)
   m_shader->setRegisteredUniform("zoom", 0.06f / g_ZOOM_LEVEL);
   m_shader->setRegisteredUniform("unidir", conv);
 
-  drawRect({-1.0f, -1.0f}, {2.0f, 3.0f});
+  drawRect({-1.0f, -1.0f, 0.2f}, {2.0f, 3.0f, 0.2f});
 }
 
 
@@ -274,14 +363,14 @@ std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, cons
   return tri;
 }
 
-void renderer_ngl::drawRect(const vec2 _p, const vec2 _d)
+void renderer_ngl::drawRect(const vec3 _p, const vec3 _d)
 {
   //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   std::array<ngl::Vec3, 4> quad = {
-    ngl::Vec3(_p.m_x,           _p.m_y,           0.0f),
-    ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y,           0.0f),
-    ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y + _d.m_y,  0.0f),
-    ngl::Vec3(_p.m_x,           _p.m_y + _d.m_y,  0.0f)
+    ngl::Vec3(_p.m_x,           _p.m_y,           _p.m_z),
+    ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y,           _p.m_z),
+    ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y + _d.m_y,  _p.m_z),
+    ngl::Vec3(_p.m_x,           _p.m_y + _d.m_y,  _p.m_z)
   };
 
   //Create a VAO
@@ -318,7 +407,7 @@ void renderer_ngl::drawLine(
     const vec2 _end
     )
 {
-  m_shader->use("plain");
+  //m_shader->use("plain");
   //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   std::array<ngl::Vec3, 2> line = {
     ngl::Vec3(_start.m_x, _start.m_y,0.0f),
@@ -366,6 +455,12 @@ void renderer_ngl::errorExit(const std::string &_msg)
   std::cerr << &_msg << " " << SDL_GetError() << std::endl;
   SDL_Quit();
   exit(EXIT_FAILURE);
+}
+
+void renderer_ngl::addShake(float _s)
+{
+  m_cameraShake += _s;
+  m_cameraShakeTargetOffset = randVec(m_cameraShake);
 }
 
 #endif

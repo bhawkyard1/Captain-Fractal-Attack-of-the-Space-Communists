@@ -65,7 +65,7 @@ class ship: public base
   //Cosmetics
   size_t m_engineGlow;
   size_t m_steeringGlow;
-  size_t m_drawShot;
+  float m_drawShot;
   size_t m_shieldGlow;
 
   size_t m_upgrades[UPGRADES_LEN];
@@ -86,16 +86,17 @@ public:
   float getTAng() const {return m_targetAngle;}
   void setAng(const float _ang) {m_angle = _ang;}
   float getAng() const {return m_angle;}
-  void setShooting() {m_drawShot = 255;}
   void setWeapData(const int _val, const int _src) {m_weapons[_val] = g_weapons[_src];}
   void setWeap(const int _val) {m_curWeap = _val;}
   void incrWeap(const int _val) {m_curWeap = clampRoll(m_curWeap + _val, 0, static_cast<int>(m_weapons.size()) - 1 );}
   float getCurWeapStat(WEAPON_STAT _stat) const {return m_weapons[m_curWeap][_stat];}
+  std::array<float, 4> getCurWeapCol() const {return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getLaserGlow()};}
   std::vector<std::array<float, 10>> getWeaps() const {return m_weapons;}
   std::array<float, 10> getWeap() const {return m_weapons[m_curWeap];}
   int getCurWeap() const {return m_curWeap;}
   bool isFiring() const {return m_shooting;}
-  void setFiring(const bool _v) {m_shooting = _v; if(_v) m_damageTimer = 3.0f;}
+  void shoot() {m_drawShot = 255.0f;}
+  void setFiring(const bool _v);
 
   void setMaxHealth(const float _h, const bool _match) {m_maxHealth = _h; if(_match) m_health = _h;}
   void setMaxShield(const float _s, const bool _match) {m_maxShield = _s; if(_match) m_shield = _s;}
@@ -152,6 +153,7 @@ public:
 
   std::string getIdentifier() const {return m_identifier;}
   std::array<float, 4> getAlphaStats() const {std::array<float, 4> ret = {static_cast<float>(m_engineGlow), static_cast<float>(m_steeringGlow), static_cast<float>(m_drawShot), static_cast<float>(m_shieldGlow)}; return ret;}
+  float getLaserGlow() const {return m_drawShot / 255.0f;}
 };
 
 extern std::vector<ship> g_ship_templates;

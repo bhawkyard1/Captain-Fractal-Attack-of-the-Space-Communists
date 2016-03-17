@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "common.hpp"
 
-game_mode g_GAME_STATE = MODE_GAME;
+game_mode g_GAME_STATE = MODE_MENU;
 
 #if RENDER_MODE == 0
 std::string g_RESOURCE_LOC = "../resources/SDL2/";

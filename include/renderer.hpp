@@ -69,7 +69,7 @@ public:
 
   SDL_Surface * getSurface(std::string _path);
 
-  void addShake(float _s) {m_cameraShake += _s;}
+  void addShake(float _s);
 };
 
 #endif

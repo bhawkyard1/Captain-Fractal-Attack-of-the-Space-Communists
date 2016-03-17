@@ -159,6 +159,7 @@ void universe::update(const float _dt)
   if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
   {
     playSnd( static_cast<sound>(m_ply.getCurWeap()) );
+    m_ply.shoot();
     addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER );
     m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
     m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
@@ -510,6 +511,7 @@ void universe::update(const float _dt)
     if(e.isFiring() and e.getCooldown() <= 0)
     {
       //If the agent is shooting, add lasers.
+      e.shoot();
       addShot(e.getPos() - e.getVel(), e.getVel(), e.getAng(), e.getWeap(), e.getTeam());
       e.setCooldown( (e.getCurWeapStat(COOLDOWN)) );
       e.setFiring(false);
@@ -793,26 +795,33 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
-  m_drawer.update();
+  m_drawer.update(_dt);
   m_drawer.clear();
 
   m_drawer.drawBackground(m_time_elapsed, m_pos);
 
-  m_drawer.setShader("textured");
-
-  m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), "FEDERATION_MKII");
-
-  for(auto &i : m_agents)
-  {
-    m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), "FEDERATION_MKII");
-
-  }
-
+  m_drawer.setShader("majorLazer");
   for(auto &i : m_shots)
   {
     vec2 ipos = i.getInterpolatedPosition(_dt);
     vec2 ivel = (i.getVel() + i.getWVel()) * 3;
-    m_drawer.drawLine(i.getPos(), i.getPos() + ivel);
+    std::array<float, 4> icol = i.getCol();
+    for( auto &c : icol )
+    {
+      c /= 255.0f;
+    }
+    m_drawer.drawLaser(i.getPos(), i.getPos() + ivel, icol);
+  }
+
+  m_drawer.setShader("textured");
+  m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
+  for(auto &i : m_agents)
+  {
+    m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), i.getCurWeapCol());
+  }
+  for(auto &i : m_asteroids)
+  {
+    m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
   }
 
   drawUI();

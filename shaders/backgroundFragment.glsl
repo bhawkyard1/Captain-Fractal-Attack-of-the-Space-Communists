@@ -1,6 +1,6 @@
 #version 410 core
 
-#define iterations 10
+#define iterations 12
 
 //This variable does some really weird shit, yo.
 //At low values, looks like a big space city.

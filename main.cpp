@@ -102,8 +102,7 @@ int main(int argc, char* argv[])
 void mainMenu(universe &uni)
 {
     playSnd(MENU_SELECT_SND);
-    //universe uni;
-    //Create the universe.
+
     g_GAME_OVER = true;
 
     uni.reload(true);
@@ -178,7 +177,7 @@ void mainMenu(universe &uni)
     uni.setMaxEnemyCount(20);
     uni.setMaxWingmanCount(10);
 
-    uni.addBuild({600.0f, 300.0f}, PLAYER_STATION);
+    //uni.addBuild({600.0f, 300.0f}, PLAYER_STATION);
 
     for(int i = 0; i < 360; i += 6)
     {
@@ -341,6 +340,7 @@ void mainMenu(universe &uni)
         //Draw the game.
         float diff_clamped = clock.getDiff();
         if(diff_clamped == 0.0f) diff_clamped = 0.01f;
+
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
     }
 }

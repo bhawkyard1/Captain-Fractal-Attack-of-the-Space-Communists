@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-
+#include <array>
 #include <vector>
 
 #include "sprite_sheet.hpp"
@@ -53,6 +53,10 @@ class renderer_ngl
   SDL_GLContext m_gl_context;
   GLuint m_vao;
   void loadMatricesToShader();
+
+  float m_cameraShake;
+  vec2 m_cameraShakeTargetOffset;
+  vec2 m_cameraShakeOffset;
 public:
   renderer_ngl(int _w, int _h);
   ~renderer_ngl();
@@ -60,12 +64,12 @@ public:
   int init();
 
   void createShaderProgram(const std::string _name, const std::string _vert, const std::string _frag);
-  void update();
+  void update(const float _dt);
 
   void setShader(const std::string _shader) {m_shader->use(_shader);}
 
   void drawBackground(float _dt, vec2 _v);
-  void drawRect(const vec2 _p, const vec2 _d);
+  void drawRect(const vec3 _p, const vec3 _d);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void drawLine(const vec2 _start, const vec2 _end);
@@ -76,6 +80,9 @@ public:
 
   void loadAsset(const std::string _key, const std::string _path);
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
+
+  void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
+  void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}
@@ -107,6 +114,7 @@ public:
   void finalise() {swapWindow();}
 
   SDL_Surface * getSurface(std::string path);
+  void addShake(float _s);
 };
 
 #endif
