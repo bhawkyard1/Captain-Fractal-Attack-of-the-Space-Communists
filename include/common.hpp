@@ -11,7 +11,7 @@
 
 #include "vectors.hpp"
 
-#define RENDER_MODE 1
+#define RENDER_MODE 0
 
 enum game_mode {MODE_MENU, MODE_TUTORIAL, MODE_GAME, MODE_QUIT};
 extern game_mode g_GAME_STATE;
@@ -27,7 +27,7 @@ extern int g_WIN_POS_Y;
 extern int g_WIN_HEIGHT;
 extern int g_WIN_WIDTH;
 
-extern int g_BACKGROUND_DOTS;
+extern int g_GRAPHICAL_DETAIL;
 
 extern int g_DIFFICULTY;
 

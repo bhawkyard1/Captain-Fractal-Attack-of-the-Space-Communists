@@ -112,7 +112,7 @@ public:
   void setEnergy(const float _e) {m_energy = _e;}
   float getEnergy() const {return m_energy;}
   float getCooldown() const {return m_coolDown;}
-  void setCooldown(const float _f) {m_coolDown = _f;}
+  void setCooldown(const float _f);
 
   void setMissiles(const int _m) {m_missiles = _m;}
   void incrMissiles(const int _m) {m_missiles += _m;}

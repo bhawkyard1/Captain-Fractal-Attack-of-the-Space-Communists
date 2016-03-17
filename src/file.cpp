@@ -219,7 +219,7 @@ void loadConfig()
     {
       if(strings.at(i) == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
       else if(strings.at(i) == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings.at(i) == "background_detail") g_BACKGROUND_DOTS = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings.at(i) == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
       else if(strings.at(i) == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
       else if(strings.at(i) == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
     }
@@ -230,8 +230,7 @@ void loadConfig()
   std::cout << "g_HALFWIN is " << g_HALFWIN.m_x << ", " << g_HALFWIN.m_y << std::endl;
 
   std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;
-  std::cout << "g_DIFFICULTY: " << g_DIFFICULTY << std::endl;
-  std::cout << "Background Particles: " << g_BACKGROUND_DOTS << std::endl;
+  std::cout << "Difficulty: " << g_DIFFICULTY << std::endl;
   std::cout << "Devmode: " << g_DEV_MODE << std::endl;
 }
 

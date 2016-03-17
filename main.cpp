@@ -590,23 +590,19 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     {
     case SDLK_w:
         ply->accelerate(1);
-        uni->setVel(-ply->getVel());
         break;
     case SDLK_s:
         if(*keymod == 1) saveGame(uni);
         else
         {
             ply->accelerate(-1);
-            uni->setVel(-ply->getVel());
         }
         break;
     case SDLK_a:
         ply->dodge(1);
-        uni->setVel(-ply->getVel());
         break;
     case SDLK_d:
         ply->dodge(-1);
-        uni->setVel(-ply->getVel());
         break;
     case SDLK_ESCAPE:
         uni->setPause(true);

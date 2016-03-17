@@ -14,8 +14,8 @@ void player::ctrlUpdate()
 {
   if(g_GAME_OVER) return;
   vec2 v = getVel();
-  setPos({v.m_x, v.m_y});
-  setPPos({v.m_x, v.m_y});
+  setPos({-v.m_x, -v.m_y});
+  setPPos({-v.m_x, -v.m_y});
   vec2 p = getPos();
   p *= g_ZOOM_LEVEL;
   p += g_HALFWIN;

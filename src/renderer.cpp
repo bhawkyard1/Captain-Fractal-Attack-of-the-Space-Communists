@@ -32,6 +32,9 @@ renderer::renderer(
 
     loadTextures();
 
+    m_cameraShake = 0.0f;
+    m_cameraShakeTargetOffset = {0.0f, 0.0f};
+    m_cameraShakeOffset = {0.0f, 0.0f};
 }
 
 renderer::~renderer()
@@ -172,6 +175,21 @@ void renderer::loadTextureSet(
     m_textures.insert({_key, temp_tex});
 }
 
+void renderer::update(const float _dt)
+{
+    m_cameraShake = clamp(m_cameraShake - _dt * 10.0f, 0.0f, 15.0f);
+
+    //m_cameraShake = 15.0f;
+
+    if(magns(m_cameraShakeTargetOffset - m_cameraShakeOffset) < 40.0f)
+    {
+        m_cameraShakeTargetOffset = randVec(m_cameraShake);
+    }
+    m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * _dt * 4.0f;
+
+    g_ZOOM_LEVEL +=  m_cameraShake * 0.0001f;
+}
+
 void renderer::loadFontSpriteSheet(
         std::string _name,
         std::string _path,
@@ -267,6 +285,7 @@ void renderer::drawTextureSet(
 
     _pos *= g_ZOOM_LEVEL;
     _pos += g_HALFWIN;
+    _pos += m_cameraShakeOffset;
 
     w *= g_ZOOM_LEVEL / 2;
     h *= g_ZOOM_LEVEL / 2;
@@ -334,6 +353,7 @@ void renderer::drawTexture(
 
     _pos *= g_ZOOM_LEVEL;
     _pos += g_HALFWIN;
+    _pos += m_cameraShakeOffset;
 
     w *= g_ZOOM_LEVEL / 2;
     h *= g_ZOOM_LEVEL / 2;
@@ -370,9 +390,12 @@ void renderer::drawLine(
 {
     _start *= g_ZOOM_LEVEL;
     _start += g_HALFWIN;
+    _start += m_cameraShakeOffset;
 
     _end *= g_ZOOM_LEVEL;
     _end += g_HALFWIN;
+    _end += m_cameraShakeOffset;
+
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);
     SDL_RenderDrawLine(m_renderer, _start.m_x, _start.m_y, _end.m_x, _end.m_y);
 }
@@ -386,9 +409,11 @@ void renderer::drawLineGr(
 {
     _start *= g_ZOOM_LEVEL;
     _start += g_HALFWIN;
+    _start += m_cameraShakeOffset;
 
     _end *= g_ZOOM_LEVEL;
     _end += g_HALFWIN;
+    _end += m_cameraShakeOffset;
 
     SDL_SetRenderDrawColor(m_renderer, _scol[0], _scol[1], _scol[2], _scol[3]);
     int p0[2] = {static_cast<int>(_start.m_x), static_cast<int>(_start.m_y)};
@@ -454,6 +479,9 @@ void renderer::drawCircle(int _x,
 {
     _x = _x * g_ZOOM_LEVEL + g_HALFWIN.m_x;
     _y = _y * g_ZOOM_LEVEL + g_HALFWIN.m_y;
+    _x += m_cameraShakeOffset.m_x;
+    _y += m_cameraShakeOffset.m_y;
+
     _radius *= g_ZOOM_LEVEL;
 
     SDL_SetRenderDrawColor(m_renderer, _col[0], _col[1], _col[2], _col[3]);

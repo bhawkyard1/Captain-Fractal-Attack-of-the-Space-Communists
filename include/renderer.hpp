@@ -28,11 +28,16 @@ class renderer
   int m_h;
   std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
   std::unordered_map<std::string, sprite_sheet> m_letters;
+  float m_cameraShake;
+  vec2 m_cameraShakeTargetOffset;
+  vec2 m_cameraShakeOffset;
 public:
   renderer(int _w, int _h);
   ~renderer();
   int init();
   void loadTextures();
+
+  void update(const float _dt);
 
   void loadFontSpriteSheet(std::string _name, std::string _path, int _size);
   void loadSpriteSheet();
@@ -63,6 +68,8 @@ public:
   void finalise();
 
   SDL_Surface * getSurface(std::string _path);
+
+  void addShake(float _s) {m_cameraShake += _s;}
 };
 
 #endif

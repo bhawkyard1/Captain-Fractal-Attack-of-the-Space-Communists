@@ -31,12 +31,12 @@ universe::universe()
   m_cCol[1] = 90.0f;
   m_cCol[2] = 100.0f;
 
-  for(int i = 0; i < g_BACKGROUND_DOTS; i++)
+  for(int i = 0; i < 2048 * pow(2, g_GRAPHICAL_DETAIL) ; i++)
   {
     m_dots.push_back(stardust(m_cCol));
   }
 
-  for(int i = 0; i < g_BACKGROUND_DOTS; i++)
+  for(int i = 0; i < 1024 * pow(2, g_GRAPHICAL_DETAIL); i++)
   {
     std::string id;
     switch(rand()%4)
@@ -120,6 +120,8 @@ void universe::update(const float _dt)
   //If m_paused, we do not update the game.
   if(m_paused) return;
 
+  m_drawer.update(_dt);
+
   m_pos += m_vel;
   m_time_elapsed += _dt;
   //Interpolate towards desired background colour.
@@ -149,6 +151,8 @@ void universe::update(const float _dt)
     m_ply.update(_dt);
   }
 
+  m_vel = -m_ply.getVel();
+
   //If player health is below 25%, emit smoke.
   if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getHealth() / m_ply.getMaxHealth(), "SMOKE");
 
@@ -158,6 +162,7 @@ void universe::update(const float _dt)
     addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER );
     m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
     m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
+    m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
   }
 
   if(!g_DEV_MODE and m_ply.getHealth() <= 0.0f and !g_GAME_OVER)
@@ -174,6 +179,7 @@ void universe::update(const float _dt)
     playSnd(EXPLOSION_SND);
 
     m_ply.setPos({F_INF, F_INF});
+    m_drawer.addShake(20.0f);
 
     m_ui.clear();
 
@@ -333,7 +339,7 @@ void universe::update(const float _dt)
         for(int fx = 0; fx < rand() % 5 + 1; fx++)
         {
           vec2 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
-          pos += m_asteroids.at(i).getPos();
+          pos += m_asteroids[i].getPos();
           addpfx(pos, m_asteroids.at(i).getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
           for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids.at(i).getVel() + m_vel + randVec(6.0f), 0.0f, "SMOKE");
         }
@@ -349,6 +355,7 @@ void universe::update(const float _dt)
           }
         }
         playSnd(EXPLOSION_SND);
+        m_drawer.addShake(12000.0f / mag(m_asteroids[i].getPos() - m_ply.getPos()));
       }
       swapnpop(&m_asteroids, i);
     }
@@ -377,6 +384,7 @@ void universe::update(const float _dt)
         addScore( m_agents.at(i).getScore() );
         if( rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
         playSnd(EXPLOSION_SND);
+        m_drawer.addShake(8000.0f / mag(m_agents[i].getPos() - m_ply.getPos()));
       }
       if(emnityCheck(m_agents.at(i).getTeam(), TEAM_PLAYER)) m_factionCounts[GALACTIC_FEDERATION]--;
       else m_factionCounts[m_agents.at(i).getTeam()]--;
@@ -1019,6 +1027,7 @@ void universe::checkCollisions()
         if(lineIntersectCircle(sp, spv, dp, m_ply.getRadius()))
         {
           playSnd(RICOCHET_SND);
+          m_drawer.addShake(5.0f);
           addpfx(sp + randVec(32.0f), m_ply.getVel(), m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
           harm = m_partitions.lasers.at(p).at(l)->getDmg();
 

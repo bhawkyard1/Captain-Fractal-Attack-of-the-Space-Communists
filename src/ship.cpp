@@ -529,6 +529,8 @@ void ship::update(const float _dt)
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
     m_accelerating = false;
+
+    addVel(-getVel() * 0.00001f);
 }
 
 void ship::damage(float _d)
@@ -640,4 +642,10 @@ void ship::setGrade(
 int ship::getScore() const
 {
     return static_cast<int>((m_maxHealth + m_maxShield + m_maxEnergy) / 100.0f);
+}
+
+void ship::setCooldown(const float _f)
+{
+    m_coolDown = _f;
+    addVel(-vec(m_angle + 90.0f) * getCurWeapStat(STOPPING_POWER) * 5.0f);
 }
