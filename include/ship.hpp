@@ -5,7 +5,7 @@
 #include <array>
 #include <unordered_map>
 
-#include "SDL2/SDL.h"
+#include <SDL.h>
 
 #include "weapons.hpp"
 #include "common.hpp"

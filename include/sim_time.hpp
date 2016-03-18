@@ -7,7 +7,7 @@ class sim_time
 {
     typedef std::chrono::high_resolution_clock hr_clock;
 
-    const double m_tickRate = static_cast<const double>(1000000000.0f);
+    const double m_tickRate = static_cast<const double>(8000000.0f);
     double m_time_since_creation;
     //Variables to hold the start and end measurements.
     long int m_start;

@@ -3,6 +3,10 @@
 #include <math.h>
 #include <vector>
 #include <time.h>
+
+#include <ciso646>
+
+#undef main
 #include <cstdlib>
 
 //Used for string/file operations
@@ -11,7 +15,7 @@
 #include <sstream>
 
 //SDL headers
-#include "SDL2/SDL.h"
+#include <SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
@@ -42,11 +46,12 @@
 
 //Contains funtions to save/load the game
 #include "file.hpp"
-
+/*
 #ifdef _WIN32
 #include <windows.h>
-#undef interface
 #endif
+*/
+#undef interface
 
 //Function prototypes.
 void gameInit();
@@ -66,13 +71,13 @@ int main(int argc, char* argv[])
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
     loadConfig();
     universe uni;
-#ifdef _WIN32
+/*#ifdef _WIN32
     AllocConsole() ;
     AttachConsole( GetCurrentProcessId() );
     freopen( "CON", "w", stdout );
     freopen( "CON", "w", stdin );
     freopen( "CON", "w", stderr );
-#endif
+#endif*/
 
     sfxInit();
     loadSounds();

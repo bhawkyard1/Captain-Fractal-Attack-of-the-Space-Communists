@@ -1,8 +1,10 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
+#include <SDL.h>
+#include <SDL2/SDL_image.h>
+
+#include <ciso646>
 
 #include <iostream>
 #include <vector>

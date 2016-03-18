@@ -116,6 +116,7 @@ void universe::addMissile(
 
 void universe::update(const float _dt)
 {
+    std::cout << "dt is " << _dt << std::endl;
   //std::cout << 1/_dt << "fps" << std::endl;
   //If m_paused, we do not update the game.
   if(m_paused) return;

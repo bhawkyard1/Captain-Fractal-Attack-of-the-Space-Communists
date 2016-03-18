@@ -19,12 +19,6 @@
 #if RENDER_MODE == 1
 
 #include <ngl/NGLInit.h>
-#include <ngl/VertexArrayObject.h>
-#include <ngl/Camera.h>
-#include <ngl/Colour.h>
-#include <ngl/Light.h>
-#include <ngl/Transformation.h>
-#include <ngl/Text.h>
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/Obj.h>

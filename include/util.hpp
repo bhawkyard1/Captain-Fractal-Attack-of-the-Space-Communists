@@ -1,11 +1,14 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
+#include <vector>
 #include <math.h>
 #include <limits>
 #include <algorithm>
 #include <sstream>
 #include <time.h>
+
+#include <ciso646>
 
 #include "SDL2/SDL_ttf.h"
 
