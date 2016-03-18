@@ -211,7 +211,7 @@ void mainMenu(universe &uni)
 
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
-    sim_time clock(120.0f);
+    sim_time clock(60.0f);
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
     while(g_GAME_STATE == MODE_MENU)
@@ -362,7 +362,7 @@ void playGame(universe &uni)
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
-    sim_time clock(120.0f);
+    sim_time clock(60.0f);
 
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
@@ -709,7 +709,7 @@ void playTutorial(universe &uni)
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
-    sim_time clock(120.0f);
+    sim_time clock(60.0f);
 
     std::array<bool, 4> directionsTravelled = {false, false, false, false};
     float timer = 0.0f;
