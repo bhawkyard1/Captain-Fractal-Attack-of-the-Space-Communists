@@ -38,14 +38,18 @@ class renderer_ngl
   ngl::ShaderLib * m_shader;
 
   std::unordered_map<std::string, ngl::Obj*> m_models;
-  std::unordered_map<std::string, ngl::Texture> m_textures;
 
   ngl::Obj * m_test_ship;
   ngl::Texture m_test_texture;
   GLuint m_test_texture_id;
 
   SDL_GLContext m_gl_context;
+
+  GLuint m_screenQuadVAO;
   GLuint m_vao;
+  GLuint m_vertBuffer;
+  GLuint m_colourBuffer;
+
   void loadMatricesToShader();
 
   float m_cameraShake;
@@ -61,6 +65,8 @@ public:
   void update(const float _dt);
 
   void setShader(const std::string _shader) {m_shader->use(_shader);}
+
+  GLuint createVAO(std::vector<ngl::Vec3> _verts);
 
   void drawBackground(float _dt, vec2 _v);
   void drawRect(const vec3 _p, const vec3 _d);

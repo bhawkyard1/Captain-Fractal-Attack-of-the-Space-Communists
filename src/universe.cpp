@@ -116,7 +116,6 @@ void universe::addMissile(
 
 void universe::update(const float _dt)
 {
-    std::cout << "dt is " << _dt << std::endl;
   //std::cout << 1/_dt << "fps" << std::endl;
   //If m_paused, we do not update the game.
   if(m_paused) return;
@@ -357,7 +356,7 @@ void universe::update(const float _dt)
           }
         }
         playSnd(EXPLOSION_SND);
-        m_drawer.addShake(12000.0f / mag(m_asteroids[i].getPos() - m_ply.getPos()));
+        m_drawer.addShake(12000.0f / (1.0f + mag(m_asteroids[i].getPos() - m_ply.getPos())));
       }
       swapnpop(&m_asteroids, i);
     }
@@ -386,7 +385,7 @@ void universe::update(const float _dt)
         addScore( m_agents.at(i).getScore() );
         if( rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
         playSnd(EXPLOSION_SND);
-        m_drawer.addShake(8000.0f / mag(m_agents[i].getPos() - m_ply.getPos()));
+        m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
       }
       if(emnityCheck(m_agents.at(i).getTeam(), TEAM_PLAYER)) m_factionCounts[GALACTIC_FEDERATION]--;
       else m_factionCounts[m_agents.at(i).getTeam()]--;
