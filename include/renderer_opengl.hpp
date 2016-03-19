@@ -48,6 +48,7 @@ class renderer_ngl
   GLuint m_screenQuadVAO;
   GLuint m_vao;
   GLuint m_vertBuffer;
+  GLuint m_UVBuffer;
   GLuint m_colourBuffer;
 
   void loadMatricesToShader();
@@ -69,10 +70,9 @@ public:
   GLuint createVAO(std::vector<ngl::Vec3> _verts);
 
   void drawBackground(float _dt, vec2 _v);
-  void drawRect(const vec3 _p, const vec3 _d);
+  void drawRect(const vec3 _p, const vec3 _d, const float _ang);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
-  void drawLine(const vec2 _start, const vec2 _end);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
   void swapWindow() const { SDL_GL_SwapWindow(m_window); }
   void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
@@ -83,6 +83,8 @@ public:
 
   void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
   void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
+
+  void drawExplosion(const vec2 _pos, const float _d, const float _dt);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}
@@ -96,8 +98,8 @@ public:
   void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod) {return;}
   void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col) {return;}
   void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s) {return;}
-  void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col ) {return;}
-  void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col) {return;}
+  void drawLine(vec2 _start, vec2 _end, std::array<float,4> _lCol );
+  void drawLine(vec2 _start, vec2 _end) {return;}
   void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol) {return;}
   void drawCircle(int x, int y, int radius, std::array<float, 4> _col) {return;}
   void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col) {return;}

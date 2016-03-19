@@ -77,6 +77,15 @@ void main()
 
     fragColour = vec4(v * 0.01, 1.0);
 
+    /*if(gl_FragCoord.x > 960)
+    {
+        fragColour = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+    else
+    {
+        fragColour = vec4(0.0, 1.0, 0.0, 1.0);
+    }*/
+
     //FROM : http://casual-effects.blogspot.co.uk/2013/08/starfield-shader.html
     // Motion blur; increases temporal coherence of undersampled flickering stars
     // and provides temporal filtering under true motion.

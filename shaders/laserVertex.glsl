@@ -10,6 +10,5 @@ uniform mat4 MVP;
 void main()
 {
     vertColour = inColour;
-    //vertColour = vec4(1.0, 0.0, 0.0, 1.0);//inColour;
     gl_Position = MVP * inPosition;
 }

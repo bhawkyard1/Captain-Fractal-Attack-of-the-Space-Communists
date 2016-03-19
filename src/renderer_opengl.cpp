@@ -71,8 +71,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   glViewport(0, 0, m_w, m_h);
 
-  m_view = ngl::lookAt(ngl::Vec3(0,0,1),
-                       ngl::Vec3(0,0,0),
+  m_view = ngl::lookAt(ngl::Vec3(0,1,1),
+                       ngl::Vec3(0,1,0),
                        ngl::Vec3(0,1,0));
 
 
@@ -96,6 +96,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
   createShaderProgram("textured", "textureVertex", "textureFragment");
   createShaderProgram("majorLazer", "laserVertex", "laserFragment");
+  createShaderProgram("explosion", "explosionVertex", "explosionFragment");
 
   m_shader->use("background");
 
@@ -151,11 +152,15 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   m_vao = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, 1.0f, 0.0f)});
 
   m_screenQuadVAO = createVAO({
-        ngl::Vec3(-1.0f, -1.0f, 0.0f),
-        ngl::Vec3(-1.0f, 1.0f, 0.0f),
-        ngl::Vec3(1.0f, 1.0f, 0.0f),
-        ngl::Vec3(1.0f, -1.0f, 0.0f)
+        ngl::Vec3(-1.0f, -1.0f, 0.5f),
+        ngl::Vec3(-1.0f, 1.0f, 0.5f),
+        ngl::Vec3(1.0f, 1.0f, 0.5f),
+        ngl::Vec3(1.0f, -1.0f, 0.5f)
         });
+
+  glGenBuffers(1, &m_vertBuffer);
+  glGenBuffers(1, &m_UVBuffer);
+  glGenBuffers(1, &m_colourBuffer);
   ////////////////////////////////////////////////////////////////
 }
 
@@ -187,6 +192,19 @@ void renderer_ngl::drawShip(const vec2 _p, const float _ang, const std::string _
 
 void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol)
 {
+  vec2 fstart = {_start.m_x, -_start.m_y};
+  vec2 fend = {_end.m_x, -_end.m_y};
+  fstart *= g_ZOOM_LEVEL;
+  fend *= g_ZOOM_LEVEL;
+  fstart += g_HALFWIN - m_cameraShakeOffset;
+  fend += g_HALFWIN - m_cameraShakeOffset;
+
+  m_shader->setRegisteredUniform("fstart", ngl::Vec2(fstart.m_x, fstart.m_y));
+  m_shader->setRegisteredUniform("fend", ngl::Vec2(fend.m_x, fend.m_y));
+  m_shader->setRegisteredUniform("resolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
+
+  //std::cout << "TRANSLATE " << fstart.m_x << ", " << fstart.m_y << std::endl;
+
   glBindVertexArray(m_vao);
 
   std::array<ngl::Vec3, 2> line = {
@@ -200,9 +218,9 @@ void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::arra
   };
 
   //Generate a VBO
-  GLuint vertBuffer;
-  glGenBuffers(1, &vertBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+  //GLuint vertBuffer;
+  //glGenBuffers(1, &vertBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
   glBufferData(GL_ARRAY_BUFFER,
                sizeof(ngl::Vec3) * line.size(),
                &line[0].m_x,
@@ -210,13 +228,13 @@ void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::arra
       );
 
   glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
   glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
 
 
-  GLuint colourBuffer;
-  glGenBuffers(1, &colourBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+  //GLuint colourBuffer;
+  //glGenBuffers(1, &colourBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
   glBufferData(GL_ARRAY_BUFFER,
                sizeof(ngl::Vec4) * vertCol.size(),
                &vertCol[0].m_x,
@@ -224,16 +242,16 @@ void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::arra
       );
 
   glEnableVertexAttribArray(1);
-  glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
   glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
-  //m_transform.setPosition(ngl::Vec3(_start.m_x, _start.m_y, 10.0f));
+  glLineWidth(5.0f * g_ZOOM_LEVEL);
   loadMatricesToShader();
   glDrawArraysEXT(GL_LINES, 0, 2);
 
   glBindVertexArray(0);
 
-  //m_transform.reset();
+  glLineWidth(1.0f);
 }
 
 renderer_ngl::~renderer_ngl()
@@ -417,7 +435,7 @@ std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, cons
   return tri;
 }
 
-void renderer_ngl::drawRect(const vec3 _p, const vec3 _d)
+void renderer_ngl::drawRect(const vec3 _p, const vec3 _d, const float _ang)
 {
   //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
   std::array<ngl::Vec3, 4> quad = {
@@ -428,11 +446,10 @@ void renderer_ngl::drawRect(const vec3 _p, const vec3 _d)
   };
 
   //Make it active
-  glBindVertexArray(m_vao);
+  glBindVertexArray(m_screenQuadVAO);
 
   //Generate a VBO
-  GLuint VBO;
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
   //Copy dat data
   glBufferData(GL_ARRAY_BUFFER,
                sizeof(ngl::Vec3) * quad.size(),
@@ -443,63 +460,118 @@ void renderer_ngl::drawRect(const vec3 _p, const vec3 _d)
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(0);
 
-  glBindVertexArray(0);
+  m_transform.setRotation(ngl::Vec3(0.0f, _ang, 0.0f));
+  m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
+  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 10.0f));
+  loadMatricesToShader();
 
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glViewport(0, 0, m_w, m_h);
   glBindVertexArray(m_vao);
   //loadMatricesToShader();
   glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
   glDisableVertexAttribArray(0);
-
-  m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
-  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 10.0f));
-  loadMatricesToShader();
-  glDrawArraysEXT(GL_LINES, 0, 2);
-
-  glBindVertexArray(0);
 
   m_transform.reset();
 }
 
 void renderer_ngl::drawLine(
     const vec2 _start,
-    const vec2 _end
+    const vec2 _end,
+    const std::array<float, 4> _lCol
     )
+{ 
+    glBindVertexArray(m_vao);
+
+    std::array<ngl::Vec3, 2> line = {
+      ngl::Vec3(_start.m_x, _start.m_y,10.0f),
+      ngl::Vec3(_end.m_x,  _end.m_y,  10.0f)
+    };
+
+    std::array<ngl::Vec4, 2> vertCol = {
+      ngl::Vec4(_lCol[0] / 255.0f, _lCol[1] / 255.0f, _lCol[2] / 255.0f, _lCol[3] / 255.0f),
+      ngl::Vec4(_lCol[0] / 255.0f, _lCol[1] / 255.0f, _lCol[2] / 255.0f, _lCol[3] / 255.0f)
+    };
+
+    //Generate a VBO
+    //GLuint vertBuffer;
+    //glGenBuffers(1, &vertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3) * line.size(),
+                 &line[0].m_x,
+        GL_STATIC_DRAW
+        );
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+
+
+    //GLuint colourBuffer;
+    //glGenBuffers(1, &colourBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec4) * vertCol.size(),
+                 &vertCol[0].m_x,
+        GL_STATIC_DRAW
+        );
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
+    glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    glLineWidth(2.0f * g_ZOOM_LEVEL);
+    loadMatricesToShader();
+    glDrawArraysEXT(GL_LINES, 0, 2);
+
+    glBindVertexArray(0);
+
+    glLineWidth(1.0f);
+}
+
+void renderer_ngl::drawExplosion(const vec2 _pos, const float _d, const float _dt)
 {
-  //m_shader->use("plain");
-  //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-  /*std::array<ngl::Vec3, 2> line = {
-    ngl::Vec3(_start.m_x, _start.m_y,0.0f),
-    ngl::Vec3(_end.m_x,  _end.m_y,  0.0f)
-  };
+    glBindVertexArray(m_vao);
 
-  //Create a VAO
-  glGenVertexArrays(1, &m_vao);
-  //Make it active
-  glBindVertexArray(m_vao);
+    //Verts
+    std::array<ngl::Vec3, 4> verts = {
+        ngl::Vec3(-_d, -_d),
+        ngl::Vec3(-_d, _d),
+        ngl::Vec3(_d, _d),
+        ngl::Vec3(_d, -_d)
+    };
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3) * verts.size(),
+                 &verts[0].m_x,
+        GL_STATIC_DRAW
+        );
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
 
-  //Generate a VBO
-  GLuint VBO;
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  //Copy dat data
-  glBufferData(GL_ARRAY_BUFFER,
-               sizeof(ngl::Vec3) * line.size(),
-               &line[0].m_x,
-      GL_STATIC_DRAW
-      );
+    //UVs
+    std::array<ngl::Vec2, 4> uvs = {
+        ngl::Vec2(0.0, 0.0),
+        ngl::Vec2(0.0, 1.0),
+        ngl::Vec2(1.0, 1.0),
+        ngl::Vec2(1.0, 0.0)
+    };
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3) * uvs.size(),
+                 &uvs[0].m_x,
+        GL_STATIC_DRAW
+        );
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
 
-  glBindVertexArray(0);
 
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  loadMatricesToShader();
-  glBindVertexArray(m_vao);
-  //loadMatricesToShader();
-  glDrawArraysEXT(GL_LINES, 0, 2);*/
+    m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y));
+    loadMatricesToShader();
+    glBindVertexArray(m_vao);
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+    glBindVertexArray(0);
+    m_transform.reset();
 }
 
 void renderer_ngl::loadMatricesToShader()
