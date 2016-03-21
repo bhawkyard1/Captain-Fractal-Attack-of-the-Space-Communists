@@ -26,7 +26,8 @@ in vec4 gl_FragCoord;
 uniform vec2 iResolution;
 uniform float iGlobalTime;
 uniform float zoom;
-uniform vec2 unidir;
+uniform vec2 univel;
+uniform vec2 unipos;
 
 out vec4 fragColour;
 
@@ -44,7 +45,7 @@ void main()
     //This controls the direction.
     //from.z controls background changing.
     //vec3 from = vec3( cos(iGlobalTime), 0.0f, 0.001);
-    vec3 from = vec3(unidir.xy + 20., 0.0001);
+    vec3 from = vec3(unipos.xy + 20., 0.0001);
     from.xy /= 20000.0;
     from += vec3(12.0, 1.0, 0.0);
     from.z *= iGlobalTime;

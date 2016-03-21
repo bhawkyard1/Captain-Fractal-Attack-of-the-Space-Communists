@@ -573,7 +573,7 @@ void universe::update(const float _dt)
 
     if(g_DIFFICULTY == 0) return;
 
-    if(rand() % 1024 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
+    if(rand() % 10 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
         aiTeam pteam;
@@ -824,16 +824,19 @@ void universe::draw(float _dt)
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
     }
 
-    m_drawer.useShader("plain");
     for(auto &i : m_particles)
     {
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
+        vec2 ipos = i.getPos();
 
+        m_drawer.drawExplosion(ipos, {128.0f, 128.0f}, col[3] / 255.0f);
+
+        m_drawer.useShader("plain");
         int k = 0;
         for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
             vec2 jpos = j->getInterpolatedPosition(_dt);
-            vec2 jvel = (j->getVel() + j->getWVel()) * 3;
+            vec2 jvel = (j->getVel() - j->getWVel()) * 3;
             col[3] = i.getAlpha(k);
 
             m_drawer.drawLine(jpos, jpos + jvel, col);

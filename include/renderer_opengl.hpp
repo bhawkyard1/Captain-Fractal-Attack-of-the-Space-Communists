@@ -46,6 +46,7 @@ class renderer_ngl
   SDL_GLContext m_gl_context;
 
   GLuint m_screenQuadVAO;
+  GLuint m_unit_square_vao;
   GLuint m_vao;
   GLuint m_vertBuffer;
   GLuint m_UVBuffer;
@@ -84,7 +85,7 @@ public:
   void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
   void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
 
-  void drawExplosion(const vec2 _pos, const float _d, const float _dt);
+  void drawExplosion(const vec2 _pos, const vec2 _d, const float _alpha);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}
