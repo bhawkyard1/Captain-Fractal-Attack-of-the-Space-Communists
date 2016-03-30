@@ -60,8 +60,9 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     glClear(GL_COLOR_BUFFER_BIT);
 
     //Don't draw further fragments over closer ones.
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    //This messes with transparency using ortho projection, so it's out for now.
+    //glEnable(GL_DEPTH_TEST);
+    //glDepthFunc(GL_LESS);
 
     swapWindow();
 
@@ -160,6 +161,26 @@ renderer_ngl::renderer_ngl(int _w, int _h)
                                     ngl::Vec3(1.0f, 1.0f, 0.5f),
                                     ngl::Vec3(1.0f, -1.0f, 0.5f)
                                 });
+
+    m_spriteVAO = createVAO({
+                            ngl::Vec3(-1.0f, -1.0f, 0.5f),
+                            ngl::Vec3(-1.0f, 1.0f, 0.5f),
+                            ngl::Vec3(1.0f, 1.0f, 0.5f),
+                            ngl::Vec3(1.0f, -1.0f, 0.5f)
+                         },
+                         {
+                            ngl::Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+                            ngl::Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+                            ngl::Vec4(0.0f, 0.0f, 0.0f, 1.0f),
+                            ngl::Vec4(0.0f, 0.0f, 0.0f, 1.0f)
+                         },
+                         {
+                            ngl::Vec2(0.0, 0.0),
+                            ngl::Vec2(0.0, 1.0),
+                            ngl::Vec2(1.0, 1.0),
+                            ngl::Vec2(1.0, 0.0)
+                         }
+                         );
 
     m_screenQuadVAO = createVAO({
                                     ngl::Vec3(-1.0f, -1.0f, 0.5f),
@@ -403,19 +424,93 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts)
     glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
     glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
 
-    std::vector<ngl::Vec4> cols (_verts.size(), ngl::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    return temp_vao;
+}
+
+GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols)
+{
+    GLuint temp_vao;
+    glGenVertexArrays(1, &temp_vao);
+    glBindVertexArray(temp_vao);
+
+    //Generate a VBO
+    GLuint vertBuffer;
+    glGenBuffers(1, &vertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3) * _verts.size(),
+                 &_verts[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
 
     GLuint colourBuffer;
     glGenBuffers(1, &colourBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
     glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Vec4) * cols.size(),
-                 &cols[0].m_x,
+                 sizeof(ngl::Vec4) * _cols.size(),
+                 &_cols[0].m_x,
             GL_STATIC_DRAW
             );
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+    glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    glBindVertexArray(0);
+
+    return temp_vao;
+}
+
+GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols, std::vector<ngl::Vec2> _UVs)
+{
+    GLuint temp_vao;
+    glGenVertexArrays(1, &temp_vao);
+    glBindVertexArray(temp_vao);
+
+    //Generate a VBO
+    GLuint vertBuffer;
+    glGenBuffers(1, &vertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3) * _verts.size(),
+                 &_verts[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    GLuint colourBuffer;
+    glGenBuffers(1, &colourBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec4) * _cols.size(),
+                 &_cols[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
+    glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    glBindVertexArray(0);
+
+    GLuint UVBuffer;
+    glGenBuffers(1, &UVBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec4) * _UVs.size(),
+                 &_UVs[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
     glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
     glBindVertexArray(0);
@@ -445,7 +540,7 @@ std::vector<vec3> renderer_ngl::constructTri(const vec2 _p, const float _d, cons
 void renderer_ngl::drawRect(const vec3 _p, const vec3 _d, const float _ang)
 {
     //m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-    std::array<ngl::Vec3, 4> quad = {
+    /*std::array<ngl::Vec3, 4> quad = {
         ngl::Vec3(_p.m_x,           _p.m_y,           _p.m_z),
         ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y,           _p.m_z),
         ngl::Vec3(_p.m_x + _d.m_x,  _p.m_y + _d.m_y,  _p.m_z),
@@ -465,7 +560,7 @@ void renderer_ngl::drawRect(const vec3 _p, const vec3 _d, const float _ang)
             );
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(0);*/
 
     m_transform.setRotation(ngl::Vec3(0.0f, _ang, 0.0f));
     m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));

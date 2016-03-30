@@ -47,7 +47,9 @@ class renderer_ngl
 
   GLuint m_screenQuadVAO;
   GLuint m_unit_square_vao;
+  GLuint m_spriteVAO;
   GLuint m_vao;
+
   GLuint m_vertBuffer;
   GLuint m_UVBuffer;
   GLuint m_colourBuffer;
@@ -69,6 +71,8 @@ public:
   void setShader(const std::string _shader) {m_shader->use(_shader);}
 
   GLuint createVAO(std::vector<ngl::Vec3> _verts);
+  GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols);
+  GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols, std::vector<ngl::Vec2> _UVs);
 
   void drawBackground(float _dt, vec2 _v);
   void drawRect(const vec3 _p, const vec3 _d, const float _ang);
