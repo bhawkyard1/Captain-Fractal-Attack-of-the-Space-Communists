@@ -16,7 +16,6 @@ void main()
     //vec4 shootingLightCol = vec4(1.0, 0.0, 0.0, 1.0);
 
     fragColour = texture( diffuse, UV );
-
     fragColour += dot(normal, shootingLightPos) * vec4(shootingLightCol.rgb * shootingLightCol.a, shootingLightCol.a);
-    fragColour *= dot(normal, ambientLightPos) * 0.6 + 0.1;
+    fragColour.rgb *= dot(normal, ambientLightPos) * 0.6 + 0.1;
 }

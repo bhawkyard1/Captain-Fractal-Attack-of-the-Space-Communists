@@ -19,6 +19,7 @@ class pfx
     vec2 m_vel;
     vec2 m_wvel;
     bool m_active;
+    float m_force;
 public:
     pfx(const vec2 _p, const vec2 _v, const vec2 _wv, const size_t _no, const float _force, const std::string _identifier);
     void update(float _dt);
@@ -31,6 +32,7 @@ public:
     std::string getIdentifier() const {return m_identifier;}
     std::vector<base> * getParticles() {return &m_particles;}
     vec2 getPos() const {return m_pos;}
+    float getForce() {return m_force;}
 };
 
 #endif

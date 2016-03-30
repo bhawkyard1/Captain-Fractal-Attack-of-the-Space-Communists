@@ -90,7 +90,7 @@ public:
   void setWeap(const int _val) {m_curWeap = _val;}
   void incrWeap(const int _val) {m_curWeap = clampRoll(m_curWeap + _val, 0, static_cast<int>(m_weapons.size()) - 1 );}
   float getCurWeapStat(WEAPON_STAT _stat) const {return m_weapons[m_curWeap][_stat];}
-  std::array<float, 4> getCurWeapCol() const {return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getLaserGlow()};}
+  std::array<float, 4> getCurWeapCol() const;
   std::vector<std::array<float, 10>> getWeaps() const {return m_weapons;}
   std::array<float, 10> getWeap() const {return m_weapons[m_curWeap];}
   int getCurWeap() const {return m_curWeap;}

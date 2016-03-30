@@ -116,6 +116,7 @@ void universe::addMissile(
 
 void universe::update(const float _dt)
 {
+    std::cout << "UPDATE START" << std::endl;
     //std::cout << 1/_dt << "fps" << std::endl;
     //If m_paused, we do not update the game.
     if(m_paused) return;
@@ -186,7 +187,7 @@ void universe::update(const float _dt)
 
         g_GAME_OVER = true;
     }
-
+    std::cout << "UPDATE 1" << std::endl;
     for(auto &i : m_dots)
     {
         i.setWVel(m_vel);
@@ -212,7 +213,7 @@ void universe::update(const float _dt)
             i.spriteGen(m_cCol, w, h);
         }
     }
-
+    std::cout << "UPDATE 2" << std::endl;
     for(int i = m_shots.size() - 1; i >= 0; i--)
     {
         if(m_shots.at(i).getPower() < 0.0f)
@@ -225,6 +226,7 @@ void universe::update(const float _dt)
             m_shots.at(i).update(_dt);
         }
     }
+    std::cout << "UPDATE 3" << std::endl;
     m_partitions.rects.clear();
     m_partitions.ships.clear();
     m_partitions.lasers.clear();
@@ -286,7 +288,7 @@ void universe::update(const float _dt)
 
     detectCollisions(init_rect, init_ship, init_laser, init_missile, init_asteroid, 0);
     checkCollisions();
-
+std::cout << "UPDATE 4" << std::endl;
     for(int i = m_missiles.size() - 1; i >= 0; i--)
     {
         m_missiles.at(i).updatePos(_dt);
@@ -328,7 +330,7 @@ void universe::update(const float _dt)
             m_missiles.at(i).steering();
         }
     }
-
+std::cout << "UPDATE 6" << std::endl;
     for(int i = m_asteroids.size() - 1; i >= 0; i--)
     {
         m_asteroids.at(i).updatePos(_dt);
@@ -366,7 +368,7 @@ void universe::update(const float _dt)
             m_asteroids.at(i).update(_dt);
         }
     }
-
+std::cout << "UPDATE 7" << std::endl;
     //Cull dead m_agents.
     for(int i = m_agents.size() - 1; i >= 0; i--)
     {
@@ -408,25 +410,25 @@ void universe::update(const float _dt)
     }
 
     //Update live m_agents.
-    for(auto &e : m_agents)
+    for(size_t e = 0; e < m_agents.size(); ++e)
     {
-        e.updatePos(_dt);
-        vec2 p = e.getPos();
+        m_agents[e].updatePos(_dt);
+        vec2 p = m_agents[e].getPos();
 
-        if(e.getHealth() < e.getConfidence()) e.setEnergyPriority(2);
-        else if(e.getHealth() < e.getMaxHealth() * 0.75f) e.setEnergyPriority(1);
-        else e.setEnergyPriority(0);
+        if(m_agents[e].getHealth() < m_agents[e].getConfidence()) m_agents[e].setEnergyPriority(2);
+        else if(m_agents[e].getHealth() < m_agents[e].getMaxHealth() * 0.75f) m_agents[e].setEnergyPriority(1);
+        else m_agents[e].setEnergyPriority(0);
 
-        e.setWVel(m_vel);
-        e.update(_dt);
+        m_agents[e].setWVel(m_vel);
+        m_agents[e].update(_dt);
 
-        //If the agent is damaged, add smoke.
-        if(e.getHealth() < e.getMaxHealth()) addParticleSprite(p, e.getVel(), e.getHealth() / e.getMaxHealth(), "SMOKE");
+        //If the agent is damaged, add smokm_agents[e].
+        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getHealth() / m_agents[e].getMaxHealth(), "SMOKE");
 
         float minDist = F_MAX;
-        e.setTarget(nullptr);
+        m_agents[e].setTarget(nullptr);
 
-        if(e.getClassification() == PLAYER_MINER_DROID) //Set miner targets
+        if(m_agents[e].getClassification() == PLAYER_MINER_DROID) //Set miner targets
         {
             //Find the closest asteroid.
             for(auto &k : m_asteroids)
@@ -434,15 +436,15 @@ void universe::update(const float _dt)
                 float nd = magns(p - k.getPos());
                 if(nd < minDist)
                 {
-                    e.setTarget( &k );
-                    e.setGoal(GOAL_ATTACK);
+                    m_agents[e].setTarget( &k );
+                    m_agents[e].setGoal(GOAL_ATTACK);
                     minDist = nd;
                 }
             }
         }
-        else if(e.getClassification() == PLAYER_GRAVWELL) //Gravwell attraction
+        else if(m_agents[e].getClassification() == PLAYER_GRAVWELL) //Gravwell attraction
         {
-            //Attract m_asteroids based on distance.
+            //Attract m_asteroids based on distancm_agents[e].
             for(auto &k : m_asteroids)
             {
                 vec2 incr = p - k.getPos();
@@ -453,24 +455,24 @@ void universe::update(const float _dt)
                 else k.addVel( -k.getVel() * 0.0125f );
             }
         }
-        else if(e.getClassification() == PLAYER_BARRACKS)
+        else if(m_agents[e].getClassification() == PLAYER_BARRACKS)
         {
             //Spawn wingman.
             if(rand() % 2048 == 0 and m_factionCounts[TEAM_PLAYER] < 20) spawnShip(TEAM_PLAYER, p);
         }
-        else if(e.getCanShoot()) //Default m_target acquisition
+        else if(m_agents[e].getCanShoot()) //Default m_target acquisition
         {
             //Get closest enemy.
             for(auto &k : m_agents)
             {
-                if(&e == &k) continue;
+                if(&m_agents[e] == &k) continue;
 
                 float nd = magns(p - k.getPos());
-                if(nd < minDist and emnityCheck(e.getTeam(), k.getTeam()))
+                if(nd < minDist and emnityCheck(m_agents[e].getTeam(), k.getTeam()))
                 {
-                    e.setTarget( (enemy*)&k );
-                    if(e.getClassification() != PLAYER_TURRET) e.setGoal(GOAL_ATTACK);
-                    else e.setGoal(GOAL_TURRET);
+                    m_agents[e].setTarget( (enemy*)&k );
+                    if(m_agents[e].getClassification() != PLAYER_TURRET) m_agents[e].setGoal(GOAL_ATTACK);
+                    else m_agents[e].setGoal(GOAL_TURRET);
                     minDist = nd;
                 }
             }
@@ -478,57 +480,56 @@ void universe::update(const float _dt)
 
         //Setting the follow distances of the different units.
         float fd = 0.0f;
-        if(e.getTeam() == TEAM_PLAYER) fd = 1500.0f;
-        else if(e.getTeam() == TEAM_PLAYER_MINER) fd = 20000.0f;
-        float nd = magns(m_ply.getPos() - e.getPos());
+        if(m_agents[e].getTeam() == TEAM_PLAYER) fd = 1500.0f;
+        else if(m_agents[e].getTeam() == TEAM_PLAYER_MINER) fd = 20000.0f;
+        float nd = magns(m_ply.getPos() - m_agents[e].getPos());
 
-        if(emnityCheck( e.getTeam(), TEAM_PLAYER ) and nd < minDist and !g_GAME_OVER )
+        if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and nd < minDist and !g_GAME_OVER )
         {
             //If the given agent is hostile, and the players distance is the closest ship.
-            e.setTarget( (player*)&m_ply );
-            e.setGoal(GOAL_ATTACK);
+            m_agents[e].setTarget( (player*)&m_ply );
+            m_agents[e].setGoal(GOAL_ATTACK);
             minDist = nd;
         }
-        else if(e.getCanMove() and !emnityCheck( e.getTeam(), TEAM_PLAYER ) and ( nd > fd * fd or e.getTarget() == nullptr ) and !e.inCombat())
+        else if(m_agents[e].getCanMove() and !emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > fd * fd or m_agents[e].getTarget() == nullptr ) and !m_agents[e].inCombat())
         {
             //If the agent is non-hostile AND not in combat AND it either has no m_target, OR it is too far away, is follows the player.
-            e.setTarget( (player*)&m_ply );
-            e.setGoal( GOAL_CONGREGATE );
+            m_agents[e].setTarget( (player*)&m_ply );
+            m_agents[e].setGoal( GOAL_CONGREGATE );
         }
-        else if( e.getTarget() == nullptr )
+        else if( m_agents[e].getTarget() == nullptr )
         {
-            //If the agent has no m_target, it becomes idle.
-            e.setGoal( GOAL_IDLE );
+            //If the agent has no m_target, it becomes idlm_agents[e].
+            m_agents[e].setGoal( GOAL_IDLE );
         }
-        //std::cout << "P1" << std::endl;
-        if(emnityCheck( e.getTeam(), TEAM_PLAYER ) and e.getHealth() < e.getConfidence() and e.getCanMove())
+
+        if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
         {
             //If the enemy can move and is scared, runs away.
-            removeFromSquad(&e, getSquadFromID(e.getSquadID()));
-            e.setGoal(GOAL_FLEE);
+            removeFromSquad(&m_agents[e], getSquadFromID(m_agents[e].getSquadID()));
+            m_agents[e].setGoal(GOAL_FLEE);
         }
-        //std::cout << "P2" << std::endl;
-        if(e.isFiring() and e.getCooldown() <= 0)
+
+        if(m_agents[e].isFiring() and m_agents[e].getCooldown() <= 0)
         {
             //If the agent is shooting, add lasers.
-            e.shoot();
-            addShot(e.getPos() - e.getVel(), e.getVel(), e.getAng(), e.getWeap(), e.getTeam());
-            e.setCooldown( (e.getCurWeapStat(COOLDOWN)) );
-            e.setFiring(false);
+            m_agents[e].shoot();
+            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam());
+            m_agents[e].setCooldown( (m_agents[e].getCurWeapStat(COOLDOWN)) );
+            m_agents[e].setFiring(false);
         }
 
         //If too far from group center, congregate at center.
-        if(e.getSquadID() >= 0 and !e.inCombat() and magns(p - m_squads[e.getSquadID()].m_centerPoint) > sqr(m_squads[e.getSquadID()].m_regroupDist) )
+        if(m_agents[e].getSquadID() >= 0 and !m_agents[e].inCombat() and magns(p - m_squads[m_agents[e].getSquadID()].m_centerPoint) > sqr(m_squads[m_agents[e].getSquadID()].m_regroupDist) )
         {
-            e.setTarget(nullptr);
-            e.setTPos( m_squads[e.getSquadID()].m_centerPoint );
-            e.setTVel( m_squads[e.getSquadID()].m_averageVel );
-            e.setGoal(GOAL_CONGREGATE);
+            m_agents[e].setTarget(nullptr);
+            m_agents[e].setTPos( m_squads[m_agents[e].getSquadID()].m_centerPoint );
+            m_agents[e].setTVel( m_squads[m_agents[e].getSquadID()].m_averageVel );
+            m_agents[e].setGoal(GOAL_CONGREGATE);
         }
-
         //Update behaviour, steer towards m_target.
-        e.behvrUpdate();
-        e.steering();
+        m_agents[e].behvrUpdate();
+        m_agents[e].steering();
     }
 
     //Ship spawning functions.
@@ -600,6 +601,7 @@ void universe::update(const float _dt)
         a.update(_dt);
         m_asteroids.push_back(a);
     }
+    std::cout << "UPDATE E" << std::endl;
 }
 
 #if RENDER_MODE == 0
@@ -795,6 +797,7 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
+    std::cout << "DRAW START" << std::endl;
     m_drawer.update(_dt);
     m_drawer.clear();
 
@@ -817,7 +820,9 @@ void universe::draw(float _dt)
     m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
     for(auto &i : m_agents)
     {
+        //std::cout << "IDENTIFIER : " << i.getIdentifier() << std::endl;
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), i.getCurWeapCol());
+        //std::cout << "DRAWN" << std::endl;
     }
     for(auto &i : m_asteroids)
     {
@@ -828,10 +833,11 @@ void universe::draw(float _dt)
     {
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
         vec2 ipos = i.getPos();
+        float dim = i.getForce() * 10.0f;
 
-        m_drawer.drawExplosion(ipos, {32.0f, 32.0f}, col[3] / 255.0f);
+        m_drawer.drawExplosion(ipos, {dim, dim}, col[3] / 255.0f);
 
-        m_drawer.useShader("plain");
+        /*m_drawer.useShader("plain");
         int k = 0;
         for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
@@ -841,28 +847,41 @@ void universe::draw(float _dt)
 
             m_drawer.drawLine(jpos, jpos + jvel, col);
             ++k;
-        }
+        }*/
     }
 
     drawUI();
 
     m_drawer.swapWindow();
+
+    std::cout << "DRAW END" << std::endl;
 }
 
 void universe::drawUI()
 {
-  //m_drawer.drawRect({0.0f, 0.0f}, {200.0f, 200.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
+    //m_drawer.drawRect({0.0f, 0.0f}, {200.0f, 200.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
 
-  m_drawer.statusBars(&m_ply);
-  for(auto &i : *m_ui.getElements())
-  {
-    for(auto &j : *i.getButtons())
+    if(!g_GAME_OVER)
     {
-      vec2 dim = j.getDim();
-      vec2 pos = j.getPos() + dim / 2.0f;
-      m_drawer.drawRect({pos.m_x, pos.m_y, 0.0f}, {dim.m_x, dim.m_y, 0.0f}, 0.0f, j.getDrawCol());
+        m_drawer.statusBars(&m_ply);
     }
-  }
+
+    for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
+    {
+        if(!i->isVisible()) continue;
+        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
+        {
+            vec2 dim = j->getDim();
+            vec2 pos = j->getPos();
+            pos.m_x += dim.m_x / 2.0f;
+            pos.m_y += dim.m_y;
+            m_drawer.drawRect({pos.m_x, pos.m_y, 1.0f}, {dim.m_x, dim.m_y, 1.0f}, 0.0f, j->getDrawCol());
+            /*pos += dim / 2.0f;
+            m_drawer.drawRect({pos.m_x, pos.m_y, 1.0f}, {dim.m_x, dim.m_y, 1.0f}, 0.0f, j.getDrawCol());
+            pos += dim / 2.0f;
+            m_drawer.drawRect({pos.m_x, pos.m_y, 1.0f}, {dim.m_x, dim.m_y, 1.0f}, 0.0f, j.getDrawCol());*/
+        }
+    }
 }
 #endif
 

@@ -31,7 +31,7 @@ static std::array<std::array<float,10>,18> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 1	14
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 2	15
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 3	16
-     {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}},//P gunship laser	17
+     {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}}//P gunship laser	17
  }};
 
 inline float getEnergyCost(int weap)

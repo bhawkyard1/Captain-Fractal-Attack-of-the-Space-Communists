@@ -14,7 +14,7 @@
 #include "ship.hpp"
 #include "laser.hpp"
 #include "player.hpp"
-#include "fontChar.hpp"
+#include "sprite_sheet_opengl.hpp"
 
 #if RENDER_MODE == 1
 

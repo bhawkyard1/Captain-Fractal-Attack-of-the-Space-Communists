@@ -3,14 +3,13 @@
 #include "util.hpp"
 #include "common.hpp"
 
-pfx::pfx(
-        vec2 _p,
-        vec2 _v,
-        vec2 _wv,
-        size_t _no,
-        float _force,
-        std::string _identifier
-        )
+pfx::pfx(const vec2 _p,
+        const vec2 _v,
+        const vec2 _wv,
+        const size_t _no,
+        const float _force,
+        const std::string _identifier
+         )
 {
     m_glowA = clamp(255.0f * (_force * _force) / 100.0f, 0.0f, 255.0f);
 
@@ -38,6 +37,7 @@ pfx::pfx(
 
         m_alphas.push_back(rand()%100+55);
     }
+    m_force = _force;
 }
 
 void pfx::update(float _dt)

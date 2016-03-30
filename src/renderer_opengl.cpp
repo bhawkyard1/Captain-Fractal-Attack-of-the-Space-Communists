@@ -16,6 +16,9 @@
 
 #include <ngl/VAOPrimitives.h>
 
+#include <SDL2/SDL.h>
+#include <SDL_ttf.h>
+
 renderer_ngl::renderer_ngl(int _w, int _h)
 {
     init();
@@ -72,8 +75,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
     glViewport(0, 0, m_w, m_h);
 
-    m_view = ngl::lookAt(ngl::Vec3(0,1,1),
-                         ngl::Vec3(0,1,0),
+    m_view = ngl::lookAt(ngl::Vec3(0,0,1),
+                         ngl::Vec3(0,0,0),
                          ngl::Vec3(0,1,0));
 
 
@@ -90,8 +93,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     m_uiProject = ngl::ortho(
           0.0f,
           g_WIN_WIDTH,
-          g_WIN_HEIGHT - 50.0f,
-          -50.0f,
+          g_WIN_HEIGHT,
+          0.0f,
           -256.0,
           256.0
           );
@@ -168,10 +171,10 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     m_vao = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, 1.0f, 0.0f)});
 
     m_unit_square_vao = createVAO({
-                                    ngl::Vec3(-1.0f, -1.0f, 0.5f),
-                                    ngl::Vec3(-1.0f, 1.0f, 0.5f),
-                                    ngl::Vec3(1.0f, 1.0f, 0.5f),
-                                    ngl::Vec3(1.0f, -1.0f, 0.5f)
+                                    ngl::Vec3(-0.5f, -0.5f, 0.5f),
+                                    ngl::Vec3(-0.5f, 0.5f, 0.5f),
+                                    ngl::Vec3(0.5f, 0.5f, 0.5f),
+                                    ngl::Vec3(0.5f, -0.5f, 0.5f)
                                 });
 
     m_spriteVAO = createVAO({
@@ -236,8 +239,8 @@ void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::arra
     vec2 fend = {_end.m_x, -_end.m_y};
     fstart *= g_ZOOM_LEVEL;
     fend *= g_ZOOM_LEVEL;
-    fstart += g_HALFWIN - m_cameraShakeOffset;
-    fend += g_HALFWIN - m_cameraShakeOffset;
+    fstart += g_HALFWIN + m_cameraShakeOffset;
+    fend += g_HALFWIN + m_cameraShakeOffset;
 
     m_shader->setRegisteredUniform("fstart", ngl::Vec2(fstart.m_x, fstart.m_y));
     m_shader->setRegisteredUniform("fend", ngl::Vec2(fend.m_x, fend.m_y));
@@ -345,8 +348,8 @@ void renderer_ngl::update(const float _dt)
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
                 g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
-                g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y + 1.0f,
-                -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y + 1.0f,
+                g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
+                -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
                 -256.0,
                 256.0
                 );
@@ -551,9 +554,9 @@ void renderer_ngl::drawRect(const vec3 _p, const vec3 _d, const float _ang, std:
   m_shader->use("debug");
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
 
-  m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z);
-  m_transform.setScale(_d.m_x, _d.m_y, _d.m_z);
   m_transform.setRotation(0.0f, 0.0f, _ang);
+  m_transform.setScale(_d.m_x, _d.m_y, _d.m_z);
+  m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z);
   loadTransformToShader();
 
   glBindVertexArray(m_unit_square_vao);
@@ -720,6 +723,64 @@ void renderer_ngl::statusBars(player * _ply)
   //energy
   col = {0.2f, 0.9f, 0.2f, 1.0f};
   drawRect({0,32}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 8}, 0.0f, col);
+}
+
+void renderer_ngl::loadFontSpriteSheet(
+    std::string _name,
+    std::string _path,
+    int _size
+    )
+{
+  sprite_sheet sheet;
+
+  TTF_Font * fnt = TTF_OpenFont(_path.c_str(), _size);
+
+  if(!fnt)
+  {
+    std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+    TTF_CloseFont(fnt);
+    return;
+  }
+
+  std::string ascii;
+  for(int i = 0; i < 33; ++i) ascii += ' ';
+  for(int i = 33; i < 127; ++i)
+  {
+    ascii += static_cast<char>(i);
+  }
+  ascii += "\0";
+
+  for(size_t i = 0; i < ascii.length(); ++i)
+  {
+    //We need to first render to a surface as that's what TTF_RenderText
+    //returns, then load that surface into a texture
+    SDL_Surface * surf = TTF_RenderGlyph_Blended(fnt, ascii[i], {255,255,255});
+
+    if(!surf)
+    {
+      std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+      SDL_FreeSurface(surf);
+      return;
+    }
+
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(m_renderer, surf);
+
+    //Clean up the surface.
+    SDL_FreeSurface(surf);
+
+    if(!texture)
+    {
+      std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
+      SDL_DestroyTexture(texture);
+      return;
+    }
+
+    sheet.m_sheet.push_back(texture);
+  }
+
+  TTF_CloseFont(fnt);
+
+  m_letters.insert({_name, sheet});
 }
 
 #endif

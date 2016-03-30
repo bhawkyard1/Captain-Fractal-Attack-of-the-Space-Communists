@@ -182,7 +182,7 @@ void mainMenu(universe &uni)
     uni.setMaxEnemyCount(20);
     uni.setMaxWingmanCount(10);
 
-    //uni.addBuild({600.0f, 300.0f}, PLAYER_STATION);
+    uni.addBuild({600.0f, 300.0f}, PLAYER_STATION);
 
     for(int i = 0; i < 360; i += 6)
     {
@@ -199,7 +199,7 @@ void mainMenu(universe &uni)
         uni.addBuild(pos, PLAYER_TURRET);
     }
 
-    for(auto i = uni.getAgents()->begin(); i != uni.getAgents()->end(); ++i) i->setVel(-scrollVel);
+    //for(auto i = uni.getAgents()->begin(); i != uni.getAgents()->end(); ++i) i->setVel(-scrollVel);
 
     for(int i = 0; i < 10; ++i)
     {
