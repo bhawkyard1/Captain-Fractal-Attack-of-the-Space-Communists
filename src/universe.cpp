@@ -829,7 +829,7 @@ void universe::draw(float _dt)
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
         vec2 ipos = i.getPos();
 
-        m_drawer.drawExplosion(ipos, {128.0f, 128.0f}, col[3] / 255.0f);
+        m_drawer.drawExplosion(ipos, {32.0f, 32.0f}, col[3] / 255.0f);
 
         m_drawer.useShader("plain");
         int k = 0;
@@ -851,7 +851,18 @@ void universe::draw(float _dt)
 
 void universe::drawUI()
 {
+  //m_drawer.drawRect({0.0f, 0.0f}, {200.0f, 200.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
 
+  m_drawer.statusBars(&m_ply);
+  for(auto &i : *m_ui.getElements())
+  {
+    for(auto &j : *i.getButtons())
+    {
+      vec2 dim = j.getDim();
+      vec2 pos = j.getPos() + dim / 2.0f;
+      m_drawer.drawRect({pos.m_x, pos.m_y, 0.0f}, {dim.m_x, dim.m_y, 0.0f}, 0.0f, j.getDrawCol());
+    }
+  }
 }
 #endif
 

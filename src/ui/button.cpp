@@ -69,12 +69,22 @@ button::button(
 
     m_initCost = _pcost;
     m_cost = _pcost;
+
+    m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
 }
 
 void button::update(int _pts)
 {
-    if(_pts > m_cost) m_dark = false;
-    else m_dark = true;
+    if(_pts > m_cost)
+    {
+      m_dark = false;
+      m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
+    }
+    else
+    {
+      m_dark = true;
+      m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
+    }
 }
 
 void button::updateText(std::string _text)

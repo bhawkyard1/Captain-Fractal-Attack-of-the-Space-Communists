@@ -6,7 +6,6 @@
 #include <array>
 #include <vector>
 
-#include "sprite_sheet.hpp"
 #include "vectors.hpp"
 
 #include "common.hpp"
@@ -15,6 +14,7 @@
 #include "ship.hpp"
 #include "laser.hpp"
 #include "player.hpp"
+#include "fontChar.hpp"
 
 #if RENDER_MODE == 1
 
@@ -23,16 +23,20 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/Obj.h>
 
+//#include <ngl/Text.h>
+
 class renderer_ngl
 {
   //The window we'll be rendering to
   SDL_Window * m_window = NULL;
   //SDL_Renderer * m_renderer = NULL;
   int m_w, m_h;
-  //std::unordered_map<std::string, std::vector<SDL_Texture*>> m_textures;
-  std::unordered_map<std::string, sprite_sheet> m_letters;
+
+  std::unordered_map<std::string, fontChar> m_letters;
+
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
+  ngl::Mat4 m_uiProject;
   ngl::Mat4 m_VP;
   ngl::Transformation m_transform;
   ngl::ShaderLib * m_shader;
@@ -55,6 +59,7 @@ class renderer_ngl
   GLuint m_colourBuffer;
 
   void loadMatricesToShader();
+  void loadTransformToShader();
 
   float m_cameraShake;
   vec2 m_cameraShakeTargetOffset;
@@ -75,7 +80,7 @@ public:
   GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols, std::vector<ngl::Vec2> _UVs);
 
   void drawBackground(float _dt, vec2 _v);
-  void drawRect(const vec3 _p, const vec3 _d, const float _ang);
+  void drawRect(const vec3 _p, const vec3 _d, const float _ang, std::array<float, 4> _col);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
@@ -112,11 +117,11 @@ public:
 
   void queryTexture(std::string identifier, int index, int * w, int * h) {*w = 32.0f; *h = 32.0f;}
   float getTextureRadius(std::string _identifier) {return 32.0f;}
-/*
+
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp) {return;}
-  void statusBars(player * ply) {return;}
-  void drawWeaponStats(player * ply) {return;}*/
+  void statusBars(player * ply);
+  void drawWeaponStats(player * ply) {return;}
 
   void finalise() {swapWindow();}
 

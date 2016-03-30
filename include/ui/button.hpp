@@ -13,6 +13,8 @@ class button
   bool m_selected = false;
   std::array<int, 8> m_col;
   std::array<int, 8> m_tcol;
+  //Variable to track actual current colour.
+  std::array<float, 4> m_dcol;
   std::string m_initLabel;
   std::string m_label;
   int m_initCost;
@@ -39,6 +41,7 @@ public:
   vec2 getPos() {return m_pos;}
   vec2 getDim() {return m_dim;}
 
+  std::array<float, 4> getDrawCol() {return m_dcol;}
   std::array<int, 8> getCol() {return m_col;}
   std::array<int, 8> getTCol() {return m_tcol;}
 
