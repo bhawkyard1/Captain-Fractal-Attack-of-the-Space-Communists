@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
     loadConfig();
     universe uni;
-/*#ifdef _WIN32
+    /*#ifdef _WIN32
     AllocConsole() ;
     AttachConsole( GetCurrentProcessId() );
     freopen( "CON", "w", stdout );
@@ -666,6 +666,11 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     case SDLK_RIGHTBRACKET:
         g_TIME_SCALE = clamp(g_TIME_SCALE + 0.05f, 0.0f, 2.0f);
         std::cout << "Timescale " << g_TIME_SCALE << std::endl;
+        break;
+    case SDLK_i:
+        uni->toggleUIVisible();
+        break;
+    default:
         break;
     }
 }

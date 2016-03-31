@@ -37,6 +37,7 @@ struct col_partition
 
 class universe
 {
+    bool showUI;
     ui::interface m_ui;
     #if RENDER_MODE == 0
       renderer m_drawer;
@@ -142,6 +143,10 @@ public:
 #endif
     bool isEscMenuShown() {return m_escMenuShown;}
     void escMenuTog() {m_escMenuShown = !m_escMenuShown;}
+
+    bool UIVisible() const {return showUI;}
+    void setUIVisible(const bool _b) {showUI = _b;}
+    void toggleUIVisible() {showUI = !showUI;}
 };
 
 #endif

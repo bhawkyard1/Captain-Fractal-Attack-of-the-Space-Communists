@@ -11,6 +11,7 @@ universe::universe()
       m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
       m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
 {
+    showUI = true;
     m_time_elapsed = 0.0;
     m_pos = {0.0f, 0.0f};
     setVel({0,0});
@@ -116,8 +117,6 @@ void universe::addMissile(
 
 void universe::update(const float _dt)
 {
-    std::cout << "UPDATE START" << std::endl;
-    //std::cout << 1/_dt << "fps" << std::endl;
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
@@ -187,7 +186,7 @@ void universe::update(const float _dt)
 
         g_GAME_OVER = true;
     }
-    std::cout << "UPDATE 1" << std::endl;
+
     for(auto &i : m_dots)
     {
         i.setWVel(m_vel);
@@ -213,7 +212,7 @@ void universe::update(const float _dt)
             i.spriteGen(m_cCol, w, h);
         }
     }
-    std::cout << "UPDATE 2" << std::endl;
+
     for(int i = m_shots.size() - 1; i >= 0; i--)
     {
         if(m_shots.at(i).getPower() < 0.0f)
@@ -226,7 +225,7 @@ void universe::update(const float _dt)
             m_shots.at(i).update(_dt);
         }
     }
-    std::cout << "UPDATE 3" << std::endl;
+
     m_partitions.rects.clear();
     m_partitions.ships.clear();
     m_partitions.lasers.clear();
@@ -288,7 +287,7 @@ void universe::update(const float _dt)
 
     detectCollisions(init_rect, init_ship, init_laser, init_missile, init_asteroid, 0);
     checkCollisions();
-std::cout << "UPDATE 4" << std::endl;
+
     for(int i = m_missiles.size() - 1; i >= 0; i--)
     {
         m_missiles.at(i).updatePos(_dt);
@@ -330,7 +329,7 @@ std::cout << "UPDATE 4" << std::endl;
             m_missiles.at(i).steering();
         }
     }
-std::cout << "UPDATE 6" << std::endl;
+
     for(int i = m_asteroids.size() - 1; i >= 0; i--)
     {
         m_asteroids.at(i).updatePos(_dt);
@@ -368,7 +367,7 @@ std::cout << "UPDATE 6" << std::endl;
             m_asteroids.at(i).update(_dt);
         }
     }
-std::cout << "UPDATE 7" << std::endl;
+
     //Cull dead m_agents.
     for(int i = m_agents.size() - 1; i >= 0; i--)
     {
@@ -601,7 +600,6 @@ std::cout << "UPDATE 7" << std::endl;
         a.update(_dt);
         m_asteroids.push_back(a);
     }
-    std::cout << "UPDATE E" << std::endl;
 }
 
 #if RENDER_MODE == 0
@@ -753,7 +751,7 @@ void universe::draw(float _dt)
     }
 
     //Draw the ui
-    drawUI();
+    if(showUI) drawUI();
 
     m_drawer.finalise();
 }
@@ -837,7 +835,7 @@ void universe::draw(float _dt)
 
         m_drawer.drawExplosion(ipos, {dim, dim}, col[3] / 255.0f);
 
-        /*m_drawer.useShader("plain");
+        m_drawer.useShader("plain");
         int k = 0;
         for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
@@ -847,14 +845,12 @@ void universe::draw(float _dt)
 
             m_drawer.drawLine(jpos, jpos + jvel, col);
             ++k;
-        }*/
+        }
     }
 
-    drawUI();
+    if(showUI) drawUI();
 
     m_drawer.swapWindow();
-
-    std::cout << "DRAW END" << std::endl;
 }
 
 void universe::drawUI()

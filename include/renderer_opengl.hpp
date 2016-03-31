@@ -32,7 +32,7 @@ class renderer_ngl
   //SDL_Renderer * m_renderer = NULL;
   int m_w, m_h;
 
-  std::unordered_map<std::string, fontChar> m_letters;
+  std::unordered_map<std::string, spriteSheet> m_letters;
 
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;

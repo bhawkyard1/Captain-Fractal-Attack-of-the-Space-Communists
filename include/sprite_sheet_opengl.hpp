@@ -1,5 +1,5 @@
-#ifndef FONTCHAR_HPP
-#define FONTCHAR_HPP
+#ifndef SPRITESHEETOPENGL_HPP
+#define SPRITESHEETOPENGL_HPP
 
 #include <ngl/NGLInit.h>
 

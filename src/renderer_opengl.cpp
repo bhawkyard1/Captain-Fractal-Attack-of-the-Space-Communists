@@ -725,7 +725,7 @@ void renderer_ngl::statusBars(player * _ply)
   drawRect({0,32}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 8}, 0.0f, col);
 }
 
-void renderer_ngl::loadFontSpriteSheet(
+/*void renderer_ngl::loadFontSpriteSheet(
     std::string _name,
     std::string _path,
     int _size
@@ -781,6 +781,6 @@ void renderer_ngl::loadFontSpriteSheet(
   TTF_CloseFont(fnt);
 
   m_letters.insert({_name, sheet});
-}
+}*/
 
 #endif
