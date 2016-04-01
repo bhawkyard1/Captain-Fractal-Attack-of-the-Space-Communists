@@ -346,7 +346,9 @@ void mainMenu(universe &uni)
         float diff_clamped = clock.getDiff();
         if(diff_clamped == 0.0f) diff_clamped = 0.01f;
 
+        uni.clear();
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
+        uni.swap();
     }
 }
 
@@ -420,7 +422,10 @@ void playGame(universe &uni)
         //Draw the game.
         float diff_clamped = clock.getDiff();
         if(diff_clamped == 0.0f) diff_clamped = 0.01f;
+
+        uni.clear();
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
+        uni.swap();
     }
 }
 
@@ -821,6 +826,8 @@ void playTutorial(universe &uni)
         //Draw the game.
         float diff_clamped = clock.getDiff();
         if(diff_clamped == 0.0f) diff_clamped = 0.01f;
+
+        uni.clear();
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
 
         if(tutStage == STAGE_BEGIN and timer > 1.0f)
@@ -833,7 +840,6 @@ void playTutorial(universe &uni)
             uni.getRenderer()->drawText("WELCOME TO ELITE DANGEROUS V2.0", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 210.0f}, false, 2.0f);
             uni.getRenderer()->drawText("THIS TUTORIAL WILL GUIDE YOU THROUGH SOME OF THE GAMES SYSTEMS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
             uni.getRenderer()->drawText("PRESS 'SPACE' TO UNPAUSE", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
-            uni.getRenderer()->finalise();
         }
         else if(tutStage == STAGE_MOVEMENT_INTRO)
         {
@@ -846,7 +852,6 @@ void playTutorial(universe &uni)
             if(!directionsTravelled[1]) uni.getRenderer()->drawText("A", "pix", ppos + vec(ang) * 100.0f, true, 2.0f);
             if(!directionsTravelled[2]) uni.getRenderer()->drawText("S", "pix", ppos + vec(ang - 90) * 100.0f, true, 2.0f);
             if(!directionsTravelled[3]) uni.getRenderer()->drawText("D", "pix", ppos + vec(ang + 180) * 100.0f, true, 2.0f);
-            uni.getRenderer()->finalise();
             if(std::all_of(
                         std::begin(directionsTravelled),
                         std::end(directionsTravelled),
@@ -863,13 +868,11 @@ void playTutorial(universe &uni)
         {
             uni.getRenderer()->drawText("PRESS 'O' TO ZOOM OUT", "pix", {200.0f, -300.0f}, true, 2.0f);
             uni.getRenderer()->drawText("AND 'P' TO ZOOM BACK IN", "pix", {-2000.0f, 2000.0f}, true, 20.0f);
-            uni.getRenderer()->finalise();
             if(g_ZOOM_LEVEL <= 0.4f) tutStage = STAGE_ZOOM_IN;
         }
         else if(tutStage == STAGE_ZOOM_IN)
         {
             uni.getRenderer()->drawText("AND   'P'   TO   ZOOM   BACK   IN", "pix", {-2000.0f, 500.0f}, true, 20.0f);
-            uni.getRenderer()->finalise();
             if(g_ZOOM_LEVEL >= 0.8f) tutStage = STAGE_SHOOTING;
         }
         else if(tutStage == STAGE_SHOOTING and timer > 1.5f)
@@ -877,7 +880,6 @@ void playTutorial(universe &uni)
             uni.getRenderer()->drawText("OF COURSE, A SPACE GAME WITHOUT LASERS WOULD BE TERRIBLE", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
             uni.getRenderer()->drawText("PRESSING LMB WILL SHOOT IN THE DIRECTION YOU ARE FACING", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
             uni.getRenderer()->drawText("TRY IT OUT!", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
-            uni.getRenderer()->finalise();
         }
         else if(tutStage == STAGE_ENERGY_LEVELS_PAUSE and timer > 1.0f)
         {
@@ -888,7 +890,6 @@ void playTutorial(universe &uni)
             uni.getRenderer()->drawText("PRETTY COOL, RIGHT?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
             uni.getRenderer()->drawText("YOU CAN'T JUST SHOOT FOREVER THOUGH; YOU HAVE TO THINK ABOUT YOUR HEALTH, SHIELDS AND ENERGY", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
             uni.getRenderer()->drawText("YOU CAN SEE ALL THIS IN THE TOP-LEFT", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
-            uni.getRenderer()->finalise();
             if(timer > 10.0f)
             {
                 tutStage = STAGE_ENERGY_LEVELS_2;
@@ -900,7 +901,6 @@ void playTutorial(universe &uni)
             uni.getRenderer()->drawText("SHOOTING, MOVING AND RECHARGING SHIELDS ALL USE ENERGY, SO YOU HAVE TO BE CAREFUL", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
             uni.getRenderer()->drawText("USE THE BUTTONS ON THE RIGHT TO PRIORITISE CERTAIN SYSTEMS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
             uni.getRenderer()->drawText("CTRL CLICK SET THE PRIORITY TO 'GUNS'", "pix", {g_HALFWIN.m_x, g_HALFWIN.m_y - 80.0f}, false, 1.2f);
-            uni.getRenderer()->finalise();
         }
         else if(tutStage == STAGE_ASTEROID_1 and timer > 1.0f)
         {
@@ -917,7 +917,6 @@ void playTutorial(universe &uni)
         {
             vec2 tPos = (*uni.getAsteroids())[0].getPos();
             uni.getRenderer()->drawText("NOW BLOW UP THIS ROCK", "pix", {tPos.m_x + 100, tPos.m_y}, true, 2.0f);
-            uni.getRenderer()->finalise();
 
             if(uni.getAsteroids()->size() == 0 and uni.getScore() >= 10)
             {
@@ -934,14 +933,12 @@ void playTutorial(universe &uni)
             if(timer < 4.0f)
             {
                 uni.getRenderer()->drawText("WHOA, YOU GOT TEN POINTS!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else
             {
                 uni.getRenderer()->drawText("YOU CAN USE YOUR POINTS TO IMPROVE YOUR SHIP, AND TO BUY STRUCTURES AND WINGMEN", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
                 uni.getRenderer()->drawText("YOU CAN GET POINTS BY BLOWING UP ASTEROIDS OR ENEMY SHIPS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
                 uni.getRenderer()->drawText("CTRL-CLICK ON THE LOWER MENU TO GET YOURSELF SOME UPGRADES", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
-                uni.getRenderer()->finalise();
             }
 
             if(uni.getScore() < 4)
@@ -955,12 +952,10 @@ void playTutorial(universe &uni)
             if(timer < 3.0f)
             {
                 uni.getRenderer()->drawText("UH-OH! IT LOOKS LIKE SOME SPACE PIRATES ARE COMING TO STEAL YOUR BOOTY", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else if(timer >= 3.0f and timer < 6.0f)
             {
                 uni.getRenderer()->drawText("WE'D BETTER SHOW THEM WHO'S BOSS", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
-                uni.getRenderer()->finalise();
             }
             else if(timer > 6.0f)
             {
@@ -974,12 +969,10 @@ void playTutorial(universe &uni)
             if(timer < 2.0f)
             {
                 uni.getRenderer()->drawText("SCROLL TO SWITCH WEAPON!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
-                uni.getRenderer()->finalise();
             }
             else if(timer > 2.0f and timer < 4.5f)
             {
                 uni.getRenderer()->drawText("USE THE MINIMAP TO LOCATE ENEMIES!", "pix", {g_WIN_WIDTH - 512.0f, 200.0f}, false, 1.0f);
-                uni.getRenderer()->finalise();
             }
 
             if(uni.getPly()->getHealth() <= 0.0f)
@@ -1003,17 +996,14 @@ void playTutorial(universe &uni)
             if(timer < 1.5f)
             {
                 uni.getRenderer()->drawText("WELL DONE!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else if(timer > 1.5f and timer < 3.0f)
             {
                 uni.getRenderer()->drawText("RIGHT, LET'S BUILD A BASE!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else if(timer > 3.0f and uni.getScore() < 5000)
             {
                 uni.getRenderer()->drawText("ADDING POINTS...", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else
             {
@@ -1028,7 +1018,6 @@ void playTutorial(universe &uni)
                 uni.getRenderer()->drawText("YOU CAN CTRL CLICK AND DRAG STRUCTURES FROM THE CYAN MENU INTO THE WORLD", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
                 uni.getRenderer()->drawText("YOU CAN ALSO BUY WINGMEN, AND MINERS, WHO WILL AUTOMATICALLY DESTROY ASTEROIDS", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
                 uni.getRenderer()->drawText("MAKE YOURSELF A BASE", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
-                uni.getRenderer()->finalise();
             }
             else
             {
@@ -1041,12 +1030,10 @@ void playTutorial(universe &uni)
             if(timer < 3.0f)
             {
                 uni.getRenderer()->drawText("WELL, LET'S SEE HOW WELL YOUR BASE STANDS UP", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else if(timer >= 3.0f and timer < 6.0f)
             {
                 uni.getRenderer()->drawText("GET READY TO FIGHT!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
-                uni.getRenderer()->finalise();
             }
             else if(timer > 6.0f)
             {
@@ -1085,7 +1072,6 @@ void playTutorial(universe &uni)
             if(timer < 3.0f)
             {
                 uni.getRenderer()->drawText("OH, IT LOOKS LIKE THINGS DIDN'T QUITE WORK OUT", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else if(timer > 3.0f and uni.getPly()->getHealth() <= 0.0f)
             {
@@ -1098,7 +1084,6 @@ void playTutorial(universe &uni)
             else if(timer < 6.0f)
             {
                 uni.getRenderer()->drawText("RIGHT, LET'S GIVE THAT ANOTHER GO, SHALL WE?", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-                uni.getRenderer()->finalise();
             }
             else
             {
@@ -1106,6 +1091,8 @@ void playTutorial(universe &uni)
                 timer = 10.0f;
             }
         }
+
+        uni.swap();
     }
 }
 

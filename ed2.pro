@@ -1,4 +1,4 @@
-TARGET = "Elite Dangerous v2.0"
+TARGET = "Captain Fractal: Attack of the Space Communists"
 
 OBJECTS_DIR = obj
 

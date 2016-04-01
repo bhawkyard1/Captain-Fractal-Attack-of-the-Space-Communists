@@ -86,9 +86,13 @@ public:
     void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
     void addBuild(const vec2 _p,const ship_spec _type);
     void addBuild(const ship_spec _type);
+
     void update(const float _dt);
+
+    void clear() {m_drawer.clear();}
     void draw(const float _dt);
     void drawUI();
+    void swap() {m_drawer.swapWindow();}
 
     void detectCollisions(const SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, unsigned short int _lvl);
     void checkCollisions();

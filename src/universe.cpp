@@ -796,7 +796,7 @@ void universe::drawUI()
 void universe::draw(float _dt)
 {
     m_drawer.update(_dt);
-    m_drawer.clear();
+    //m_drawer.clear();
 
     m_drawer.drawBackground(m_time_elapsed, m_pos);
 
@@ -813,6 +813,7 @@ void universe::draw(float _dt)
         m_drawer.drawLaser(ipos, ipos + ivel, icol);
     }
 
+    m_drawer.enableDepthSorting();
     m_drawer.setShader("ship");
     m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
     for(auto &i : m_agents)
@@ -826,6 +827,34 @@ void universe::draw(float _dt)
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
     }
 
+    int mx = 0, my = 0;
+    SDL_GetMouseState(&mx, &my);
+
+    vec2 dpos = {static_cast<float>(mx), static_cast<float>(my)};
+    dpos -= g_HALFWIN;
+    dpos /= g_ZOOM_LEVEL;
+
+    switch(m_mouse_state)
+    {
+    case 7:
+        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_TURRET", 0.5f);
+        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_TURRET", 0.5f);
+        break;
+    case 8:
+        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_GRAVWELL", 0.5f);
+        break;
+    case 9:
+        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_BARRACKS", 0.5f);
+        break;
+    case 10:
+        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_STATION", 0.5f);
+        break;
+    default:
+        break;
+    }
+
+    m_drawer.disableDepthSorting();
+
     for(auto &i : m_particles)
     {
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
@@ -836,7 +865,7 @@ void universe::draw(float _dt)
 
         m_drawer.useShader("plain");
         int k = 0;
-        for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
+        /*for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
             vec2 jpos = j->getInterpolatedPosition(_dt);
             vec2 jvel = (j->getVel()) * 3;
@@ -844,18 +873,18 @@ void universe::draw(float _dt)
 
             m_drawer.drawLine(jpos, jpos + jvel, col);
             ++k;
-        }
+        }*/
     }
 
     if(showUI) drawUI();
 
-    m_drawer.swapWindow();
+    //m_drawer.swapWindow();
 }
 
 void universe::drawUI()
 {
     //m_drawer.drawRect({0.0f, 0.0f}, {200.0f, 200.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
-    m_drawer.drawText("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "pix", {200, 200}, false, 1.0f);
+    //m_drawer.drawText("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "pix", {200, 200}, false, 1.0f);
 
     if(!g_GAME_OVER)
     {

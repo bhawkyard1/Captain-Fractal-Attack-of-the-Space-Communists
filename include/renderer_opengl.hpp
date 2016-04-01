@@ -49,6 +49,7 @@ class renderer_ngl
 
   SDL_GLContext m_gl_context;
 
+  GLuint m_pointVAO;
   GLuint m_screenQuadVAO;
   GLuint m_unit_square_vao;
   GLuint m_spriteVAO;
@@ -82,7 +83,7 @@ public:
   void drawBackground(float _dt, vec2 _v);
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
-  void drawRect(const vec2 _p, const vec2 _d, const float _ang);
+  void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
@@ -92,6 +93,7 @@ public:
 
   void loadAsset(const std::string _key, const std::string _path);
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
+  void drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha);
 
   void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
   void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
@@ -131,6 +133,9 @@ public:
   void addShake(float _s);
 
   GLuint SDLSurfaceToGLTexture(SDL_Surface * _s);
+
+  void enableDepthSorting();
+  void disableDepthSorting();
 };
 
 #endif

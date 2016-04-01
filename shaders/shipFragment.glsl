@@ -5,6 +5,7 @@ in vec3 normal;
 
 uniform sampler2D diffuse;
 uniform vec4 shootingLightCol;
+uniform float alpha;
 
 layout(location = 0) out vec4 fragColour;
 
@@ -18,4 +19,5 @@ void main()
     fragColour = texture( diffuse, UV );
     fragColour += dot(normal, shootingLightPos) * vec4(shootingLightCol.rgb * shootingLightCol.a, shootingLightCol.a);
     fragColour.rgb *= dot(normal, ambientLightPos) * 0.6 + 0.1;
+    fragColour.a *= alpha;
 }
