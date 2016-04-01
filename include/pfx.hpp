@@ -25,6 +25,7 @@ public:
     void update(float _dt);
     bool done() const {return !m_active;}
     void setWVel(vec2 _v) {m_wvel = _v;}
+    vec2 getWVel() const {return m_wvel;}
     std::array<float, 3> getCol() const {return m_col;}
     float getCol(int i) const {return m_col[i];}
     float getAlpha() const {return m_glowA;}

@@ -48,11 +48,12 @@ void pfx::update(float _dt)
 
     for(size_t i = 0; i < m_alphas.size(); ++i)
     {
-        m_particles.at(i).updatePos( _dt );
+        m_particles[i].setWVel(m_wvel);
+        m_particles[i].updatePos( _dt );
 
-        if(m_alphas.at(i) > 0)
+        if(m_alphas[i] > 0)
         {
-            m_alphas.at(i) -= 1;
+            m_alphas[i] -= 1;
             done = false;
         }
     }

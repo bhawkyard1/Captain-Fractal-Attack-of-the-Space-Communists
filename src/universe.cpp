@@ -840,7 +840,7 @@ void universe::draw(float _dt)
         for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
             vec2 jpos = j->getInterpolatedPosition(_dt);
-            vec2 jvel = (j->getVel() - j->getWVel()) * 3;
+            vec2 jvel = (j->getVel()) * 3;
             col[3] = i.getAlpha(k);
 
             m_drawer.drawLine(jpos, jpos + jvel, col);
