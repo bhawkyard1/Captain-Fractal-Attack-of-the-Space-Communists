@@ -9,7 +9,7 @@ bool emnityCheck(const aiTeam _a, const aiTeam _b);
 universe::universe()
     :
       m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
-      m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(getTextureKey(PLAYER_SHIP)) )
+      m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
 {
     showUI = true;
     m_time_elapsed = 0.0;
@@ -100,7 +100,7 @@ void universe::addMissile(
         const aiTeam _team
         )
 {
-    missile m(_p, m_drawer.getTextureRadius("ION_MISSILE_MKI"));
+    missile m(_p, m_drawer.getTextureRadius(ION_MISSILE_MKI));
     m.setVel(_v + computeVector(_angle + 90) * 5);
     m.setWVel(m_vel);
     m.setAng(_angle);
@@ -595,7 +595,7 @@ void universe::update(const float _dt)
         else if(side == 1) ppos = {randFloat(-20000.0f,20000.0f), 20000.0f};
         else if(side == 2) ppos = {-20000.0f, randFloat(-20000.0f,20000.0f)};
         else if(side == 3) ppos = {20000.0f, randFloat(-20000.0f,20000.0f)};
-        ship a(ppos, size, m_drawer.getTextureRadius( getTextureKey(size) ));
+        ship a(ppos, size, m_drawer.getTextureRadius( size ));
         a.setVel( randVec(64.0f) );
         a.update(_dt);
         m_asteroids.push_back(a);
@@ -795,7 +795,6 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
-    std::cout << "DRAW START" << std::endl;
     m_drawer.update(_dt);
     m_drawer.clear();
 
@@ -814,7 +813,7 @@ void universe::draw(float _dt)
         m_drawer.drawLaser(ipos, ipos + ivel, icol);
     }
 
-    m_drawer.setShader("textured");
+    m_drawer.setShader("ship");
     m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
     for(auto &i : m_agents)
     {
@@ -856,6 +855,7 @@ void universe::draw(float _dt)
 void universe::drawUI()
 {
     //m_drawer.drawRect({0.0f, 0.0f}, {200.0f, 200.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
+    m_drawer.drawText("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "pix", {200, 200}, false, 1.0f);
 
     if(!g_GAME_OVER)
     {
@@ -867,15 +867,16 @@ void universe::drawUI()
         if(!i->isVisible()) continue;
         for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
         {
-            vec2 dim = j->getDim();
-            vec2 pos = j->getPos();
-            pos.m_x += dim.m_x / 2.0f;
-            pos.m_y += dim.m_y;
-            m_drawer.drawRect({pos.m_x, pos.m_y, 1.0f}, {dim.m_x, dim.m_y, 1.0f}, 0.0f, j->getDrawCol());
-            /*pos += dim / 2.0f;
-            m_drawer.drawRect({pos.m_x, pos.m_y, 1.0f}, {dim.m_x, dim.m_y, 1.0f}, 0.0f, j.getDrawCol());
-            pos += dim / 2.0f;
-            m_drawer.drawRect({pos.m_x, pos.m_y, 1.0f}, {dim.m_x, dim.m_y, 1.0f}, 0.0f, j.getDrawCol());*/
+            std::array<float, 4> col = j->getDrawCol();
+
+            vec2 jdim = j->getDim();
+            vec2 jpos = j->getPos();
+            jpos.m_x += jdim.m_x / 2.0f;
+            jpos.m_y += jdim.m_y;
+
+            m_drawer.drawButton(jpos, jdim, 0.0f, {col[0], col[1], col[2], col[3]});
+            m_drawer.drawText(j->getLabel(), "pix", jpos, false, 1.0f);
+
         }
     }
 }
@@ -1550,7 +1551,7 @@ void universe::loadShips()
 {
     for(int i = 0; i < static_cast<int>(SHIPS_END); ++i)
     {
-        ship insert( {0.0f, 0.0f}, static_cast<ship_spec>(i), m_drawer.getTextureRadius(getTextureKey(static_cast<ship_spec>(i))) );
+        ship insert( {0.0f, 0.0f}, static_cast<ship_spec>(i), m_drawer.getTextureRadius(static_cast<ship_spec>(i)) );
         g_ship_templates.push_back(insert);
     }
     std::cout << "No of ship types: " << g_ship_templates.size() << std::endl;

@@ -80,7 +80,9 @@ public:
   GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols, std::vector<ngl::Vec2> _UVs);
 
   void drawBackground(float _dt, vec2 _v);
-  void drawRect(const vec3 _p, const vec3 _d, const float _ang, std::array<float, 4> _col);
+
+  void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
+  void drawRect(const vec2 _p, const vec2 _d, const float _ang);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
@@ -97,26 +99,26 @@ public:
   void drawExplosion(const vec2 _pos, const vec2 _d, const float _alpha);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
-  /*void loadTextures() {return;}
+  /*void loadTextures() {return;}*/
 
-  void loadFontSpriteSheet(std::string name, std::string path, int size) {return;}
-  void loadSpriteSheet() {return;}
+  void loadFontSpriteSheet(std::string name, std::string path, int size);
+  /*void loadSpriteSheet() {return;}
   void loadTexture(std::string _key, std::string _path, SDL_BlendMode _b) {return;}
   void loadTextureSet(std::string _key, std::string _set) {return;}
 */
   void setBlendMode (SDL_BlendMode _b) {return;}
   void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod) {return;}
   void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col) {return;}
-  void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s) {return;}
+  void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s);
   void drawLine(vec2 _start, vec2 _end, std::array<float,4> _lCol );
   void drawLine(vec2 _start, vec2 _end) {return;}
   void drawLineGr(vec2, vec2, std::array<float, 4> scol, std::array<float, 4> ecol) {return;}
   void drawCircle(int x, int y, int radius, std::array<float, 4> _col) {return;}
   void drawCircleUI(int x, int y, int radius, std::array<float, 4> _col) {return;}
-  void drawText(const std::string _text, const std::string _font, const vec2 _pos, const bool _wpos) {return;}
 
   void queryTexture(std::string identifier, int index, int * w, int * h) {*w = 32.0f; *h = 32.0f;}
-  float getTextureRadius(std::string _identifier) {return 32.0f;}
+  //float getTextureRadius(ship_spec _type) {return 32.0f;}
+  float getTextureRadius(ship_spec _type) {return g_texture_keys[(_type)].m_radius;}
 
   //UI drawing
   void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp) {return;}
@@ -127,6 +129,8 @@ public:
 
   SDL_Surface * getSurface(std::string path);
   void addShake(float _s);
+
+  GLuint SDLSurfaceToGLTexture(SDL_Surface * _s);
 };
 
 #endif

@@ -2,20 +2,20 @@
 #include "weapons.hpp"
 #include "vectors.hpp"
 
-std::vector<std::string> texture_keys = {
-    "FEDERATION_MKI", "FEDERATION_MKII", "FEDERATION_MKIII", "FEDERATION_MKIV", "FEDERATION_GUNSHIP",
-    "PIRATE_GNAT", "PIRATE_CRUISER", "PIRATE_WRANGLER", "PIRATE_MARAUDER", "PIRATE_GUNSHIP",
-    "PLAYER_MINER_DROID", "PLAYER_TURRET", "PLAYER_STATION", "PLAYER_GRAVWELL", "PLAYER_BARRACKS",
-    "PLAYER_SHIP",
-    "PLAYER_HUNTER", "PLAYER_DEFENDER", "PLAYER_DESTROYER",
-    "ION_MISSILE_MKI",
-    "ASTEROID_SMALL", "ASTEROID_MID", "ASTEROID_LARGE",
-    "SHIPS_END"
+std::vector<tinfo> g_texture_keys = {
+    {"FEDERATION_MKI", 64}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64},
+    {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64},
+    {"PLAYER_MINER_DROID", 16}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
+    {"PLAYER_SHIP", 32},
+    {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32},
+    {"ION_MISSILE_MKI", 16},
+    {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
+    {"SHIPS_END", 0}
 };
 
 std::vector<ship> g_ship_templates;
 
-std::string getTextureKey(ship_spec _s) {return texture_keys[_s];}
+std::string getTextureKey(ship_spec _s) {return g_texture_keys[_s].m_name;}
 ship_spec decrSpec(ship_spec _s) {return static_cast<ship_spec>( static_cast<int>(_s) - 1 );}
 
 ship::ship(

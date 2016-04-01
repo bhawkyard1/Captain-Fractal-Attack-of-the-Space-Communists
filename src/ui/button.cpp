@@ -36,6 +36,8 @@ button::button(
 
     m_initCost = 0;
     m_cost = 0;
+
+    m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
 }
 
 button::button(

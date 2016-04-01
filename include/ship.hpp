@@ -25,7 +25,13 @@ enum ship_spec {
   SHIPS_END
 };
 
-extern std::vector<std::string> g_texture_keys;
+struct tinfo
+{
+  std::string m_name;
+  float m_radius;
+};
+
+extern std::vector<tinfo> g_texture_keys;
 
 std::string getTextureKey(ship_spec _s);
 ship_spec decrSpec(ship_spec _s);

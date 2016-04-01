@@ -19,7 +19,7 @@ win32 {
 
 INCLUDEPATH += $$PWD/include
 
-MOC_DIR=moc
+MOC_DIR = moc
 
 SOURCES += $$PWD/main.cpp \
            $$PWD/src/*.cpp \
@@ -47,15 +47,15 @@ CONFIG += console
 }
 
 win32: {
-PRE_TARGETDEPS+=C:/NGL/lib/NGL.lib
-INCLUDEPATH+=-I c:/boost
-INCLUDEPATH += $$(HOMEDRIVE)/NGL/include/
-DEFINES+=GL42
-DEFINES += WIN32
-DEFINES+=_WIN32
-DEFINES+=_USE_MATH_DEFINES
-LIBS += -LC:/NGL/lib/ -lNGL
-DEFINES+=NO_DLL
+    PRE_TARGETDEPS += C:/NGL/lib/NGL.lib
+    INCLUDEPATH += -I c:/boost
+    INCLUDEPATH += $$(HOMEDRIVE)/NGL/include/
+    DEFINES += GL42
+    DEFINES += WIN32
+    DEFINES += _WIN32
+    DEFINES += _USE_MATH_DEFINES
+    LIBS += -LC:/NGL/lib/ -lNGL
+    DEFINES += NO_DLL
 }
 
 OTHER_FILES += readme.md \
