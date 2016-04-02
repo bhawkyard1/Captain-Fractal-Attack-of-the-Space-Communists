@@ -930,7 +930,7 @@ void universe::drawUI()
         m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false, 1.0f);
 
         m_drawer.statusBars(&m_ply);
-        m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots);
+        m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
     }
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)

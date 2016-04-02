@@ -429,7 +429,7 @@ void ship::accelerate(const float _mult)
     m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + 10.0f * accelMult,0.0f,255.0f);
 
-    m_accelerating = true;
+    setAccelerating(true);
 }
 
 void ship::accelerate(
@@ -455,7 +455,7 @@ void ship::accelerate(
     m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + 10.0f * accelMult,0.0f,255.0f);
 
-    m_accelerating = true;
+    setAccelerating(true);
 }
 
 void ship::dodge(const float _side)
@@ -523,12 +523,10 @@ void ship::update(const float _dt)
 
     m_steeringGlow = clamp(m_steeringGlow - 10.0f, 0.0f, 255.0f);
     m_shieldGlow = clamp(m_shieldGlow - 10.0f, 0.0f, 255.0f);
-    m_engineGlow = clamp(m_engineGlow - 1.0f, 0.0f, 255.0f);
+    if(!m_accelerating) m_engineGlow = clamp(m_engineGlow - 10.0f, 0.0f, 255.0f);
 
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
-
-    m_accelerating = false;
 
     m_drawShot /= 1.5f;
 

@@ -14,6 +14,7 @@
 #include "ship.hpp"
 #include "laser.hpp"
 #include "player.hpp"
+#include "faction.hpp"
 #include "sprite_sheet_opengl.hpp"
 
 #if RENDER_MODE == 1
@@ -84,6 +85,7 @@ public:
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
   void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
+  void drawCircle(const vec2 _p, const float _d);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
@@ -124,7 +126,7 @@ public:
   float getTextureRadius(ship_spec _type) {return g_texture_keys[(_type)].m_radius;}
 
   //UI drawing
-  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
+  void drawMap(std::vector<missile> * _mp, std::vector<enemy> *_ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp);
   void statusBars(player * ply);
   void drawWeaponStats(player * ply) {return;}
 

@@ -85,6 +85,8 @@ public:
   void addVelS(const vec2 _v) {if(m_canMove) addVel(_v * m_inertia * m_enginePower);}
   void accelerate(const float _mult);
   void accelerate(const vec2 _dir, const float _mult);
+  void setAccelerating(const bool _b) {m_accelerating = _b;}
+
   void dodge(const float _side);
 
   void update(const float _dt);

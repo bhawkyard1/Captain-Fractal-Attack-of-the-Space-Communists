@@ -868,7 +868,7 @@ void renderer_ngl::disableDepthSorting()
     glDisable(GL_DEPTH_TEST);
 }
 
-void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::vector<ship> *ap, std::vector<laser> *lp)
+void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp)
 {
   /*SDL_Rect map;
   map.w = 256;
@@ -887,7 +887,7 @@ void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 0.4f));
   drawRect({g_WIN_WIDTH - 256.0f, 0.0f}, {256.0f, 256.0f}, 0.0f, false);
 
-  /*SDL_SetRenderDrawColor(m_renderer, 0, 0, 255, 255);
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, 1.0f));
   for(unsigned int i = 0; i < _lp->size(); i++)
   {
     vec2 lpp = _lp->at(i).getPos();
@@ -895,10 +895,10 @@ void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std
     double x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     double y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
-    SDL_RenderDrawPoint(m_renderer, x, y);
+    drawCircle({x, y}, 1.0f);
   }
 
-  SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 0.0f, 0.1f, 1.0f));
   for(unsigned int i = 0; i < _mp->size(); i++)
   {
     vec2 mpp = _mp->at(i).getPos();
@@ -906,10 +906,10 @@ void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std
     double x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     double y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
-    SDL_RenderDrawPoint(m_renderer, x, y);
+    drawCircle({x, y}, 1.0f);
   }
 
-  SDL_SetRenderDrawColor(m_renderer, 200, 200, 200, 255);
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
   for(unsigned int i = 0; i < _ap->size(); i++)
   {
     vec2 app = _ap->at(i).getPos();
@@ -917,17 +917,17 @@ void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std
     double x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     double y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
 
-    int radius = 1;
-    if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
-    else if(_ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3;
+    float radius = 1.0f;
+    if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2.0f;
+    else if(_ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3.0f;
 
-    drawCircleUI(x, y, radius, {200,200,200,255});
+    drawCircle({x, y}, radius);
   }
 
   for(unsigned int i = 0; i < _ep->size(); i++)
   {
     vec2 epp = _ep->at(i).getPos();
-    int radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
+    float radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
     std::array<int, 4> col;
     col = _fp->at(_ep->at(i).getTeam()).m_colour;
@@ -936,8 +936,22 @@ void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std
     float x = clamp(epp.m_x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
     float y = clamp(epp.m_y / 156.0f + 128.0f, 0.0f, 256.0f);
 
-    drawCircleUI(x,y,radius,col);
-  }*/
+    drawCircle({x, y}, radius);
+  }
+}
+
+void renderer_ngl::drawCircle(const vec2 _p, const float _d)
+{
+    glPointSize(_d);
+
+    glBindVertexArray(m_pointVAO);
+    m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
+    loadMatricesToShader();
+    glDrawArraysEXT(GL_POINTS, 0, 1);
+    glBindVertexArray(0);
+    m_transform.reset();
+
+    glPointSize(1.0f);
 }
 
 #endif
