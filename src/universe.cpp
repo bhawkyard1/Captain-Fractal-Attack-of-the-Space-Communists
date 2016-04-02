@@ -813,6 +813,42 @@ void universe::draw(float _dt)
         m_drawer.drawLaser(ipos, ipos + ivel, icol);
     }
 
+    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
+    m_drawer.drawFlames(
+                m_ply.getPos() + back(rad(m_ply.getAng())) * (m_ply.getRadius() + stat),
+                {m_ply.getRadius(), stat},
+                m_ply.getAng(),
+                {0.1f, 0.4f, 1.0f, 1.0f},
+                m_time_elapsed,
+                m_ply.getAlphaStats()[0] * m_ply.getEnginePower()
+            );
+    for(auto &i : m_agents)
+    {
+        float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 25.0f;
+        std::array<float, 4> col = i.getCurWeapCol();
+        col[3] = 1.0f;
+        m_drawer.drawFlames(
+                    i.getInterpolatedPosition(_dt) + back(rad(i.getAng())) * (i.getRadius() + stat),
+                    {i.getRadius(), stat},
+                    i.getAng(),
+                    col,
+                    m_time_elapsed,
+                    i.getAlphaStats()[0] * i.getEnginePower()
+                );
+    }
+    for(auto &i : m_missiles)
+    {
+        float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 25.0f;
+        m_drawer.drawFlames(
+                    i.getInterpolatedPosition(_dt) + back(rad(i.getAng())) * (i.getRadius() + stat),
+                    {i.getRadius(), stat},
+                    i.getAng(),
+                    {0.1f, 0.4f, 1.0f, 1.0f},
+                    m_time_elapsed,
+                    i.getAlphaStats()[0] * i.getEnginePower()
+                );
+    }
+
     m_drawer.enableDepthSorting();
     m_drawer.setShader("ship");
     m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
@@ -873,7 +909,7 @@ void universe::draw(float _dt)
             vec2 jvel = (j->getVel()) * 3;
             col[3] = i.getAlpha(k);
 
-            m_drawer.drawLine(jpos, jpos + jvel, col);
+            //m_drawer.drawLine(jpos, jpos + jvel, col);
             ++k;
         }
     }
@@ -890,6 +926,9 @@ void universe::drawUI()
 
     if(!g_GAME_OVER)
     {
+        m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2}, false, 1.0f);
+        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false, 1.0f);
+
         m_drawer.statusBars(&m_ply);
         m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots);
     }

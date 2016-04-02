@@ -99,6 +99,7 @@ public:
   void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
 
   void drawExplosion(const vec2 _pos, const vec2 _d, const float _alpha);
+  void drawFlames(const vec2 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}
   /*void loadTextures() {return;}*/

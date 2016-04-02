@@ -178,4 +178,25 @@ std::vector<std::string> split(std::string str, char delim)
   return ret;
 }
 
+vec2 front(float _ang)
+{
+    _ang -= rad(90.0f);
+    return {cos(_ang), sin(_ang)};
+}
 
+vec2 back(float _ang)
+{
+    _ang += rad(90.0f);
+    return {cos(_ang), sin(_ang)};
+}
+
+vec2 left(float _ang)
+{
+    _ang -= rad(180.0f);
+    return {cos(_ang), sin(_ang)};
+}
+
+vec2 right(float _ang)
+{
+    return {cos(_ang), sin(_ang)};
+}

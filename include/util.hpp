@@ -133,4 +133,10 @@ void swapnpop(std::vector<t> * vec, int i)
   iter_swap( vec->begin() + i, vec->end() - 1 );
   vec->pop_back();
 }
+
+vec2 front(float _ang);
+vec2 back(float _ang);
+vec2 left(float _ang);
+vec2 right(float _ang);
+
 #endif

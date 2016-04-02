@@ -113,6 +113,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("majorLazer", "laserVertex", "laserFragment");
     createShaderProgram("explosion", "explosionVertex", "explosionFragment");
+    createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
@@ -394,7 +395,6 @@ void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v)
     ngl::Vec2 convp = ngl::Vec2(-_p.m_x, _p.m_y);
     ngl::Vec2 convv = ngl::Vec2(-_v.m_x, _v.m_y);
 
-    std::cout << "yo " << convv.m_x << ", " << convv.m_y << std::endl;
     m_shader->use("background");
     m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
     m_shader->setRegisteredUniform("iGlobalTime", _dt);
@@ -668,44 +668,26 @@ void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const float _al
     m_shader->setRegisteredUniform("alpha", _alpha);
 
     glBindVertexArray(m_spriteVAO);
-
-    //Verts
-    /*std::array<ngl::Vec3, 4> verts = {
-        ngl::Vec3(-_d, -_d),
-        ngl::Vec3(-_d, _d),
-        ngl::Vec3(_d, _d),
-        ngl::Vec3(_d, -_d)
-    };*/
-    /*
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
-    glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Vec3) * verts.size(),
-                 &verts[0].m_x,
-            GL_STATIC_DRAW
-            );
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-    */
-    //UVs
-    /*std::array<ngl::Vec2, 4> uvs = {
-        ngl::Vec2(0.0, 0.0),
-        ngl::Vec2(0.0, 1.0),
-        ngl::Vec2(1.0, 1.0),
-        ngl::Vec2(1.0, 0.0)
-    };
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
-    glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Vec2) * uvs.size(),
-                 &uvs[0].m_x,
-            GL_STATIC_DRAW
-            );
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
-    glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 0, 0 );*/
-
-    //m_transform.setRotation(ngl::Vec3(0.0f, _ang, 0.0f));
     m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
+    m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y));
+
+    loadMatricesToShader();
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+    glBindVertexArray(0);
+    m_transform.reset();
+}
+
+void renderer_ngl::drawFlames(const vec2 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed)
+{
+    m_shader->use("flame");
+    m_shader->setRegisteredUniform("iGlobalTime", _t);
+    m_shader->setRegisteredUniform("flameCol", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+    m_shader->setRegisteredUniform("speed", _speed);
+
+    glBindVertexArray(m_spriteVAO);
+
+    m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
+    m_transform.setRotation(ngl::Vec3(0.0f, 0.0f, _ang));
     m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y));
 
     loadMatricesToShader();
