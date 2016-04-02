@@ -798,7 +798,7 @@ void universe::draw(float _dt)
     m_drawer.update(_dt);
     //m_drawer.clear();
 
-    m_drawer.drawBackground(m_time_elapsed, m_pos);
+    m_drawer.drawBackground(m_time_elapsed, m_pos, m_vel);
 
     m_drawer.setShader("majorLazer");
     for(auto &i : m_shots)
@@ -818,9 +818,11 @@ void universe::draw(float _dt)
     m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
     for(auto &i : m_agents)
     {
-        //std::cout << "IDENTIFIER : " << i.getIdentifier() << std::endl;
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), i.getCurWeapCol());
-        //std::cout << "DRAWN" << std::endl;
+    }
+    for(auto &i : m_missiles)
+    {
+        m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), i.getCurWeapCol());
     }
     for(auto &i : m_asteroids)
     {
@@ -865,7 +867,7 @@ void universe::draw(float _dt)
 
         m_drawer.useShader("plain");
         int k = 0;
-        /*for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
+        for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
             vec2 jpos = j->getInterpolatedPosition(_dt);
             vec2 jvel = (j->getVel()) * 3;
@@ -873,7 +875,7 @@ void universe::draw(float _dt)
 
             m_drawer.drawLine(jpos, jpos + jvel, col);
             ++k;
-        }*/
+        }
     }
 
     if(showUI) drawUI();
@@ -889,6 +891,7 @@ void universe::drawUI()
     if(!g_GAME_OVER)
     {
         m_drawer.statusBars(&m_ply);
+        m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots);
     }
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)

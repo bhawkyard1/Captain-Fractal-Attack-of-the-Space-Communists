@@ -31,6 +31,21 @@ uniform vec2 unipos;
 
 out vec4 fragColour;
 
+float vec2Ang(vec2 _v)
+{
+    return atan(_v.y, _v.x);
+}
+
+vec2 rotatePoint(vec2 _p, float _a)
+{
+    mat2 matt;
+    matt[0][0] = cos(_a);
+    matt[1][0] = -sin(_a);
+    matt[0][1] = sin(_a);
+    matt[1][1] = cos(_a);
+    return matt * _p;
+}
+
 void main()
 {
     //Get coords and direction.
@@ -38,6 +53,11 @@ void main()
     vec2 uv = gl_FragCoord.xy / iResolution.xy - 0.5;
     //Multiply up by current aspect ratio.
     uv.y *= iResolution.y / iResolution.x;
+
+    /*float ang = vec2Ang(univel);
+    uv = rotatePoint(uv, ang);
+    uv *= 1.0 + univel.length();
+    uv = rotatePoint(uv, -ang);*/
 
     //Don't know what this does. Seems to kind of link together current uv pos and the zoom level.
     vec3 uvzoom = vec3(uv * zoom, 20.0);

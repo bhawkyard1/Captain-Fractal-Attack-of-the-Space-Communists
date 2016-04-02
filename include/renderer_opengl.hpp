@@ -80,7 +80,7 @@ public:
   GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols);
   GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols, std::vector<ngl::Vec2> _UVs);
 
-  void drawBackground(float _dt, vec2 _v);
+  void drawBackground(float _dt, vec2 _v, vec2 _p);
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
   void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
@@ -123,7 +123,7 @@ public:
   float getTextureRadius(ship_spec _type) {return g_texture_keys[(_type)].m_radius;}
 
   //UI drawing
-  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp) {return;}
+  void drawMap(std::vector<missile> * mp, std::vector<enemy> *ep, std::vector<ship> * ap, std::vector<laser> * lp);
   void statusBars(player * ply);
   void drawWeaponStats(player * ply) {return;}
 

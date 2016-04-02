@@ -1,4 +1,4 @@
-TARGET = "Captain Fractal: Attack of the Space Communists"
+TARGET = "Captain Fractal- Attack of the Space Communists"
 
 OBJECTS_DIR = obj
 

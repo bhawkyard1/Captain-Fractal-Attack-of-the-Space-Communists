@@ -28,7 +28,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 g_WIN_POS_X, g_WIN_POS_Y,
-                                g_WIN_HEIGHT, g_WIN_WIDTH,
+                                g_WIN_WIDTH, g_WIN_HEIGHT,
                                 SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
 
     if(!m_window)
@@ -141,7 +141,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     loadAsset("PLAYER_GRAVWELL",     "well_1");
     loadAsset("PLAYER_BARRACKS",     "barracks_1");
 
-    loadAsset("ION_MISSILE_MKI",     "missile");
+    loadAsset("ION_MISSILE_MKI",     "missile_1");
 
     loadAsset("ASTEROID_SMALL",      "asteroid_1");
     loadAsset("ASTEROID_MID",        "asteroid_2");
@@ -388,16 +388,19 @@ void renderer_ngl::update(const float _dt)
     m_VP = m_view * m_project;
 }
 
-void renderer_ngl::drawBackground(float _dt, vec2 _v)
+void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v)
 { 
-    _v += m_cameraShakeOffset;
-    ngl::Vec2 conv = ngl::Vec2(-_v.m_x, _v.m_y);
-    //std::cout << "converted! " << conv.m_x << ", " << conv.m_y << std::endl;
+    _p += m_cameraShakeOffset;
+    ngl::Vec2 convp = ngl::Vec2(-_p.m_x, _p.m_y);
+    ngl::Vec2 convv = ngl::Vec2(-_v.m_x, _v.m_y);
+
+    std::cout << "yo " << convv.m_x << ", " << convv.m_y << std::endl;
     m_shader->use("background");
     m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
     m_shader->setRegisteredUniform("iGlobalTime", _dt);
     m_shader->setRegisteredUniform("zoom", 0.06f / g_ZOOM_LEVEL);
-    m_shader->setRegisteredUniform("unipos", conv);
+    m_shader->setRegisteredUniform("unipos", convp);
+    m_shader->setRegisteredUniform("univel", convv);
 
     glBindVertexArray(m_screenQuadVAO);
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
@@ -881,6 +884,78 @@ void renderer_ngl::enableDepthSorting()
 void renderer_ngl::disableDepthSorting()
 {
     glDisable(GL_DEPTH_TEST);
+}
+
+void renderer_ngl::drawMap(std::vector<missile> *mp, std::vector<enemy> *ep, std::vector<ship> *ap, std::vector<laser> *lp)
+{
+  /*SDL_Rect map;
+  map.w = 256;
+  map.h = 256;
+  map.x = g_WIN_WIDTH - 256;
+  map.y = 0;
+
+  SDL_SetRenderDrawColor(m_renderer, 200, 200, 255, 100);
+  SDL_RenderFillRect(m_renderer,&map);
+
+  SDL_SetRenderDrawColor(m_renderer,0, 0, 0, 255);
+  SDL_RenderDrawLine(m_renderer, g_WIN_WIDTH-128, 124, g_WIN_WIDTH-128, 132);
+  SDL_RenderDrawLine(m_renderer, g_WIN_WIDTH-124, 128, g_WIN_WIDTH-132, 128);*/
+
+  m_shader->use("debug");
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 0.4f));
+  drawRect({g_WIN_WIDTH - 256.0f, 0.0f}, {256.0f, 256.0f}, 0.0f, false);
+
+  /*SDL_SetRenderDrawColor(m_renderer, 0, 0, 255, 255);
+  for(unsigned int i = 0; i < _lp->size(); i++)
+  {
+    vec2 lpp = _lp->at(i).getPos();
+
+    double x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+    double y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
+
+    SDL_RenderDrawPoint(m_renderer, x, y);
+  }
+
+  SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+  for(unsigned int i = 0; i < _mp->size(); i++)
+  {
+    vec2 mpp = _mp->at(i).getPos();
+
+    double x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+    double y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
+
+    SDL_RenderDrawPoint(m_renderer, x, y);
+  }
+
+  SDL_SetRenderDrawColor(m_renderer, 200, 200, 200, 255);
+  for(unsigned int i = 0; i < _ap->size(); i++)
+  {
+    vec2 app = _ap->at(i).getPos();
+
+    double x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
+    double y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
+
+    int radius = 1;
+    if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2;
+    else if(_ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3;
+
+    drawCircleUI(x, y, radius, {200,200,200,255});
+  }
+
+  for(unsigned int i = 0; i < _ep->size(); i++)
+  {
+    vec2 epp = _ep->at(i).getPos();
+    int radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
+
+    std::array<int, 4> col;
+    col = _fp->at(_ep->at(i).getTeam()).m_colour;
+    col[3] = 255;
+
+    float x = clamp(epp.m_x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
+    float y = clamp(epp.m_y / 156.0f + 128.0f, 0.0f, 256.0f);
+
+    drawCircleUI(x,y,radius,col);
+  }*/
 }
 
 #endif
