@@ -26,7 +26,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     m_w = _w;
     m_h = _h;
 
-    m_window = SDL_CreateWindow("Elite Dangerous v2.0",
+    m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 g_WIN_POS_X, g_WIN_POS_Y,
                                 g_WIN_HEIGHT, g_WIN_WIDTH,
                                 SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
