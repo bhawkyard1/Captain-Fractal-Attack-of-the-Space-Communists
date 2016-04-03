@@ -596,8 +596,11 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     escMenuSelection.add(mm);
     escMenuSelection.add(quit);
 
+    vec2 vel = ply->getVel();
+    float spd = mag(vel);
+    vec2 dir = -(vel / spd);
     switch (sym)
-    {
+    { 
     case SDLK_w:
         ply->accelerate(1);
         break;
@@ -675,6 +678,8 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     case SDLK_i:
         uni->toggleUIVisible();
         break;
+    case SDLK_e:
+        ply->accelerate(dir, clamp(spd, 0.0f, 1.0f));
     default:
         break;
     }

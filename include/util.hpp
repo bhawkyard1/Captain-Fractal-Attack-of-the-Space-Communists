@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <sstream>
 #include <time.h>
+#include <array>
 
 #include <ciso646>
 

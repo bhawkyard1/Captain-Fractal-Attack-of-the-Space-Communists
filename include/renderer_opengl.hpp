@@ -86,6 +86,7 @@ public:
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
   void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
+  void drawSmoke(const vec2 _pos, const vec2 _dim, const float _ang, const std::array<float, 4> _col);
   void drawCircle(const vec2 _p, const float _d, const bool _ws);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
@@ -99,11 +100,12 @@ public:
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha);
 
-  void drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha);
+  void drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col);
   void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
   void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
 
-  void drawExplosion(const vec2 _pos, const vec2 _d, const float _alpha);
+  void drawExplosion(const vec2 _pos, const float _d, const std::array<float, 4> _col);
+  void drawExplosion(const vec2 _pos, const vec2 _d, const std::array<float, 4> _col);
   void drawFlames(const vec2 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed);
 
   void useShader(const std::string _sh) {m_shader->use(_sh);}

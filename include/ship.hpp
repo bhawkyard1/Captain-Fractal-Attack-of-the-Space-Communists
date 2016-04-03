@@ -97,8 +97,9 @@ public:
   void setWeapData(const int _val, const int _src) {m_weapons[_val] = g_weapons[_src];}
   void setWeap(const int _val) {m_curWeap = _val;}
   void incrWeap(const int _val) {m_curWeap = clampRoll(m_curWeap + _val, 0, static_cast<int>(m_weapons.size()) - 1 );}
-  float getCurWeapStat(WEAPON_STAT _stat) const {return m_weapons[m_curWeap][_stat];}
+  float getCurWeapStat(WEAPON_STAT _stat) const;
   std::array<float, 4> getCurWeapCol() const;
+  std::array<float, 4> getShieldCol() const;
   std::vector<std::array<float, 10>> getWeaps() const {return m_weapons;}
   std::array<float, 10> getWeap() const {return m_weapons[m_curWeap];}
   int getCurWeap() const {return m_curWeap;}

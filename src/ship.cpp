@@ -667,3 +667,15 @@ std::array<float, 4> ship::getCurWeapCol() const
     if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getLaserGlow()};
     return {0.0f, 0.0f, 0.0f, 0.0f};
 }
+
+std::array<float, 4> ship::getShieldCol() const
+{
+    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getLaserGlow()};
+    return {0.1f, 0.4f, 1.0f, 1.0f};
+}
+
+float ship::getCurWeapStat(WEAPON_STAT _ws) const
+{
+    if(m_canShoot) return m_weapons[m_curWeap][_ws];
+    return 0.0f;
+}

@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <utility>
+#include <fstream>
 
 #include "common.hpp"
 
@@ -217,19 +218,21 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
 {
   std::vector<ngl::Obj*> models;
-
   models.push_back( loadObj(_path, "") );
   models.push_back( loadObj(_path, "_static") );
-
   m_models.insert({_key, models});
 }
 
 ngl::Obj * renderer_ngl::loadObj(const std::string _path, const std::string _append)
 {
   std::string full = _path + _append;
-  ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
-  tempObj->createVAO();
-  return tempObj;
+  if(std::ifstream(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj"))
+  {
+      ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
+      tempObj->createVAO();
+      return tempObj;
+  }
+  return nullptr;
 }
 
 void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha)
@@ -346,7 +349,7 @@ void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::arra
   glLineWidth(1.0f);
 }
 
-void renderer_ngl::drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha)
+void renderer_ngl::drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col)
 {
   m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
   m_transform.setRotation(90.0f, 0.0f, 0.0f);
@@ -355,6 +358,7 @@ void renderer_ngl::drawShield(const vec2 _p, const float _r, const float _dt, co
   m_shader->use("shield");
   m_shader->setRegisteredUniform("iGlobalTime", _dt);
   m_shader->setRegisteredUniform("alpha", _alpha);
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
   loadMatricesToShader();
 
   m_shield->draw();
@@ -717,10 +721,10 @@ void renderer_ngl::drawLine(
   glLineWidth(1.0f);
 }
 
-void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const float _alpha)
+void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const std::array<float, 4> _col)
 {
   m_shader->use("explosion");
-  m_shader->setRegisteredUniform("alpha", _alpha);
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
 
   glBindVertexArray(m_spriteVAO);
   m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
@@ -730,6 +734,16 @@ void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const float _al
   glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
   glBindVertexArray(0);
   m_transform.reset();
+}
+
+void renderer_ngl::drawExplosion(const vec2 _pos, const float _d, const std::array<float, 4> _col)
+{
+  drawExplosion(_pos, {_d, _d}, _col);
+}
+
+void renderer_ngl::drawSmoke(const vec2 _pos, const vec2 _dim, const float _ang, const std::array<float, 4> _col)
+{
+
 }
 
 void renderer_ngl::drawFlames(const vec2 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed)
@@ -891,6 +905,7 @@ void renderer_ngl::drawText(
   spriteSheet * tmp = &m_letters[_font];
 
   m_shader->use("text");
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
   float x = _pos.m_x;
   float y = _pos.m_y;

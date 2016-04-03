@@ -3617,6 +3617,8 @@ obj\renderer_opengl.obj: src\renderer_opengl.cpp C:\SDL2\i686-w64-mingw32\includ
 		include\enemy.hpp \
 		include\laser.hpp \
 		include\player.hpp \
+		include\faction.hpp \
+		include\squad.hpp \
 		include\sprite_sheet_opengl.hpp \
 		C:\NGL\include\ngl\NGLInit.h \
 		C:\NGL\include\ngl\Singleton.h \
