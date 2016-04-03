@@ -74,14 +74,7 @@ void main()
     //vec3 col = vec3(1.5*c1, 1.5*c1*c1*c1, c1*c1*c1*c1*c1*c1);
 
     vec3 tempFlameCol = flameCol.rgb;
-    vec3 col = vec3(pow(c1, tempFlameCol.b), pow(c1, tempFlameCol.g), pow(c1, tempFlameCol.r));
-#ifdef BLUE_FLAME
-    col = col.zyx;
-#endif
-#ifdef GREEN_FLAME
-    col = 0.85*col.yxz;
-#endif
-
+    vec3 col = vec3(pow(c1, 0.25/tempFlameCol.r), pow(c1, 0.25/tempFlameCol.g), pow(c1, 0.25/tempFlameCol.b));
     //col = flameCol.rgb;
 
     float a = c * ( 1.0 - pow(UV.y,3.0) );

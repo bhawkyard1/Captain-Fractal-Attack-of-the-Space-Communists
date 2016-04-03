@@ -181,22 +181,32 @@ std::vector<std::string> split(std::string str, char delim)
 vec2 front(float _ang)
 {
     _ang -= rad(90.0f);
-    return {cos(_ang), sin(_ang)};
+    return {static_cast<float>(cos(_ang)), static_cast<float>(sin(_ang))};
 }
 
 vec2 back(float _ang)
 {
     _ang += rad(90.0f);
-    return {cos(_ang), sin(_ang)};
+    return {static_cast<float>(cos(_ang)), static_cast<float>(sin(_ang))};
 }
 
 vec2 left(float _ang)
 {
     _ang -= rad(180.0f);
-    return {cos(_ang), sin(_ang)};
+    return {static_cast<float>(cos(_ang)), static_cast<float>(sin(_ang))};
 }
 
 vec2 right(float _ang)
 {
-    return {cos(_ang), sin(_ang)};
+    return {static_cast<float>(cos(_ang)), static_cast<float>(sin(_ang))};
+}
+
+std::array<float, 4> col255to1(std::array<float, 4> _col)
+{
+  return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
+}
+
+std::array<float, 4> col255to1(std::array<int, 4> _col)
+{
+  return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
 }

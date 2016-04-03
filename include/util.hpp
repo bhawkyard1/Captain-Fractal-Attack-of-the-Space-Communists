@@ -139,4 +139,7 @@ vec2 back(float _ang);
 vec2 left(float _ang);
 vec2 right(float _ang);
 
+std::array<float, 4> col255to1(std::array<float, 4> _col);
+std::array<float, 4> col255to1(std::array<int, 4> _col);
+
 #endif

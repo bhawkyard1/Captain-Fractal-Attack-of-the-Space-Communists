@@ -70,7 +70,7 @@ unix {
 
 }
 
-NGLPATH=$$(NGLDIR)
+NGLPATH = $$(NGLDIR)
 isEmpty(NGLPATH){ # note brace must be here
         message("including $HOME/NGL")
         include($(HOME)/NGL/UseNGL.pri)

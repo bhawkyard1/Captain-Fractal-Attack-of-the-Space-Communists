@@ -427,7 +427,7 @@ void ship::accelerate(const float _mult)
     vec2 add = vec(getAng() + 90.0f) * accelMult * m_inertia * m_enginePower;
     addVel(add * _mult);
     m_energy -= energyLoss;
-    m_engineGlow = clamp(m_engineGlow + 10.0f * accelMult,0.0f,255.0f);
+    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
 
     setAccelerating(true);
 }
@@ -453,7 +453,7 @@ void ship::accelerate(
     if(m_energy <= energyLoss) return;
     addVel(_dir * _mult * m_inertia * m_enginePower);
     m_energy -= energyLoss;
-    m_engineGlow = clamp(m_engineGlow + 10.0f * accelMult,0.0f,255.0f);
+    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
 
     setAccelerating(true);
 }
@@ -523,7 +523,7 @@ void ship::update(const float _dt)
 
     m_steeringGlow = clamp(m_steeringGlow - 10.0f, 0.0f, 255.0f);
     m_shieldGlow = clamp(m_shieldGlow - 10.0f, 0.0f, 255.0f);
-    if(!m_accelerating) m_engineGlow = clamp(m_engineGlow - 10.0f, 0.0f, 255.0f);
+    m_engineGlow = clamp(m_engineGlow - 20.0f, 0.0f, 255.0f);
 
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
@@ -531,6 +531,8 @@ void ship::update(const float _dt)
     m_drawShot /= 1.5f;
 
     addVel(-getVel() * 0.00001f);
+
+    m_accelerating = false;
 }
 
 void ship::setFiring(const bool _v)

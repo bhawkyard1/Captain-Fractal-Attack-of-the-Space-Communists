@@ -161,6 +161,7 @@ public:
 
   std::string getIdentifier() const {return m_identifier;}
   std::array<float, 4> getAlphaStats() const {std::array<float, 4> ret = {static_cast<float>(m_engineGlow), static_cast<float>(m_steeringGlow), static_cast<float>(m_drawShot), static_cast<float>(m_shieldGlow)}; return ret;}
+  float getShieldGlow() const {return m_shieldGlow;}
   float getLaserGlow() const {return m_drawShot / 255.0f;}
 };
 

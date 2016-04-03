@@ -42,7 +42,8 @@ class renderer_ngl
   ngl::Transformation m_transform;
   ngl::ShaderLib * m_shader;
 
-  std::unordered_map<std::string, ngl::Obj*> m_models;
+  std::unordered_map<std::string, std::vector<ngl::Obj*>> m_models;
+  ngl::Obj * m_shield;
 
   ngl::Obj * m_test_ship;
   ngl::Texture m_test_texture;
@@ -85,7 +86,7 @@ public:
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
   void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
-  void drawCircle(const vec2 _p, const float _d);
+  void drawCircle(const vec2 _p, const float _d, const bool _ws);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);
   void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
@@ -93,10 +94,12 @@ public:
   void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
   void errorExit(const std::string &_msg);
 
+  ngl::Obj * loadObj(const std::string _path, const std::string _append);
   void loadAsset(const std::string _key, const std::string _path);
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
   void drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha);
 
+  void drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha);
   void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
   void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
 
