@@ -1677,6 +1677,10 @@ void universe::createFactions()
     spooky_pirates.m_colour = {240, 211, 10};
     m_factions.push_back(spooky_pirates);
 
+    faction space_communists;
+    space_communists.m_colour = {255, 0, 0};
+    m_factions.push_back(space_communists);
+
     faction neutral;
     neutral.m_colour = {200, 200, 200};
     m_factions.push_back(neutral);
