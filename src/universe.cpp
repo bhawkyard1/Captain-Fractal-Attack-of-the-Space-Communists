@@ -16,10 +16,11 @@ universe::universe()
     m_pos = {0.0f, 0.0f};
     setVel({0,0});
 
-    m_factionCounts.assign(6, 0);
-    m_factionMaxCounts.assign(6, 0);
+    m_factionCounts.assign(7, 0);
+    m_factionMaxCounts.assign(7, 0);
 
     m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
+    m_factionMaxCounts[SPACE_COMMUNISTS] = 3;
 
     m_ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
     m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
@@ -384,11 +385,13 @@ void universe::update(const float _dt)
                     addpfx(pos, m_agents.at(i).getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
                 }
                 addScore( m_agents.at(i).getScore() );
-                if( rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
+                if( m_agents[i].getTeam() != SPACE_COMMUNISTS and rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
+                else if( m_agents[i].getTeam() == SPACE_COMMUNISTS and rand() % 4 <= g_DIFFICULTY ) m_factionMaxCounts[SPACE_COMMUNISTS] += g_DIFFICULTY + 1;
+
                 playSnd(EXPLOSION_SND);
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
             }
-            if(emnityCheck(m_agents.at(i).getTeam(), TEAM_PLAYER)) m_factionCounts[GALACTIC_FEDERATION]--;
+            if(m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) m_factionCounts[GALACTIC_FEDERATION]--;
             else m_factionCounts[m_agents.at(i).getTeam()]--;
 
             swapnpop(&m_agents, i);
@@ -573,7 +576,7 @@ void universe::update(const float _dt)
 
     if(g_DIFFICULTY == 0) return;
 
-    if(rand() % 10 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,200))
+    if(rand() % 10 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
         aiTeam pteam;
@@ -581,6 +584,15 @@ void universe::update(const float _dt)
         else pteam = GALACTIC_FEDERATION;
         spawnSquad(pteam, 10000.0f, 20000.0f, reps);
     }
+
+    if(rand() % 10 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
+    {
+        int reps = clamp(rand() % (g_DIFFICULTY * 20) + 1, 1, clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,80) - m_factionCounts[SPACE_COMMUNISTS]);
+        aiTeam pteam;
+        pteam = SPACE_COMMUNISTS;
+        spawnSquad(pteam, 10000.0f, 20000.0f, reps);
+    }
+
     if(rand() % 1024 == 0 and m_asteroids.size() < 10)
     {
         ship_spec size = ASTEROID_MID;
@@ -940,7 +952,7 @@ void universe::draw(float _dt)
             vec2 jvel = (j->getVel()) * 3;
             col[3] = i.getAlpha(k);
 
-            //m_drawer.drawLine(jpos, jpos + jvel, col);
+            m_drawer.drawLine(jpos, jpos + jvel, col);
             ++k;
         }
     }
@@ -1303,7 +1315,12 @@ void universe::spawnShip(
 
     ship_spec type;
 
-    if( _t == SPOOKY_SPACE_PIRATES )
+    if( _t == SPACE_COMMUNISTS )
+    {
+      type = COMMUNIST_1;
+      if(prob < 50) type = COMMUNIST_2;
+    }
+    else if( _t == SPOOKY_SPACE_PIRATES )
     {
         type = PIRATE_GNAT;
         if(prob > 75 and prob <= 80) type = PIRATE_CRUISER;
@@ -1334,7 +1351,8 @@ void universe::spawnShip(
 
     if( _t == TEAM_PLAYER ) m_factionCounts[TEAM_PLAYER]++;
     else if( _t == TEAM_PLAYER_MINER ) m_factionCounts[TEAM_PLAYER_MINER]++;
-    else if( _t == SPOOKY_SPACE_PIRATES or _t == GALACTIC_FEDERATION )  m_factionCounts[GALACTIC_FEDERATION]++;
+    else if( _t == SPOOKY_SPACE_PIRATES or _t == GALACTIC_FEDERATION) m_factionCounts[GALACTIC_FEDERATION]++;
+    else if(_t == SPACE_COMMUNISTS )  m_factionCounts[SPACE_COMMUNISTS]++;
 
     newShip.setPos(_p);
 
@@ -1424,14 +1442,15 @@ void universe::reload(const bool _newGame)
     m_time_elapsed = 0.0;
     setVel({0,0});
 
-    m_factionCounts.assign(6, 0);
-    m_factionMaxCounts.assign(6, 0);
+    m_factionCounts.assign(7, 0);
+    m_factionMaxCounts.assign(7, 0);
 
     m_mouse_state = -1;
 
     m_escMenuShown = false;
 
     m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
+    m_factionMaxCounts[SPACE_COMMUNISTS] = 3;
 
     m_ply.setWeapData(0,0);
     m_ply.setWeapData(1,1);
@@ -1474,15 +1493,19 @@ void universe::addBuild(
     {
     case PLAYER_STATION:
         m_factionMaxCounts[GALACTIC_FEDERATION] += 25;
+        m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
         break;
     case PLAYER_GRAVWELL:
         m_factionMaxCounts[GALACTIC_FEDERATION] += 5;
+        m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
         break;
     case PLAYER_TURRET:
         m_factionMaxCounts[GALACTIC_FEDERATION] += 1;
+        m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
         break;
     case PLAYER_BARRACKS:
         m_factionMaxCounts[GALACTIC_FEDERATION] += 20;
+        m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
         break;
     default:
         break;

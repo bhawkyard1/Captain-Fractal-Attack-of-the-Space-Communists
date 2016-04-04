@@ -121,6 +121,9 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
   m_shader->use("background");
 
+  loadAsset("COMMUNIST_1",         "commie_1");
+  loadAsset("COMMUNIST_2",         "commie_2");
+
   loadAsset("FEDERATION_MKI",      "enemy_1");
   loadAsset("FEDERATION_MKII",     "enemy_2");
   loadAsset("FEDERATION_MKIII",    "enemy_3");
@@ -680,8 +683,8 @@ void renderer_ngl::drawLine(
   };
 
   std::array<ngl::Vec4, 2> vertCol = {
-    ngl::Vec4(_lCol[0] / 255.0f, _lCol[1] / 255.0f, _lCol[2] / 255.0f, _lCol[3] / 255.0f),
-    ngl::Vec4(_lCol[0] / 255.0f, _lCol[1] / 255.0f, _lCol[2] / 255.0f, _lCol[3] / 255.0f)
+    ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3] / 255.0f),
+    ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3] / 255.0f)
   };
 
   //Generate a VBO

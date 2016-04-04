@@ -109,9 +109,10 @@ public:
     int getScore() const  {return m_score;}
     int * getScorePt() {return &m_score;}
 
-    int getMaxEnemyCount() const {return m_factionMaxCounts[GALACTIC_FEDERATION];}
-    int getEnemyCount() const {return m_factionCounts[GALACTIC_FEDERATION];}
-    void setMaxEnemyCount(const int m) {m_factionMaxCounts[GALACTIC_FEDERATION] = m; m_factionMaxCounts[SPOOKY_SPACE_PIRATES] = m;}
+    int getMaxEnemyCount(aiTeam _t) const {return m_factionMaxCounts[_t];}
+    int getEnemyCount(aiTeam _t) const {return m_factionCounts[_t];}
+
+    void setMaxEnemyCount(const int m, const aiTeam _t) {m_factionMaxCounts[_t] = m;}
     int getMaxWingmanCount() const {return m_factionMaxCounts[TEAM_PLAYER];}
     void setMaxWingmanCount(const int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
     int getMaxMinerCount() const {return m_factionMaxCounts[TEAM_PLAYER_MINER];}

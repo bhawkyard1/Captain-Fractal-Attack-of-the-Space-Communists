@@ -179,7 +179,7 @@ void mainMenu(universe &uni)
 
     vec2 scrollVel = randVec(0.5f, 2.0f);
     uni.setVel(scrollVel);
-    uni.setMaxEnemyCount(20);
+    uni.setMaxEnemyCount(20, GALACTIC_FEDERATION);
     uni.setMaxWingmanCount(10);
 
     uni.addBuild({600.0f, 300.0f}, PLAYER_STATION);
@@ -1067,7 +1067,7 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_COMBAT_5)
         {
-            if(uni.getEnemyCount() == 0)
+            if(uni.getEnemyCount(GALACTIC_FEDERATION) == 0)
             {
                 tutStage = STAGE_COMPLETE;
             }

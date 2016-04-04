@@ -3,6 +3,7 @@
 #include "vectors.hpp"
 
 std::vector<tinfo> g_texture_keys = {
+    {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32},
     {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64},
     {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64},
     {"PLAYER_MINER_DROID", 16}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
@@ -48,6 +49,26 @@ ship::ship(
 
     switch(_type)
     {
+    case COMMUNIST_1:
+        m_identifier = "COMMUNIST_1";
+        setMaxHealth(30.0f,true);
+        setMaxShield(20.0f,true);
+        setMaxEnergy(100.0f,true);
+        m_inertia = 0.1f;
+        m_enginePower = 4.0f;
+        m_weapons.push_back( g_weapons[rand() % 2 + 18] );
+        m_curWeap = 0;
+        break;
+    case COMMUNIST_2:
+        m_identifier = "COMMUNIST_2";
+        setMaxHealth(50.0f,true);
+        setMaxShield(40.0f,true);
+        setMaxEnergy(100.0f,true);
+        m_inertia = 0.09f;
+        m_enginePower = 5.0f;
+        m_weapons.push_back( g_weapons[rand() % 2 + 18] );
+        m_curWeap = 0;
+        break;
     case FEDERATION_MKI:
         m_identifier = "FEDERATION_MKI";
         setMaxHealth(50.0f,true);
@@ -351,6 +372,12 @@ ship::ship(
 
     switch(_src.getClassification())
     {
+    case COMMUNIST_1:
+        m_curWeap = rand() % 2 + 18;
+        break;
+    case COMMUNIST_2:
+        m_curWeap = rand() % 2 + 18;
+        break;
     case FEDERATION_MKI:
         m_curWeap = rand() % 3 + 4;
         break;

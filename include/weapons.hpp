@@ -32,9 +32,9 @@ static std::array<std::array<float,10>,21> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 2	15
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 3	16
      {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}},//P gunship laser	17
-     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1
-     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2
-     {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 18
+     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1 18
+     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2 19
+     {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
  }};
 
 inline float getEnergyCost(int weap)

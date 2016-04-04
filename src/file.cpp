@@ -11,7 +11,8 @@ void saveGame(universe * uni)
     std::ofstream save(g_RESOURCE_LOC + "save.txt");
 
     save 	<< "score " << uni->getScore() << std::endl
-            << "mec " << uni->getMaxEnemyCount() << std::endl
+            << "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << std::endl
+            << "mcc " << uni->getMaxEnemyCount(SPACE_COMMUNISTS) << std::endl
             << "mwc " << uni->getMaxWingmanCount() << std::endl
             << "mmc " << uni->getMaxMinerCount() << std::endl
             << "nm " << uni->getPly()->getMissiles() << std::endl
@@ -164,7 +165,8 @@ void loadGame(universe * uni)
         for(size_t i = 0; i < strings.size(); i++)
         {
             if(strings.at(i) == "score") uni->setScore( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings.at(i) == "mec") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings.at(i) == "mec") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), GALACTIC_FEDERATION );
+            else if(strings.at(i) == "mcc") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), SPACE_COMMUNISTS );
             else if(strings.at(i) == "mwc") uni->setMaxWingmanCount( stoi(strings.at(i+1), nullptr, 10) );
             else if(strings.at(i) == "mmc") uni->setMaxMinerCount( stoi(strings.at(i+1), nullptr, 10) );
             else if(strings.at(i) == "nm") uni->getPly()->setMissiles( stoi(strings.at(i+1), nullptr, 10) );
