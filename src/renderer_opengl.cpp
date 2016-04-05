@@ -154,6 +154,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   loadAsset("ASTEROID_MID",        "asteroid_2");
   loadAsset("ASTEROID_LARGE",      "asteroid_3");
 
+
   loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 30);
   loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 35);
 
@@ -727,7 +728,6 @@ void renderer_ngl::drawLine(
 
 void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const std::array<float, 4> _col)
 {
-  m_shader->use("explosion");
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
 
   glBindVertexArray(m_spriteVAO);
@@ -749,7 +749,6 @@ void renderer_ngl::drawSmoke(const vec2 _pos, const vec2 _d, const float _dt, co
 {
   m_shader->use("smoke");
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
-  m_shader->setRegisteredUniform("iGlobalTime", _dt);
 
   glBindVertexArray(m_spriteVAO);
   m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
