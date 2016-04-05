@@ -86,7 +86,7 @@ public:
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
   void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
-  void drawSmoke(const vec2 _pos, const vec2 _dim, const float _ang, const std::array<float, 4> _col);
+  void drawSmoke(const vec2 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col);
   void drawCircle(const vec2 _p, const float _d, const bool _ws);
   void drawTri(const vec2 _p, const float _d, const float _ang);
   std::vector<vec3> constructTri(const vec2 _p, const float _d, const float _ang);

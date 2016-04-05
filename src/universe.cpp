@@ -565,8 +565,8 @@ void universe::update(const float _dt)
       swapnpop(&m_passive_sprites, i);
       continue;
     }
-    alph *= 0.9f;
-    alph -= 0.2f;
+    alph *= 0.98f;
+    alph -= 0.05f;
     m_passive_sprites.at(i).setCol(3, alph);
   }
 
@@ -830,6 +830,17 @@ void universe::draw(float _dt)
     m_drawer.drawLaser(ipos, ipos + ivel, icol);
   }
 
+  for(auto i = m_passive_sprites.begin(); i != m_passive_sprites.end(); ++i)
+  {
+    if(!m_paused) i->incrDim();
+    if(i->getIdentifier() != "SMOKE") continue;
+    vec2 ipos = i->getInterpolatedPosition(_dt);
+    std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+    col = col255to1(col);
+
+    m_drawer.drawSmoke(ipos, {i->getDim(), i->getDim()}, m_time_elapsed, col);
+  }
+
   float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
   m_drawer.drawFlames(
         m_ply.getPos() + back(rad(m_ply.getAng())) * (m_ply.getRadius() + stat),
@@ -930,14 +941,6 @@ void universe::draw(float _dt)
     m_drawer.drawExplosion(i.getPos() + front(rad(i.getAng())) * i.getRadius(),
                            i.getCurWeapStat(DAMAGE) * 4.0f,
                            i.getCurWeapCol());
-  }
-
-  for(auto i = m_passive_sprites.begin(); i != m_passive_sprites.end(); ++i)
-  {
-    if(!m_paused) i->incrDim();
-    vec2 ipos = i->getInterpolatedPosition(_dt);
-    std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-    m_drawer.drawSmoke(ipos, {i->getDim(), i->getDim()}, i->getAng(), col);
   }
 
   for(auto &i : m_particles)
@@ -1289,8 +1292,7 @@ void universe::addParticleSprite(
   else if( _tex == "EXPLOSION" ) col = 255.0f;
 
   int w = 0, h = 0;
-  m_drawer.queryTexture(_tex, 0, &w, &h);
-  stardust_sprite sm (_tex, col, w, h);
+  stardust_sprite sm (_tex, col, 64.0f, 64.0f);
   sm.setPos(_p);
   if( _tex == "SMOKE" ) sm.setVel(_v + randVec(1.0f));
   else if( _tex == "EXPLOSION" ) sm.setVel(_v);
