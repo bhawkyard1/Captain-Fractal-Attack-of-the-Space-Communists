@@ -954,7 +954,7 @@ void universe::draw(float _dt)
         m_drawer.useShader("explosion");
         m_drawer.drawExplosion(ipos, {dim, dim}, col);
 
-        //m_drawer.useShader("plain");
+        m_drawer.useShader("plain");
         int k = 0;
         for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
         {
