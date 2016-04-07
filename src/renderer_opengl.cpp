@@ -121,6 +121,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   createShaderProgram("debug", "MVPVert", "debugFragment");
 
   m_shader->use("background");
+  m_shader->setRegisteredUniform("iterations", (g_GRAPHICAL_DETAIL + 1.0f) * 4.0f);
 
   loadAsset("COMMUNIST_1",         "commie_1");
   loadAsset("COMMUNIST_2",         "commie_2");
@@ -233,9 +234,9 @@ ngl::Obj * renderer_ngl::loadObj(const std::string _path, const std::string _app
   std::string full = _path + _append;
   if(std::ifstream(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj"))
   {
-      ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
-      tempObj->createVAO();
-      return tempObj;
+    ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
+    tempObj->createVAO();
+    return tempObj;
   }
   return nullptr;
 }
@@ -808,27 +809,27 @@ void renderer_ngl::statusBars(player * _ply)
 {
   //health base
   std::array<float, 4> col = {0.4f, 0.08f, 0.08f, 1.0f};
-  drawButton({0,0}, {256, 8}, 0.0f, col);
+  drawButton({128,8}, {256, 16}, 0.0f, col);
 
   //health
   col = {0.9f, 0.2f, 0.2f, 1.0f};
-  drawButton({0,0}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 8}, 0.0f, col);
+  drawButton({128,8}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, 0.0f, col);
 
   //shield base
   col = {0.1f, 0.1f, 0.4f, 1.0f};
-  drawButton({0,16}, {256, 8}, 0.0f, col);
+  drawButton({128,24}, {256, 16}, 0.0f, col);
 
   //shield
   col = {0.2f, 0.2f, 0.9f, 1.0f};
-  drawButton({0,16}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 8}, 0.0f, col);
+  drawButton({128,24}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, 0.0f, col);
 
   //energy base
   col = {0.08f, 0.4f, 0.08f, 1.0f};
-  drawButton({0,32}, {256, 8}, 0.0f, col);
+  drawButton({128,40}, {256, 16}, 0.0f, col);
 
   //energy
   col = {0.2f, 0.9f, 0.2f, 1.0f};
-  drawButton({0,32}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 8}, 0.0f, col);
+  drawButton({128,40}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, 0.0f, col);
 }
 
 void renderer_ngl::loadFontSpriteSheet(
@@ -932,6 +933,7 @@ void renderer_ngl::drawText(
 
     float w = static_cast<float>(tmp->m_dim[i].first);
     float h = static_cast<float>(tmp->m_dim[i].second);
+    w = 8.0f;
     w *= _mul;
     h *= _mul;
     //w = 8;

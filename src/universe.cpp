@@ -754,7 +754,9 @@ void universe::draw(float _dt)
         m_drawer.drawTexture("PLAYER_TURRET", 0, dpos, 0, {255, 255, 255, 100});
         m_drawer.drawTexture("PLAYER_TURRET", 5, dpos, 0, {255, 255, 255, 100});
         break;
-    case 8:
+    case 8:, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+      m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
+  }
         m_drawer.drawTexture("PLAYER_GRAVWELL", 0, dpos, 0, {255, 255, 255, 100});
         break;
     case 9:
@@ -954,16 +956,19 @@ void universe::draw(float _dt)
         m_drawer.useShader("explosion");
         m_drawer.drawExplosion(ipos, {dim, dim}, col);
 
-        m_drawer.useShader("plain");
-        int k = 0;
-        for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
+        if(g_GRAPHICAL_DETAIL > 0)
         {
-            vec2 jpos = j->getInterpolatedPosition(_dt);
-            vec2 jvel = (j->getVel()) * 3;
-            col[3] = i.getAlpha(k);
+          m_drawer.useShader("plain");
+          int k = 0;
+          for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
+          {
+              vec2 jpos = j->getInterpolatedPosition(_dt);
+              vec2 jvel = (j->getVel()) * 3;
+              col[3] = i.getAlpha(k);
 
-            m_drawer.drawLine(jpos, jpos + jvel, col);
-            ++k;
+              m_drawer.drawLine(jpos, jpos + jvel, col);
+              ++k;
+          }
         }
     }
 
@@ -979,8 +984,8 @@ void universe::drawUI()
 
     if(!g_GAME_OVER)
     {
-        m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 2}, false, 1.0f);
-        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false, 1.0f);
+        m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 16}, false, 1.0f);
+        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 48}, false, 1.0f);
 
         m_drawer.statusBars(&m_ply);
         m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
@@ -999,7 +1004,9 @@ void universe::drawUI()
             jpos.m_y += jdim.m_y;
 
             m_drawer.drawButton(jpos, jdim, 0.0f, {col[0], col[1], col[2], col[3]});
-            m_drawer.drawText(j->getLabel(), "pix", jpos, false, 1.0f);
+
+            jpos.m_x -= jdim.m_x / 4.0f;
+            m_drawer.drawText(j->getLabel(), "pix", jpos, false, j->getTextSizeMul());
 
         }
     }

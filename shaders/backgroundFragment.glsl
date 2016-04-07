@@ -1,7 +1,5 @@
 #version 410 core
 
-#define iterations 12
-
 //This variable does some really weird shit, yo.
 //At low values, looks like a big space city.
 //Really trippy stuff.
@@ -11,7 +9,7 @@
 #define volsteps 10
 #define stepsize 0.3
 
-#define tile   0.850
+#define tile 0.850
 
 #define brightness 0.0015
 #define darkmatter 0.300
@@ -28,6 +26,8 @@ uniform float iGlobalTime;
 uniform float zoom;
 uniform vec2 univel;
 uniform vec2 unipos;
+
+uniform float iterations;
 
 out vec4 fragColour;
 
