@@ -755,10 +755,10 @@ void universe::draw(float _dt)
         m_drawer.drawTexture("PLAYER_TURRET", 5, dpos, 0, {255, 255, 255, 100});
         break;
     case 8:, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-      m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
-  }
-        m_drawer.drawTexture("PLAYER_GRAVWELL", 0, dpos, 0, {255, 255, 255, 100});
-        break;
+        m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
+    }
+    m_drawer.drawTexture("PLAYER_GRAVWELL", 0, dpos, 0, {255, 255, 255, 100});
+    break;
     case 9:
         m_drawer.drawTexture("PLAYER_BARRACKS", 0, dpos, 0, {255, 255, 255, 100});
         break;
@@ -767,12 +767,12 @@ void universe::draw(float _dt)
         break;
     default:
         break;
-    }
+}
 
-    //Draw the ui
-    if(showUI) drawUI();
+//Draw the ui
+if(showUI) drawUI();
 
-    m_drawer.finalise();
+m_drawer.finalise();
 }
 
 void universe::drawUI()
@@ -829,10 +829,11 @@ void universe::draw(float _dt)
         {
             c /= 255.0f;
         }
-        m_drawer.drawLaser(ipos, ipos + ivel, icol);
+        m_drawer.addLine(ipos, ipos + ivel, icol);
     }
+    m_drawer.drawLasers();
 
-    m_drawer.useShader("smoke");
+    /*m_drawer.useShader("smoke");
     for(auto i = m_passive_sprites.begin(); i != m_passive_sprites.end(); ++i)
     {
         if(!m_paused) i->incrDim();
@@ -841,42 +842,54 @@ void universe::draw(float _dt)
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
         col = col255to1(col);
         m_drawer.drawSmoke(ipos, {i->getDim(), i->getDim()}, m_time_elapsed, col);
+    }*/
+
+    m_drawer.useShader("flame");
+    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
+    if(stat > 0.05f)
+    {
+        m_drawer.drawFlames(
+                    m_ply.getPos() + back(rad(m_ply.getAng())) * (m_ply.getRadius() + stat),
+                    {m_ply.getRadius(), stat},
+                    m_ply.getAng(),
+                    {0.1f, 0.4f, 1.0f, 1.0f},
+                    m_time_elapsed,
+                    m_ply.getAlphaStats()[0] * m_ply.getEnginePower()
+                );
     }
 
-    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
-    m_drawer.drawFlames(
-                m_ply.getPos() + back(rad(m_ply.getAng())) * (m_ply.getRadius() + stat),
-    {m_ply.getRadius(), stat},
-                m_ply.getAng(),
-    {0.1f, 0.4f, 1.0f, 1.0f},
-                m_time_elapsed,
-                m_ply.getAlphaStats()[0] * m_ply.getEnginePower()
-            );
     for(auto &i : m_agents)
     {
         float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 25.0f;
         std::array<float, 4> col = i.getCurWeapCol();
         col[3] = 1.0f;
-        m_drawer.drawFlames(
-                    i.getInterpolatedPosition(_dt) + back(rad(i.getAng())) * (i.getRadius() + stat),
-        {i.getRadius(), stat},
-                    i.getAng(),
-                    col,
-                    m_time_elapsed,
-                    i.getAlphaStats()[0] * i.getEnginePower()
-                );
+        if(stat > 0.05f)
+        {
+            m_drawer.drawFlames(
+                        i.getInterpolatedPosition(_dt) + back(rad(i.getAng())) * (i.getRadius() + stat),
+            {i.getRadius(), stat},
+                        i.getAng(),
+                        col,
+                        m_time_elapsed,
+                        i.getAlphaStats()[0] * i.getEnginePower()
+                    );
+        }
     }
     for(auto &i : m_missiles)
     {
         float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 25.0f;
-        m_drawer.drawFlames(
-                    i.getInterpolatedPosition(_dt) + back(rad(i.getAng())) * (i.getRadius() + stat),
-        {i.getRadius(), stat},
-                    i.getAng(),
-        {0.1f, 0.4f, 1.0f, 1.0f},
-                    m_time_elapsed,
-                    i.getAlphaStats()[0] * i.getEnginePower()
-                );
+
+        if(stat > 0.05f)
+        {
+            m_drawer.drawFlames(
+                        i.getInterpolatedPosition(_dt) + back(rad(i.getAng())) * (i.getRadius() + stat),
+            {i.getRadius(), stat},
+                        i.getAng(),
+            {0.1f, 0.4f, 1.0f, 1.0f},
+                        m_time_elapsed,
+                        i.getAlphaStats()[0] * i.getEnginePower()
+                    );
+        }
     }
 
     m_drawer.enableDepthSorting();
@@ -936,16 +949,23 @@ void universe::draw(float _dt)
     }
 
     m_drawer.useShader("explosion");
-    m_drawer.drawExplosion(m_ply.getPos() + front(rad(m_ply.getAng())) * m_ply.getRadius(),
-                           m_ply.getCurWeapStat(DAMAGE) * 4.0f,
-                           m_ply.getCurWeapCol());
+    if(m_ply.getCurWeapCol()[3] > 0.05f)
+    {
+        m_drawer.drawExplosion(m_ply.getPos() + front(rad(m_ply.getAng())) * m_ply.getRadius(),
+                               m_ply.getCurWeapStat(DAMAGE) * 4.0f,
+                               m_ply.getCurWeapCol());
+    }
     for(auto &i : m_agents)
     {
-        m_drawer.drawExplosion(i.getPos() + front(rad(i.getAng())) * i.getRadius(),
-                               i.getCurWeapStat(DAMAGE) * 4.0f,
-                               i.getCurWeapCol());
+        if(i.getCurWeapCol()[3] > 0.05f)
+        {
+            m_drawer.drawExplosion(i.getPos() + front(rad(i.getAng())) * i.getRadius(),
+                                   i.getCurWeapStat(DAMAGE) * 4.0f,
+                                   i.getCurWeapCol());
+        }
     }
 
+    m_drawer.clearVectors();
     for(auto &i : m_particles)
     {
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
@@ -953,12 +973,14 @@ void universe::draw(float _dt)
         vec2 ipos = i.getPos();
         float dim = i.getForce() * 10.0f;
 
-        m_drawer.useShader("explosion");
-        m_drawer.drawExplosion(ipos, {dim, dim}, col);
+        if(col[3] > 0.05f)
+        {
+            m_drawer.useShader("explosion");
+            m_drawer.drawExplosion(ipos, {dim, dim}, col);
+        }
 
         if(g_GRAPHICAL_DETAIL > 0)
         {
-          m_drawer.useShader("plain");
           int k = 0;
           for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
           {
@@ -966,11 +988,13 @@ void universe::draw(float _dt)
               vec2 jvel = (j->getVel()) * 3;
               col[3] = i.getAlpha(k);
 
-              m_drawer.drawLine(jpos, jpos + jvel, col);
+              m_drawer.addLine(jpos, jpos + jvel, col);
               ++k;
           }
         }
     }
+    m_drawer.useShader("plain");
+    m_drawer.drawLines(1.0f);
 
     if(showUI) drawUI();
 

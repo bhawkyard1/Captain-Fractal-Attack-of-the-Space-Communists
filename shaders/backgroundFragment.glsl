@@ -4,9 +4,9 @@
 //At low values, looks like a big space city.
 //Really trippy stuff.
 //TO-DO: Delete before Jon reads these comments.
-#define formuparam 0.53
+//#define formuparam 0.53
 
-#define volsteps 10
+#define volsteps 16
 #define stepsize 0.3
 
 #define tile 0.850
@@ -15,7 +15,7 @@
 #define darkmatter 0.300
 
 //Higher= brigwhter/less faded.
-#define distfading 0.4
+#define distfading 0.5
 
 #define saturation 0.6
 
@@ -26,8 +26,9 @@ uniform float iGlobalTime;
 uniform float zoom;
 uniform vec2 univel;
 uniform vec2 unipos;
-
 uniform float iterations;
+
+float formuparam = 0.5 + (sin(iGlobalTime / 256.0)) / 16.0;
 
 out vec4 fragColour;
 
@@ -40,8 +41,8 @@ vec2 rotatePoint(vec2 _p, float _a)
 {
     mat2 matt;
     matt[0][0] = cos(_a);
-    matt[1][0] = -sin(_a);
-    matt[0][1] = sin(_a);
+    matt[0][1] = -sin(_a);
+    matt[1][0] = sin(_a);
     matt[1][1] = cos(_a);
     return matt * _p;
 }
@@ -55,8 +56,9 @@ void main()
     uv.y *= iResolution.y / iResolution.x;
 
     /*float ang = vec2Ang(univel);
+    float len = univel.length();
     uv = rotatePoint(uv, ang);
-    uv *= 1.0 + univel.length();
+    uv.y *= 1.0 + pow(len, 5.0) / 1000.0;
     uv = rotatePoint(uv, -ang);*/
 
     //Don't know what this does. Seems to kind of link together current uv pos and the zoom level.

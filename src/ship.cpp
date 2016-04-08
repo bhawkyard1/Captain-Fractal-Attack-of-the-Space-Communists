@@ -514,12 +514,12 @@ void ship::update(const float _dt)
     if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel, -180.0f, 180.0f ) );
     else if(angDiff < -1.0f)
     {
-        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -9999.0f, -1.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -90.0f, -1.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
         m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
     else if(angDiff > 1.0f)
     {
-        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 1.0f, 9999.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 1.0f, 90.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
         m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
 
@@ -555,7 +555,7 @@ void ship::update(const float _dt)
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
-    m_drawShot /= 1.5f;
+    m_drawShot /= 4.0f;
 
     addVel(-getVel() * 0.00001f);
 
