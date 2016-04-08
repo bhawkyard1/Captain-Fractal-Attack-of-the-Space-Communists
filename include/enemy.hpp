@@ -16,6 +16,7 @@ class enemy: public ship
   ship * m_target;
   float m_stopDist;
   float m_confidence;
+  float m_retargetTimer;
   aiTeam m_team;
   int m_squadID;
 public:
@@ -24,14 +25,17 @@ public:
   void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
 
-  void behvrUpdate();
+  void behvrUpdate(float _dt);
   void steering();
 
   aiTeam getTeam() const {return m_team;}
   void setTeam(const aiTeam _t) {m_team = _t;}
 
   ship * getTarget() const {return m_target;}
-  void setTarget(ship * _t) {m_target = _t;}
+  void setTarget(ship * _t);
+
+  float getRetargetTimer() {return m_retargetTimer;}
+  void setRetargetTimer(float _val) {m_retargetTimer = _val;}
 
   float getConfidence() {return m_confidence;}
   void setConfidence(float c) {m_confidence = c;}

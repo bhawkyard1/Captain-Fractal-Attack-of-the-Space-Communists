@@ -535,7 +535,7 @@ void universe::update(const float _dt)
             m_agents[e].setGoal(GOAL_CONGREGATE);
         }
         //Update behaviour, steer towards m_target.
-        m_agents[e].behvrUpdate();
+        m_agents[e].behvrUpdate(_dt);
         m_agents[e].steering();
     }
 
