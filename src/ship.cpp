@@ -512,14 +512,14 @@ void ship::update(const float _dt)
     float turnConst = 0.2f;
 
     if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel, -180.0f, 180.0f ) );
-    else if(angDiff < -1.0f)
+    else if(angDiff < -0.5f)
     {
-        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -90.0f, -1.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -90.0f, -0.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
         m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
-    else if(angDiff > 1.0f)
+    else if(angDiff > 0.5f)
     {
-        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 1.0f, 90.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
+        setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 0.0f, 90.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
         m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
 

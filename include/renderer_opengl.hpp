@@ -63,6 +63,7 @@ class renderer_ngl
 
   std::vector<vec3> m_verts;
   std::vector<std::array<float, 4>> m_colours;
+  std::vector<vec2> m_UVs;
 
   void loadMatricesToShader();
   void loadTransformToShader();
@@ -90,6 +91,10 @@ public:
   void drawBackground(float _dt, vec2 _v, vec2 _p);
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
+
+  void addRect(const vec2 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
+  void drawRects(const bool _ws);
+
   void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
   void drawSmoke(const vec2 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col);
   void drawCircle(const vec2 _p, const float _d, const bool _ws);
@@ -105,7 +110,7 @@ public:
 
   void drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col);
   void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
-  void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
+  //void drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
   void drawLasers();
   void drawLines(float _width);
 
@@ -127,7 +132,7 @@ public:
   void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s);
 
   void addLine(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
-  void drawLine(const vec2 _start, const vec2 _end, const std::array<float,4> _lCol);
+  //void drawLine(const vec2 _start, const vec2 _end, const std::array<float,4> _lCol);
 
   void queryTexture(std::string identifier, int index, int * w, int * h) {*w = 32.0f; *h = 32.0f;}
   //float getTextureRadius(ship_spec _type) {return 32.0f;}

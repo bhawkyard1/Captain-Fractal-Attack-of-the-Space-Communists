@@ -5,6 +5,7 @@ uniform vec2 resolution;
 
 in vec4 gl_FragCoord;
 in vec4 vertColour;
+in vec2 UV;
 
 in vec2 fstart;
 in vec2 fend;
@@ -31,5 +32,9 @@ void main()
     fragColour.a *= vertColour.a;*/
 
     //fragColour = vec4(fract(sin(dot(fragCoord.xy ,vec2(12.9898,78.233))) * 43758.5453), fract(sin(dot(fragCoord.xy ,vec2(12.9898,78.233))) * 43758.5453), 0.0, 1.0);
-    fragColour = vec4(1.0);
+    fragColour = vertColour * 2.2;
+
+    //fragColour = mix(vec4(1.0), vertColour, abs(UV.x));
+
+    fragColour.a *= UV.y;
 }

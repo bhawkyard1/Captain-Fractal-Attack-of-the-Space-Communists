@@ -833,16 +833,17 @@ void universe::draw(float _dt)
     }
     m_drawer.drawLasers();
 
-    /*m_drawer.useShader("smoke");
+    m_drawer.useShader("smoke");
     for(auto i = m_passive_sprites.begin(); i != m_passive_sprites.end(); ++i)
     {
         if(!m_paused) i->incrDim();
         if(i->getIdentifier() != "SMOKE") continue;
         vec2 ipos = i->getInterpolatedPosition(_dt);
+        vec2 idim = {i->getDim(), i->getDim()};
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
         col = col255to1(col);
-        m_drawer.drawSmoke(ipos, {i->getDim(), i->getDim()}, m_time_elapsed, col);
-    }*/
+        m_drawer.drawSmoke(ipos, idim * 2.0f, m_time_elapsed, col);
+    }
 
     m_drawer.useShader("flame");
     float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
@@ -986,7 +987,7 @@ void universe::draw(float _dt)
           {
               vec2 jpos = j->getInterpolatedPosition(_dt);
               vec2 jvel = (j->getVel()) * 3;
-              col[3] = i.getAlpha(k);
+              col[3] = i.getAlpha(k) / 255.0f;
 
               m_drawer.addLine(jpos, jpos + jvel, col);
               ++k;
