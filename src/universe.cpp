@@ -25,13 +25,13 @@ universe::universe()
     m_ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
     m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
 
-    m_tCol[0] = 40.0f;
-    m_tCol[1] = 90.0f;
-    m_tCol[2] = 100.0f;
+    m_tCol[0] = 255.0f;
+    m_tCol[1] = 50.0f;
+    m_tCol[2] = 50.0f;
 
-    m_cCol[0] = 40.0f;
-    m_cCol[1] = 90.0f;
-    m_cCol[2] = 100.0f;
+    m_cCol[0] = 255.0f;
+    m_cCol[1] = 50.0f;
+    m_cCol[2] = 50.0f;
 
 #if RENDER_MODE == 0
     for(int i = 0; i < 2048 * pow(2, g_GRAPHICAL_DETAIL) ; i++)
@@ -139,11 +139,11 @@ void universe::update(const float _dt)
     m_cCol[2] += clamp(m_tCol[2] - m_cCol[2], -1.0f, 1.0f);
 
     //Randomly change background colour.
-    if(rand()%10000 == 0)
+    if(rand()%1024 == 0)
     {
-        float p0 = randFloat(0.0f, 100.0f);
-        float p1 = randFloat(0.0f, 100.0f) + p0;
-        float p2 = randFloat(0.0f, 100.0f) + p0 + p1;
+        float p0 = randFloat(0.0f, 1.0f);
+        float p1 = randFloat(0.0f, 1.0f);
+        float p2 = randFloat(0.0f, 1.0f);
         float total = p0 + p1 + p2;
 
         m_tCol[0] = ( p0 / total ) * 250.0f;
@@ -586,7 +586,7 @@ void universe::update(const float _dt)
 
     if(g_DIFFICULTY == 0) return;
 
-    if(rand() % 30000 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
+    if(rand() % 128 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
         aiTeam pteam;
@@ -595,7 +595,7 @@ void universe::update(const float _dt)
         spawnSquad(pteam, 10000.0f, 20000.0f, reps);
     }
 
-    if(rand() % 30000 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
+    if(rand() % 128 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 20) + 1, 1, clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,80) - m_factionCounts[SPACE_COMMUNISTS]);
         aiTeam pteam;
@@ -822,7 +822,7 @@ void universe::draw(float _dt)
     m_drawer.update(_dt);
     //m_drawer.clear();
 
-    m_drawer.drawBackground(m_time_elapsed, m_pos, m_vel);
+    m_drawer.drawBackground(m_time_elapsed, m_pos, m_vel, m_cCol);
 
     m_drawer.setShader("majorLazer");
     for(auto &i : m_shots)
@@ -838,7 +838,7 @@ void universe::draw(float _dt)
     }
     m_drawer.drawLasers();
 
-    m_drawer.useShader("smoke");
+    m_drawer.clearVectors();
     for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
         if(!m_paused) i->incrDim();
@@ -847,8 +847,12 @@ void universe::draw(float _dt)
         vec2 idim = {i->getDim(), i->getDim()};
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
         col = col255to1(col);
-        m_drawer.drawSmoke(ipos, idim * 2.0f, m_time_elapsed, col);
+        //m_drawer.drawSmoke(ipos, idim * 2.0f, m_time_elapsed, col);
+        m_drawer.addRect(ipos, idim, 0.0f, col);
     }
+    m_drawer.useShader("smoke");
+    m_drawer.drawRects(true);
+
 
     m_drawer.useShader("flame");
     float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
@@ -977,30 +981,39 @@ void universe::draw(float _dt)
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
         col = col255to1(col);
         vec2 ipos = i.getPos();
-        float dim = i.getForce() * 10.0f;
+        float idim = i.getForce() * 10.0f;
 
         if(col[3] > 0.05f)
         {
-            m_drawer.useShader("explosion");
-            m_drawer.drawExplosion(ipos, {dim, dim}, col);
-        }
-
-        if(g_GRAPHICAL_DETAIL > 1)
-        {
-          int k = 0;
-          for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
-          {
-              vec2 jpos = j->getInterpolatedPosition(_dt);
-              vec2 jvel = (j->getVel()) * 3;
-              col[3] = i.getAlpha(k) / 255.0f;
-
-              //m_drawer.addLine(jpos, jpos + jvel, col);
-              ++k;
-          }
+            /*m_drawer.useShader("explosion");
+            m_drawer.drawExplosion(ipos, {dim, dim}, col);*/
+            m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
         }
     }
-    m_drawer.useShader("plain");
-    m_drawer.drawLines(1.0f);
+    m_drawer.useShader("explosion");
+    m_drawer.drawRects(true);
+
+    if(g_GRAPHICAL_DETAIL > 1)
+    {
+        m_drawer.clearVectors();
+        for(auto &i : m_particles)
+        {
+            std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
+            col = col255to1(col);
+            int k = 0;
+            for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
+            {
+                vec2 jpos = j->getInterpolatedPosition(_dt);
+                vec2 jvel = (j->getVel()) * 3;
+                col[3] = i.getAlpha(k) / 255.0f;
+
+                m_drawer.addLine(jpos, jpos + jvel, col);
+                ++k;
+            }
+        }
+        m_drawer.useShader("plain");
+        m_drawer.drawLines(1.0f);
+    }
 
     if(showUI) drawUI();
 
@@ -1018,6 +1031,7 @@ void universe::drawUI()
         m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 48}, false, 1.0f);
 
         m_drawer.statusBars(&m_ply);
+        m_drawer.drawWeaponStats(&m_ply);
         m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
     }
 
@@ -1036,8 +1050,17 @@ void universe::drawUI()
             m_drawer.drawButton(jpos, jdim, 0.0f, {col[0], col[1], col[2], col[3]});
 
             jpos.m_x -= jdim.m_x / 4.0f;
-            m_drawer.drawText(j->getLabel(), "pix", jpos, false, j->getTextSizeMul());
 
+            if(j->isDark())
+            {
+                for(auto &i : col) i += 0.05f;
+                m_drawer.drawText(j->getLabel(), "pix", jpos, false, j->getTextSizeMul(), col);
+            }
+            else
+            {
+                for(auto &i : col) i += 0.8f;
+                m_drawer.drawText(j->getLabel(), "pix", jpos, false, j->getTextSizeMul(), col);
+            }
         }
     }
 }
@@ -1467,6 +1490,7 @@ void universe::reload(const bool _newGame)
     m_shots.clear();
     m_asteroids.clear();
     m_passiveSprites.clear();
+    m_particles.clear();
 
     m_vel = {0,0};
     m_ply.setHealth( m_ply.getMaxHealth() );
@@ -1593,32 +1617,32 @@ void universe::initUI()
 
     //Add buttons to the upgrades menu.
     float w = 150.0f, h = 50.0f;
-    arr1 = {100,50,50,200,250,200,200,255};
+    arr1 = {50,5,5,200,250,50,50,255};
     arr2 = {100,50,50,200,250,200,200,255};
     button upgrades_lasers("LASERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.0f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_lasers);
 
-    arr1 = {50,50,100,200,200,200,250,255};
+    arr1 = {5,5,50,200,50,50,250,255};
     arr2 = {50,50,100,200,200,200,250,255};
     button upgrades_shields("SHIELDS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.15f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_shields);
 
-    arr1 = {50,100,50,200,200,250,200,255};
+    arr1 = {5,50,5,200,50,250,50,255};
     arr2 = {50,100,50,200,200,250,200,255};
     button upgrades_generators("GENERATORS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.3f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_generators);
 
-    arr1 = {50,50,80,200,200,200,220,255};
+    arr1 = {5,25,25,200,50,50,250,255};
     arr2 = {50,50,80,200,200,200,220,255};
     button upgrades_thrusters("THRUSTERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.45f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_thrusters);
 
-    arr1 = {255,210,0,200,255,253,100,255};
+    arr1 = {60,40,0,200,220,200,50,255};
     arr2 = {255,210,0,200,255,253,100,255};
     button upgrades_m_missiles("MISSILE (4)",arr1,arr2,{g_WIN_WIDTH * 0.6f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_m_missiles);
 
-    arr1 = {100,210,255,200,180,220,255,255};
+    arr1 = {50,100,140,200,180,220,255,255};
     arr2 = {100,210,255,200,180,220,255,255};
     button upgrades_miner("MINER (16)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.85f},{w,h},16);
     upgrades_menu.add(upgrades_miner);

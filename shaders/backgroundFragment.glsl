@@ -17,7 +17,7 @@
 //Higher= brigwhter/less faded.
 #define distfading 0.5
 
-#define saturation 0.6
+#define saturation 0.9
 
 in vec4 gl_FragCoord;
 
@@ -27,6 +27,7 @@ uniform float zoom;
 uniform vec2 univel;
 uniform vec2 unipos;
 uniform float iterations;
+uniform vec3 inColour;
 
 float formuparam = 0.5 + (sin(iGlobalTime / 256.0)) / 16.0;
 
@@ -92,22 +93,14 @@ void main()
         a *= a * a; // add contrast
         if(r > 6) fade *= 1.0 - dm; // dark matter, don't render near
         v += fade;
-        v += vec3(s, s * s, s * s * s * s) * a * brightness * fade; // coloring based on distance
+        v += vec3(pow(s, inColour.r * 4.0), pow(s, inColour.g * 4.0), pow(s, inColour.b * 4.0)) * a * brightness * fade; // coloring based on distance
+        //v += vec3(s * s * s * s, s * s, s * s * s * s) * a * brightness * fade;
         fade *= distfading; // distance fading
         s += stepsize;
     }
     v = mix( vec3(length(v)), v, saturation); //color adjust
 
-    fragColour = vec4(v * 0.01, 1.0);
-
-    /*if(gl_FragCoord.x > 960)
-    {
-        fragColour = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-    else
-    {
-        fragColour = vec4(0.0, 1.0, 0.0, 1.0);
-    }*/
+    fragColour = vec4(v * 0.015, 1.0);
 
     //FROM : http://casual-effects.blogspot.co.uk/2013/08/starfield-shader.html
     // Motion blur; increases temporal coherence of undersampled flickering stars

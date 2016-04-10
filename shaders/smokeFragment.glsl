@@ -3,6 +3,7 @@
 #define PI 3.14159265358979323846
 
 in vec4 gl_FragCoord;
+in vec4 vertColour;
 in vec2 UV;
 
 uniform float iGlobalTime;

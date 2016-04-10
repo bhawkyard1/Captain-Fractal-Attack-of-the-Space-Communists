@@ -872,12 +872,12 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_MOVEMENT_SLOW)
         {
-           uni.getRenderer()->drawText("PRESS 'E' TO SLOW DOWN TO A STOP", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+           uni.getRenderer()->drawText("HOLD 'E' TO SLOW DOWN TO A STOP", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
            if(magns(uni.getPly()->getVel()) < 0.2f) tutStage = STAGE_ZOOM_OUT;
         }
         else if(tutStage == STAGE_ZOOM_OUT)
         {
-            uni.getRenderer()->drawText("PRESS 'O' TO ZOOM OUT", "pix", {200.0f, -300.0f}, true, 2.0f);
+            uni.getRenderer()->drawText("HOLD 'O' TO ZOOM OUT", "pix", {200.0f, -300.0f}, true, 2.0f);
             uni.getRenderer()->drawText("AND 'P' TO ZOOM BACK IN", "pix", {-2000.0f, 2000.0f}, true, 20.0f);
             if(g_ZOOM_LEVEL <= 0.4f) tutStage = STAGE_ZOOM_IN;
         }
@@ -926,8 +926,11 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_ASTEROID_2)
         {
-            vec2 tPos = (*uni.getAsteroids())[0].getPos();
-            uni.getRenderer()->drawText("NOW BLOW UP THIS ROCK", "pix", {tPos.m_x + 100, tPos.m_y}, true, 2.0f);
+            if(uni.getAsteroids()->size() > 0)
+            {
+                vec2 tPos = (*uni.getAsteroids())[0].getPos();
+                uni.getRenderer()->drawText("NOW BLOW UP THIS ROCK", "pix", {tPos.m_x + 100, tPos.m_y}, true, 2.0f);
+            }
 
             if(uni.getAsteroids()->size() == 0 and uni.getScore() >= 10)
             {

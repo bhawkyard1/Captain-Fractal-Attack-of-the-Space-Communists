@@ -88,7 +88,7 @@ public:
 
   void clearVectors();
 
-  void drawBackground(float _dt, vec2 _v, vec2 _p);
+  void drawBackground(float _dt, vec2 _v, vec2 _p, std::array<float, 3> _cCol);
 
   void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
 
@@ -126,10 +126,8 @@ public:
   void loadTexture(std::string _key, std::string _path, SDL_BlendMode _b) {return;}
   void loadTextureSet(std::string _key, std::string _set) {return;}
 */
-  void setBlendMode (SDL_BlendMode _b) {return;}
-  void drawTextureSet(std::string key, vec2 pos, float orient, std::array<float, 4> alphaMod) {return;}
-  void drawTexture(std::string key, size_t index, vec2 pos, float orient, std::array<float, 4> col) {return;}
   void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s);
+  void drawText(std::string text, std::string font, vec2 pos, const bool _w, const float _s, const std::array<float, 4> _col);
 
   void addLine(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
   //void drawLine(const vec2 _start, const vec2 _end, const std::array<float,4> _lCol);
@@ -140,8 +138,8 @@ public:
 
   //UI drawing
   void drawMap(std::vector<missile> * _mp, std::vector<enemy> *_ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp);
-  void statusBars(player * ply);
-  void drawWeaponStats(player * ply) {return;}
+  void statusBars(player * _ply);
+  void drawWeaponStats(player * _ply);
 
   void finalise() {swapWindow();}
 

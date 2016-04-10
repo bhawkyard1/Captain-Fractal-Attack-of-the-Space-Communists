@@ -33,10 +33,10 @@ button::button(const std::string _txt,
   m_dim.m_x = _dim.m_x;
   m_dim.m_y = _dim.m_y;
 
-  m_initCost = 0;
-  m_cost = 0;
+  m_initCost = -1;
+  m_cost = -1;
 
-  m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
+  m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
 }
 
 button::button(const std::string _txt,
@@ -67,10 +67,10 @@ button::button(const std::string _txt,
   m_dim.m_x = _dim.m_x;
   m_dim.m_y = _dim.m_y;
 
-  m_initCost = 0;
-  m_cost = 0;
+  m_initCost = -1;
+  m_cost = -1;
 
-  m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
+  m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
 }
 
 button::button(

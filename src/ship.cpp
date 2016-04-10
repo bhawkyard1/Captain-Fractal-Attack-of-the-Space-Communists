@@ -51,8 +51,8 @@ ship::ship(
     {
     case COMMUNIST_1:
         m_identifier = "COMMUNIST_1";
-        setMaxHealth(30.0f,true);
-        setMaxShield(20.0f,true);
+        setMaxHealth(20.0f,true);
+        setMaxShield(10.0f,true);
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 4.0f;
@@ -61,8 +61,8 @@ ship::ship(
         break;
     case COMMUNIST_2:
         m_identifier = "COMMUNIST_2";
-        setMaxHealth(50.0f,true);
-        setMaxShield(40.0f,true);
+        setMaxHealth(40.0f,true);
+        setMaxShield(30.0f,true);
         setMaxEnergy(100.0f,true);
         m_inertia = 0.09f;
         m_enginePower = 5.0f;
@@ -71,8 +71,8 @@ ship::ship(
         break;
     case FEDERATION_MKI:
         m_identifier = "FEDERATION_MKI";
-        setMaxHealth(50.0f,true);
-        setMaxShield(30.0f,true);
+        setMaxHealth(30.0f,true);
+        setMaxShield(20.0f,true);
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 4.0f;
@@ -81,8 +81,8 @@ ship::ship(
         break;
     case FEDERATION_MKII:
         m_identifier = "FEDERATION_MKII";
-        setMaxHealth(90.0f,true);
-        setMaxShield(60.0f,true);
+        setMaxHealth(50.0f,true);
+        setMaxShield(50.0f,true);
         setMaxEnergy(100.0f,true);
         m_inertia = 0.09f;
         m_enginePower = 5.0f;
@@ -91,8 +91,8 @@ ship::ship(
         break;
     case FEDERATION_MKIII:
         m_identifier = "FEDERATION_MKIII";
-        setMaxHealth(120.0f,true);
-        setMaxShield(90.0f,true);
+        setMaxHealth(90.0f,true);
+        setMaxShield(60.0f,true);
         setMaxEnergy(150.0f,true);
         m_inertia = 0.08f;
         m_enginePower = 6.0f;
@@ -101,8 +101,8 @@ ship::ship(
         break;
     case FEDERATION_MKIV:
         m_identifier = "FEDERATION_MKIV";
-        setMaxHealth(150.0f,true);
-        setMaxShield(120.0f,true);
+        setMaxHealth(120.0f,true);
+        setMaxShield(80.0f,true);
         setMaxEnergy(200.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 7.0f;
@@ -121,8 +121,8 @@ ship::ship(
         break;
     case PIRATE_GNAT:
         m_identifier = "PIRATE_GNAT";
-        setMaxHealth(80.0f,true);
-        setMaxShield(40.0f,true);
+        setMaxHealth(30.0f,true);
+        setMaxShield(20.0f,true);
         setMaxEnergy(90.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 4.0f;
@@ -131,8 +131,8 @@ ship::ship(
         break;
     case PIRATE_CRUISER:
         m_identifier = "PIRATE_CRUISER";
-        setMaxHealth(100.0f,true);
-        setMaxShield(60.0f,true);
+        setMaxHealth(50.0f,true);
+        setMaxShield(50.0f,true);
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 5.0f;
@@ -141,8 +141,8 @@ ship::ship(
         break;
     case PIRATE_WRANGLER:
         m_identifier = "PIRATE_WRANGLER";
-        setMaxHealth(140.0f,true);
-        setMaxShield(70.0f,true);
+        setMaxHealth(90.0f,true);
+        setMaxShield(60.0f, true);
         setMaxEnergy(120.0f,true);
         m_inertia = 0.05f;
         m_enginePower = 6.0f;
@@ -152,7 +152,7 @@ ship::ship(
     case PIRATE_MARAUDER:
         m_identifier = "PIRATE_MARAUDER";
         setMaxHealth(120.0f,true);
-        setMaxShield(120.0f,true);
+        setMaxShield(60.0f,true);
         setMaxEnergy(120.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 7.0f;
