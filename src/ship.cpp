@@ -229,7 +229,7 @@ ship::ship(
         break;
     case ASTEROID_SMALL:
         m_identifier = "ASTEROID_SMALL";
-        setMaxHealth(500.0f,true);
+        setMaxHealth(200.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
         m_angVel = randFloat(-1.0f, 1.0f);
@@ -266,7 +266,7 @@ ship::ship(
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
         m_inertia = 0.1f;
-        m_enginePower = 0.0f;
+        m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[13] );
         m_curWeap = 0;
         m_canMove = false;

@@ -38,4 +38,6 @@ void main()
     fragColour.a = mix(1.0, 0.0, dist * 2.0);
     fragColour.a *= noise(tUV, 1.0) * noise(-tUV, 0.25);
     fragColour *= inColour;
+
+    //fragColour = inColour;
 }

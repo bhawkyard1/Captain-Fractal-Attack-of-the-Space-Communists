@@ -41,17 +41,18 @@ class universe
     ui::interface m_ui;
     #if RENDER_MODE == 0
       renderer m_drawer;
+      std::vector<stardust> m_dots;
+      std::vector<stardust_sprite> m_sparkles;
     #elif RENDER_MODE == 1
       renderer_ngl m_drawer;
     #endif
-    std::vector<stardust> m_dots;
-    std::vector<stardust_sprite> m_sparkles;
+
     std::vector<laser> m_shots;
     std::vector<enemy> m_agents;
     std::vector<pfx> m_particles;
     std::vector<missile> m_missiles;
     std::vector<ship> m_asteroids;
-    std::vector<stardust_sprite> m_passive_sprites;
+    std::vector<stardust_sprite> m_passiveSprites;
     std::vector<squad> m_squads;
     std::vector<faction> m_factions;
 

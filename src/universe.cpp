@@ -19,8 +19,8 @@ universe::universe()
     m_factionCounts.assign(7, 0);
     m_factionMaxCounts.assign(7, 0);
 
-    m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
-    m_factionMaxCounts[SPACE_COMMUNISTS] = 3;
+    m_factionMaxCounts[GALACTIC_FEDERATION] = 1;
+    m_factionMaxCounts[SPACE_COMMUNISTS] = 1;
 
     m_ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
     m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
@@ -33,6 +33,7 @@ universe::universe()
     m_cCol[1] = 90.0f;
     m_cCol[2] = 100.0f;
 
+#if RENDER_MODE == 0
     for(int i = 0; i < 2048 * pow(2, g_GRAPHICAL_DETAIL) ; i++)
     {
         m_dots.push_back(stardust(m_cCol));
@@ -64,6 +65,8 @@ universe::universe()
         m_drawer.queryTexture(id, 0, &w, &h);
         m_sparkles.push_back(stardust_sprite(id, m_cCol, w, h));
     }
+#endif
+
     initUI();
     if(g_DEV_MODE) setScore(100000);
     else setScore(0);
@@ -193,6 +196,7 @@ void universe::update(const float _dt)
         g_GAME_OVER = true;
     }
 
+#if RENDER_MODE == 0
     for(auto &i : m_dots)
     {
         i.setWVel(m_vel);
@@ -218,6 +222,7 @@ void universe::update(const float _dt)
             i.spriteGen(m_cCol, w, h);
         }
     }
+#endif
 
     for(int i = m_shots.size() - 1; i >= 0; i--)
     {
@@ -547,27 +552,27 @@ void universe::update(const float _dt)
         if(m_particles.at(i).done()) swapnpop(&m_particles, i);
 
     }
-    for(int i = m_passive_sprites.size() - 1; i >= 0; --i)
+    for(int i = m_passiveSprites.size() - 1; i >= 0; --i)
     {
-        float alph = m_passive_sprites.at(i).getCol(3);
+        float alph = m_passiveSprites.at(i).getCol(3);
 
-        m_passive_sprites.at(i).setWVel(m_vel);
-        m_passive_sprites.at(i).updateSprite(_dt);
+        m_passiveSprites.at(i).setWVel(m_vel);
+        m_passiveSprites.at(i).updateSprite(_dt);
 
-        std::string temp = m_passive_sprites.at(i).getIdentifier();
+        std::string temp = m_passiveSprites.at(i).getIdentifier();
         int w = 0;
         int h = 0;
         m_drawer.queryTexture(temp, 0, &w, &h);
 
-        if(alph <= 0.0f or isOffScreen(m_passive_sprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passive_sprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passive_sprites.at(i).getDim() <= 0.0f)
+        if(alph <= 0.1f or isOffScreen(m_passiveSprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passiveSprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passiveSprites.at(i).getDim() <= 0.0f)
         {
             //std::cout <<"popit" << std::endl;
-            swapnpop(&m_passive_sprites, i);
+            swapnpop(&m_passiveSprites, i);
             continue;
         }
-        alph *= 0.98f;
-        alph -= 0.05f;
-        m_passive_sprites.at(i).setCol(3, alph);
+        alph *= 0.9f;
+        alph -= 0.2f;
+        m_passiveSprites.at(i).setCol(3, alph);
     }
 
     if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER))
@@ -581,7 +586,7 @@ void universe::update(const float _dt)
 
     if(g_DIFFICULTY == 0) return;
 
-    if(rand() % 10 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
+    if(rand() % 30000 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
         aiTeam pteam;
@@ -590,7 +595,7 @@ void universe::update(const float _dt)
         spawnSquad(pteam, 10000.0f, 20000.0f, reps);
     }
 
-    if(rand() % 10 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
+    if(rand() % 30000 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 20) + 1, 1, clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,80) - m_factionCounts[SPACE_COMMUNISTS]);
         aiTeam pteam;
@@ -598,7 +603,7 @@ void universe::update(const float _dt)
         spawnSquad(pteam, 10000.0f, 20000.0f, reps);
     }
 
-    if(rand() % 1024 == 0 and m_asteroids.size() < 10)
+    if(rand() % 512 == 0 and m_asteroids.size() < 10)
     {
         ship_spec size = ASTEROID_MID;
         int prob = rand() % 100;
@@ -623,7 +628,7 @@ void universe::update(const float _dt)
 void universe::draw(float _dt)
 {	
     //std::cout << 1/_dt << " fps" << std::endl;
-    //std::cout << m_passive_sprites.size() << std::endl;
+    //std::cout << m_passiveSprites.size() << std::endl;
     if(m_paused) _dt = 0.0f;
 
     m_drawer.clear();
@@ -650,7 +655,7 @@ void universe::draw(float _dt)
     }
     m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
 
-    for(auto i = m_passive_sprites.begin(); i != m_passive_sprites.end(); ++i)
+    for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
         if(!m_paused) i->incrDim();
         vec2 ipos = i->getInterpolatedPosition(_dt);
@@ -834,7 +839,7 @@ void universe::draw(float _dt)
     m_drawer.drawLasers();
 
     m_drawer.useShader("smoke");
-    for(auto i = m_passive_sprites.begin(); i != m_passive_sprites.end(); ++i)
+    for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
         if(!m_paused) i->incrDim();
         if(i->getIdentifier() != "SMOKE") continue;
@@ -980,7 +985,7 @@ void universe::draw(float _dt)
             m_drawer.drawExplosion(ipos, {dim, dim}, col);
         }
 
-        if(g_GRAPHICAL_DETAIL > 0)
+        if(g_GRAPHICAL_DETAIL > 1)
         {
           int k = 0;
           for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
@@ -989,7 +994,7 @@ void universe::draw(float _dt)
               vec2 jvel = (j->getVel()) * 3;
               col[3] = i.getAlpha(k) / 255.0f;
 
-              m_drawer.addLine(jpos, jpos + jvel, col);
+              //m_drawer.addLine(jpos, jpos + jvel, col);
               ++k;
           }
         }
@@ -1331,7 +1336,7 @@ void universe::addParticleSprite(
     if( _tex == "SMOKE" ) sm.setVel(_v + randVec(1.0f));
     else if( _tex == "EXPLOSION" ) sm.setVel(_v);
     sm.setZ(1.0f);
-    m_passive_sprites.push_back(sm);
+    m_passiveSprites.push_back(sm);
 }
 
 void universe::spawnShip(const aiTeam _t)
@@ -1461,7 +1466,7 @@ void universe::reload(const bool _newGame)
     m_missiles.clear();
     m_shots.clear();
     m_asteroids.clear();
-    m_passive_sprites.clear();
+    m_passiveSprites.clear();
 
     m_vel = {0,0};
     m_ply.setHealth( m_ply.getMaxHealth() );
@@ -1490,8 +1495,8 @@ void universe::reload(const bool _newGame)
 
     m_escMenuShown = false;
 
-    m_factionMaxCounts[GALACTIC_FEDERATION] = 3;
-    m_factionMaxCounts[SPACE_COMMUNISTS] = 3;
+    m_factionMaxCounts[GALACTIC_FEDERATION] = 1;
+    m_factionMaxCounts[SPACE_COMMUNISTS] = 1;
 
     m_ply.setWeapData(0,0);
     m_ply.setWeapData(1,1);
