@@ -39,9 +39,9 @@ void saveGame(universe * uni)
     std::cout << "SAVED" << std::endl;
 }
 
-void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_v)
+void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
 {    
-    for(auto &i : *_v)
+    for(auto &i : *_u)
     {
        _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
              << i.getPos().m_x << "," << i.getPos().m_y << "|"
@@ -53,9 +53,9 @@ void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_v)
     }
 }
 
-void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_v)
+void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_u)
 {
-    for(auto &i : *_v)
+    for(auto &i : *_u)
     {
        _file << "/|" << i.getClassification() << "|"
              << i.getPos().m_x << "," << i.getPos().m_y << "|"
@@ -66,7 +66,7 @@ void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_v)
     }
 }
 
-void readVectorEnemy(std::string str, universe * u)
+void readVectorEnemy(std::string str, universe * _u)
 {
     std::vector<std::string> vecs = split( str, '/' );
 
@@ -107,11 +107,11 @@ void readVectorEnemy(std::string str, universe * u)
         temp.setShield(shield);
         temp.setEnergy(energy);
 
-        u->getAgents()->push_back(temp);
+        _u->getAgents()->push_back(temp);
     }
 }
 
-void readVectorAsteroid(std::string str, universe * u)
+void readVectorAsteroid(std::string str, universe * _u)
 {
     std::vector<std::string> vecs = split( str, '/' );
 
@@ -148,7 +148,7 @@ void readVectorAsteroid(std::string str, universe * u)
         temp.setAng(ang);
         temp.setHealth(health);
 
-        u->getAsteroids()->push_back(temp);
+        _u->getAsteroids()->push_back(temp);
     }
 }
 

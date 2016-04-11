@@ -68,16 +68,9 @@ void playTutorial(universe &uni);
 
 int main(int argc, char* argv[])
 {
-    std::cout << "ELITE DANGEROUS v2.0 INITIALISING..." << std::endl;
+    std::cout << "CAPTAIN FRACTAL INITIALISING..." << std::endl;
     loadConfig();
     universe uni;
-    /*#ifdef _WIN32
-    AllocConsole() ;
-    AttachConsole( GetCurrentProcessId() );
-    freopen( "CON", "w", stdout );
-    freopen( "CON", "w", stdin );
-    freopen( "CON", "w", stderr );
-#endif*/
 
     sfxInit();
     loadSounds();

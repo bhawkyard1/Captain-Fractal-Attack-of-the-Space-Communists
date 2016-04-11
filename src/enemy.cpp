@@ -18,22 +18,10 @@ enemy::enemy(
   m_team = _team;
   m_confidence = randFloat(5.0f, 20.0f);
   m_squadID = -1;
-  m_retargetTimer = 0.0f;
-}
-
-void enemy::setTarget(ship *_t)
-{
-  if(m_retargetTimer > 0.0f)
-  {
-    m_target = &(*_t);
-  }
-  m_target = _t;
-  m_retargetTimer = 1.0f;
 }
 
 void enemy::behvrUpdate(float _dt)
 {
-  m_retargetTimer -= _dt;
   if(m_target != nullptr)
   {
     m_tPos = m_target->getPos();

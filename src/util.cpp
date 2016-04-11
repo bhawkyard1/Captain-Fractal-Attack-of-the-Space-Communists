@@ -163,14 +163,14 @@ void toOctant(int * x, int * y, int octant)
   }
 }
 
-std::vector<std::string> split(std::string str, char delim)
+std::vector<std::string> split(std::string _str, char _delim)
 {
   std::vector<std::string> ret;
 
-  std::stringstream ss(str);
+  std::stringstream ss(_str);
   std::string sub;
 
-  while( getline( ss, sub, delim ) )
+  while( getline( ss, sub, _delim ) )
   {
     ret.push_back(sub);
   }

@@ -23,6 +23,6 @@ bool g_GAME_OVER = false;
 
 float g_TARG_ZOOM_LEVEL = 1.0f;
 float g_ZOOM_LEVEL = 1.0f;
-float g_PIXEL_UNIT_CONVERSION = 80.0f;
+const float g_PIXEL_UNIT_CONVERSION = 80.0f;
 float g_TIME_SCALE = 1.0f;
 float g_BG_DENSITY = 5.0f;
