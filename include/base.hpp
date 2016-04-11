@@ -21,27 +21,27 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Getters and setters for position
   //----------------------------------------------------------------------------------------------------------------------
-  void setPos(const vec2 _val) {m_pos = _val;}
-  vec2 getPos() const {return m_pos;}
+  void setPos(const vec3 _val) {m_pos = _val;}
+  vec3 getPos() const {return m_pos;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Getters and setters for m_prevPos
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 getPPos() const {return m_prevPos;}
-  void setPPos(const vec2 _p) {m_prevPos = _p;}
+  vec3 getPPos() const {return m_prevPos;}
+  void setPPos(const vec3 _p) {m_prevPos = _p;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Setters for velocity
   //----------------------------------------------------------------------------------------------------------------------
-  void setVel(const vec2 _v) {m_vel = _v;}
-  void setWVel(const vec2 _wv) {m_wvel = _wv;}
-  void addVel(const vec2 _v) {m_vel += _v;}
+  void setVel(const vec3 _v) {m_vel = _v;}
+  void setWVel(const vec3 _wv) {m_wvel = _wv;}
+  void addVel(const vec3 _v) {m_vel += _v;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Getters for velocity
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 getVel() const {return m_vel;}
-  vec2 getWVel() const {return m_wvel;}
+  vec3 getVel() const {return m_vel;}
+  vec3 getWVel() const {return m_wvel;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Updates the position of the object based on velocity, wvel, and time differece
@@ -53,28 +53,28 @@ public:
   /// @brief Returns a vec2 interpolated between current and previous position
   /// @param _dt interpolant
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 getInterpolatedPosition(const float _dt);
+  vec3 getInterpolatedPosition(const float _dt);
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The last position of the object, used when drawing
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 m_prevPos;
+  vec3 m_prevPos;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The current position of the object
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 m_pos;
+  vec3 m_pos;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The current velocity of the object, relative to the world
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 m_vel;
+  vec3 m_vel;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The current velocity of the object, relative to the player
   //----------------------------------------------------------------------------------------------------------------------
-  vec2 m_wvel;
+  vec3 m_wvel;
 };
 
 #endif

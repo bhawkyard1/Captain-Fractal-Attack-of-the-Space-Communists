@@ -259,11 +259,11 @@ void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string 
   m_transform.reset();
 }
 
-void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string _asset)
+void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string _asset)
 {
   m_shader->setRegisteredUniform("alpha", 1.0f);
 
-  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
+  m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, _p.m_z));
   m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
   loadMatricesToShader();
 
@@ -281,16 +281,16 @@ void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string 
   m_transform.reset();
 }
 
-void renderer_ngl::drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol)
+void renderer_ngl::drawShip(const vec3 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol)
 {
   m_shader->setRegisteredUniform("shootingLightCol", ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3]));
   drawAsset(_p, _ang, _asset);
 }
 
-void renderer_ngl::addLine(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol)
+void renderer_ngl::addLine(const vec3 _start, const vec3 _end, const std::array<float, 4> _lCol)
 {
-  m_verts.push_back({_start.m_x, _start.m_y, 10.0f});
-  m_verts.push_back({_end.m_x, _end.m_y, 10.0f});
+  m_verts.push_back({_start.m_x, _start.m_y, _start.m_z});
+  m_verts.push_back({_end.m_x, _end.m_y, _end.m_z});
 
   m_UVs.push_back({0.0f, 0.0f});
   m_UVs.push_back({1.0f, 1.0f});
@@ -421,7 +421,7 @@ void renderer_ngl::drawLines(const float _width)
     glLineWidth(1.0f);
 }*/
 
-void renderer_ngl::drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col)
+void renderer_ngl::drawShield(const vec3 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col)
 {
   m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
   m_transform.setRotation(90.0f, 0.0f, 0.0f);
@@ -490,8 +490,7 @@ void renderer_ngl::createShaderProgram(const std::string _name, const std::strin
 
 void renderer_ngl::update(const float _dt)
 {
-  m_verts.clear();
-  m_colours.clear();
+  clearVectors();
 
   m_cameraShake = clamp(m_cameraShake - _dt * 5.0f, 0.0f, 20.0f);
 
@@ -499,7 +498,7 @@ void renderer_ngl::update(const float _dt)
 
   if(magns(m_cameraShakeTargetOffset - m_cameraShakeOffset) < 80.0f)
   {
-    m_cameraShakeTargetOffset = randVec(m_cameraShake);
+    m_cameraShakeTargetOffset = randVec2(m_cameraShake);
   }
   m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * clamp(_dt * 5.0f, 0.0f, 1.0f);
 
@@ -652,7 +651,7 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::V
   return temp_vao;
 }
 
-void renderer_ngl::drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col)
+void renderer_ngl::drawButton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col)
 {
   m_shader->use("debug");
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
@@ -660,7 +659,7 @@ void renderer_ngl::drawButton(const vec2 _p, const vec2 _d, const float _ang, st
   drawRect(_p, _d, _ang, false);
 }
 
-void renderer_ngl::addRect(const vec2 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col)
+void renderer_ngl::addRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col)
 {
   std::array<vec3, 6> pos;
 
@@ -689,7 +688,7 @@ void renderer_ngl::addRect(const vec2 _p, const vec2 _d, const float _ang, const
   //Positioning
   for(auto &i : pos)
   {
-    i += tovec3(_p);
+    i += _p;
   }
 
   //UVs
@@ -711,7 +710,7 @@ void renderer_ngl::addRect(const vec2 _p, const vec2 _d, const float _ang, const
   }
 }
 
-void renderer_ngl::drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws)
+void renderer_ngl::drawRect(const vec3 _p, const vec2 _d, const float _ang, const bool _ws)
 {
   glBindVertexArray(m_unit_square_vao);
   m_transform.setRotation(0.0f, 0.0f, _ang);
@@ -776,7 +775,7 @@ void renderer_ngl::drawRects(const bool _ws)
   glBindVertexArray(0);
 }
 
-void renderer_ngl::drawCircle(const vec2 _p, const float _d, const bool _ws)
+void renderer_ngl::drawCircle(const vec3 _p, const float _d, const bool _ws)
 {
   glPointSize(_d);
 
@@ -849,7 +848,7 @@ void renderer_ngl::drawLine(
     glLineWidth(1.0f);
 }*/
 
-void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const std::array<float, 4> _col)
+void renderer_ngl::drawExplosion(const vec3 _pos, const vec2 _d, const std::array<float, 4> _col)
 {
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
 
@@ -863,12 +862,12 @@ void renderer_ngl::drawExplosion(const vec2 _pos, const vec2 _d, const std::arra
   m_transform.reset();
 }
 
-void renderer_ngl::drawExplosion(const vec2 _pos, const float _d, const std::array<float, 4> _col)
+void renderer_ngl::drawExplosion(const vec3 _pos, const float _d, const std::array<float, 4> _col)
 {
   drawExplosion(_pos, {_d, _d}, _col);
 }
 
-void renderer_ngl::drawSmoke(const vec2 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col)
+void renderer_ngl::drawSmoke(const vec3 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col)
 {
   m_shader->use("smoke");
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
@@ -883,7 +882,7 @@ void renderer_ngl::drawSmoke(const vec2 _pos, const vec2 _d, const float _dt, co
   m_transform.reset();
 }
 
-void renderer_ngl::drawFlames(const vec2 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed)
+void renderer_ngl::drawFlames(const vec3 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed)
 {
   m_shader->setRegisteredUniform("iGlobalTime", _t);
   m_shader->setRegisteredUniform("flameCol", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
@@ -923,7 +922,7 @@ void renderer_ngl::errorExit(const std::string &_msg)
 void renderer_ngl::addShake(float _s)
 {
   m_cameraShake += _s;
-  m_cameraShakeTargetOffset = randVec(m_cameraShake);
+  m_cameraShakeTargetOffset = randVec2(m_cameraShake);
 }
 
 void renderer_ngl::statusBars(player * _ply)
@@ -956,7 +955,7 @@ void renderer_ngl::statusBars(player * _ply)
 void renderer_ngl::drawWeaponStats(player *_ply)
 {
   vec2 dim = {g_WIN_WIDTH * 0.1f, g_WIN_HEIGHT * 0.2f};
-  vec2 pos = {g_WIN_WIDTH - (dim.m_x / 2.0f), g_WIN_HEIGHT - 1.4f * (dim.m_y / 2.0f)};
+  vec3 pos = {g_WIN_WIDTH - (dim.m_x / 2.0f), g_WIN_HEIGHT - 1.4f * (dim.m_y / 2.0f), 0.0f};
 
   std::array<float, 4> wc = _ply->getCurWeapCol();
 
@@ -1060,8 +1059,7 @@ GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s)
   return textureID;
 }
 
-void renderer_ngl::drawText(
-    std::string _text,
+void renderer_ngl::drawText(std::string _text,
     std::string _font,
     vec2 _pos,
     bool _ws,
@@ -1094,8 +1092,7 @@ void renderer_ngl::drawText(
   }
 }
 
-void renderer_ngl::drawText(
-    std::string _text,
+void renderer_ngl::drawText(std::string _text,
     std::string _font,
     vec2 _pos,
     bool _ws,
@@ -1152,7 +1149,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, 1.0f));
   for(unsigned int i = 0; i < _lp->size(); i++)
   {
-    vec2 lpp = _lp->at(i).getPos();
+    vec3 lpp = _lp->at(i).getPos();
 
     float x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     float y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -1163,7 +1160,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 0.0f, 0.1f, 1.0f));
   for(unsigned int i = 0; i < _mp->size(); i++)
   {
-    vec2 mpp = _mp->at(i).getPos();
+    vec3 mpp = _mp->at(i).getPos();
 
     float x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     float y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -1174,7 +1171,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
   for(unsigned int i = 0; i < _ap->size(); i++)
   {
-    vec2 app = _ap->at(i).getPos();
+    vec3 app = _ap->at(i).getPos();
 
     float x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     float y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -1188,7 +1185,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
 
   for(unsigned int i = 0; i < _ep->size(); i++)
   {
-    vec2 epp = _ep->at(i).getPos();
+    vec3 epp = _ep->at(i).getPos();
     float radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
     std::array<float, 4> col;

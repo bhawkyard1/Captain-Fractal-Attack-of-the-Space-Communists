@@ -24,7 +24,7 @@ public:
   /// @brief ctor for the laser class
   /// @param _p position, _v velocity, _ang angle, _data copied from weapons.hpp, _team the lasers' team
   //----------------------------------------------------------------------------------------------------------------------
-  laser(vec2 _p, vec2 _v, float _ang, std::array<float, WEAPS_W> _data, aiTeam _team);
+  laser(vec3 _p, vec3 _v, float _ang, std::array<float, WEAPS_W> _data, aiTeam _team);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief returns damage

@@ -6,7 +6,7 @@
 class player: public ship
 {
 public:
-    player(vec2 _p, float _r);
+    player(vec3 _p, float _r);
 	void ctrlUpdate();
 };
 

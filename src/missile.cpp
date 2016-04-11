@@ -1,7 +1,7 @@
 #include "missile.hpp"
 
 missile::missile(
-        const vec2 _p,
+        const vec3 _p,
         const float _r)
         :
         ship(_p, ION_MISSILE_MKI, _r)
@@ -18,7 +18,7 @@ void missile::steering()
 {
     if(m_target != nullptr)
     {
-        vec2 m_tPos = m_target->getPos();
+        vec3 m_tPos = m_target->getPos();
 
         float dist = mag(m_tPos - getPos());
 
@@ -26,10 +26,10 @@ void missile::steering()
 
         float frames = dist/cSpd;
 
-        vec2 tPPos = m_target->getPos() + m_target->getVel() * frames;
+        vec3 tPPos = m_target->getPos() + m_target->getVel() * frames;
         float tPPDist = mag(tPPos - getPos());
 
-        float vecMul = dotProd1(unit(getVel()),computeVector(getTAng() + 90));
+        float vecMul = dotProd1(unit(getVel()),tovec3(computeVector(getTAng() + 90)));
 
         float stoppingDistance = (cSpd*cSpd)/2;
         if(vecMul < 0) stoppingDistance *= -1;
@@ -38,7 +38,7 @@ void missile::steering()
 
         float angleMul = (shortestAngle(getAng(), getTAng())+90)/90.0;
 
-        setTAng(clampRoll(computeAngle(getPos() - m_tPos),-180.0f,180.0f));
+        setTAng(clampRoll(computeAngle(tovec2(getPos() - m_tPos)),-180.0f,180.0f));
 
         if(fabs(shortestAngle(getAng(), getTAng())) <= 2.0f)
         {

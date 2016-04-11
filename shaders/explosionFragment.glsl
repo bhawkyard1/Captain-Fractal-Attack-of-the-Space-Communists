@@ -9,9 +9,9 @@ in vec4 vertCol;
 out vec4 fragColour;
 
 void main()
-{
+{    
     float dist = length(vec2(0.5, 0.5) - UV);
     fragColour = mix(vec4(1.0), vec4(vertCol.rgb, 0.0), dist * 2.0);
-    fragColour *= 2.0;
+    fragColour *= 1.5;
     fragColour.a *= vertCol.a;
 }

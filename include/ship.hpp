@@ -79,13 +79,13 @@ class ship: public base
   float m_shieldMul;
   float m_generatorMul;
 public:
-  ship(const vec2 _p, const ship_spec _type, const float);
-  ship(const ship& _src, const vec2 _p);
+  ship(const vec3 _p, const ship_spec _type, const float);
+  ship(const ship& _src, const vec3 _p);
   ship(const ship_spec _type);
 
-  void addVelS(const vec2 _v) {if(m_canMove) addVel(_v * m_inertia * m_enginePower);}
+  void addVelS(const vec3 _v) {if(m_canMove) addVel(_v * m_inertia * m_enginePower);}
   void accelerate(const float _mult);
-  void accelerate(const vec2 _dir, const float _mult);
+  void accelerate(const vec3 _dir, const float _mult);
   void setAccelerating(const bool _b) {m_accelerating = _b;}
 
   void dodge(const float _side);

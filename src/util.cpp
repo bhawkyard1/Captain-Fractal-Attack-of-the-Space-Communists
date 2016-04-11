@@ -2,58 +2,58 @@
 
 float toDeg(float rad)
 {
-  return (rad * 180) / 3.14159;
+    return (rad * 180) / 3.14159;
 }
 
 float toRad(float deg)
 {
-  return (deg * 3.14159) / 180;
+    return (deg * 3.14159) / 180;
 }
 
 float computeAngle(vec2 v)
 {
-  return -toDeg(atan2(v.m_x,v.m_y));
+    return -toDeg(atan2(v.m_x,v.m_y));
 }
 
 vec2 computeVector(float angle)
 {
-  return { static_cast<float>(-cos(toRad(-angle))), static_cast<float>(sin(toRad(-angle))) };
+    return { static_cast<float>(-cos(toRad(-angle))), static_cast<float>(sin(toRad(-angle))) };
 }
 
 void equateArrays(int arr1[], int arr2[], int ind)
 {
-  for(int i = 0; i < ind; i++)
-  {
-    arr2[ind] = arr1[ind];
-  }
+    for(int i = 0; i < ind; i++)
+    {
+        arr2[ind] = arr1[ind];
+    }
 }
 
 
 float shortestAngle(float ang1, float ang2)
 {
-  return fmod(ang1 - ang2 + 180, 360) - 180;
+    return fmod(ang1 - ang2 + 180, 360) - 180;
 }
 
 int factorial(int val)
 {
-  int returnVal = 0;
+    int returnVal = 0;
 
-  for(int i = val; i > 0; i--)
-  {
-    returnVal += i;
-  }
-  return returnVal;
+    for(int i = val; i > 0; i--)
+    {
+        returnVal += i;
+    }
+    return returnVal;
 }
 
 double dotProd(double x0, double y0, double x1, double y1)
 {
-  return acos((x0*x1+y0*y1)/(sqrt(x0*x0+y0*y0)*sqrt(x1*x1+y1*y1)));
+    return acos((x0*x1+y0*y1)/(sqrt(x0*x0+y0*y0)*sqrt(x1*x1+y1*y1)));
 }
 
 
 float sqr(float arg)
 {
-  return arg*arg;
+    return arg*arg;
 }
 
 float fastInvSqrt(float _val)
@@ -69,113 +69,134 @@ float fastInvSqrt(float _val)
 
 float randFloat(int low, int high)
 {
-  float flow = static_cast<float>(low);
-  float fhigh = static_cast<float>(high);
-  return static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(fhigh-flow))+flow;
+    float flow = static_cast<float>(low);
+    float fhigh = static_cast<float>(high);
+    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(fhigh-flow))+flow;
 }
 
 float randFloat(float low, float high)
 {
-  return static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(high-low))+low;
+    return static_cast <float> (rand()) / static_cast <float> (RAND_MAX/(high-low))+low;
 }
 
 double diffClock(clock_t clock1, clock_t clock2)
 {
-  double diffticks = clock1-clock2;
-  double diffs = diffticks/CLOCKS_PER_SEC;
-  return diffs;
+    double diffticks = clock1-clock2;
+    double diffs = diffticks/CLOCKS_PER_SEC;
+    return diffs;
 }
 
 bool pointInRect(vec2 p, SDL_Rect * r)
 {
-  if(p.m_x > r->x and p.m_x < r->x + r->w and p.m_y > r->y and p.m_y < r->y + r->h) return true;
-  return false;
+    if(p.m_x > r->x and p.m_x < r->x + r->w and p.m_y > r->y and p.m_y < r->y + r->h) return true;
+    return false;
 }
 
 bool pointInRect(vec2 p, vec2 r_pos, vec2 r_dim)
 {
-  if(p.m_x > r_pos.m_x and p.m_x < r_pos.m_x + r_dim.m_x and p.m_y > r_pos.m_y and p.m_y < r_pos.m_y + r_dim.m_y) return true;
-  return false;
+    if(p.m_x > r_pos.m_x and p.m_x < r_pos.m_x + r_dim.m_x and p.m_y > r_pos.m_y and p.m_y < r_pos.m_y + r_dim.m_y) return true;
+    return false;
 }
 
 bool strToBool(std::string str)
 {
-  if(str == "true") return true;
-  return false;
+    if(str == "true") return true;
+    return false;
 }
 
-vec2 randVec(float m, float M)
+vec2 randVec2(float m, float M)
 {
-  float a = randFloat(0.0f, 360.0f);
-  vec2 v = {static_cast<float>(cos(a)), static_cast<float>(sin(a))};
-  return v * randFloat(m, M);
+    float a = randFloat(0.0f, UPI);
+    vec2 v = {static_cast<float>(cos(a)), static_cast<float>(sin(a))};
+    return v * randFloat(m, M);
 }
 
-vec2 randVec(float f)
+vec2 randVec2(float f)
 {
-  float a = randFloat(0.0f, 360.0f);
-  vec2 v = {static_cast<float>(cos(a)), static_cast<float>(sin(a))};
-  return v * randFloat(0.0f, f);
+    float a = randFloat(0.0f, UPI);
+    vec2 v = {static_cast<float>(cos(a)), static_cast<float>(sin(a))};
+    return v * randFloat(0.0f, f);
 }
 
-vec2 randVec(vec2 min, vec2 max)
+vec2 randVec2(vec2 min, vec2 max)
 {
-  return {randFloat(min.m_x, max.m_x), randFloat(min.m_y, max.m_y)};
+    return {randFloat(min.m_x, max.m_x), randFloat(min.m_y, max.m_y)};
+}
+
+vec3 randVec3(float m, float M)
+{
+    vec3 v = {randFloat(0.0f, 1.0f), randFloat(0.0f, 1.0f), randFloat(0.0f, 1.0f)};
+    float vsum = sum(v);
+    v /= vsum;
+    return v * randFloat(m, M);
+}
+
+vec3 randVec3(float f)
+{
+    vec3 v = {randFloat(0.0f, 1.0f), randFloat(0.0f, 1.0f), randFloat(0.0f, 1.0f)};
+    float vsum = sum(v);
+    v /= vsum;
+    return v * randFloat(0.0f, f);
+}
+
+vec3 randVec3(vec3 min, vec3 max)
+{
+    return {randFloat(min.m_x, max.m_x), randFloat(min.m_y, max.m_y), randFloat(min.m_z, max.m_z)};
 }
 
 void toOctant(int * x, int * y, int octant)
 {
-  switch(octant)
-  {
+    switch(octant)
+    {
     int t;
     case 0:
-      break;
+        break;
     case 1:
-      t = *x;
-      *x = *y;
-      *y = t;
-      break;
+        t = *x;
+        *x = *y;
+        *y = t;
+        break;
     case 2:
-      t = *x;
-      *x = -*y;
-      *y = t;
-      break;
+        t = *x;
+        *x = -*y;
+        *y = t;
+        break;
     case 3:
-      *x = -*x;
-      break;
+        *x = -*x;
+        break;
     case 4:
-      *x = -*x;
-      *y = -*y;
-      break;
+        *x = -*x;
+        *y = -*y;
+        break;
     case 5:
-      t = *x;
-      *x = -*y;
-      *y = -t;
-      break;
+        t = *x;
+        *x = -*y;
+        *y = -t;
+        break;
     case 6:
-      t = *x;
-      *x = *y;
-      *y = -t;
-      break;
+        t = *x;
+        *x = *y;
+        *y = -t;
+        break;
     case 7:
-      *y = -*y;
-      break;
-  }
+        *y = -*y;
+        break;
+    }
 }
 
 std::vector<std::string> split(std::string _str, char _delim)
 {
-  std::vector<std::string> ret;
+    std::vector<std::string> ret;
 
-  std::stringstream ss(_str);
-  std::string sub;
+    std::stringstream ss(_str);
+    std::string sub;
 
-  while( getline( ss, sub, _delim ) )
-  {
-    ret.push_back(sub);
-  }
+    while( getline( ss, sub, _delim ) )
+    {
+        ret.push_back(sub);
+    }
 
-  return ret;
+    return ret;
 }
 
 vec2 front(float _ang)
@@ -203,10 +224,10 @@ vec2 right(float _ang)
 
 std::array<float, 4> col255to1(std::array<float, 4> _col)
 {
-  return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
+    return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
 }
 
 std::array<float, 4> col255to1(std::array<int, 4> _col)
 {
-  return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
+    return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
 }

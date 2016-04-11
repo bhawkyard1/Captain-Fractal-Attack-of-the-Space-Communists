@@ -1,8 +1,8 @@
 #include "enemy.hpp"
 
 enemy::enemy(
-    const vec2 _p ,
-    const vec2 _v,
+    const vec3 _p ,
+    const vec3 _v,
     const ship_spec _type,
     const aiTeam _team
     ):
@@ -55,10 +55,10 @@ void enemy::steering()
   setFiring(false);
 
   if(m_curGoal == GOAL_IDLE or m_curGoal == GOAL_SPACE_STATION) return;
-  vec2 p = getPos();
-  vec2 v = getVel();
-  vec2 uv = unit(v);
-  vec2 utv = unit(m_tPos - p);
+  vec3 p = getPos();
+  vec3 v = getVel();
+  vec3 uv = unit(v);
+  vec3 utv = unit(m_tPos - p);
 
 
   //This is the distance between the ship and its m_target position.
@@ -117,7 +117,7 @@ void enemy::steering()
   //m_tPos -= unit(linePos - m_tPos) * cSpd * 3;
 
   //Angle the ship towards its m_target.
-  setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
+  setTAng(clampRoll(computeAngle(tovec2(p - m_tPos)), -180.0f, 180.0f));
   //If we are close to the target, aim towards it.
   //if( dist < 800.0f + radius ) setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
 
@@ -141,12 +141,12 @@ void enemy::steering()
   }
 
   //This variable represents the ships' direction versus its ideal direction.
-  float vecMulSide = dotProd1(uv,computeVector(getTAng()));
+  float vecMulSide = dotProd1(tovec2(uv), computeVector(getTAng()));
 
   if(fabs(vecMulSide) > 0.8f)
   {
     //closing speed * how sideways it is flying * its angle relative to velocity
-    float dv = clamp(cSpd * vecMulSide * dotProd1(uv, computeVector(getAng())), 0.0f, 1.0f);
+    float dv = clamp(cSpd * vecMulSide * dotProd1(tovec2(uv), computeVector(getAng())), 0.0f, 1.0f);
     if(vecMulSide < 0) dodge( dv );
     else if(vecMulSide > 0) dodge( -dv );
   }

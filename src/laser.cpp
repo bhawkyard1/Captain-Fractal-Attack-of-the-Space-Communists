@@ -1,17 +1,17 @@
 #include "laser.hpp"
 
-laser::laser(
-        vec2 _p,
-        vec2 _v,
+laser::laser(vec3 _p,
+        vec3 _v,
         float _ang,
         std::array<float, WEAPS_W> _data,
         aiTeam _team
         )
 {
     float temp_angle = _ang + randFloat(-_data[1], _data[1]);
-	vec2 vAdd = computeVector(temp_angle);
-		
-    setVel({_v.m_x + vAdd.m_x * _data[3], _v.m_y + vAdd.m_y * _data[3]});
+    vec3 vAdd = tovec3(computeVector(temp_angle));
+    vAdd.m_z = sin(randFloat(-_data[1], _data[1]));
+
+    setVel({_v.m_x + vAdd.m_x * _data[3], _v.m_y + vAdd.m_y * _data[3], 0.0f});
     setPos(_p);
     setPPos(_p);
 	

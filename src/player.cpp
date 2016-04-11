@@ -1,7 +1,7 @@
 #include "player.hpp"
 
 player::player(
-    vec2 _p,
+    vec3 _p,
     float _r)
   :
     ship(_p, PLAYER_SHIP, _r)
@@ -13,14 +13,14 @@ player::player(
 void player::ctrlUpdate()
 {
   if(g_GAME_OVER) return;
-  vec2 v = getVel();
+  vec3 v = getVel();
   setPos({-v.m_x, -v.m_y});
   setPPos({-v.m_x, -v.m_y});
-  vec2 p = getPos();
+  vec3 p = getPos();
   p *= g_ZOOM_LEVEL;
-  p += g_HALFWIN;
+  p += tovec3(g_HALFWIN);
   int mx = 0, my = 0;
   SDL_GetMouseState(&mx,&my);
-  vec2 t = {p.m_x - mx, p.m_y - my};
-  setTAng(deg(-ang(t)));
+  vec3 t = {p.m_x - mx, p.m_y - my};
+  setTAng(deg(-ang(tovec2(t))));
 }

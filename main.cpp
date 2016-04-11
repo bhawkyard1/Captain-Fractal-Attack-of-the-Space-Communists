@@ -170,7 +170,7 @@ void mainMenu(universe &uni)
     g_TARG_ZOOM_LEVEL = 0.4f;
     g_DIFFICULTY = 20;
 
-    vec2 scrollVel = randVec(0.5f, 2.0f);
+    vec3 scrollVel = tovec3(randVec2(0.5f, 2.0f));
     uni.setVel(scrollVel);
     uni.setMaxEnemyCount(20, GALACTIC_FEDERATION);
     uni.setMaxWingmanCount(10);
@@ -179,14 +179,14 @@ void mainMenu(universe &uni)
 
     for(int i = 0; i < 360; i += 6)
     {
-        vec2 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i)))};
+        vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1100.0f;
         pos += {600.0f, 300.0f};
         uni.addBuild(pos, PLAYER_TURRET);
     }
     for(int i = 3; i < 360; i += 6)
     {
-        vec2 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i)))};
+        vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1150.0f;
         pos += {600.0f, 300.0f};
         uni.addBuild(pos, PLAYER_TURRET);
@@ -536,8 +536,8 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     ui::selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
-    vec2 pos = {static_cast<float>(mx), static_cast<float>(my)};
-    pos -= g_HALFWIN;
+    vec3 pos = {static_cast<float>(mx), static_cast<float>(my), 0.0f};
+    pos -= tovec3(g_HALFWIN);
     pos /= g_ZOOM_LEVEL;
 
     switch(uni->getMouseState())
@@ -590,9 +590,9 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     escMenuSelection.add(mm);
     escMenuSelection.add(quit);
 
-    vec2 vel = ply->getVel();
+    vec3 vel = ply->getVel();
     float spd = mag(vel);
-    vec2 dir = -(vel / spd);
+    vec3 dir = -(vel / spd);
     switch (sym)
     { 
     case SDLK_w:
@@ -842,7 +842,7 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_MOVEMENT_INTRO)
         {
-            vec2 ppos = uni.getPly()->getPos();
+            vec2 ppos = tovec2(uni.getPly()->getPos());
             float ang = uni.getPly()->getAng();
             uni.getRenderer()->drawText("OKAY, FIRST UP, MOVEMENT:", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
             uni.getRenderer()->drawText("YOU ALWAYS CHASE THE MOUSE", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
@@ -921,7 +921,7 @@ void playTutorial(universe &uni)
         {
             if(uni.getAsteroids()->size() > 0)
             {
-                vec2 tPos = (*uni.getAsteroids())[0].getPos();
+                vec3 tPos = (*uni.getAsteroids())[0].getPos();
                 uni.getRenderer()->drawText("NOW BLOW UP THIS ROCK", "pix", {tPos.m_x + 100, tPos.m_y}, true, 2.0f);
             }
 
@@ -1073,6 +1073,19 @@ void playTutorial(universe &uni)
             if(uni.getEnemyCount(GALACTIC_FEDERATION) == 0)
             {
                 tutStage = STAGE_COMPLETE;
+                timer = 0.0f;
+            }
+        }
+        else if(tutStage == STAGE_COMPLETE)
+        {
+            if(timer < 5.0f)
+            {
+             uni.getRenderer()->drawText("YOU HAVE COMPLETED THE TUTORIAL, WELL DONE!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+             uni.getRenderer()->drawText("SPACE STALIN MAY HAVE FOUND HIS MATCH AT LAST.", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 100.0f}, false, 1.0f);
+            }
+            else
+            {
+                g_GAME_STATE = MODE_MENU;
             }
         }
         else if(tutStage == STAGE_COMBAT_2_DIED)

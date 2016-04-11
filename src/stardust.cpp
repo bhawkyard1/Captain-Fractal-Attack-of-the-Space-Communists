@@ -61,12 +61,12 @@ void stardust::gen(
   else
   {
     int side = rand()%4;
-    vec2 vec;
+    vec3 vec;
 
     if(side == 0)
     {
       //TOP
-      vec = randVec({-g_HALFWIN.m_x - 100.0f, -g_HALFWIN.m_y - 200.0f}, {g_HALFWIN.m_x + 100.0f, -g_HALFWIN.m_y});
+      vec = randVec3({-g_HALFWIN.m_x - 100.0f, -g_HALFWIN.m_y - 200.0f}, {g_HALFWIN.m_x + 100.0f, -g_HALFWIN.m_y});
       vec *= g_BG_DENSITY;
       setPos(vec);
       setPPos(getPos());
@@ -74,7 +74,7 @@ void stardust::gen(
     else if(side == 1)
     {
       //RIGHT
-      vec = randVec({g_HALFWIN.m_x, -g_HALFWIN.m_y - 100.0f}, {g_HALFWIN.m_x + 200.0f, g_HALFWIN.m_y + 100.0f});
+      vec = randVec3({g_HALFWIN.m_x, -g_HALFWIN.m_y - 100.0f, 0.0f}, {g_HALFWIN.m_x + 200.0f, g_HALFWIN.m_y + 100.0f, 0.0f});
       vec *= g_BG_DENSITY;
       vec.m_x += g_WIN_WIDTH;
       setPos(vec);
@@ -83,7 +83,7 @@ void stardust::gen(
     else if(side == 2)
     {
       //BOTTOM
-      vec = randVec({-g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {g_HALFWIN.m_x + 100.0f, g_HALFWIN.m_y + 200.0f});
+      vec = randVec3({-g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y, 0.0f}, {g_HALFWIN.m_x + 100.0f, g_HALFWIN.m_y + 200.0f, 0.0f});
       vec *= g_BG_DENSITY;
       vec.m_y += g_WIN_HEIGHT;
       setPos(vec);
@@ -92,7 +92,7 @@ void stardust::gen(
     else if(side == 3)
     {
       //LEFT
-      vec = randVec({-g_HALFWIN.m_x - 200.0f, -g_HALFWIN.m_y - 100.0f}, {-g_HALFWIN.m_x, g_HALFWIN.m_y + 100.0f});
+      vec = randVec3({-g_HALFWIN.m_x - 200.0f, -g_HALFWIN.m_y - 100.0f, 0.0f}, {-g_HALFWIN.m_x, g_HALFWIN.m_y + 100.0f, 0.0f});
       vec *= g_BG_DENSITY;
       setPos(vec);
       setPPos(getPos());

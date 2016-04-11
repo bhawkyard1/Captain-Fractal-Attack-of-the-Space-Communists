@@ -60,8 +60,8 @@ class universe
     std::vector<int> m_factionMaxCounts;
 
     player m_ply;
-    vec2 m_vel;
-    vec2 m_pos;
+    vec3 m_vel;
+    vec3 m_pos;
 
     col_partition m_partitions;
 
@@ -77,15 +77,15 @@ public:
     universe();
     void initUI();
     player * getPly() {return &m_ply;}
-    void setVel(const vec2 _v) {m_vel = _v;}
-    void addShot(const vec2 _p, const vec2 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team);
-    void addMissile(const vec2 _p, const vec2 _v, const float _angle, const aiTeam _team);
+    void setVel(const vec3 _v) {m_vel = _v;}
+    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team);
+    void addMissile(const vec3 _p, const vec3 _v, const float _angle, const aiTeam _team);
     void spawnShip(const aiTeam t);
-    void spawnShip(const aiTeam _t, const vec2 _p);
+    void spawnShip(const aiTeam _t, const vec3 _p);
     void spawnSquad(const aiTeam _t, const float _min, const float _max, const int _i);
     void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++;}
     void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
-    void addBuild(const vec2 _p,const ship_spec _type);
+    void addBuild(const vec3 _p, const ship_spec _type);
     void addBuild(const ship_spec _type);
 
     void update(const float _dt);
@@ -98,13 +98,13 @@ public:
     void detectCollisions(const SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, unsigned short int _lvl);
     void checkCollisions();
 
-    void addpfx(const vec2 _p, const vec2 _v, const vec2 _wv, const int _no, const float _f);
-    void addParticleSprite(const vec2 _p, const vec2 _v, const float _m, const std::string _tex);
+    void addpfx(const vec3 _p, const vec3 _v, const vec3 _wv, const int _no, const float _f);
+    void addParticleSprite(const vec3 _p, const vec3 _v, const float _m, const std::string _tex);
     std::vector<enemy>* getAgents() {return &m_agents;}
     std::vector<laser>* getShots() {return &m_shots;}
     std::vector<missile>* getMissiles() {return &m_missiles;}
     std::vector<ship>* getAsteroids() {return &m_asteroids;}
-    ship * closestEnemy(const vec2 _p, const aiTeam _t);
+    ship * closestEnemy(const vec3 _p, const aiTeam _t);
     void setScore(const int _s) {m_score = _s; m_ui.update(m_score);}
     void addScore(const int _s) {m_score += _s; m_ui.update(m_score);}
     int getScore() const  {return m_score;}

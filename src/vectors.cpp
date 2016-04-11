@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "vectors.hpp"
 #include "util.hpp"
 
@@ -322,9 +324,22 @@ float dotProd2(vec3 A, vec3 B)
 //Given a point p1 and a gradients m1, and the general point p2, will find the point on p1 + t(m1) closest to p2.
 vec2 closest(vec2 p1, vec2 m1, vec2 p2)
 {
+    //Ensure m1 is a unit vector.
     float m = mag(m1);
     if(m == 0.0f) return p1;
     else m1 /= m;
+
+    return p1 + m1 * dotProd1( p2 - p1, m1 );
+}
+
+//Given a point p1 and a gradients m1, and the general point p2, will find the point on p1 + t(m1) closest to p2.
+vec3 closest(vec3 p1, vec3 m1, vec3 p2)
+{
+    //Ensure m1 is a unit vector.
+    float m = mag(m1);
+    if(m == 0.0f) return p1;
+    else m1 /= m;
+
     return p1 + m1 * dotProd1( p2 - p1, m1 );
 }
 

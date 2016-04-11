@@ -7,8 +7,8 @@ void base::updatePos(const float _dt)
     m_pos += (m_vel + m_wvel) * g_PIXEL_UNIT_CONVERSION * _dt;
 }
 
-vec2 base::getInterpolatedPosition(const float _dt)
+vec3 base::getInterpolatedPosition(const float _dt)
 {
-  vec2 p = _dt * getPos() + (1 - _dt) * getPPos();
+  vec3 p = _dt * getPos() + (1 - _dt) * getPPos();
   return p;
 }

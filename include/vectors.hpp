@@ -4,6 +4,8 @@
 #include <math.h>
 
 #define V_PI 3.14159265359
+struct vec2;
+struct vec3;
 
 struct vec2
 {
@@ -39,7 +41,7 @@ struct vec3
   vec3& operator+=(vec3 _rhs) { m_x += _rhs.m_x; m_y += _rhs.m_y; m_z += _rhs.m_z; return *this; }
   vec3& operator-=(vec3 &_rhs) { m_x -= _rhs.m_x; m_y -= _rhs.m_y; m_z -= _rhs.m_z; return *this; }
   vec3& operator-=(float &_rhs) { m_x -= _rhs; m_y -= _rhs; m_z -= _rhs; return *this; }
-  vec3& operator*=(float &_rhs) { m_x *= _rhs; m_y *= _rhs; m_z *= _rhs; return *this; }
+  vec3& operator*=(const float &_rhs) { m_x *= _rhs; m_y *= _rhs; m_z *= _rhs; return *this; }
   vec3& operator/=(float &_rhs) { m_x /= _rhs; m_y /= _rhs; m_z /= _rhs; return *this; }
 };
 
@@ -86,6 +88,7 @@ float dotProd2(const vec3 A, const vec3 B);
 
 //Given a point p1 and a gradients m1, and the general point p2, will find the point on p1 + t(m1) closest to p2.
 vec2 closest(const vec2 p1, const vec2 m1, const vec2 p2);
+vec3 closest(const vec3 p1, const vec3 m1, const vec3 p2);
 vec3 tovec3(const vec2 vec);
 vec2 tovec2(const vec3 vec);
 float angle(const vec2 vec);

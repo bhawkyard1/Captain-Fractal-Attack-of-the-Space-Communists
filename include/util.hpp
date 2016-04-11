@@ -21,6 +21,8 @@
 #define I_MAX std::numeric_limits<int>::max()
 #define I_INF std::numeric_limits<int>::max()
 
+#define UPI 3.14159265359
+
 void toOctant(int*,int*,int);
 
 float toDeg(float rad);
@@ -118,11 +120,13 @@ bool pointInRect(vec2 p, vec2 r_pos, vec2 r_dim);
 
 bool strToBool(std::string str);
 
-vec2 randVec(float m, float M);
+vec2 randVec2(float m, float M);
+vec2 randVec2(float f);
+vec2 randVec2(vec2 min, vec2 max);
 
-vec2 randVec(float f);
-
-vec2 randVec(vec2 min, vec2 max);
+vec3 randVec3(float m, float M);
+vec3 randVec3(float f);
+vec3 randVec3(vec3 min, vec3 max);
 
 void toOctant(int * x, int * y, int octant);
 

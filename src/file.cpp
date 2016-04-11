@@ -81,15 +81,17 @@ void readVectorEnemy(std::string str, universe * _u)
         id = std::stof(stat[0]);
         team = std::stof(stat[1]);
 
-        vec2 pos;
+        vec3 pos;
         stat = split(stats[2], ',');
         pos.m_x = std::stof(stat[0]);
         pos.m_y = std::stof(stat[1]);
+        pos.m_z = 0.0f;
 
-        vec2 vel;
+        vec3 vel;
         stat = split(stats[3], ',');
         vel.m_x = std::stof(stat[0]);
         vel.m_y = std::stof(stat[1]);
+        vel.m_z = 0.0f;
 
         float ang = std::stof(stats[4]);
 
@@ -185,7 +187,7 @@ void loadGame(universe * uni)
             else if(strings.at(i) == "ps")
             {
                 std::vector<std::string> stats = split(strings.at(i + 1), ',');
-                vec2 vel = {std::stof(stats[0]), std::stof(stats[1])};
+                vec3 vel = {std::stof(stats[0]), std::stof(stats[1]), 0.0f};
                 float health = std::stof(stats[2]);
                 float shield = std::stof(stats[3]);
                 float energy = std::stof(stats[4]);

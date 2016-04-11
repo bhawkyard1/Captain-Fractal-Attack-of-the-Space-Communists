@@ -20,7 +20,7 @@ std::string getTextureKey(ship_spec _s) {return g_texture_keys[_s].m_name;}
 ship_spec decrSpec(ship_spec _s) {return static_cast<ship_spec>( static_cast<int>(_s) - 1 );}
 
 ship::ship(
-        vec2 _p,
+        vec3 _p,
         ship_spec _type,
         float _radius
         )
@@ -319,9 +319,8 @@ ship::ship(
     m_radius = _radius;
 }
 
-ship::ship(
-        const ship &_src,
-        const vec2 _p
+ship::ship(const ship &_src,
+        const vec3 _p
         )
 {
     m_coolDown = 0.0f;
@@ -452,15 +451,14 @@ void ship::accelerate(const float _mult)
 
     if(m_energy <= energyLoss) return;
     vec2 add = vec(getAng() + 90.0f) * accelMult * m_inertia * m_enginePower;
-    addVel(add * _mult);
+    addVel(tovec3(add) * _mult);
     m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
 
     setAccelerating(true);
 }
 
-void ship::accelerate(
-        const vec2 _dir,
+void ship::accelerate(const vec3 _dir,
         const float _mult
         )
 {
@@ -502,7 +500,7 @@ void ship::dodge(const float _side)
 
     if(m_energy <= energyLoss) return;
     vec2 vec = computeVector(getAng());
-    addVel(vec * _side * accelMult * m_inertia * m_enginePower);
+    addVel(tovec3(vec )* _side * accelMult * m_inertia * m_enginePower);
     m_energy -= energyLoss * fabs(_side);
 }
 
@@ -593,7 +591,7 @@ void ship::damage(float _d, const vec2 _v)
     if(m_canMove)
     {
         _d *= (dotProd1( vec(m_angle + 90), unit(_v) ) / 2.0f) + 1.5f;
-        addVel(_v);
+        addVel(tovec3(_v));
     }
 
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;
@@ -686,7 +684,7 @@ int ship::getScore() const
 void ship::setCooldown(const float _f)
 {
     m_coolDown = _f;
-    addVelS(-vec(m_angle + 90.0f) * getCurWeapStat(STOPPING_POWER) * 5.0f);
+    addVelS(tovec3(-vec(m_angle + 90.0f) * getCurWeapStat(STOPPING_POWER) * 5.0f));
 }
 
 std::array<float, 4> ship::getCurWeapCol() const

@@ -183,7 +183,7 @@ void renderer::update(const float _dt)
 
   if(magns(m_cameraShakeTargetOffset - m_cameraShakeOffset) < 40.0f)
   {
-    m_cameraShakeTargetOffset = randVec(m_cameraShake);
+    m_cameraShakeTargetOffset = randVec2(m_cameraShake);
   }
   m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * _dt * 4.0f;
 
@@ -561,7 +561,7 @@ void renderer::drawMap(std::vector<missile> *_mp,
   SDL_SetRenderDrawColor(m_renderer, 0, 0, 255, 255);
   for(unsigned int i = 0; i < _lp->size(); i++)
   {
-    vec2 lpp = _lp->at(i).getPos();
+    vec3 lpp = _lp->at(i).getPos();
 
     double x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     double y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -572,7 +572,7 @@ void renderer::drawMap(std::vector<missile> *_mp,
   SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
   for(unsigned int i = 0; i < _mp->size(); i++)
   {
-    vec2 mpp = _mp->at(i).getPos();
+    vec3 mpp = _mp->at(i).getPos();
 
     double x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     double y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -583,7 +583,7 @@ void renderer::drawMap(std::vector<missile> *_mp,
   SDL_SetRenderDrawColor(m_renderer, 200, 200, 200, 255);
   for(unsigned int i = 0; i < _ap->size(); i++)
   {
-    vec2 app = _ap->at(i).getPos();
+    vec3 app = _ap->at(i).getPos();
 
     double x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
     double y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
@@ -597,7 +597,7 @@ void renderer::drawMap(std::vector<missile> *_mp,
 
   for(unsigned int i = 0; i < _ep->size(); i++)
   {
-    vec2 epp = _ep->at(i).getPos();
+    vec3 epp = _ep->at(i).getPos();
     int radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
     std::array<int, 4> col;
@@ -688,5 +688,5 @@ void renderer::drawWeaponStats(player * _ply)
 void renderer::addShake(float _s)
 {
   m_cameraShake += _s;
-  m_cameraShakeTargetOffset = randVec(m_cameraShake);
+  m_cameraShakeTargetOffset = randVec2(m_cameraShake);
 }

@@ -3,9 +3,9 @@
 #include "util.hpp"
 #include "common.hpp"
 
-pfx::pfx(const vec2 _p,
-        const vec2 _v,
-        const vec2 _wv,
+pfx::pfx(const vec3 _p,
+        const vec3 _v,
+        const vec3 _wv,
         const size_t _no,
         const float _force,
         const std::string _identifier

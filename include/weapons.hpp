@@ -52,4 +52,9 @@ inline bool isOffScreen(vec2 pos, float dist)
     return (pos.m_x < -dist or pos.m_y < -dist or pos.m_x > dist or pos.m_y > dist);
 }
 
+inline bool isOffScreen(vec3 pos, float dist)
+{
+    return (pos.m_x < -dist or pos.m_y < -dist or pos.m_x > dist or pos.m_y > dist);
+}
+
 #endif

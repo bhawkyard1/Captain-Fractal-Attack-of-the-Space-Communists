@@ -10,7 +10,7 @@ class missile: public ship
     ship * m_target;
     bool m_det;
 public:
-    missile(const vec2 _p, const float _r);
+    missile(const vec3 _p, const float _r);
     void setTarget(ship * _s) {m_target = _s;}
     ship * getTarget() const {return m_target;}
 	void steering();

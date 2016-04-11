@@ -106,13 +106,13 @@ public:
   /// @brief Draws a button (ie glorified coloured rectangle)
   /// @param _p position of the button, _d button dimensions, _ang angle of the button, _col colour of the button
   //----------------------------------------------------------------------------------------------------------------------
-  void drawButton(const vec2 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
+  void drawButton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Adds six verts to the member vertex attribute vectors. This allows me to batch draw simple objects.
   /// @param _dt time difference, _v velocity of the universe, _p position of the universe, _cCol colour of the universe
   //----------------------------------------------------------------------------------------------------------------------
-  void addRect(const vec2 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
+  void addRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Takes the vert attribute vectors, treats them as rectangles, and draw them.
@@ -124,19 +124,19 @@ public:
   /// @brief Draw a single rectangle
   /// @param _p position of the rectangle, _d dimensions, _ang angle, _ws place in-world (true) or on the screen (false)
   //----------------------------------------------------------------------------------------------------------------------
-  void drawRect(const vec2 _p, const vec2 _d, const float _ang, const bool _ws);
+  void drawRect(const vec3 _p, const vec2 _d, const float _ang, const bool _ws);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws a rectangle with the smoke shader
   /// @param _p position, _d dimension, _dt global time for shader, _col colour tint
   //----------------------------------------------------------------------------------------------------------------------
-  void drawSmoke(const vec2 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col);
+  void drawSmoke(const vec3 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws a circle
   /// @param _p position, _d radius, _ws world space (true) or screen space (false)
   //----------------------------------------------------------------------------------------------------------------------
-  void drawCircle(const vec2 _p, const float _d, const bool _ws);
+  void drawCircle(const vec3 _p, const float _d, const bool _ws);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Makes the member gl context and window active
@@ -170,7 +170,7 @@ public:
   /// @brief Draws an textured model
   /// @param _p position, _ang asset angle, _asset asset key in m_objects
   //----------------------------------------------------------------------------------------------------------------------
-  void drawAsset(const vec2 _p, const float _ang, const std::string _asset);
+  void drawAsset(const vec3 _p, const float _ang, const std::string _asset);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws an textured model, but with a supplied alpha
@@ -182,13 +182,13 @@ public:
   /// @brief Draws an shield of a given radius, with a fancy shader
   /// @param _p position, _r radius, _dt global time for shader, _alpha transparency, _col colour tint
   //----------------------------------------------------------------------------------------------------------------------
-  void drawShield(const vec2 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col);
+  void drawShield(const vec3 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws a ship
   /// @param _p position, _ang asset angle, _asset asset key in m_objects, _col colour of muzzle flash
   //----------------------------------------------------------------------------------------------------------------------
-  void drawShip(const vec2 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
+  void drawShip(const vec3 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Treats the entries in the vertex attribute vectors as lines, and draws them with a laser shader
@@ -205,14 +205,14 @@ public:
   /// @brief Draws an explosion
   /// @param _pos position, _d dimensions, _col colour tint
   //----------------------------------------------------------------------------------------------------------------------
-  void drawExplosion(const vec2 _pos, const float _d, const std::array<float, 4> _col);
-  void drawExplosion(const vec2 _pos, const vec2 _d, const std::array<float, 4> _col);
+  void drawExplosion(const vec3 _pos, const float _d, const std::array<float, 4> _col);
+  void drawExplosion(const vec3 _pos, const vec2 _d, const std::array<float, 4> _col);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws jet flames
   /// @param _width width of the lines
   //----------------------------------------------------------------------------------------------------------------------
-  void drawFlames(const vec2 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed);
+  void drawFlames(const vec3 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Loads ascii characters using SDL_TTF, and saves them as openGL textures.
@@ -236,7 +236,7 @@ public:
   /// @brief Adds a line to the member vertex attribute vectors, with position, uvs and colour
   /// @param _start start of the line, _end end of the line, _lCol colour of the line
   //----------------------------------------------------------------------------------------------------------------------
-  void addLine(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol);
+  void addLine(const vec3 _start, const vec3 _end, const std::array<float, 4> _lCol);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Gets the radius of a ship
