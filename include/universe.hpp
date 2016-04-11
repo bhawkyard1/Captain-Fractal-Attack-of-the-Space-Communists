@@ -93,7 +93,7 @@ public:
     void clear() {m_drawer.clear();}
     void draw(const float _dt);
     void drawUI();
-    void swap() {m_drawer.swapWindow();}
+    void swap() {m_drawer.finalise();}
 
     void detectCollisions(const SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, unsigned short int _lvl);
     void checkCollisions();

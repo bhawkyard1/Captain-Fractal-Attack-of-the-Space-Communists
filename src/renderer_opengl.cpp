@@ -69,7 +69,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LESS);
 
-    swapWindow();
+    finalise();
 
     ngl::NGLInit::instance();
 
@@ -301,7 +301,7 @@ void renderer_ngl::addLine(const vec2 _start, const vec2 _end, const std::array<
     m_verts.push_back({_end.m_x, _end.m_y, 10.0f});
 
     m_UVs.push_back({0.0f, 0.0f});
-    m_UVs.push_back({0.0f, 1.0f});
+    m_UVs.push_back({1.0f, 1.0f});
 
     m_colours.push_back(_lCol);
     m_colours.push_back(_lCol);
@@ -522,7 +522,7 @@ void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v, std::array<float,
 
     for(auto &i : _cCol) i /= 255.0f;
 
-    std::cout << "Col " << _cCol[0] << ", " << _cCol[1] << ", " << _cCol[2] << std::endl;
+    //std::cout << "Col " << _cCol[0] << ", " << _cCol[1] << ", " << _cCol[2] << std::endl;
     m_shader->use("background");
     m_shader->setRegisteredUniform("iGlobalTime", _dt);
     m_shader->setRegisteredUniform("zoom", 0.06f / g_ZOOM_LEVEL);
@@ -533,7 +533,6 @@ void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v, std::array<float,
     glBindVertexArray(m_screenQuadVAO);
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
     glBindVertexArray(0);
-
 }
 
 GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts)
@@ -951,8 +950,8 @@ void renderer_ngl::statusBars(player * _ply)
 
 void renderer_ngl::drawWeaponStats(player *_ply)
 {
-    vec2 dim = {g_WIN_WIDTH * 0.1, g_WIN_HEIGHT * 0.2};
-    vec2 pos = {g_WIN_WIDTH - (dim.m_x / 2.0f), g_WIN_HEIGHT - 1.4 * (dim.m_y / 2.0f)};
+    vec2 dim = {g_WIN_WIDTH * 0.1f, g_WIN_HEIGHT * 0.2f};
+    vec2 pos = {g_WIN_WIDTH - (dim.m_x / 2.0f), g_WIN_HEIGHT - 1.4f * (dim.m_y / 2.0f)};
 
     std::array<float, 4> wc = _ply->getCurWeapCol();
 

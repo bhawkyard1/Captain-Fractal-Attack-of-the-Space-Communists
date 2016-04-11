@@ -26,11 +26,11 @@ universe::universe()
     m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
 
     m_tCol[0] = 255.0f;
-    m_tCol[1] = 50.0f;
+    m_tCol[1] = 200.0f;
     m_tCol[2] = 50.0f;
 
     m_cCol[0] = 255.0f;
-    m_cCol[1] = 50.0f;
+    m_cCol[1] = 200.0f;
     m_cCol[2] = 50.0f;
 
 #if RENDER_MODE == 0
@@ -560,9 +560,8 @@ void universe::update(const float _dt)
         m_passiveSprites.at(i).updateSprite(_dt);
 
         std::string temp = m_passiveSprites.at(i).getIdentifier();
-        int w = 0;
-        int h = 0;
-        m_drawer.queryTexture(temp, 0, &w, &h);
+        int w = 32;
+        int h = 32;
 
         if(alph <= 0.1f or isOffScreen(m_passiveSprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passiveSprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passiveSprites.at(i).getDim() <= 0.0f)
         {
@@ -824,7 +823,7 @@ void universe::draw(float _dt)
 
     m_drawer.drawBackground(m_time_elapsed, m_pos, m_vel, m_cCol);
 
-    m_drawer.setShader("majorLazer");
+    m_drawer.useShader("majorLazer");
     for(auto &i : m_shots)
     {
         vec2 ipos = i.getInterpolatedPosition(_dt);
@@ -903,7 +902,7 @@ void universe::draw(float _dt)
     }
 
     m_drawer.enableDepthSorting();
-    m_drawer.setShader("ship");
+    m_drawer.useShader("ship");
     m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier(), m_ply.getCurWeapCol());
     for(auto &i : m_agents)
     {

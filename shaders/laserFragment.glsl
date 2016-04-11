@@ -32,9 +32,15 @@ void main()
     fragColour.a *= vertColour.a;*/
 
     //fragColour = vec4(fract(sin(dot(fragCoord.xy ,vec2(12.9898,78.233))) * 43758.5453), fract(sin(dot(fragCoord.xy ,vec2(12.9898,78.233))) * 43758.5453), 0.0, 1.0);
-    fragColour = vertColour * 2.2;
+
+    float dist = length(vec2(0.5, 0.5) - UV);
+    fragColour = mix(vec4(1.0), vec4(vertColour.rgb, 0.0), dist * 2.0);
+    fragColour *= 1.5;
+    fragColour.a *= vertColour.a;
+
+    //fragColour = vertColour * 2.2;
 
     //fragColour = mix(vec4(1.0), vertColour, abs(UV.x));
 
-    fragColour.a *= UV.y;
+    //fragColour.a *= UV.y;
 }
