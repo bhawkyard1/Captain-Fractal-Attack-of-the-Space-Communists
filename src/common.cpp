@@ -4,9 +4,9 @@
 game_mode g_GAME_STATE = MODE_MENU;
 
 #if RENDER_MODE == 0
-std::string g_RESOURCE_LOC = "../resources/SDL2/";
+std::string g_RESOURCE_LOC = "./resources/SDL2/";
 #elif RENDER_MODE == 1
-std::string g_RESOURCE_LOC = "../resources/NGL/";
+std::string g_RESOURCE_LOC = "./resources/NGL/";
 #endif
 
 double g_GLOBAL_TIME = 0.0f;

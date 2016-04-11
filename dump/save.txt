@@ -1,9 +1,0 @@
-score 21
-mec 3
-mwc 0
-mmc 2
-nm 3
-d 2
-u 1 0 1 0 
-tp 
-sp 
