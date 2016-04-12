@@ -152,8 +152,10 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   loadAsset("ASTEROID_MID",        "asteroid_2");
   loadAsset("ASTEROID_LARGE",      "asteroid_3");
 
-  loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 30);
-  loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 35);
+  loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
+  loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 20);
+
+  loadFontSpriteSheet("pix90", g_RESOURCE_LOC + "fonts/pix.TTF", 60);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1080,14 +1082,14 @@ void renderer_ngl::drawText(std::string _text,
     //glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
     glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
 
-    float w = static_cast<float>(tmp->m_dim[i].first);
-    float h = static_cast<float>(tmp->m_dim[i].second);
-    w = 8.0f;
+    float w = static_cast<float>(tmp->m_dim[_text[i]].first);
+    float h = static_cast<float>(tmp->m_dim[_text[i]].second);
+
     w *= _mul;
     h *= _mul;
     //w = 8;
 
-    drawRect({x, y}, {(float)w, (float)h}, 0.0f, _ws);
+    drawRect({x, y}, {w, h}, 0.0f, _ws);
     x += w;
   }
 }
@@ -1114,9 +1116,9 @@ void renderer_ngl::drawText(std::string _text,
     //glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
     glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
 
-    float w = static_cast<float>(tmp->m_dim[i].first);
-    float h = static_cast<float>(tmp->m_dim[i].second);
-    w = 8.0f;
+    float w = static_cast<float>(tmp->m_dim[_text[i]].first);
+    float h = static_cast<float>(tmp->m_dim[_text[i]].second);
+
     w *= _mul;
     h *= _mul;
     //w = 8;

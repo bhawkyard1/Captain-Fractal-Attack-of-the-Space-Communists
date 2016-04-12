@@ -53,6 +53,7 @@ void loadSounds()
     loadSound(g_RESOURCE_LOC + "sfx/menu_button_", 1);
 
     loadMusic(g_RESOURCE_LOC + "sfx/deep_space_0");
+    loadMusic(g_RESOURCE_LOC + "sfx/soviet_national_anthem_0");
 }
 
 void playSnd(sound _snd)

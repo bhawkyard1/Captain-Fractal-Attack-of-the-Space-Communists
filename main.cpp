@@ -74,21 +74,24 @@ int main(int argc, char* argv[])
 
     sfxInit();
     loadSounds();
-    playMusic(0);
+
     while(g_GAME_STATE != MODE_QUIT)
     {
         if(g_GAME_STATE == MODE_MENU)
         {
+            playMusic(1);
             gameInit();
             mainMenu(uni);
         }
         else if(g_GAME_STATE == MODE_TUTORIAL)
         {
+            playMusic(0);
             gameInit();
             playTutorial(uni);
         }
         else if(g_GAME_STATE == MODE_GAME)
         {
+            playMusic(0);
             gameInit();
             playGame(uni);
         }
@@ -342,6 +345,8 @@ void mainMenu(universe &uni)
 
         uni.clear();
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
+        uni.getRenderer()->drawText("CAPTAIN FRACTAL:", "pix90", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 300.0f}, false, 1.0f);
+        uni.getRenderer()->drawText("ATTACK OF THE SPACE COMMUNISTS", "pix90", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
         uni.swap();
     }
 }

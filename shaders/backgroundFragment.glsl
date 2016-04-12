@@ -56,10 +56,10 @@ void main()
     //Multiply up by current aspect ratio.
     uv.y *= iResolution.y / iResolution.x;
 
-    float z = sqrt((2000.0 * 2000.0) - (uv.x * uv.x) - (uv.y * uv.y));
+    /*float z = sqrt((2000.0 * 2000.0) - (uv.x * uv.x) - (uv.y * uv.y));
     z /= 4000.0;
     z = z * z * z;
-    uv *= z;
+    uv *= z;*/
 
     //Don't know what this does. Seems to kind of link together current uv pos and the zoom level.
     vec3 uvzoom = vec3(uv * zoom, 20.0);

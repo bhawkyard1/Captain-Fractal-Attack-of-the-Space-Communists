@@ -3,7 +3,8 @@
 #include "util.hpp"
 #include "common.hpp"
 
-pfx::pfx(const vec3 _p,
+pfx::pfx(
+        const vec3 _p,
         const vec3 _v,
         const vec3 _wv,
         const size_t _no,

@@ -643,10 +643,10 @@ void universe::draw(float _dt)
     {
         if(i->getZ() > 1) continue;
 
-        vec2 ipos = i->getInterpolatedPosition(_dt);
-        vec2 ivel = (i->getVel() + i->getWVel()) * i->getZ();
+        vec3 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ivel = (i->getVel() + i->getWVel()) * i->getZ();
         std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawLine(ipos, ipos + ivel, icol);
+        m_drawer.drawLine(tovec2(ipos), tovec2(ipos + ivel), icol);
     }
 
     m_drawer.setBlendMode(SDL_BLENDMODE_ADD);
@@ -654,9 +654,9 @@ void universe::draw(float _dt)
     {
         if(i->getZ() <= 1)
         {
-            vec2 ipos = i->getInterpolatedPosition(_dt);
+            vec3 ipos = i->getInterpolatedPosition(_dt);
             std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-            m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
+            m_drawer.drawTexture( i->getTex(), 0, tovec2(ipos), i->getAng(), col );
         }
     }
     m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
@@ -664,60 +664,60 @@ void universe::draw(float _dt)
     for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
         if(!m_paused) i->incrDim();
-        vec2 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ipos = i->getInterpolatedPosition(_dt);
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
+        m_drawer.drawTexture( i->getTex(), 0, tovec2(ipos), i->getAng(), col );
     }
 
     for(auto i = m_shots.begin(); i != m_shots.end(); ++i)
     {
-        vec2 ipos = i->getInterpolatedPosition(_dt);
-        vec2 ivel = (i->getVel() + i->getWVel()) * 3;
+        vec3 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ivel = (i->getVel() + i->getWVel()) * 3;
         std::array<float, 4> iscol = {i->getCol(0), i->getCol(1), i->getCol(2), 255};
         std::array<float, 4> iecol = {iscol[0] / 2, iscol[1] / 2, iscol[2] / 2, 20};
-        m_drawer.drawLineGr(ipos, ipos + ivel, iecol, iscol);
+        m_drawer.drawLineGr(tovec2(ipos), tovec2(ipos + ivel), iecol, iscol);
     }
 
     for(auto i = m_asteroids.begin(); i != m_asteroids.end(); ++i)
     {
-        vec2 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ipos = i->getInterpolatedPosition(_dt);
         std::array<float, 4> icol = {255, 255, 255, 255};
-        m_drawer.drawTexture(i->getIdentifier(), 0, ipos, i->getAng(), icol);
+        m_drawer.drawTexture(i->getIdentifier(), 0, tovec2(ipos), i->getAng(), icol);
     }
 
     for(auto i = m_agents.begin(); i != m_agents.end(); ++i)
     {
-        vec2 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ipos = i->getInterpolatedPosition(_dt);
         std::array<float, 4> ialpha = i->getAlphaStats();
-        m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
+        m_drawer.drawTextureSet(i->getIdentifier(), tovec2(ipos), i->getAng(), ialpha);
     }
 
     if(!g_GAME_OVER)
     {
-        vec2 ppos = m_ply.getInterpolatedPosition(_dt);
+        vec3 ppos = m_ply.getInterpolatedPosition(_dt);
         std::array<float, 4> palpha = m_ply.getAlphaStats();
-        m_drawer.drawTextureSet(m_ply.getIdentifier(), ppos, m_ply.getAng(), palpha);
+        m_drawer.drawTextureSet(m_ply.getIdentifier(), tovec2(ppos), m_ply.getAng(), palpha);
     }
 
     for(auto i = m_missiles.begin(); i != m_missiles.end(); ++i)
     {
-        vec2 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ipos = i->getInterpolatedPosition(_dt);
         std::array<float, 4> ialpha = i->getAlphaStats();
-        m_drawer.drawTextureSet(i->getIdentifier(), ipos, i->getAng(), ialpha);
+        m_drawer.drawTextureSet(i->getIdentifier(), tovec2(ipos), i->getAng(), ialpha);
     }
 
     for(auto i = m_particles.begin(); i != m_particles.end(); ++i)
     {
-        vec2 ipos = i->getPos();
+        vec3 ipos = i->getPos();
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getAlpha()};
 
-        m_drawer.drawTexture(i->getIdentifier(), 0, ipos, 0, col);
+        m_drawer.drawTexture(i->getIdentifier(), 0, tovec2(ipos), 0, col);
         int k = 0;
         for(auto j = i->getParticles()->begin(); j != i->getParticles()->end(); ++j)
         {
-            vec2 jpos = j->getInterpolatedPosition(_dt);
+            vec3 jpos = j->getInterpolatedPosition(_dt);
             col[3] = i->getAlpha(k);
-            m_drawer.drawLine(jpos, jpos + j->getVel(), col);
+            m_drawer.drawLine(tovec2(jpos), tovec2(jpos + j->getVel()), col);
             k++;
         }
     }
@@ -725,10 +725,10 @@ void universe::draw(float _dt)
     for(auto i = m_dots.begin(); i != m_dots.end(); ++i)
     {
         if(i->getZ() <= 1) continue;
-        vec2 ipos = i->getInterpolatedPosition(_dt);
-        vec2 ivel = (i->getVel() + i->getWVel()) * i->getZ();
+        vec3 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ivel = (i->getVel() + i->getWVel()) * i->getZ();
         std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawLine(ipos, ipos + ivel, icol);
+        m_drawer.drawLine(tovec2(ipos), tovec2(ipos + ivel), icol);
     }
 
     m_drawer.setBlendMode(SDL_BLENDMODE_ADD);
@@ -736,9 +736,9 @@ void universe::draw(float _dt)
     {
         if(i->getZ() > 1)
         {
-            vec2 ipos = i->getInterpolatedPosition(_dt);
+            vec3 ipos = i->getInterpolatedPosition(_dt);
             std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-            m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), icol );
+            m_drawer.drawTexture( i->getTex(), 0, tovec2(ipos), i->getAng(), icol );
 
         }
     }
@@ -765,11 +765,9 @@ void universe::draw(float _dt)
         m_drawer.drawTexture("PLAYER_TURRET", 0, dpos, 0, {255, 255, 255, 100});
         m_drawer.drawTexture("PLAYER_TURRET", 5, dpos, 0, {255, 255, 255, 100});
         break;
-    case 8:, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawTexture( i->getTex(), 0, ipos, i->getAng(), col );
-    }
-    m_drawer.drawTexture("PLAYER_GRAVWELL", 0, dpos, 0, {255, 255, 255, 100});
-    break;
+    case 8:
+        m_drawer.drawTexture("PLAYER_GRAVWELL", 0, dpos, 0, {255, 255, 255, 100});
+        break;
     case 9:
         m_drawer.drawTexture("PLAYER_BARRACKS", 0, dpos, 0, {255, 255, 255, 100});
         break;
@@ -778,12 +776,13 @@ void universe::draw(float _dt)
         break;
     default:
         break;
-}
+    }
 
 //Draw the ui
 if(showUI) drawUI();
 
 m_drawer.finalise();
+
 }
 
 void universe::drawUI()
@@ -937,7 +936,7 @@ void universe::draw(float _dt)
     for(auto &i : m_shots)
     {
         vec3 ipos = i.getInterpolatedPosition(_dt);
-        vec3 ivel = (i.getVel() + i.getWVel()) * 3;
+        vec3 ivel = (i.getVel() + i.getWVel()) * 8.0f;
         std::array<float, 4> icol = i.getCol();
         for( auto &c : icol )
         {

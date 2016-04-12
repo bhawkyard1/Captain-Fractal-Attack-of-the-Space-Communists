@@ -1,6 +1,7 @@
 #include "laser.hpp"
 
-laser::laser(vec3 _p,
+laser::laser(
+        vec3 _p,
         vec3 _v,
         float _ang,
         std::array<float, WEAPS_W> _data,
