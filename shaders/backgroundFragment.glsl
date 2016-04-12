@@ -56,11 +56,10 @@ void main()
     //Multiply up by current aspect ratio.
     uv.y *= iResolution.y / iResolution.x;
 
-    /*float ang = vec2Ang(univel);
-    float len = univel.length();
-    uv = rotatePoint(uv, ang);
-    uv.y *= 1.0 + pow(len, 5.0) / 1000.0;
-    uv = rotatePoint(uv, -ang);*/
+    float z = sqrt((2000.0 * 2000.0) - (uv.x * uv.x) - (uv.y * uv.y));
+    z /= 4000.0;
+    z = z * z * z;
+    uv *= z;
 
     //Don't know what this does. Seems to kind of link together current uv pos and the zoom level.
     vec3 uvzoom = vec3(uv * zoom, 20.0);
@@ -69,7 +68,7 @@ void main()
     //from.z controls background changing.
     //vec3 from = vec3( cos(iGlobalTime), 0.0f, 0.001);
     vec3 from = vec3(unipos.xy + 20., 0.0001);
-    from.xy /= 20000.0;
+    from.xy /= 80000.0;
     from += vec3(12.0, 1.0, 0.0);
     from.z *= iGlobalTime;
 

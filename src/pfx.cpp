@@ -15,8 +15,9 @@ pfx::pfx(const vec3 _p,
 
     m_active = true;
 
-    m_pos = _p;
-    m_vel = _v;
+    setPos(_p);
+    setVel(_v);
+    setWVel(_wv);
 
     m_col[0] = randNum(0.0f, 150.0f) + 105.0f;
     m_col[1] = randNum(0.0f, 150.0f) + 105.0f;
@@ -31,7 +32,7 @@ pfx::pfx(const vec3 _p,
         particle.setPPos(_p);
 
         particle.setVel( { randFloat(-_force, _force), randFloat(-_force, _force) } );
-        particle.setWVel( m_vel + _wv );
+        particle.setWVel( _v + _wv );
 
         m_particles.push_back(particle);
 
@@ -42,13 +43,11 @@ pfx::pfx(const vec3 _p,
 
 void pfx::update(float _dt)
 {
-    m_pos += (m_vel + m_wvel) * g_PIXEL_UNIT_CONVERSION * _dt;
-
     bool done = true;
 
     for(size_t i = 0; i < m_alphas.size(); ++i)
     {
-        m_particles[i].setWVel(m_wvel);
+        m_particles[i].setWVel( getWVel() );
         m_particles[i].updatePos( _dt );
 
         if(m_alphas[i] > 0)
@@ -60,4 +59,6 @@ void pfx::update(float _dt)
 
     if(done) m_active = false;
     m_glowA = clamp(m_glowA - 16.0f, 0.0f, 255.0f);
+
+    updatePos(_dt);
 }

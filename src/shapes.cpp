@@ -16,6 +16,7 @@ bool pointOnLine(vec2 _start, vec2 _end, vec2 _point)
   vec2 startToPoint = _point - _start;
   vec2 startToEnd = _end - _start;
   float cp = crossProd(startToPoint, startToEnd);
+
   return (fabs(cp) <= 0.01f) and (abs(startToPoint.m_x) <= abs(startToEnd.m_x));
 }
 
@@ -53,5 +54,5 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
   vec3 startToEnd = _end - _start;
   float dp = dotProd2(startToPoint, startToEnd);
 
-  return (fabs(dp) > 0.98f and fabs(dp) < 1.02f) and (abs(startToPoint.m_x) <= abs(startToEnd.m_x));
+  return (fabs(dp) > 0.98f and fabs(dp) < 1.02f) and (magns(_start) < magns(_point) and magns(_point) < magns(_end));
 }

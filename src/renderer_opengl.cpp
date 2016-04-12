@@ -929,27 +929,27 @@ void renderer_ngl::statusBars(player * _ply)
 {
   //health base
   std::array<float, 4> col = {0.4f, 0.08f, 0.08f, 1.0f};
-  drawButton({128,8}, {256, 16}, 0.0f, col);
+  drawButton({128,40}, {256, 16}, 0.0f, col);
 
   //health
   col = {0.9f, 0.2f, 0.2f, 1.0f};
-  drawButton({128,8}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, 0.0f, col);
+  drawButton({128,40}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, 0.0f, col);
 
   //shield base
   col = {0.1f, 0.1f, 0.4f, 1.0f};
-  drawButton({128,24}, {256, 16}, 0.0f, col);
+  drawButton({128,56}, {256, 16}, 0.0f, col);
 
   //shield
   col = {0.2f, 0.2f, 0.9f, 1.0f};
-  drawButton({128,24}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, 0.0f, col);
+  drawButton({128,56}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, 0.0f, col);
 
   //energy base
   col = {0.08f, 0.4f, 0.08f, 1.0f};
-  drawButton({128,40}, {256, 16}, 0.0f, col);
+  drawButton({128,72}, {256, 16}, 0.0f, col);
 
   //energy
   col = {0.2f, 0.9f, 0.2f, 1.0f};
-  drawButton({128,40}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, 0.0f, col);
+  drawButton({128,72}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, 0.0f, col);
 }
 
 void renderer_ngl::drawWeaponStats(player *_ply)
@@ -964,7 +964,7 @@ void renderer_ngl::drawWeaponStats(player *_ply)
   drawRect(pos, dim, 0.0f, false);
 
   dim.m_x *= 0.75f;
-  //dim.m_y *= 2.0f;
+  dim.m_y *= 0.75f;
 
   float fWIN_WIDTH = static_cast<float>(g_WIN_WIDTH), fWIN_HEIGHT = static_cast<float>(g_WIN_HEIGHT);
   std::string damageText = "Damage " + std::to_string(_ply->getCurWeapStat(DAMAGE));

@@ -63,21 +63,21 @@ void main()
     q.x *= 2.0;
     q.y *= 2.0;
     float strength = 1.0;
-    float T3 = max(3.0, 1.25 * strength) * iGlobalTime * speed * 0.01;
+    float T3 = max(3.0, 1.25 * strength) * iGlobalTime * speed * 0.001;
     q.x = mod(q.x, 1.0) - 0.5;
     q.y -= 0.25;
-    float n = fbm(strength * q - vec2(0, T3));
-    float c = 1.0 - 16.0 * pow( max( 0.0, length(q * vec2(1.8 + q.y * 1.5, 0.75) ) - n * max( 0.0, q.y + 0.25 ) ),1.2 );
-    float c1 = n * c * (1.5 - pow(2.5 * UV.y, 4.0));
+    float n = fbm(strength * q - vec2(0.0, T3));
+    float c = 1.0 - 16.0 * pow( max( 0.0, length(q * vec2(1.8 + q.y * 1.5, 0.75) ) - n * max( 0.0, q.y + 0.25 ) ), 1.2 );
+    float c1 = n * c * 1.5;
     c1=clamp(c1, 0.0, 1.0);
-
-    //vec3 col = vec3(1.5*c1, 1.5*c1*c1*c1, c1*c1*c1*c1*c1*c1);
 
     vec3 tempFlameCol = flameCol.rgb;
     vec3 col = vec3(pow(c1, 0.25/tempFlameCol.r), pow(c1, 0.25/tempFlameCol.g), pow(c1, 0.25/tempFlameCol.b));
-    //col = flameCol.rgb;
 
     float a = c * ( 1.0 - pow(UV.y,3.0) );
-    fragColour = vec4( mix(vec3(0.0),col,a), 1.0);
-    fragColour.a = max( max(fragColour.r, fragColour.g), fragColour.b ) * flameCol.a;
+
+    fragColour = mix(vec4(col.rgb,0.0),vec4(col,1.0), a * (1.0 - UV.y));
+    fragColour.rgb *= 2.0;
+
+    //fragColour.a = max( max(fragColour.r, fragColour.g), fragColour.b ) * flameCol.a;
 }

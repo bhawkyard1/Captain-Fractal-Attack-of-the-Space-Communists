@@ -39,7 +39,7 @@ struct vec3
 
   vec3& operator=(const vec3 &_rhs) { m_x = _rhs.m_x; m_y = _rhs.m_y; m_z = _rhs.m_z; return *this; }
   vec3& operator+=(vec3 _rhs) { m_x += _rhs.m_x; m_y += _rhs.m_y; m_z += _rhs.m_z; return *this; }
-  vec3& operator-=(vec3 &_rhs) { m_x -= _rhs.m_x; m_y -= _rhs.m_y; m_z -= _rhs.m_z; return *this; }
+  vec3& operator-=(vec3 _rhs) { m_x -= _rhs.m_x; m_y -= _rhs.m_y; m_z -= _rhs.m_z; return *this; }
   vec3& operator-=(float &_rhs) { m_x -= _rhs; m_y -= _rhs; m_z -= _rhs; return *this; }
   vec3& operator*=(const float &_rhs) { m_x *= _rhs; m_y *= _rhs; m_z *= _rhs; return *this; }
   vec3& operator/=(float &_rhs) { m_x /= _rhs; m_y /= _rhs; m_z /= _rhs; return *this; }

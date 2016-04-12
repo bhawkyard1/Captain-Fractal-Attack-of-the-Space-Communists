@@ -844,7 +844,7 @@ void universe::draw(float _dt)
     m_drawer.clearVectors();
 
     m_drawer.useShader("flame");
-    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 25.0f;
+    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 50.0f;
     if(stat > 0.05f and !g_GAME_OVER)
     {
         m_drawer.drawFlames(
@@ -859,7 +859,7 @@ void universe::draw(float _dt)
 
     for(auto &i : m_agents)
     {
-        float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 25.0f;
+        float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 50.0f;
         std::array<float, 4> col = i.getCurWeapCol();
         col[3] = 1.0f;
         if(stat > 0.05f)
@@ -1034,8 +1034,8 @@ void universe::drawUI()
     m_drawer.clearVectors();
     if(!g_GAME_OVER)
     {
-        m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{260, 16}, false, 1.0f);
-        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 48}, false, 1.0f);
+        m_drawer.drawText("SCORE: " + std::to_string( m_score ),"pix",{280, 56}, false, 1.0f);
+        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{280, 80}, false, 1.0f);
 
         m_drawer.statusBars(&m_ply);
         m_drawer.drawWeaponStats(&m_ply);
@@ -1163,7 +1163,7 @@ void universe::checkCollisions()
         for(int l = m_partitions.lasers.at(p).size() - 1; l >= 0; --l)
         {
             vec3 sp = m_partitions.lasers.at(p).at(l)->getPos();
-            vec3 sv = m_partitions.lasers.at(p).at(l)->getVel();
+            vec3 sv = m_partitions.lasers.at(p).at(l)->getVel() * 5.0f;
             vec3 spv = sp + sv * 1.5;
             float stop = m_partitions.lasers.at(p).at(l)->getStop();
 

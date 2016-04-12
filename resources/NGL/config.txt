@@ -1,5 +1,5 @@
 res_x 1920
-res_y 1080
+res_y 1200
 graphical_detail 2
 devmode 1
 difficulty 2
