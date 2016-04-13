@@ -51,6 +51,8 @@ void loadSounds()
     loadSound(g_RESOURCE_LOC + "sfx/save_", 1);
     loadSound(g_RESOURCE_LOC + "sfx/place_", 4);
     loadSound(g_RESOURCE_LOC + "sfx/menu_button_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/ui_fail_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/clunk_", 1);
 
     loadMusic(g_RESOURCE_LOC + "sfx/deep_space_0");
     loadMusic(g_RESOURCE_LOC + "sfx/soviet_national_anthem_0");

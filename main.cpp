@@ -127,10 +127,10 @@ void mainMenu(universe &uni)
     uni.getUI()->add(mainMenuSelection);
 
     ui::selection optionsHeader;
-    ui::button optionsHeaderBtn("OPTIONS (REQUIRE GAME RESTART)", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 20.0f});
-    ui::button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 20.0f});
-    ui::button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 20.0f});
-    ui::button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 20.0f});
+    ui::button optionsHeaderBtn("OPTIONS (REQUIRE GAME RESTART)", blank, blank, {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 150.0f}, {200.0f, 20.0f});
+    ui::button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 80.0f}, {200.0f, 20.0f});
+    ui::button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 90.0f, g_HALFWIN.m_y + 35.0f}, {200.0f, 20.0f});
+    ui::button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 135.0f}, {200.0f, 20.0f});
     ui::button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 200.0f}, {200.0f, 80.0f});
     optionsHeader.add(optionsHeaderBtn);
     optionsHeader.add(resolutionHeaderBtn);
@@ -142,31 +142,31 @@ void mainMenu(universe &uni)
 
     float w = 90.0f, h = 50.0f;
     ui::selection resolutionOptions;
-    resolutionOptions.add(ui::button("1280 x 720", btncol, btncol, {g_HALFWIN.m_x - 400.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1280 x 1024", btncol, btncol, {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1366 x 768", btncol, btncol, {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1440 x 900", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1600 x 900", btncol, btncol, {g_HALFWIN.m_x, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1920 x 1080", btncol, btncol, {g_HALFWIN.m_x + 100.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1920 x 1200", btncol, btncol, {g_HALFWIN.m_x + 200.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1280 x 720", btncol, btncol, {g_HALFWIN.m_x - 355.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1280 x 1024", btncol, btncol, {g_HALFWIN.m_x - 255.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1366 x 768", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1440 x 900", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1600 x 900", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1920 x 1080", btncol, btncol, {g_HALFWIN.m_x + 145.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(ui::button("1920 x 1200", btncol, btncol, {g_HALFWIN.m_x + 245.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
     resolutionOptions.setVisible(false);
     uni.getUI()->add(resolutionOptions);
 
     ui::selection qualityOptions;
-    qualityOptions.add(ui::button("Potato", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
-    qualityOptions.add(ui::button("Medium Rare", btncol, btncol, {g_HALFWIN.m_x, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
-    qualityOptions.add(ui::button("Da Vinci", btncol, btncol, {g_HALFWIN.m_x + 100.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    qualityOptions.add(ui::button("Potato", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    qualityOptions.add(ui::button("Medium Rare", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    qualityOptions.add(ui::button("Da Vinci", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
     qualityOptions.setVisible(false);
     uni.getUI()->add(qualityOptions);
 
     w = 140.0f;
     h = 50.0f;
     ui::selection difficultyOptions;
-    difficultyOptions.add(ui::button("Cadet", btncol, btncol, {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Cosmonaut", btncol, btncol, {g_HALFWIN.m_x - 150.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Captain", btncol, btncol, {g_HALFWIN.m_x, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Commander", btncol, btncol, {g_HALFWIN.m_x + 150.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Computing for Animation 1", btncol, btncol, {g_HALFWIN.m_x + 300.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(ui::button("Cadet", btncol, btncol, {g_HALFWIN.m_x - 370.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(ui::button("Cosmonaut", btncol, btncol, {g_HALFWIN.m_x - 220.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(ui::button("Captain", btncol, btncol, {g_HALFWIN.m_x - 70.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(ui::button("Commander", btncol, btncol, {g_HALFWIN.m_x + 80.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(ui::button("Computing for Animation 1", btncol, btncol, {g_HALFWIN.m_x + 230.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
     difficultyOptions.setVisible(false);
     uni.getUI()->add(difficultyOptions);
 
@@ -345,8 +345,8 @@ void mainMenu(universe &uni)
 
         uni.clear();
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
-        uni.getRenderer()->drawText("CAPTAIN FRACTAL:", "pix90", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 300.0f}, false, 1.0f);
-        uni.getRenderer()->drawText("ATTACK OF THE SPACE COMMUNISTS", "pix90", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.0f);
+        uni.getRenderer()->drawText("CAPTAIN FRACTAL:", "pix90", {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 350.0f}, false, 1.0f);
+        uni.getRenderer()->drawText("ATTACK OF THE SPACE COMMUNISTS", "pix90", {g_HALFWIN.m_x - 340.0f, g_HALFWIN.m_y - 300.0f}, false, 1.0f);
         uni.swap();
     }
 }
@@ -461,10 +461,23 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             }
             else if(ret.m_sel_val == 1)
             {
+                if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) )
+                {
+                  playSnd(MENU_FAIL_SND);
+                  return;
+                }
                 playSnd(MENU_SELECT_SND);
-                if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
-                if(ret.m_button_val == 5) uni->addMiner();
-                else if(ret.m_button_val == 6) uni->addWingman();
+                if(ret.m_button_val == 4) ply->incrMissiles(1);
+                else if(ret.m_button_val == 5)
+                {
+                  uni->addMiner();
+                  playSnd(CLUNK_SND);
+                }
+                else if(ret.m_button_val == 6)
+                {
+                  uni->addWingman();
+                  playSnd(CLUNK_SND);
+                }
                 else if(ret.m_button_val == 7) uni->setMouseState(7);
                 else if(ret.m_button_val == 8) uni->setMouseState(8);
                 else if(ret.m_button_val == 9) uni->setMouseState(9);

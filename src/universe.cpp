@@ -1050,12 +1050,24 @@ void universe::drawUI()
 
             vec2 jdim = j->getDim();
             vec2 jpos = j->getPos();
-            jpos.m_x += jdim.m_x / 2.0f;
-            jpos.m_y += jdim.m_y * 1.5f;
 
-            m_drawer.drawButton(tovec3(jpos), jdim, 0.0f, {col[0], col[1], col[2], col[3]});
+            jpos += jdim * 0.5f;
 
-            jpos.m_x -= jdim.m_x / 4.0f;
+            m_drawer.addRect(tovec3(jpos), jdim, 0.0f, col);
+            //m_drawer.drawButton(tovec3(jpos), jdim, 0.0f, {col[0], col[1], col[2], col[3]});
+        }
+        m_drawer.useShader("plain");
+        m_drawer.drawRects(false);
+
+        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
+        {
+            std::array<float, 4> col = j->getDrawCol();
+
+            vec2 jdim = j->getDim();
+            vec2 jpos = j->getPos();
+
+            jpos.m_x += jdim.m_x * 0.25f;
+            jpos.m_y += jdim.m_y * 0.5f;
 
             if(j->isDark())
             {
@@ -1594,6 +1606,7 @@ void universe::addBuild(
     addpfx(_p, {0,0}, {0,0}, rand()%20 + 50, rand()%30 + 2);
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(6.0f)), 0.0f, "SMOKE");
     playSnd(PLACE_SND);
+    playSnd(CLUNK_SND);
 }
 
 void universe::initUI()

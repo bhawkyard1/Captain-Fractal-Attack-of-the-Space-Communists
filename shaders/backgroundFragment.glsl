@@ -15,7 +15,7 @@
 #define darkmatter 0.300
 
 //Higher= brigwhter/less faded.
-#define distfading 0.5
+#define distfading 0.45
 
 #define saturation 0.9
 
@@ -95,7 +95,7 @@ void main()
         v += vec3(pow(s, inColour.r * 4.0), pow(s, inColour.g * 4.0), pow(s, inColour.b * 4.0)) * a * brightness * fade; // coloring based on distance
         //v += vec3(s * s * s * s, s * s, s * s * s * s) * a * brightness * fade;
         fade *= distfading; // distance fading
-        s += stepsize;
+        s += stepsize + 0.0001 * zoom;
     }
     v = mix( vec3(length(v)), v, saturation); //color adjust
 

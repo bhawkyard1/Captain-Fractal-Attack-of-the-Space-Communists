@@ -75,12 +75,13 @@ renderer_ngl::renderer_ngl(int _w, int _h)
                        ngl::Vec3(0,1,0));
 
 
+  float yOffset = 90.0f;
   float divz = 1 / g_ZOOM_LEVEL;
   m_project = ngl::ortho(
         -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
         g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
-        g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
-        -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
+        g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y - yOffset,
+        -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y - yOffset,
         -2048.0,
         2048.0
         );
@@ -88,8 +89,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
   m_uiProject = ngl::ortho(
         0.0f,
         g_WIN_WIDTH,
-        g_WIN_HEIGHT,
-        0.0f,
+        g_WIN_HEIGHT - yOffset,
+        -yOffset,
         -256.0,
         256.0
         );
@@ -508,11 +509,12 @@ void renderer_ngl::update(const float _dt)
 
   float divz = 1 / g_ZOOM_LEVEL;
 
+  float yOffset = g_WIN_HEIGHT * 0.075;
   m_project = ngl::ortho(
         -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
         g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
-        g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
-        -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
+        (g_HALFWIN.m_y - yOffset) * divz + m_cameraShakeOffset.m_y,
+        (-g_HALFWIN.m_y - yOffset) * divz + m_cameraShakeOffset.m_y,
         -2048.0,
         2048.0
         );
@@ -525,6 +527,8 @@ void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v, std::array<float,
   _p += m_cameraShakeOffset;
   ngl::Vec2 convp = ngl::Vec2(-_p.m_x, _p.m_y);
   ngl::Vec2 convv = ngl::Vec2(-_v.m_x, _v.m_y);
+
+  convp.m_y += g_WIN_HEIGHT * 0.125 * (1 / g_ZOOM_LEVEL);
 
   for(auto &i : _cCol) i /= 255.0f;
 
@@ -715,6 +719,8 @@ void renderer_ngl::addRect(const vec3 _p, const vec2 _d, const float _ang, const
 void renderer_ngl::drawRect(const vec3 _p, const vec2 _d, const float _ang, const bool _ws)
 {
   glBindVertexArray(m_unit_square_vao);
+
+  //m_transform.reset();
   m_transform.setRotation(0.0f, 0.0f, _ang);
   m_transform.setScale(_d.m_x, _d.m_y, 1.0f);
   m_transform.setPosition(_p.m_x, _p.m_y, -0.5f);
@@ -1145,8 +1151,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 0.4f));
   drawRect({g_WIN_WIDTH - 128.0f, 128.0f}, {256.0f, 256.0f}, 0.0f, false);
 
-  m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.0f, 1.0f, 0.0f, 1.0f));
-  drawCircle({g_WIN_WIDTH - 128.0f, 128.0f}, 2.0f, false);
+  m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
+  drawCircle({g_WIN_WIDTH - 128.0f, 128.0f}, 4.0f, false);
 
   m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, 1.0f));
   for(unsigned int i = 0; i < _lp->size(); i++)
