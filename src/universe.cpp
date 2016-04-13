@@ -842,7 +842,7 @@ void universe::draw(float _dt)
     m_drawer.drawRects(true);
     m_drawer.clearVectors();
 
-    m_drawer.useShader("flame");
+    m_drawer.useShader("flame");d
     float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 50.0f;
     if(stat > 0.05f and !g_GAME_OVER)
     {
@@ -995,8 +995,6 @@ void universe::draw(float _dt)
 
         if(col[3] > 0.05f)
         {
-            /*m_drawer.useShader("explosion");
-            m_drawer.drawExplosion(ipos, {dim, dim}, col);*/
             m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
         }
     }

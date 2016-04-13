@@ -170,7 +170,7 @@ void mainMenu(universe &uni)
     difficultyOptions.setVisible(false);
     uni.getUI()->add(difficultyOptions);
 
-    g_TARG_ZOOM_LEVEL = 0.4f;
+    g_TARG_ZOOM_LEVEL = 0.3f;
     g_DIFFICULTY = 20;
 
     vec3 scrollVel = tovec3(randVec2(0.5f, 2.0f));
@@ -202,7 +202,7 @@ void mainMenu(universe &uni)
         aiTeam t = static_cast<aiTeam>(randNum(0,4));
         if(t = TEAM_PLAYER_MINER) t = static_cast<aiTeam>(static_cast<int>(t) + randNum(1,3));
         int r = randNum(5, 10);
-        uni.spawnSquad(t, 6000.0f, 12000.0f, r);
+        uni.spawnSquad(t, 3000.0f, 8000.0f, r);
     }
 
     //Timer used to keep track of game time.
