@@ -89,12 +89,33 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void update(const float _dt);
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Loads glyphs from a font and renders them to SDL textures
+    /// @param _name identifier for the set of loaded glyphs, _path path to the font, _size font size
+    //----------------------------------------------------------------------------------------------------------------------
     void loadFontSpriteSheet(std::string _name, std::string _path, int _size);
-    void loadSpriteSheet();
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Loads an image and stores it as an SDL texture.
+    /// @param _key identifier for the texture, _path path to the image, _b blendmode for the texture (transparency handling)
+    //----------------------------------------------------------------------------------------------------------------------
     void loadTexture(std::string _key, std::string _path, SDL_BlendMode _b);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Loads a set of images, converts them to textures, and stores them
+    /// @param _key identifier for the set, _set path to the files
+    //----------------------------------------------------------------------------------------------------------------------
     void loadTextureSet(std::string _key, std::string _set);
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Loads a set of images, converts them to textures, and stores them
+    /// @param _key identifier for the set, _set path to the files
+    //----------------------------------------------------------------------------------------------------------------------
     void setBlendMode (SDL_BlendMode _b) {SDL_SetRenderDrawBlendMode(m_renderer, _b);}
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Clears the screen
+    //----------------------------------------------------------------------------------------------------------------------
     void clear();
     void drawTextureSet(std::string _key, vec2 _pos, float _orient, std::array<float, 4> _alphaMod);
     void drawTexture(std::string _key, size_t _index, vec2 _pos, float _orient, std::array<float, 4> _col);

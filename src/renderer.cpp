@@ -265,11 +265,6 @@ void renderer::queryTexture(
     *_h = rh;
 }
 
-void renderer::loadSpriteSheet()
-{
-
-}
-
 void renderer::clear()
 {
     //Clear renderer.

@@ -842,7 +842,7 @@ void universe::draw(float _dt)
     m_drawer.drawRects(true);
     m_drawer.clearVectors();
 
-    m_drawer.useShader("flame");d
+    m_drawer.useShader("flame");
     float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 50.0f;
     if(stat > 0.05f and !g_GAME_OVER)
     {
