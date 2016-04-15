@@ -1057,25 +1057,25 @@ void universe::drawUI()
         m_drawer.useShader("plain");
         m_drawer.drawRects(false);
 
-        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
+        for(auto k = i->getButtons()->begin(); k != i->getButtons()->end(); ++k)
         {
-            std::array<float, 4> col = j->getDrawCol();
+            std::array<float, 4> col = k->getDrawCol();
 
-            vec2 jdim = j->getDim();
-            vec2 jpos = j->getPos();
+            vec2 kdim = k->getDim();
+            vec2 kpos = k->getPos();
 
-            jpos.m_x += jdim.m_x * 0.25f;
-            jpos.m_y += jdim.m_y * 0.5f;
+            kpos.m_x += kdim.m_x * 0.25f;
+            kpos.m_y += kdim.m_y * 0.5f;
 
-            if(j->isDark())
+            if(k->isDark())
             {
-                for(auto &i : col) i += 0.05f;
-                m_drawer.drawText(j->getLabel(), "pix", jpos, false, j->getTextSizeMul(), col);
+                for(auto &u : col) u += 0.05f;
+                m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
             }
             else
             {
-                for(auto &i : col) i += 0.8f;
-                m_drawer.drawText(j->getLabel(), "pix", jpos, false, j->getTextSizeMul(), col);
+                for(auto &u : col) u += 0.8f;
+                m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
             }
         }
     }
@@ -1357,7 +1357,7 @@ ship * universe::closestEnemy(vec3 p, aiTeam t)
         if(dist < best_dist)
         {
             best_dist = dist;
-            r = m_agents.at(i).getSelf();
+            r = &m_agents[i];
         }
     }
     return r;

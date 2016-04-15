@@ -3,21 +3,19 @@
 
 #include <string>
 #include <unordered_map>
-
 #include <vector>
 
 #include <SDL_image.h>
 
+#include "common.hpp"
+#include "enemy.hpp"
+#include "faction.hpp"
+#include "laser.hpp"
+#include "missile.hpp"
+#include "player.hpp"
+#include "ship.hpp"
 #include "sprite_sheet.hpp"
 #include "vectors.hpp"
-
-#include "common.hpp"
-#include "missile.hpp"
-#include "enemy.hpp"
-#include "ship.hpp"
-#include "laser.hpp"
-#include "player.hpp"
-#include "faction.hpp"
 
 class renderer
 {
@@ -117,29 +115,96 @@ public:
     /// @brief Clears the screen
     //----------------------------------------------------------------------------------------------------------------------
     void clear();
-    void drawTextureSet(std::string _key, vec2 _pos, float _orient, std::array<float, 4> _alphaMod);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws a set of textures to the screen, used for objects like ships, which have multiple components.
+    /// @param _key identifier for the set, _pos position, _orient angle, _col colour tint
+    //----------------------------------------------------------------------------------------------------------------------
+    void drawTextureSet(std::string _key, vec2 _pos, float _orient, std::array<float, 4> _col);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws a texture to the screen.
+    /// @param _key identifier for the texture, _index index of the texture in the vector at '_key', _pos position, _orient angle, _col colour tint
+    //----------------------------------------------------------------------------------------------------------------------
     void drawTexture(std::string _key, size_t _index, vec2 _pos, float _orient, std::array<float, 4> _col);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws text to the screen.
+    /// @param _text text to draw, _font the font id, _pos starting position, _ss whether to draw the text in screen-space, _mul size multiplier
+    //----------------------------------------------------------------------------------------------------------------------
     void drawText(std::string _text, std::string _font, vec2 _pos, bool _ss, const float _mul);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief A wrapper around SDL's line drawing function, draws a coloured line.
+    /// @param _start start position, _end end position, _col line colour
+    //----------------------------------------------------------------------------------------------------------------------
     void drawLine(vec2 _start, vec2 _end, std::array<float,4> _col );
     void drawLine(vec2 _start, vec2 _end, std::array<int,4> _col);
-    void drawLineGr(vec2, vec2, std::array<float, 4> _scol, std::array<float, 4> _ecol);
-    void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool wire);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws line whose colour varies.
+    /// @param _p line start, _e line end, _scol start colour, _ecol end colour
+    //----------------------------------------------------------------------------------------------------------------------
+    void drawLineGr(vec2 _p, vec2 _e, std::array<float, 4> _scol, std::array<float, 4> _ecol);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws a rectangle.
+    /// @param _p position, _d dimensions, _col colour, _wire draw a rectangle outline, or a filled rectangle
+    //----------------------------------------------------------------------------------------------------------------------
+    void drawRect(vec2 _p, vec2 _d, std::array<int, 4> col, bool _wire);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws a circle.
+    /// @param _x x-coord, _y y-coord, _radius circle radius, _col circle colour
+    //----------------------------------------------------------------------------------------------------------------------
     void drawCircle(int _x, int _y, int _radius, std::array<float, 4> _col);
     void drawCircleUI(int _x, int _y, int _radius, std::array<int, 4> _col);
-    void drawText(std::string _text);
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Returns the dimensions of a texture.
+    /// @param _identifier texture identifier, _index index of the texture at '_identifier', _w reference to be filled with texture width, _h reference to be filled with texture height
+    //----------------------------------------------------------------------------------------------------------------------
     void queryTexture(std::string _identifier, int _index, int * _w, int * _h);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Returns the radius of the texture of a ship type.
+    /// @param _type ship type to test for
+    //----------------------------------------------------------------------------------------------------------------------
     float getTextureRadius(ship_spec _type) {return g_texture_keys[(_type)].m_radius;}
 
-    //UI drawing
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws the minimap.
+    /// @param _mp ref to missile vector, _ep ref to agent vector, _ap ref to asteroid vector, _lp ref to laser vector, _fp ref to faction pointer
+    //----------------------------------------------------------------------------------------------------------------------
     void drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draws health, shield and energy bars.
+    /// @param _ply ref to player
+    //----------------------------------------------------------------------------------------------------------------------
     void statusBars(player * _ply);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Draw the stats of the current weapon.
+    /// @param _ply ref to the player
+    //----------------------------------------------------------------------------------------------------------------------
     void drawWeaponStats(player * _ply);
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Displays the contents of the renderer.
+    //----------------------------------------------------------------------------------------------------------------------
     void finalise();
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Loads an image as an SDL Surface, and returns a pointer to it.
+    /// @param _path path to the image file
+    //----------------------------------------------------------------------------------------------------------------------
     SDL_Surface * getSurface(std::string _path);
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Adds screen shake.
+    /// @param _s magnitude
+    //----------------------------------------------------------------------------------------------------------------------
     void addShake(float _s);
 };
 

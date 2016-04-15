@@ -272,11 +272,10 @@ void renderer::clear()
     SDL_RenderClear( m_renderer );
 }
 
-void renderer::drawTextureSet(
-        std::string _key,
+void renderer::drawTextureSet(std::string _key,
         vec2 _pos,
         float _orient,
-        std::array<float,4> _alphaMod
+        std::array<float,4> _col
         )
 {
     int w, h;
@@ -295,10 +294,10 @@ void renderer::drawTextureSet(
     dst.w = w;
     dst.h = h;
 
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(1), _alphaMod[0]);
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(2), _alphaMod[1]);
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(3), _alphaMod[2]);
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(4), _alphaMod[3]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(1), _col[0]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(2), _col[1]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(3), _col[2]);
+    SDL_SetTextureAlphaMod(m_textures.at(_key).at(4), _col[3]);
     //SDL_SetTextureColorMod(m_textures.at(key).at(3), weapons[curWeap][4], weapons[curWeap][5], weapons[curWeap][6]);
 
     SDL_RenderCopyEx(m_renderer, m_textures[_key][5], NULL, &dst, 0, NULL, SDL_FLIP_NONE);
@@ -399,24 +398,23 @@ void renderer::drawLine(
     SDL_RenderDrawLine(m_renderer, _start.m_x, _start.m_y, _end.m_x, _end.m_y);
 }
 
-void renderer::drawLineGr(
-        vec2 _start,
-        vec2 _end,
+void renderer::drawLineGr(vec2 _p,
+        vec2 _e,
         std::array<float, 4> _scol,
         std::array<float, 4> _ecol
         )
 {
-    _start *= g_ZOOM_LEVEL;
-    _start += g_HALFWIN;
-    _start += m_cameraShakeOffset;
+    _p *= g_ZOOM_LEVEL;
+    _p += g_HALFWIN;
+    _p += m_cameraShakeOffset;
 
-    _end *= g_ZOOM_LEVEL;
-    _end += g_HALFWIN;
-    _end += m_cameraShakeOffset;
+    _e *= g_ZOOM_LEVEL;
+    _e += g_HALFWIN;
+    _e += m_cameraShakeOffset;
 
     SDL_SetRenderDrawColor(m_renderer, _scol[0], _scol[1], _scol[2], _scol[3]);
-    int p0[2] = {static_cast<int>(_start.m_x), static_cast<int>(_start.m_y)};
-    int p1[2] = {static_cast<int>(_end.m_x), static_cast<int>(_end.m_y)};
+    int p0[2] = {static_cast<int>(_p.m_x), static_cast<int>(_p.m_y)};
+    int p1[2] = {static_cast<int>(_e.m_x), static_cast<int>(_e.m_y)};
     int dx = p1[0] - p0[0], dy = p1[1] - p0[1];
     int cur[2] = {0, 0};
 

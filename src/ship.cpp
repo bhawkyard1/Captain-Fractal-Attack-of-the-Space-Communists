@@ -17,7 +17,6 @@ std::vector<tinfo> g_texture_keys = {
 std::vector<ship> g_ship_templates;
 
 std::string getTextureKey(ship_spec _s) {return g_texture_keys[_s].m_name;}
-ship_spec decrSpec(ship_spec _s) {return static_cast<ship_spec>( static_cast<int>(_s) - 1 );}
 
 ship::ship(
         vec3 _p,
