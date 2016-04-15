@@ -7,7 +7,7 @@
 class stardust: public base
 {
   float m_z;
-  std::array<int, 4> m_col;
+  std::array<float, 4> m_col;
 public:
   stardust(const std::array<float, 3> &_col);
   stardust(float _alpha);

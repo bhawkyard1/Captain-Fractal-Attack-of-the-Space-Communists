@@ -127,10 +127,10 @@ public:
   void drawRect(const vec3 _p, const vec2 _d, const float _ang, const bool _ws);
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Draws a rectangle with the smoke shader
-  /// @param _p position, _d dimension, _dt global time for shader, _col colour tint
+  /// @brief Draws m_verts as rectangles, using the smoke shader
+  /// @param _dt time step for the shader
   //----------------------------------------------------------------------------------------------------------------------
-  void drawSmoke(const vec3 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col);
+  void drawSmoke(const float _dt);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws a circle

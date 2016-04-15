@@ -99,7 +99,7 @@ public:
     void checkCollisions();
 
     void addpfx(const vec3 _p, const vec3 _v, const vec3 _wv, const int _no, const float _f);
-    void addParticleSprite(const vec3 _p, const vec3 _v, const float _m, const std::string _tex);
+    void addParticleSprite(const vec3 _p, const vec3 _v, const std::string _tex);
     std::vector<enemy>* getAgents() {return &m_agents;}
     std::vector<laser>* getShots() {return &m_shots;}
     std::vector<missile>* getMissiles() {return &m_missiles;}

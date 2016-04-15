@@ -509,7 +509,7 @@ void renderer_ngl::update(const float _dt)
 
   float divz = 1 / g_ZOOM_LEVEL;
 
-  float yOffset = g_WIN_HEIGHT * 0.025;
+  float yOffset = g_WIN_HEIGHT * 0.015;
   m_project = ngl::ortho(
         -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
         g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
@@ -875,19 +875,12 @@ void renderer_ngl::drawExplosion(const vec3 _pos, const float _d, const std::arr
   drawExplosion(_pos, {_d, _d}, _col);
 }
 
-void renderer_ngl::drawSmoke(const vec3 _pos, const vec2 _d, const float _dt, const std::array<float, 4> _col)
+void renderer_ngl::drawSmoke(const float _dt)
 {
   m_shader->use("smoke");
-  m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+  m_shader->setRegisteredUniform("iGlobalTime", _dt);
 
-  glBindVertexArray(m_spriteVAO);
-  m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
-  m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y));
-
-  loadMatricesToShader();
-  glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
-  glBindVertexArray(0);
-  m_transform.reset();
+  drawRects(true);
 }
 
 void renderer_ngl::drawFlames(const vec3 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed)

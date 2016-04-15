@@ -113,7 +113,7 @@ void universe::addMissile(const vec3 _p,
     mx -= g_HALFWIN.m_x;
     my -= g_HALFWIN.m_y;
 
-    m.setTarget(closestEnemy({ (static_cast<float>(mx) - g_HALFWIN.m_x) / g_ZOOM_LEVEL, (static_cast<float>(my) - g_HALFWIN.m_y) / g_ZOOM_LEVEL}, _team));
+    m.setTarget(closestEnemy({ mx * g_ZOOM_LEVEL, my * g_ZOOM_LEVEL}, _team));
 
     m_missiles.push_back(m);
 }
@@ -169,7 +169,7 @@ void universe::update(const float _dt)
     m_vel = -m_ply.getVel();
 
     //If player health is below 25%, emit smoke.
-    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getHealth() / m_ply.getMaxHealth(), "SMOKE");
+    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), "SMOKE");
 
     if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
     {
@@ -360,7 +360,7 @@ void universe::update(const float _dt)
                     vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
                     pos += m_asteroids[i].getPos();
                     addpfx(pos, m_asteroids.at(i).getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
-                    for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids.at(i).getVel() + m_vel + tovec3(randVec2(6.0f)), 0.0f, "SMOKE");
+                    for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids.at(i).getVel() + m_vel + tovec3(randVec2(6.0f)), "SMOKE");
                 }
                 if(m_asteroids.at(i).getClassification() == ASTEROID_SMALL) addScore( 10 );
                 else
@@ -442,7 +442,7 @@ void universe::update(const float _dt)
         m_agents[e].update(_dt);
 
         //If the agent is damaged, add smokm_agents[e].
-        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getHealth() / m_agents[e].getMaxHealth(), "SMOKE");
+        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), "SMOKE");
 
         float minDist = F_MAX;
         m_agents[e].setTarget(nullptr);
@@ -576,8 +576,8 @@ void universe::update(const float _dt)
             swapnpop(&m_passiveSprites, i);
             continue;
         }
-        alph *= 0.9f;
-        alph -= 0.2f;
+        alph *= 0.98f;
+        alph -= 0.002f;
         m_passiveSprites.at(i).setCol(3, alph);
     }
 
@@ -836,10 +836,11 @@ void universe::draw(float _dt)
         vec2 idim = {i->getDim(), i->getDim()};
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
         col = col255to1(col);
+        col[3] *= 255.0f;
+        //std::cout << col[0] << ", " << col[1] << ", " << col[2] << ", " << col[3] << std::endl;
         m_drawer.addRect(ipos, idim, 0.0f, col);
     }
-    m_drawer.useShader("smoke");
-    m_drawer.drawRects(true);
+    m_drawer.drawSmoke(m_time_elapsed);
     m_drawer.clearVectors();
 
     m_drawer.useShader("flame");
@@ -1140,7 +1141,7 @@ void universe::detectCollisions(
         }
     }
 
-    if(count < 40 or _lvl > 4 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
+    if(count < 16 or _lvl > 8 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
     {
         m_partitions.ships.push_back(pships);
         m_partitions.lasers.push_back(plasers);
@@ -1226,7 +1227,7 @@ void universe::checkCollisions()
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
                     addpfx(ep + tovec3(randVec2(er)), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
-                    for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(6.0f)), 0.0f, "SMOKE");
+                    for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(6.0f)), "SMOKE");
                     harm = m_partitions.lasers.at(p).at(l)->getDmg();
 
                     d_dir = m_partitions.lasers.at(p).at(l)->getVel();
@@ -1366,12 +1367,11 @@ ship * universe::closestEnemy(vec3 p, aiTeam t)
 void universe::addParticleSprite(
         const vec3 _p,
         const vec3 _v,
-        const float _m,
         const std::string _tex
         )
 {
     float col;
-    if( _tex == "SMOKE" ) col = randFloat(200.0f, 220.0f) * (1.0f - _m);
+    if( _tex == "SMOKE" ) col = randFloat(200.0f, 220.0f);
     else if( _tex == "EXPLOSION" ) col = 255.0f;
 
     int w = 0, h = 0;
@@ -1602,7 +1602,7 @@ void universe::addBuild(
         break;
     }
     addpfx(_p, {0,0}, {0,0}, rand()%20 + 50, rand()%30 + 2);
-    for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(6.0f)), 0.0f, "SMOKE");
+    for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(6.0f)), "SMOKE");
     playSnd(PLACE_SND);
     playSnd(CLUNK_SND);
 }

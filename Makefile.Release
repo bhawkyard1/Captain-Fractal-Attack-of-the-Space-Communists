@@ -1778,6 +1778,8 @@ obj\common.obj: src\common.cpp include\common.hpp \
 
 obj\enemy.obj: src\enemy.cpp include\enemy.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -1821,8 +1823,6 @@ obj\enemy.obj: src\enemy.cpp include\enemy.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \
@@ -1833,6 +1833,8 @@ obj\faction.obj: src\faction.cpp include\faction.hpp \
 		include\squad.hpp \
 		include\enemy.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -1876,8 +1878,6 @@ obj\faction.obj: src\faction.cpp include\faction.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \
@@ -1887,6 +1887,8 @@ obj\faction.obj: src\faction.cpp include\faction.hpp \
 obj\file.obj: src\file.cpp include\file.hpp \
 		include\enemy.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -1930,8 +1932,6 @@ obj\file.obj: src\file.cpp include\file.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \
@@ -3293,6 +3293,8 @@ obj\laser.obj: src\laser.cpp include\laser.hpp \
 		include\vectors.hpp \
 		include\enemy.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -3336,14 +3338,14 @@ obj\laser.obj: src\laser.cpp include\laser.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\util.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_ttf.h
 
 obj\missile.obj: src\missile.cpp include\missile.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -3387,8 +3389,6 @@ obj\missile.obj: src\missile.cpp include\missile.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \
@@ -3449,6 +3449,8 @@ obj\pfx.obj: src\pfx.cpp include\pfx.hpp \
 
 obj\player.obj: src\player.cpp include\player.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -3492,8 +3494,6 @@ obj\player.obj: src\player.cpp include\player.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \
@@ -3546,19 +3546,19 @@ obj\renderer.obj: src\renderer.cpp C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_ttf.h \
 		include\renderer.hpp \
-		include\sprite_sheet.hpp \
-		include\vectors.hpp \
 		include\common.hpp \
-		include\missile.hpp \
+		include\vectors.hpp \
+		include\enemy.hpp \
 		include\ship.hpp \
 		include\weapons.hpp \
 		include\util.hpp \
 		include\base.hpp \
-		include\enemy.hpp \
-		include\laser.hpp \
-		include\player.hpp \
 		include\faction.hpp \
-		include\squad.hpp
+		include\squad.hpp \
+		include\laser.hpp \
+		include\missile.hpp \
+		include\player.hpp \
+		include\sprite_sheet.hpp
 
 obj\renderer_opengl.obj: src\renderer_opengl.cpp C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
@@ -5050,6 +5050,8 @@ obj\shapes.obj: src\shapes.cpp include\shapes.hpp \
 		include\vectors.hpp
 
 obj\ship.obj: src\ship.cpp include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -5093,8 +5095,6 @@ obj\ship.obj: src\ship.cpp include\ship.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \
@@ -5154,6 +5154,8 @@ obj\sprite_sheet_opengl.obj: src\sprite_sheet_opengl.cpp
 obj\squad.obj: src\squad.cpp include\squad.hpp \
 		include\enemy.hpp \
 		include\ship.hpp \
+		include\weapons.hpp \
+		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
@@ -5197,8 +5199,6 @@ obj\squad.obj: src\squad.cpp include\squad.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\weapons.hpp \
-		include\common.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_image.h \
 		include\vectors.hpp \
 		include\util.hpp \

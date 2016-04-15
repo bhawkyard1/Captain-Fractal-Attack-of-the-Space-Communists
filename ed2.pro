@@ -2,11 +2,11 @@ TARGET = "Captain Fractal- Attack of the Space Communists"
 
 OBJECTS_DIR = obj
 
-QT += gui opengl core
+QT += opengl core
 
 isEqual(QT_MAJOR_VERSION, 5) {
         cache()
-        DEFINES += QT5BUILD
+        #DEFINES += QT5BUILD
 }
 
 win32 {
