@@ -4,8 +4,8 @@
 
 std::vector<tinfo> g_texture_keys = {
     {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32},
-    {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64},
-    {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64},
+    {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024}, {"FEDERATION_TURRET", 16},
+    {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024}, {"PIRATE_TURRET", 16},
     {"PLAYER_MINER_DROID", 16}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
     {"PLAYER_SHIP", 32},
     {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32},
@@ -13,6 +13,8 @@ std::vector<tinfo> g_texture_keys = {
     {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
     {"SHIPS_END", 0}
 };
+
+long unsigned int g_shipIDCounter = 0;
 
 std::vector<ship> g_ship_templates;
 
@@ -24,6 +26,9 @@ ship::ship(
         float _radius
         )
 {
+    g_shipIDCounter++;
+    m_uniqueID = g_shipIDCounter;
+
     m_coolDown = 0.0f;
     m_shooting = false;
 
@@ -46,6 +51,9 @@ ship::ship(
 
     m_curWeap = 0;
 
+    m_hasParent = false;
+    m_parent = -1;
+
     switch(_type)
     {
     case COMMUNIST_1:
@@ -55,7 +63,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( g_weapons[rand() % 2 + 18] );
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
         break;
     case COMMUNIST_2:
@@ -65,7 +73,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.09f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( g_weapons[rand() % 2 + 18] );
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKI:
@@ -75,7 +83,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKII:
@@ -85,7 +93,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.09f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKIII:
@@ -95,7 +103,7 @@ ship::ship(
         setMaxEnergy(150.0f,true);
         m_inertia = 0.08f;
         m_enginePower = 6.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
         break;
     case FEDERATION_MKIV:
@@ -105,7 +113,7 @@ ship::ship(
         setMaxEnergy(200.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 7.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 4] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
         break;
     case FEDERATION_GUNSHIP:
@@ -115,8 +123,29 @@ ship::ship(
         setMaxEnergy(500.0f,true);
         m_inertia = 0.02f;
         m_enginePower = 8.0f;
-        m_weapons.push_back( g_weapons[rand() % 2 + 7] );
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
         m_curWeap = 0;
+        break;
+    case FEDERATION_CAPITAL:
+        m_identifier = "FEDERATION_CAPITAL";
+        setMaxHealth(5000.0f,true);
+        setMaxShield(800.0f,true);
+        setMaxEnergy(1000.0f,true);
+        m_inertia = 0.00025f;
+        m_enginePower = 5.0f;
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
+        m_curWeap = 0;
+        break;
+    case FEDERATION_TURRET:
+        m_identifier = "FEDERATION_TURRET";
+        setMaxHealth(100.0f,true);
+        setMaxShield(200.0f,true);
+        setMaxEnergy(300.0f,true);
+        m_inertia = 0.1f;
+        m_enginePower = 4.0f;
+        m_weapons.push_back( g_weapons[WEAPON_FED_3] );
+        m_curWeap = 0;
+        m_canMove = false;
         break;
     case PIRATE_GNAT:
         m_identifier = "PIRATE_GNAT";
@@ -125,7 +154,7 @@ ship::ship(
         setMaxEnergy(90.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
         break;
     case PIRATE_CRUISER:
@@ -135,7 +164,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
         break;
     case PIRATE_WRANGLER:
@@ -145,7 +174,7 @@ ship::ship(
         setMaxEnergy(120.0f,true);
         m_inertia = 0.05f;
         m_enginePower = 6.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
         break;
     case PIRATE_MARAUDER:
@@ -155,7 +184,7 @@ ship::ship(
         setMaxEnergy(120.0f,true);
         m_inertia = 0.15f;
         m_enginePower = 7.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 14] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
         break;
     case PIRATE_GUNSHIP:
@@ -165,8 +194,29 @@ ship::ship(
         setMaxEnergy(150.0f,true);
         m_inertia = 0.05f;
         m_enginePower = 8.0f;
-        m_weapons.push_back( g_weapons[17] );
+        m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
         m_curWeap = 0;
+        break;
+    case PIRATE_CAPITAL:
+        m_identifier = "PIRATE_CAPITAL";
+        setMaxHealth(5500.0f,true);
+        setMaxShield(400.0f,true);
+        setMaxEnergy(1000.0f,true);
+        m_inertia = 0.00025f;
+        m_enginePower = 5.0f;
+        m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
+        m_curWeap = 0;
+        break;
+    case PIRATE_TURRET:
+        m_identifier = "PIRATE_TURRET";
+        setMaxHealth(100.0f,true);
+        setMaxShield(200.0f,true);
+        setMaxEnergy(300.0f,true);
+        m_inertia = 0.1f;
+        m_enginePower = 4.0f;
+        m_weapons.push_back( g_weapons[WEAPON_PIRATE_1] );
+        m_curWeap = 0;
+        m_canMove = false;
         break;
     case PLAYER_SHIP:
         m_identifier = "PLAYER_SHIP";
@@ -175,9 +225,9 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.07f;
         m_enginePower = 5.0f;
-        m_weapons.push_back( g_weapons[0] );
-        m_weapons.push_back( g_weapons[1] );
-        m_weapons.push_back( g_weapons[2] );
+        m_weapons.push_back( g_weapons[WEAPON_PLAYER_RED] );
+        m_weapons.push_back( g_weapons[WEAPON_PLAYER_GREEN] );
+        m_weapons.push_back( g_weapons[WEAPON_PLAYER_BLUE] );
         m_curWeap = 0;
         break;
     case PLAYER_HUNTER:
@@ -187,7 +237,7 @@ ship::ship(
         setMaxEnergy(100.0f,true);
         m_inertia = 0.2f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 9] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
         break;
     case PLAYER_DEFENDER:
@@ -197,7 +247,7 @@ ship::ship(
         setMaxEnergy(125.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 8.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 9] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
         break;
     case PLAYER_DESTROYER:
@@ -207,7 +257,7 @@ ship::ship(
         setMaxEnergy(150.0f,true);
         m_inertia = 0.07f;
         m_enginePower = 10.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + 9] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
         break;
     case PLAYER_MINER_DROID:
@@ -217,7 +267,7 @@ ship::ship(
         setMaxEnergy(200.0f,true);
         m_inertia = 0.3f;
         m_enginePower = 2.0f;
-        m_weapons.push_back( g_weapons[12] );
+        m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
         m_curWeap = 0;
         break;
     case ION_MISSILE_MKI:
@@ -266,7 +316,7 @@ ship::ship(
         setMaxEnergy(300.0f,true);
         m_inertia = 0.1f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( g_weapons[13] );
+        m_weapons.push_back( g_weapons[WEAPON_TURRET_LASER] );
         m_curWeap = 0;
         m_canMove = false;
         break;
@@ -318,10 +368,14 @@ ship::ship(
     m_radius = _radius;
 }
 
-ship::ship(const ship &_src,
+ship::ship(
+        const ship &_src,
         const vec3 _p
         )
 {
+    g_shipIDCounter++;
+    m_uniqueID = g_shipIDCounter;
+
     m_coolDown = 0.0f;
     m_shooting = false;
 
@@ -363,6 +417,9 @@ ship::ship(const ship &_src,
 
     m_curWeap = 0;
 
+    m_hasParent = _src.hasParent();
+    m_parent = _src.getParent();
+
     for(size_t i = 0; i < _src.getWeaps().size(); ++i)
     {
         m_weapons.push_back(_src.getWeaps()[i]);
@@ -371,66 +428,86 @@ ship::ship(const ship &_src,
     switch(_src.getClassification())
     {
     case COMMUNIST_1:
-        m_curWeap = rand() % 2 + 18;
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
+        m_curWeap = 0;
         break;
     case COMMUNIST_2:
-        m_curWeap = rand() % 2 + 18;
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
+        m_curWeap = 0;
         break;
     case FEDERATION_MKI:
-        m_curWeap = rand() % 3 + 4;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
+        m_curWeap = 0;
         break;
     case FEDERATION_MKII:
-        m_curWeap = rand() % 3 + 4;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
+        m_curWeap = 0;
         break;
     case FEDERATION_MKIII:
-        m_curWeap = rand() % 3 + 4;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
+        m_curWeap = 0;
         break;
     case FEDERATION_MKIV:
-        m_curWeap = rand() % 3 + 4;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
+        m_curWeap = 0;
         break;
     case FEDERATION_GUNSHIP:
-        m_curWeap = rand() % 2 + 7;
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
+        m_curWeap = 0;
+        break;
+    case FEDERATION_CAPITAL:
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
+        m_curWeap = 0;
         break;
     case PIRATE_GNAT:
-        m_curWeap = rand() % 3 + 14;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
+        m_curWeap = 0;
         break;
     case PIRATE_CRUISER:
-        m_curWeap = rand() % 3 + 14;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
+        m_curWeap = 0;
         break;
     case PIRATE_WRANGLER:
-        m_curWeap = rand() % 3 + 14;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
+        m_curWeap = 0;
         break;
     case PIRATE_MARAUDER:
-        m_curWeap = rand() % 3 + 14;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
+        m_curWeap = 0;
         break;
     case PIRATE_GUNSHIP:
-        m_curWeap = 17;
+        m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
+        m_curWeap = 0;
         break;
     case PLAYER_SHIP:
+        m_weapons.push_back( g_weapons[WEAPON_PLAYER_RED] );
+        m_weapons.push_back( g_weapons[WEAPON_PLAYER_GREEN] );
+        m_weapons.push_back( g_weapons[WEAPON_PLAYER_BLUE] );
         m_curWeap = 0;
         break;
     case PLAYER_HUNTER:
-        m_curWeap = rand() % 3 + 9;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
+        m_curWeap = 0;
         break;
     case PLAYER_DEFENDER:
-        m_curWeap = rand() % 3 + 9;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
+        m_curWeap = 0;
         break;
     case PLAYER_DESTROYER:
-        m_curWeap = rand() % 3 + 9;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
+        m_curWeap = 0;
         break;
     case PLAYER_MINER_DROID:
-        m_curWeap = 12;
+        m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
+        m_curWeap = 0;
         break;
     case PLAYER_TURRET:
-        m_curWeap = 13;
+        m_weapons.push_back( g_weapons[WEAPON_TURRET_LASER] );
+        m_curWeap = 0;
+        break;
     default:
         break;
     }
-}
-
-ship::ship(ship_spec _s)
-{
-    *this = g_ship_templates[_s];
 }
 
 void ship::accelerate(const float _mult)

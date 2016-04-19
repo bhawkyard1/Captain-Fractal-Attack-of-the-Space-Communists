@@ -6,7 +6,7 @@ enemy::enemy(
     const ship_spec _type,
     const aiTeam _team
     ):
-  ship(_type)
+  ship(g_ship_templates[_type], _p)
 {	
   m_curGoal = GOAL_IDLE;
   setPos(_p);

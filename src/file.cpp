@@ -144,7 +144,7 @@ void readVectorAsteroid(std::string str, universe * _u)
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
 
-        ship temp(static_cast<ship_spec>(id));
+        ship temp( g_ship_templates[id] );
         temp.setPos({pos.m_x,pos.m_y});
 
         temp.setAng(ang);

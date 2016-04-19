@@ -153,6 +153,8 @@ public:
     bool UIVisible() const {return showUI;}
     void setUIVisible(const bool _b) {showUI = _b;}
     void toggleUIVisible() {showUI = !showUI;}
+
+    void shipAddParent(enemy * _parent, enemy * _child, vec3 _offset);
 };
 
 #endif

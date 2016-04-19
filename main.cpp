@@ -194,7 +194,6 @@ void mainMenu(universe &uni)
         pos += {600.0f, 300.0f};
         uni.addBuild(pos, PLAYER_TURRET);
     }
-
     //for(auto i = uni.getAgents()->begin(); i != uni.getAgents()->end(); ++i) i->setVel(-scrollVel);
 
     for(int i = 0; i < 10; ++i)
@@ -926,7 +925,7 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_ASTEROID_1 and timer > 1.0f)
         {
-            ship asteroid(ASTEROID_SMALL);
+            ship asteroid( g_ship_templates[ASTEROID_SMALL] );
             asteroid.setPos({0.0f, - 300.0f});
             asteroid.setVel(uni.getPly()->getVel());
             asteroid.setHealth(10);

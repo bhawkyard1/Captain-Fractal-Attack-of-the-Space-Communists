@@ -10,9 +10,22 @@
 
 enum WEAPON_STAT {LASER_COUNT, SPREAD, DAMAGE, SPEED, COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE, ENERGY_COST, COOLDOWN, STOPPING_POWER};
 
+enum WEAPON_TYPE {
+    WEAPON_PLAYER_RED, WEAPON_PLAYER_GREEN, WEAPON_PLAYER_BLUE,
+    WEAPON_DEBUG_YELLOW,
+    WEAPON_FED_1, WEAPON_FED_2, WEAPON_FED_3, WEAPON_FED_TURRET, WEAPON_FED_BOSS_1, WEAPON_FED_BOSS_2,
+    WEAPON_WINGMAN_1, WEAPON_WINGMAN_2, WEAPON_WINGMAN_3,
+    WEAPON_MINER_LASER,
+    WEAPON_TURRET_LASER,
+    WEAPON_PIRATE_1, WEAPON_PIRATE_2, WEAPON_PIRATE_3, WEAPON_PIRATE_BOSS_1,
+    WEAPON_COMMUNIST_1, WEAPON_COMMUNIST_2,
+    WEAPON_END
+};
+
+
 //Weapon definitions.
 //0 Lasers per shot, 1 spread, 2 dmg, 3 speed, 4 red, 5 green, 6 blue, 7 energy cost, 8 cooldown, 9 stopping power.
-static std::array<std::array<float,10>,21> g_weapons =
+static std::array<std::array<float,10>,22> g_weapons =
 {{
      {{1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.008f}},//Laser cannon	0
      {{12.0f,	5.0f,                           3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.01f}},//Shotgun			1
@@ -21,6 +34,7 @@ static std::array<std::array<float,10>,21> g_weapons =
      {{1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 10.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.8f,   0.002f}},//AI laser 1		4
      {{3.0f,	9.0f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       5.0f,       255.0f,	20.0f,	240.0f,	0.5f,   1.0f,   0.003f}},//AI laser 2		5
      {{1.0f,	2.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       15.0f,		255.0f,	20.0f,	240.0f,	0.3f,   0.7f,   0.004f}},//AI laser 3		6
+     {{1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 10.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.8f,   0.002f}},
      {{30.0f,	2.0f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       6.0f,       255.0f,	30.0f,	80.0f,	1.0f,   1.0f,   0.008f}},//Boss laser 1	7
      {{1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       20.0f,		255.0f,	30.0f,	80.0f,	1.0f,   0.05f,  0.009f}},//Boss laser 2	8
      {{2.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	10.0f,		24.0f,		20.0f,	255.0f,	40.0f,	0.8f,   0.8f,   0.01f}},//Wingman laser	9
@@ -35,7 +49,7 @@ static std::array<std::array<float,10>,21> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1 18
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2 19
      {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
- }};
+}};
 
 inline float getEnergyCost(int weap)
 {
