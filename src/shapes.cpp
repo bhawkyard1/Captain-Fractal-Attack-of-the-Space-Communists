@@ -31,20 +31,11 @@ bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim)
 
 bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius)
 {
-  /*vec3 lineDir  = unit(_end - _start);
-
-  float det = sqr( dotProd1(lineDir, _start - _pos) ) - magns(_start - _pos) + sqr(_radius);*/
-
-  //std::cout << det << std::endl;
   vec3 lineDir  = _end - _start;
   vec3 cp = closest(_start, lineDir, _pos);
   vec3 cd = cp - _pos;
 
-  //std::cout << ((_radius * _radius) > magns(cd)) << ", " << pointOnLine(_start, _end, cp) << std::endl;
-
   return ((_radius * _radius) > magns(cd)) and pointOnLine(_start, _end, cp);
-
-  //return det >= 0.0f and pointOnLine(_start, _end, _pos);
 }
 
 bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
