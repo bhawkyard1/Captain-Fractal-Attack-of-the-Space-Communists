@@ -222,14 +222,14 @@ void universe::update(const float _dt)
 
     for(int i = m_shots.size() - 1; i >= 0; i--)
     {
-        if(m_shots.at(i).getPower() < 0.0f)
+        if(m_shots[i].getPower() < 0.0f)
         {
             swapnpop(&m_shots, i);
         }
         else
         {
-            m_shots.at(i).setWVel(m_vel);
-            m_shots.at(i).update(_dt);
+            m_shots[i].setWVel(m_vel);
+            m_shots[i].update(_dt);
         }
     }
 
@@ -297,23 +297,23 @@ void universe::update(const float _dt)
 
     for(int i = m_missiles.size() - 1; i >= 0; i--)
     {
-        m_missiles.at(i).updatePos(_dt);
-        bool ofscr = isOffScreen(m_missiles.at(i).getPos(), 30000.0f);
-        if(ofscr or m_missiles.at(i).getHealth() <= 0 or m_missiles.at(i).detonate())
+        m_missiles[i].updatePos(_dt);
+        bool ofscr = isOffScreen(m_missiles[i].getPos(), 30000.0f);
+        if(ofscr or m_missiles[i].getHealth() <= 0 or m_missiles[i].detonate())
         {
             if(!ofscr)
             {
                 for(int p = 0; p < rand()%2 + 4; p++)
                 {
                     vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
-                    pos += m_missiles.at(i).getPos();
-                    addpfx(pos, m_missiles.at(i).getVel(), m_vel, rand()%50 + 50, rand()%50 + 8);
+                    pos += m_missiles[i].getPos();
+                    addpfx(pos, m_missiles[i].getVel(), m_vel, rand()%50 + 50, rand()%50 + 8);
                 }
 
                 for(size_t j = 0; j < m_agents.size(); j++)
                 {
                     vec3 ep = m_agents.at(j).getPos();
-                    vec3 mp = m_missiles.at(i).getPos();
+                    vec3 mp = m_missiles[i].getPos();
 
                     float dmg = magns(mp-ep);
 
@@ -323,42 +323,42 @@ void universe::update(const float _dt)
                     m_agents.at(j).damage(dmg);
                 }
 
-                vec3 pdiff = m_missiles.at(i).getPos() - m_ply.getPos();
+                vec3 pdiff = m_missiles[i].getPos() - m_ply.getPos();
                 if(magns(pdiff) < 300*300) m_ply.damage(1 / mag(pdiff) * 30000);
             }
             swapnpop(&m_missiles, i);
         }
         else
         {
-            if(m_missiles.at(i).getTarget() == nullptr) m_missiles.at(i).setTarget(closestEnemy(m_missiles.at(i).getPos(), m_missiles.at(i).getTeam()));
-            m_missiles.at(i).setWVel(m_vel);
-            m_missiles.at(i).update(_dt);
-            m_missiles.at(i).steering();
+            if(m_missiles[i].getTarget() == nullptr) m_missiles[i].setTarget(closestEnemy(m_missiles[i].getPos(), m_missiles[i].getTeam()));
+            m_missiles[i].setWVel(m_vel);
+            m_missiles[i].update(_dt);
+            m_missiles[i].steering();
         }
     }
 
     for(int i = m_asteroids.size() - 1; i >= 0; i--)
     {
-        m_asteroids.at(i).updatePos(_dt);
-        vec3 p = m_asteroids.at(i).getPos();
-        if((isOffScreen(p,30000.0f) or m_asteroids.at(i).getHealth() <= 0.0f))
+        m_asteroids[i].updatePos(_dt);
+        vec3 p = m_asteroids[i].getPos();
+        if((isOffScreen(p,30000.0f) or m_asteroids[i].getHealth() <= 0.0f))
         {
-            if(m_asteroids.at(i).getHealth() <= 0.0f)
+            if(m_asteroids[i].getHealth() <= 0.0f)
             {
                 for(int fx = 0; fx < rand() % 5 + 1; fx++)
                 {
                     vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
                     pos += m_asteroids[i].getPos();
-                    addpfx(pos, m_asteroids.at(i).getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
-                    for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids.at(i).getVel() + m_vel + tovec3(randVec2(6.0f)), "SMOKE");
+                    addpfx(pos, m_asteroids[i].getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
+                    for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + randVec3(6.0f), "SMOKE");
                 }
-                if(m_asteroids.at(i).getClassification() == ASTEROID_SMALL) addScore( 10 );
+                if(m_asteroids[i].getClassification() == ASTEROID_SMALL) addScore( 10 );
                 else
                 {
                     for(int q = 0; q < 4; ++q)
                     {
-                        ship a(g_ship_templates.at( static_cast<int>(m_asteroids.at(i).getClassification()) - 1 ), p + tovec3(randVec2( m_asteroids.at(i).getRadius()) ));
-                        a.setVel( m_asteroids.at(i).getVel() + tovec3(randVec2(1.0f)) );
+                        ship a(g_ship_templates.at( static_cast<int>(m_asteroids[i].getClassification()) - 1 ), p + tovec3(randVec2( m_asteroids[i].getRadius()) ));
+                        a.setVel( m_asteroids[i].getVel() + tovec3(randVec2(1.0f)) );
                         a.update(_dt);
                         m_asteroids.push_back(a);
                     }
@@ -370,27 +370,27 @@ void universe::update(const float _dt)
         }
         else
         {
-            m_asteroids.at(i).setWVel(m_vel);
-            m_asteroids.at(i).update(_dt);
+            m_asteroids[i].setWVel(m_vel);
+            m_asteroids[i].update(_dt);
         }
     }
 
     //Cull dead m_agents.
     for(int i = m_agents.size() - 1; i >= 0; i--)
     {
-        vec3 p = m_agents.at(i).getPos();
+        vec3 p = m_agents[i].getPos();
         //Offscreen elimination, health-based elimination
-        if((isOffScreen(p,30000.0f) and m_agents.at(i).getTeam() != TEAM_PLAYER and m_agents.at(i).getTeam() != TEAM_PLAYER_MINER) or m_agents.at(i).getHealth() <= 0)
+        if((isOffScreen(p,30000.0f) and m_agents[i].getTeam() != TEAM_PLAYER and m_agents[i].getTeam() != TEAM_PLAYER_MINER) or m_agents[i].getHealth() <= 0)
         {
-            if(m_agents.at(i).getHealth() <= 0.0f)
+            if(m_agents[i].getHealth() <= 0.0f)
             {
                 for(int p = 0; p < rand() % 5 + 1; p++)
                 {
                     vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f), 0.0f};
-                    pos += m_agents.at(i).getPos();
-                    addpfx(pos, m_agents.at(i).getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
+                    pos += m_agents[i].getPos();
+                    addpfx(pos, m_agents[i].getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
                 }
-                addScore( m_agents.at(i).getScore() );
+                addScore( m_agents[i].getScore() );
                 if( m_agents[i].getTeam() != SPACE_COMMUNISTS and rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
                 else if( m_agents[i].getTeam() == SPACE_COMMUNISTS and rand() % 4 <= g_DIFFICULTY ) m_factionMaxCounts[SPACE_COMMUNISTS] += g_DIFFICULTY + 1;
 
@@ -398,7 +398,7 @@ void universe::update(const float _dt)
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
             }
             if(m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) m_factionCounts[GALACTIC_FEDERATION]--;
-            else m_factionCounts[m_agents.at(i).getTeam()]--;
+            else m_factionCounts[m_agents[i].getTeam()]--;
 
             swapnpop(&m_agents, i);
         }
@@ -513,7 +513,7 @@ void universe::update(const float _dt)
             {
                 if(&m_agents[e] == &k) continue;
 
-                float nd = magns(p - k.getPos());
+                float nd = magns(p - k.getPos()) - sqr(k.getRadius() + m_agents[e].getRadius());
                 if(nd < minDist and emnityCheck(m_agents[e].getTeam(), k.getTeam()))
                 {
                     m_agents[e].setTarget( (enemy*)&k );
@@ -581,30 +581,32 @@ void universe::update(const float _dt)
     //Ship spawning functions.
     for(int i = m_particles.size() - 1; i >= 0; i--)
     {
-        m_particles.at(i).setWVel(m_vel);
-        m_particles.at(i).update(_dt);
-        if(m_particles.at(i).done()) swapnpop(&m_particles, i);
+        m_particles[i].setWVel(m_vel);
+        m_particles[i].update(_dt);
+        if(m_particles[i].done()) swapnpop(&m_particles, i);
 
     }
+
     for(int i = m_passiveSprites.size() - 1; i >= 0; --i)
     {
-        float alph = m_passiveSprites.at(i).getCol(3);
+        float alph = m_passiveSprites[i].getCol(3);
 
-        m_passiveSprites.at(i).setWVel(m_vel);
-        m_passiveSprites.at(i).updateSprite(_dt);
+        m_passiveSprites[i].setWVel(m_vel);
+        m_passiveSprites[i].updateSprite(_dt);
 
         int w = 32;
         int h = 32;
 
-        if(alph <= 0.1f or isOffScreen(m_passiveSprites.at(i).getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passiveSprites.at(i).getZ() / g_ZOOM_LEVEL) or m_passiveSprites.at(i).getDim() <= 0.0f)
+        if(alph <= 0.1f or isOffScreen(m_passiveSprites[i].getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passiveSprites[i].getZ() / g_ZOOM_LEVEL) or m_passiveSprites[i].getDim() <= 0.0f)
         {
             //std::cout <<"popit" << std::endl;
             swapnpop(&m_passiveSprites, i);
             continue;
         }
-        alph *= 0.98f;
-        alph -= 0.002f;
-        m_passiveSprites.at(i).setCol(3, alph);
+        alph *= 0.9f;
+        alph -= 0.02f;
+        m_passiveSprites[i].setCol(3, alph);
+        m_passiveSprites[i].incrDim(_dt);
     }
 
     if(rand() % 256 == 0 and atMaxCount(TEAM_PLAYER))
@@ -856,13 +858,12 @@ void universe::draw(float _dt)
 
     for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
-        if(!m_paused) i->incrDim();
         if(i->getIdentifier() != "SMOKE") continue;
         vec3 ipos = i->getInterpolatedPosition(_dt);
         vec2 idim = {i->getDim(), i->getDim()};
         std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
         col = col255to1(col);
-        col[3] *= 255.0f;
+        //col[3] *= 255.0f;
         //std::cout << col[0] << ", " << col[1] << ", " << col[2] << ", " << col[3] << std::endl;
         m_drawer.addRect(ipos, idim, 0.0f, col);
     }
@@ -1226,12 +1227,12 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + tovec3(randVec2(er)), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
                     harm = m_partitions.lasers[p][l]->getDmg();
 
                     d_dir = m_partitions.lasers[p][l]->getVel();
                     //Delete m_shots if they match the ones in the universe vector.
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);
                     //Pop the partition pointer.
                     swapnpop(&m_partitions.lasers[p], l);
                     done = true;
@@ -1257,12 +1258,12 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + tovec3(randVec2(er)), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
-                    for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(6.0f)), "SMOKE");
+                    addpfx(ep + randVec3(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + randVec3(6.0f), "SMOKE");
                     harm = m_partitions.lasers[p][l]->getDmg();
 
                     d_dir = m_partitions.lasers[p][l]->getVel();
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);//m_shots.erase(m_shots.begin() + i);
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);//m_shots.erase(m_shots.begin() + i);
                     swapnpop(&m_partitions.lasers[p], l);
 
                     done = true;
@@ -1289,12 +1290,12 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + tovec3(randVec2(er)), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
 
                     harm = m_shots[l].getDmg();
 
                     d_dir = m_partitions.lasers[p][l]->getVel();
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers[p][l]) m_shots.erase(m_shots.begin() + i);
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) m_shots.erase(m_shots.begin() + i);
                     swapnpop(&m_partitions.lasers[p], l);
 
                     done = true;
@@ -1322,11 +1323,11 @@ void universe::checkCollisions()
                 {
                     playSnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(sp + tovec3(randVec2(32.0f)), m_ply.getVel(), m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
                     harm = m_partitions.lasers[p][l]->getDmg();
 
                     d_dir = m_partitions.lasers[p][l]->getVel();
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots.at(i) == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);
                     swapnpop(&m_partitions.lasers[p], l);
 
                     done = true;
@@ -1342,7 +1343,7 @@ void universe::checkCollisions()
             //Space-station healing check.
             for(size_t i = 0; i < m_partitions.ships[p].size(); ++i)
             {
-                enemy * a = m_partitions.ships[p].at(i);
+                enemy * a = m_partitions.ships[p][i];
                 for(size_t j = 0; j < m_partitions.ships[p].size(); ++j)
                 {
                     enemy * b = m_partitions.ships[p].at(j);
@@ -1383,8 +1384,8 @@ ship * universe::closestEnemy(vec3 p, aiTeam t)
     ship * r = nullptr;
     for(size_t i = 0; i < m_agents.size(); i++)
     {
-        if(!emnityCheck(m_agents.at(i).getTeam(), t)) continue;
-        vec3 pe = m_agents.at(i).getPos();
+        if(!emnityCheck(m_agents[i].getTeam(), t)) continue;
+        vec3 pe = m_agents[i].getPos();
         float dist = magns(pe-p);
 
         if(dist < best_dist)
@@ -1444,7 +1445,7 @@ void universe::spawnShip(
     }
     else if( _t == SPOOKY_SPACE_PIRATES )
     {
-        type = PIRATE_GNAT;
+        type = PIRATE_CAPITAL;
         if(prob > 750 and prob <= 800) type = PIRATE_CRUISER;
         else if(prob > 800 and prob <= 900) type = PIRATE_WRANGLER;
         else if(prob > 900 and prob <= 980) type = PIRATE_MARAUDER;
@@ -1453,7 +1454,7 @@ void universe::spawnShip(
     }
     else if( _t == GALACTIC_FEDERATION )
     {
-        type = FEDERATION_MKI;
+        type = FEDERATION_CAPITAL;
         if(prob > 750 and prob <= 800) type = FEDERATION_MKII;
         else if(prob > 800 and prob <= 900) type = FEDERATION_MKIII;
         else if(prob > 900 and prob <= 980) type = FEDERATION_MKIV;
@@ -1518,7 +1519,7 @@ void universe::spawnShip(
                 {
                     for(int pang = 0; pang < 360; pang += 60)
                     {
-                        vec3 pos = {cos(rad(pang)) * p * 150.0f, sin(rad(pang)) * p * 150.0f, 0.0f};
+                        vec3 pos = {static_cast<float>(cos(rad(pang))) * p * 150.0f, static_cast<float>(sin(rad(pang))) * p * 150.0f, 0.0f};
                         enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, PIRATE_TURRET, SPOOKY_SPACE_PIRATES);
 
                         shipAddParent(&m_agents.back(), &temp1, pos);
@@ -1563,7 +1564,7 @@ void universe::spawnShip(
         {
             for(int pang = 0; pang < 360; pang += 60)
             {
-                vec3 pos = {cos(rad(pang)) * p * 150.0f, sin(rad(pang)) * p * 150.0f, 0.0f};
+                vec3 pos = {static_cast<float>(cos(rad(pang))) * p * 150.0f, static_cast<float>(sin(rad(pang))) * p * 150.0f, 0.0f};
                 enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, PIRATE_TURRET, SPOOKY_SPACE_PIRATES);
 
                 shipAddParent(&m_agents.back(), &temp1, pos);
@@ -1705,7 +1706,7 @@ void universe::addBuild(
         break;
     }
     addpfx(_p, {0,0}, {0,0}, rand()%20 + 50, rand()%30 + 2);
-    for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(6.0f)), "SMOKE");
+    for(int q = 0; q < 50; ++q) addParticleSprite(_p, randVec3(6.0f), "SMOKE");
     playSnd(PLACE_SND);
     playSnd(CLUNK_SND);
 }

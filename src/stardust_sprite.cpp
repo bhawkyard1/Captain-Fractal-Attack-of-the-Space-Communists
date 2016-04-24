@@ -116,14 +116,14 @@ void stardust_sprite::updateSprite(const float _dt)
   updatePos(_dt);
 }
 
-void stardust_sprite::incrDim()
+void stardust_sprite::incrDim(float _dt)
 {
   if(m_identifier == "SMOKE")
   {
-    m_dim += 2.0f;
+    m_dim += 32.0f * _dt;
   }
   else if(m_identifier == "EXPLOSION")
   {
-    m_dim -= 2.0f;
+    m_dim -= 32.0f * _dt;
   }
 }

@@ -3,7 +3,7 @@
 #define PI 3.14159265358979323846
 
 in vec4 gl_FragCoord;
-in vec4 vertColour;
+in vec4 vertCol;
 in vec2 UV;
 
 uniform float iGlobalTime;
@@ -37,6 +37,6 @@ void main()
     fragColour = vec4(0.5, 0.5, 0.5, 1.0);
     fragColour.a = mix(1.0, 0.0, dist * 2.0);
     fragColour.a *= noise(tUV, 2.0) * noise(tUV, 1.0);
-    fragColour *= vertColour;
+    fragColour *= vertCol;
     //fragColour.a = 1.0;
 }
