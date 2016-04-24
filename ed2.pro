@@ -6,7 +6,7 @@ QT += opengl core
 
 isEqual(QT_MAJOR_VERSION, 5) {
         cache()
-        #DEFINES += QT5BUILD
+        #DEFINES  += QT5BUILD
 }
 
 win32 {

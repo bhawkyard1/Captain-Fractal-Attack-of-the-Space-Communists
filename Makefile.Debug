@@ -11,7 +11,7 @@ MAKEFILE      = Makefile.Debug
 
 CC            = cl
 CXX           = cl
-DEFINES       = -DUNICODE -DWIN32 -DWIN64 -DQT5BUILD -DGL42 -DWIN32 -D_WIN32 -D_USE_MATH_DEFINES -DNO_DLL -DQT5BUILD -DNGL_DEBUG -DGL42 -DWIN32 -D_WIN32 -D_USE_MATH_DEFINES -DNO_DLL -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DUNICODE -DWIN32 -DWIN64 -DGL42 -DWIN32 -D_WIN32 -D_USE_MATH_DEFINES -DNO_DLL -DNGL_DEBUG -DGL42 -DWIN32 -D_WIN32 -D_USE_MATH_DEFINES -DNO_DLL -DQT_QML_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -nologo -Zm200 -Zc:wchar_t -FS -Zi -MDd -W3 /Fd"debug\Captain Fractal- Attack of the Space Communists.pdb" $(DEFINES)
 CXXFLAGS      = -nologo -Zm200 -Zc:wchar_t -FS -msse -msse2 -msse3 -Zi -MDd -GR -W3 -w34100 -w34189 -EHsc /Fd"debug\Captain Fractal- Attack of the Space Communists.pdb" $(DEFINES)
 INCPATH       = -I"." -I"C:\SDL2\i686-w64-mingw32\include\SDL2" -I"C:\SDL2\i686-w64-mingw32\include" -I"include" -I"-I" -I"C:\boost" -I"C:\NGL\include" -I"\NGL\include" -I"-I" -I"C:\boost" -I"D:\Qt\5.4\msvc2013_64_opengl\include" -I"D:\Qt\5.4\msvc2013_64_opengl\include\QtOpenGL" -I"D:\Qt\5.4\msvc2013_64_opengl\include\QtWidgets" -I"D:\Qt\5.4\msvc2013_64_opengl\include\QtGui" -I"D:\Qt\5.4\msvc2013_64_opengl\include\QtCore" -I"moc" -I"D:\Qt\5.4\msvc2013_64_opengl\mkspecs\win32-msvc2013" 
@@ -68,8 +68,8 @@ SOURCES       = main.cpp \
 		src\util.cpp \
 		src\vectors.cpp \
 		src\ui\button.cpp \
-		src\ui\interface.cpp \
-		src\ui\selection.cpp 
+		src\ui\selection.cpp \
+		src\ui\user_interface.cpp 
 OBJECTS       = obj\main.obj \
 		obj\base.obj \
 		obj\common.obj \
@@ -95,8 +95,8 @@ OBJECTS       = obj\main.obj \
 		obj\util.obj \
 		obj\vectors.obj \
 		obj\button.obj \
-		obj\interface.obj \
-		obj\selection.obj
+		obj\selection.obj \
+		obj\user_interface.obj
 
 DIST          =  include\base.hpp \
 		include\base.hpp \
@@ -125,8 +125,8 @@ DIST          =  include\base.hpp \
 		include\vectors.hpp \
 		include\weapons.hpp \
 		include\ui\button.hpp \
-		include\ui\interface.hpp \
-		include\ui\selection.hpp main.cpp \
+		include\ui\selection.hpp \
+		include\ui\user_interface.hpp main.cpp \
 		src\base.cpp \
 		src\common.cpp \
 		src\enemy.cpp \
@@ -151,8 +151,8 @@ DIST          =  include\base.hpp \
 		src\util.cpp \
 		src\vectors.cpp \
 		src\ui\button.cpp \
-		src\ui\interface.cpp \
-		src\ui\selection.cpp
+		src\ui\selection.cpp \
+		src\ui\user_interface.cpp
 QMAKE_TARGET  = Captain Fractal- Attack of the Space Communists
 DESTDIR        = debug\ #avoid trailing-slash linebreak
 TARGET         = "Captain Fractal- Attack of the Space Communists.exe"
@@ -241,7 +241,7 @@ dist:
 	$(ZIP) Captain Fractal- Attack of the Space Communists.zip $(SOURCES) $(DIST) ed2.pro D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\spec_pre.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\common\shell-win32.conf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\qconfig.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_axbase.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_axbase_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_axcontainer.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_axcontainer_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_axserver.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_axserver_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_bluetooth.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_bluetooth_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_bootstrap_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_clucene_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_concurrent.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_concurrent_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_core.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_core_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_dbus.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_dbus_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_declarative.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_declarative_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_designer.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_designer_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_designercomponents_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_enginio.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_enginio_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_gui.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_gui_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_help.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_help_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_location.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_location_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_multimedia.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_multimedia_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_multimediawidgets.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_multimediawidgets_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_network.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_network_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_nfc.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_nfc_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_opengl.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_opengl_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_openglextensions.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_openglextensions_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_platformsupport_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_positioning.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_positioning_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_printsupport.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_printsupport_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_qml.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_qml_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_qmldevtools_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_qmltest.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_qmltest_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_quick.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_quick_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_quickparticles_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_quickwidgets.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_quickwidgets_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_script.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_script_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_scripttools.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_scripttools_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_sensors.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_sensors_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_serialport.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_serialport_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_sql.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_sql_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_svg.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_svg_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_testlib.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_testlib_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_uitools.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_uitools_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webchannel.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webchannel_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webengine.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webengine_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webenginecore.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webenginecore_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webenginewidgets.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webenginewidgets_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webkit.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webkit_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webkitwidgets.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_webkitwidgets_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_websockets.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_websockets_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_widgets.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_widgets_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_winextras.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_winextras_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_xml.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_xml_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_xmlpatterns.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\modules\qt_lib_xmlpatterns_private.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\qt_functions.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\qt_config.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\qt_config.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\win32-msvc2013\qmake.conf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\spec_post.prf .qmake.cache D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\exclusive_builds.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\default_pre.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\default_pre.prf \NGL\UseNGL.pri D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\resolve_config.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\exclusive_builds_post.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\default_post.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\build_pass.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\c++11.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\console.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\qml_debug.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\rtti.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\precompile_header.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\warn_on.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\qt.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\resources.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\moc.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\opengl.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\uic.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\testcase_targets.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\exceptions.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\yacc.prf D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\lex.prf ed2.pro D:/Qt/5.4/msvc2013_64_opengl/lib/Qt5OpenGLd.prl D:/Qt/5.4/msvc2013_64_opengl/lib/Qt5Widgetsd.prl D:/Qt/5.4/msvc2013_64_opengl/lib/Qt5Guid.prl D:/Qt/5.4/msvc2013_64_opengl/lib/Qt5Cored.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) obj\main.obj obj\base.obj obj\common.obj obj\enemy.obj obj\faction.obj obj\file.obj obj\laser.obj obj\missile.obj obj\pfx.obj obj\player.obj obj\renderer.obj obj\renderer_opengl.obj obj\sfx.obj obj\shapes.obj obj\ship.obj obj\sim_time.obj obj\sprite_sheet.obj obj\sprite_sheet_opengl.obj obj\squad.obj obj\stardust.obj obj\stardust_sprite.obj obj\universe.obj obj\util.obj obj\vectors.obj obj\button.obj obj\interface.obj obj\selection.obj
+	-$(DEL_FILE) obj\main.obj obj\base.obj obj\common.obj obj\enemy.obj obj\faction.obj obj\file.obj obj\laser.obj obj\missile.obj obj\pfx.obj obj\player.obj obj\renderer.obj obj\renderer_opengl.obj obj\sfx.obj obj\shapes.obj obj\ship.obj obj\sim_time.obj obj\sprite_sheet.obj obj\sprite_sheet_opengl.obj obj\squad.obj obj\stardust.obj obj\stardust_sprite.obj obj\universe.obj obj\util.obj obj\vectors.obj obj\button.obj obj\selection.obj obj\user_interface.obj
 	-$(DEL_FILE) "debug\Captain Fractal- Attack of the Space Communists.exp" "debug\Captain Fractal- Attack of the Space Communists.ilk" "debug\Captain Fractal- Attack of the Space Communists.idb"
 
 distclean: clean 
@@ -1677,9 +1677,6 @@ obj\main.obj: main.cpp C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
 		C:\NGL\include\ngl\RibExport.h \
 		include\stardust.hpp \
 		include\stardust_sprite.hpp \
-		include\ui\interface.hpp \
-		include\ui\selection.hpp \
-		include\ui\button.hpp \
 		include\file.hpp
 
 obj\base.obj: src\base.cpp include\base.hpp \
@@ -3283,9 +3280,6 @@ obj\file.obj: src\file.cpp include\file.hpp \
 		C:\NGL\include\ngl\RibExport.h \
 		include\stardust.hpp \
 		include\stardust_sprite.hpp \
-		include\ui\interface.hpp \
-		include\ui\selection.hpp \
-		include\ui\button.hpp \
 		include\sfx.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_mixer.h
 
@@ -6706,9 +6700,6 @@ obj\universe.obj: src\universe.cpp include\universe.hpp \
 		C:\NGL\include\ngl\RibExport.h \
 		include\stardust.hpp \
 		include\stardust_sprite.hpp \
-		include\ui\interface.hpp \
-		include\ui\selection.hpp \
-		include\ui\button.hpp \
 		include\sfx.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_mixer.h \
 		include\shapes.hpp
@@ -6810,56 +6801,6 @@ obj\vectors.obj: src\vectors.cpp include\vectors.hpp \
 obj\button.obj: src\ui\button.cpp include\ui\button.hpp \
 		include\vectors.hpp
 
-obj\interface.obj: src\ui\interface.cpp include\util.hpp \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_ttf.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_config.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_platform.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\begin_code.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\close_code.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_assert.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_atomic.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_audio.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_error.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_endian.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_mutex.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_thread.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_rwops.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_clipboard.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_cpuinfo.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_events.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_video.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_pixels.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_rect.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_surface.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_blendmode.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_keyboard.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_keycode.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_scancode.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_mouse.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_joystick.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_gamecontroller.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_quit.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_gesture.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_touch.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_filesystem.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_haptic.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_hints.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_loadso.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_log.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_messagebox.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_power.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_render.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
-		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
-		include\vectors.hpp \
-		include\ui\interface.hpp \
-		include\ui\selection.hpp \
-		include\ui\button.hpp
-
 obj\selection.obj: src\ui\selection.cpp include\util.hpp \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_ttf.h \
 		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
@@ -6908,6 +6849,53 @@ obj\selection.obj: src\ui\selection.cpp include\util.hpp \
 		include\vectors.hpp \
 		include\ui\selection.hpp \
 		include\ui\button.hpp
+
+obj\user_interface.obj: src\ui\user_interface.cpp include\util.hpp \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_ttf.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_main.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_stdinc.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_config.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_platform.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\begin_code.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\close_code.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_assert.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_atomic.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_audio.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_error.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_endian.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_mutex.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_thread.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_rwops.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_clipboard.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_cpuinfo.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_events.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_video.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_pixels.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_rect.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_surface.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_blendmode.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_keyboard.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_keycode.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_scancode.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_mouse.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_joystick.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_gamecontroller.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_quit.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_gesture.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_touch.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_filesystem.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_haptic.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_hints.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_loadso.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_log.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_messagebox.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_power.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_render.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_system.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_timer.h \
+		C:\SDL2\i686-w64-mingw32\include\SDL2\SDL_version.h \
+		include\vectors.hpp
 
 ####### Install
 

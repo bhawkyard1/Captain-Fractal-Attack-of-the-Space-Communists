@@ -23,7 +23,7 @@
 #include "squad.hpp"
 #include "stardust.hpp"
 #include "stardust_sprite.hpp"
-#include "ui/interface.hpp"
+#include "ui/user_interface.hpp"
 #include "weapons.hpp"
 
 struct col_partition
@@ -38,7 +38,7 @@ struct col_partition
 class universe
 {
     bool showUI;
-    ui::interface m_ui;
+    ui::userInterface m_ui;
     #if RENDER_MODE == 0
       renderer m_drawer;
       std::vector<stardust> m_dots;
@@ -127,8 +127,8 @@ public:
     void setPause(bool _p) {m_paused = _p;}
     bool isPaused() const {return m_paused;}
 
-    ui::interface * getUI() {return &m_ui;}
-    ui::interface setUI(ui::interface _i) {m_ui = _i;}
+    ui::userInterface * getUI() {return &m_ui;}
+    ui::userInterface setUI(ui::userInterface _i) {m_ui = _i;}
     bool upgradeCallback(const int _sel, const int _btn);
     void upgradeSetLabels(const int _sel, const int _btn, const int _plvl);
 
@@ -154,7 +154,7 @@ public:
     void setUIVisible(const bool _b) {showUI = _b;}
     void toggleUIVisible() {showUI = !showUI;}
 
-    void shipAddParent(enemy * _parent, enemy * _child, vec3 _offset);
+    void shipAddParent(ship *_parent, ship *_child, vec3 _offset);
 };
 
 #endif

@@ -42,7 +42,7 @@
 //Universe class, main class in game
 #include "universe.hpp"
 
-#include "ui/interface.hpp"
+#include "ui/user_interface.hpp"
 
 //Contains funtions to save/load the game
 #include "file.hpp"
@@ -51,7 +51,7 @@
 #include <windows.h>
 #endif
 */
-#undef interface
+#undef userInterface
 
 //Function prototypes.
 void gameInit();

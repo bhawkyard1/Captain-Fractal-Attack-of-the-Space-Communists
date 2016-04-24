@@ -77,9 +77,6 @@ universe::universe()
     createFactions();
     loadShips();
     m_escMenuShown = false;
-
-    //enemy newTurret({0.0f, 0.0f}, {0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
-    //shipAddParent(&m_ply, );
 }
 
 void universe::addShot(
@@ -122,6 +119,7 @@ void universe::addMissile(const vec3 _p,
 
 void universe::update(const float _dt)
 {
+    std::cout << m_agents.size() << std::endl;
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
@@ -444,8 +442,8 @@ void universe::update(const float _dt)
             float c = cos(rad(angle));
 
             vec3 epos = m_agents[e].getParentOffset();
-            epos.m_x = epos.m_x * c - epos.m_y * s;
-            epos.m_y = epos.m_x * s + epos.m_y * c;
+            epos.m_x = epos.m_x * c - epos.m_z * s;
+            epos.m_y = epos.m_x * s + epos.m_z * c;
 
             m_agents[e].setPos( parent->getPos() + epos );
             m_agents[e].setPPos( m_agents[e].getPos() );
@@ -1515,7 +1513,7 @@ void universe::spawnShip(
             else if(type == PIRATE_CAPITAL)
             {
                 std::vector<enemy> temp;
-                for(int p = 0; p < 2; ++p)
+                for(int p = 1; p < 3; ++p)
                 {
                     for(int pang = 0; pang < 360; pang += 60)
                     {
@@ -1661,6 +1659,9 @@ void universe::reload(const bool _newGame)
     }
     m_ply.setMissiles(3);
     setScore(16);
+    enemy newTurret({0.0f, 0.0f}, {0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
+    shipAddParent(&m_ply, &newTurret, {20.0f, 0.0f});
+    m_agents.push_back(newTurret);
 }
 
 void universe::addBuild(const ship_spec _type)
@@ -1921,7 +1922,7 @@ squad * universe::getSquadFromID(int _id)
     return nullptr;
 }
 
-void universe::shipAddParent(enemy * _parent, enemy * _child, vec3 _offset)
+void universe::shipAddParent(ship * _parent, ship * _child, vec3 _offset)
 {
     _child->setParent(_parent->getUniqueID());
     _child->setParentOffset(_offset);
