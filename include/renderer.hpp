@@ -17,6 +17,19 @@
 #include "sprite_sheet.hpp"
 #include "vectors.hpp"
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @file renderer.hpp
+/// @brief This file contains the old SDL renderer.
+/// @author Ben Hawkyard
+/// @version 1.0
+/// @date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game.
+/// @class renderer
+/// @brief Wrapper around SDL rendering functionality. Has not been updated in a bit, use at your
+/// own risk.
+//----------------------------------------------------------------------------------------------------------------------
+
 class renderer
 {
     //----------------------------------------------------------------------------------------------------------------------

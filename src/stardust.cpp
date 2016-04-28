@@ -19,7 +19,7 @@ stardust::stardust(float _alph)
 void stardust::updatePos(float _dt)
 {
   setPPos(getPos());
-  setPos(getPos() + (getVel()+getWVel()) * m_z * g_PIXEL_UNIT_CONVERSION * _dt);
+  setPos(getPos() + (getVel()+getWVel()) * getZ() * g_PIXEL_UNIT_CONVERSION * _dt);
 }
 
 void stardust::gen(
@@ -27,7 +27,7 @@ void stardust::gen(
     const std::array<float, 3> &_col
     )
 {
-  m_z = randFloat(0.05f, 1.1f);
+  addPos({0.0f, 0.0f, randFloat(0.05f, 1.1f)});
 
   int colProb = rand()%100;
 
@@ -50,7 +50,7 @@ void stardust::gen(
     m_col[2] = rand() % 30 + 30;
   }
 
-  m_col[3] = ( m_z + 0.25 ) * 150;
+  m_col[3] = ( getZ() + 0.25 ) * 150;
 
   if(_regen == false)
   {

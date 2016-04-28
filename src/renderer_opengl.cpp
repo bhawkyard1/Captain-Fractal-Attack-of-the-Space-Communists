@@ -123,6 +123,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
     loadAsset("COMMUNIST_1",         "commie_1");
     loadAsset("COMMUNIST_2",         "commie_2");
+    loadAsset("COMMUNIST_CAPITAL", "commie_capital");
+    loadAsset("COMMUNIST_TURRET", "commie_turret");
 
     loadAsset("FEDERATION_MKI",      "enemy_1");
     loadAsset("FEDERATION_MKII",     "enemy_2");
@@ -145,6 +147,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     loadAsset("PLAYER_DEFENDER",     "wingman_2");
     loadAsset("PLAYER_DESTROYER",    "wingman_3");
     loadAsset("PLAYER_MINER_DROID",  "miner_1");
+    loadAsset("PLAYER_CAPITAL", "player_capital");
     loadAsset("PLAYER_TURRET",       "turret_1");
 
     loadAsset("PLAYER_STATION",      "station_1");

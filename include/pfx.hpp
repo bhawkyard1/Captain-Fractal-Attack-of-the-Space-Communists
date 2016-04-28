@@ -8,6 +8,18 @@
 
 #include "SDL2/SDL_image.h"
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @file pfx.hpp
+/// @brief This class represents a simple particle system.
+/// @author Ben Hawkyard
+/// @version 1.0
+/// @date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game.
+/// @class pfx
+/// @brief Inherits from base, also contains instances of base.
+//----------------------------------------------------------------------------------------------------------------------
+
 class pfx : public base
 {
 public:
