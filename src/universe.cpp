@@ -231,7 +231,9 @@ void universe::update(const float _dt)
         }
     }
 
+#if RENDER_MODE == 0
     m_partitions.rects.clear();
+#endif
     m_partitions.ships.clear();
     m_partitions.lasers.clear();
     m_partitions.rocks.clear();
@@ -1174,7 +1176,9 @@ void universe::detectCollisions(
         m_partitions.lasers.push_back(plasers);
         m_partitions.rockets.push_back(prockets);
         m_partitions.rocks.push_back(procks);
+#if RENDER_MODE == 0
         m_partitions.rects.push_back(_box);
+#endif
     }
     else
     {
@@ -1630,7 +1634,10 @@ void universe::reload(const bool _newGame)
     m_partitions.lasers.clear();
     m_partitions.rockets.clear();
     m_partitions.rocks.clear();
+
+#if RENDER_MODE == 0
     m_partitions.rects.clear();
+#endif
 
     m_time_elapsed = 0.0;
     setVel({0,0});
