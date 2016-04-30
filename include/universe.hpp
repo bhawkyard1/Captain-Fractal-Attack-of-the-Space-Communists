@@ -254,10 +254,16 @@ public:
     void spawnShip(const aiTeam _t);
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Adds a ship to the universe, with a specified position and a random type.
-    /// @param _t team of the ship, _p position.
+    /// @brief Adds a ship to the universe, with a specified position and type.
+    /// @param _type ship class, k_t team of the ship, _p position.
     //----------------------------------------------------------------------------------------------------------------------
-    void spawnShip(const aiTeam _t, const vec3 _p);
+    void spawnShip(const ship_spec _type, const aiTeam _t, const vec3 _p);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Returns a (weighted) random ship type from a given faction.
+    /// @param _t ship faction.
+    //----------------------------------------------------------------------------------------------------------------------
+    ship_spec getRandomShipType(const aiTeam _t);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Spawns a series of ships.

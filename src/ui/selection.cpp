@@ -26,11 +26,11 @@ bool selection::click(vec2 p)
 
   for(size_t i = 0; i < m_buttons.size(); ++i)
   {
-    m_buttons.at(i).set(false);
-    if(m_buttons.at(i).isDark()) continue;
-    if(pointInRect(p, m_buttons.at(i).getPos(), m_buttons.at(i).getDim()))
+    m_buttons[i].set(false);
+    if(m_buttons[i].isDark()) continue;
+    if(pointInRect(p, m_buttons[i].getPos(), m_buttons[i].getDim()))
     {
-      m_buttons.at(i).select();
+      m_buttons[i].select();
       m_selected = i;
     }
   }

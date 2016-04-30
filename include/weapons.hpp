@@ -18,14 +18,14 @@ enum WEAPON_TYPE {
     WEAPON_MINER_LASER,
     WEAPON_TURRET_LASER,
     WEAPON_PIRATE_1, WEAPON_PIRATE_2, WEAPON_PIRATE_3, WEAPON_PIRATE_BOSS_1,
-    WEAPON_COMMUNIST_1, WEAPON_COMMUNIST_2,
+    WEAPON_COMMUNIST_1, WEAPON_COMMUNIST_2, WEAPON_COMMUNIST_CAPITAL,
     WEAPON_END
 };
 
 
 //Weapon definitions.
 //0 Lasers per shot, 1 spread, 2 dmg, 3 speed, 4 red, 5 green, 6 blue, 7 energy cost, 8 cooldown, 9 stopping power.
-static std::array<std::array<float,10>,22> g_weapons =
+static std::array<std::array<float,10>,23> g_weapons =
 {{
      {{1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.008f}},//Laser cannon	0
      {{12.0f,	5.0f,                           3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.01f}},//Shotgun			1
@@ -48,6 +48,7 @@ static std::array<std::array<float,10>,22> g_weapons =
      {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}},//P gunship laser	17
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1 18
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2 19
+     {{15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser capital 20
      {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
 }};
 

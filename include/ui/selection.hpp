@@ -19,7 +19,7 @@ public:
   int getSelected() {return m_selected;}
   void add(const button b) {m_buttons.push_back(b);}
   bool click(vec2);
-  button * getAt(size_t i) {return &m_buttons.at(i);}
+  button * getAt(size_t i) {return &m_buttons[i];}
   void reset();
   void update(int _s);
   void clear() {m_buttons.clear();}

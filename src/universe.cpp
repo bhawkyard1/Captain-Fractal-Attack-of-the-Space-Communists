@@ -119,7 +119,6 @@ void universe::addMissile(const vec3 _p,
 
 void universe::update(const float _dt)
 {
-    std::cout << m_agents.size() << std::endl;
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
@@ -305,14 +304,14 @@ void universe::update(const float _dt)
             {
                 for(int p = 0; p < rand()%2 + 4; p++)
                 {
-                    vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
+                    vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f), 0.0f};
                     pos += m_missiles[i].getPos();
                     addpfx(pos, m_missiles[i].getVel(), m_vel, rand()%50 + 50, rand()%50 + 8);
                 }
 
                 for(size_t j = 0; j < m_agents.size(); j++)
                 {
-                    vec3 ep = m_agents.at(j).getPos();
+                    vec3 ep = m_agents[j].getPos();
                     vec3 mp = m_missiles[i].getPos();
 
                     float dmg = magns(mp-ep);
@@ -320,7 +319,7 @@ void universe::update(const float _dt)
                     if(dmg > 300*300) continue;
 
                     dmg = 1/mag(mp-ep) * 30000;
-                    m_agents.at(j).damage(dmg);
+                    m_agents[j].damage(dmg);
                 }
 
                 vec3 pdiff = m_missiles[i].getPos() - m_ply.getPos();
@@ -428,13 +427,15 @@ void universe::update(const float _dt)
         }
         else if(m_agents[e].hasParent())
         {
-            enemy * parent = nullptr;
+            ship * parent = nullptr;
             for(auto &q : m_agents)
             {
                 if(q.getUniqueID() == m_agents[e].getParent()) parent = &q;
             }
             if(parent == nullptr)
             {
+                //parent = &m_ply;
+                //std::cout << "PARENTLESS! DESTROYING..." << std::endl;
                 m_agents[e].setHealth(-1.0f);
                 continue;
             }
@@ -444,10 +445,11 @@ void universe::update(const float _dt)
             float c = cos(rad(angle));
 
             vec3 epos = m_agents[e].getParentOffset();
-            epos.m_x = epos.m_x * c - epos.m_z * s;
-            epos.m_y = epos.m_x * s + epos.m_z * c;
+            float xn = epos.m_x * c - epos.m_y * s;
+            float yn = epos.m_x * s + epos.m_y * c;
+            vec3 comb = {xn, yn, 0.0f};
 
-            m_agents[e].setPos( parent->getPos() + epos );
+            m_agents[e].setPos( parent->getPos() + comb );
             m_agents[e].setPPos( m_agents[e].getPos() );
 
             m_agents[e].setWVel(m_vel);
@@ -504,7 +506,7 @@ void universe::update(const float _dt)
         else if(m_agents[e].getClassification() == PLAYER_BARRACKS)
         {
             //Spawn wingman.
-            if(rand() % 2048 == 0 and m_factionCounts[TEAM_PLAYER] < 20) spawnShip(TEAM_PLAYER, p);
+            if(rand() % 2048 == 0 and m_factionCounts[TEAM_PLAYER] < 20) spawnShip(getRandomShipType(TEAM_PLAYER), TEAM_PLAYER, p);
         }
         else if(m_agents[e].getCanShoot()) //Default m_target acquisition
         {
@@ -620,7 +622,7 @@ void universe::update(const float _dt)
 
     if(g_DIFFICULTY == 0) return;
 
-    if(rand() % 35000 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
+    if(rand() % 350 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
         aiTeam pteam;
@@ -629,7 +631,7 @@ void universe::update(const float _dt)
         spawnSquad(pteam, 10000.0f, 20000.0f, reps);
     }
 
-    if(rand() % 35000 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
+    if(rand() % 350 <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[SPACE_COMMUNISTS] < clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 20) + 1, 1, clamp(m_factionMaxCounts[SPACE_COMMUNISTS],0,80) - m_factionCounts[SPACE_COMMUNISTS]);
         aiTeam pteam;
@@ -871,12 +873,14 @@ void universe::draw(float _dt)
     m_drawer.clearVectors();
 
     m_drawer.useShader("flame");
-    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 50.0f;
+    float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower() * m_ply.getRadius()) / 1000.0f;
+
+    //std::cout << m_ply.getAlphaStats()[0] << " " << stat << std::endl;
     if(stat > 0.05f and !g_GAME_OVER)
     {
         m_drawer.drawFlames(
-                    m_ply.getPos() + tovec3(back(rad(m_ply.getAng()))) * (m_ply.getRadius() + stat),
-        {m_ply.getRadius(), stat},
+                    m_ply.getPos() + tovec3(back(rad(m_ply.getAng()))) * stat,
+        {m_ply.getRadius() * 0.7f, stat},
                     m_ply.getAng(),
         {0.1f, 0.4f, 1.0f, 1.0f},
                     m_time_elapsed,
@@ -886,14 +890,14 @@ void universe::draw(float _dt)
 
     for(auto &i : m_agents)
     {
-        float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 50.0f;
+        float stat = (i.getAlphaStats()[0] * i.getEnginePower() * i.getRadius()) / 1000.0f;
         std::array<float, 4> col = i.getCurWeapCol();
         col[3] = 1.0f;
         if(stat > 0.05f)
         {
             m_drawer.drawFlames(
-                        i.getInterpolatedPosition(_dt) + tovec3(back(rad(i.getAng()))) * (i.getRadius() + stat),
-            {i.getRadius(), stat},
+                        i.getInterpolatedPosition(_dt) + tovec3(back(rad(i.getAng()))) * stat,
+            {i.getRadius() * 0.7f, stat},
                         i.getAng(),
                         col,
                         m_time_elapsed,
@@ -957,6 +961,9 @@ void universe::draw(float _dt)
         break;
     case 10:
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_STATION", 0.5f);
+        break;
+    case 11:
+        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_CAPITAL", 0.5f);
         break;
     default:
         break;
@@ -1348,7 +1355,7 @@ void universe::checkCollisions()
                 enemy * a = m_partitions.ships[p][i];
                 for(size_t j = 0; j < m_partitions.ships[p].size(); ++j)
                 {
-                    enemy * b = m_partitions.ships[p].at(j);
+                    enemy * b = m_partitions.ships[p][j];
 
                     //If a is a station, and b the two ships are on the same team...
                     if( a->getClassification() == PLAYER_STATION and !emnityCheck( a->getTeam(), b->getTeam() ) and a != b )
@@ -1428,14 +1435,11 @@ void universe::spawnShip(const aiTeam _t)
     else if(side == 2) pass = {randFloat(-20000.0f, 20000.0f), 20000.0f};
     else if(side == 3) pass = {20000.0f, randFloat(-20000.0f, 20000.0f)};
 
-    spawnShip(_t, tovec3(pass));
+    spawnShip(getRandomShipType(_t), _t, tovec3(pass));
 }
 
-void universe::spawnShip(
-        const aiTeam _t,
-        const vec3 _p
-        )
-{	
+ship_spec universe::getRandomShipType(const aiTeam _t)
+{
     int prob = rand()%1000;
 
     ship_spec type;
@@ -1443,11 +1447,12 @@ void universe::spawnShip(
     if( _t == SPACE_COMMUNISTS )
     {
         type = COMMUNIST_1;
-        if(prob < 500) type = COMMUNIST_2;
+        if(prob > 500 and prob <= 990) type = COMMUNIST_2;
+        else if(prob > 990) type = COMMUNIST_CAPITAL;
     }
     else if( _t == SPOOKY_SPACE_PIRATES )
     {
-        type = PIRATE_CAPITAL;
+        type = PIRATE_GNAT;
         if(prob > 750 and prob <= 800) type = PIRATE_CRUISER;
         else if(prob > 800 and prob <= 900) type = PIRATE_WRANGLER;
         else if(prob > 900 and prob <= 980) type = PIRATE_MARAUDER;
@@ -1456,7 +1461,7 @@ void universe::spawnShip(
     }
     else if( _t == GALACTIC_FEDERATION )
     {
-        type = FEDERATION_CAPITAL;
+        type = FEDERATION_MKI;
         if(prob > 750 and prob <= 800) type = FEDERATION_MKII;
         else if(prob > 800 and prob <= 900) type = FEDERATION_MKIII;
         else if(prob > 900 and prob <= 980) type = FEDERATION_MKIV;
@@ -1474,7 +1479,16 @@ void universe::spawnShip(
         type = PLAYER_MINER_DROID;
     }
 
-    enemy newShip({0.0f, 0.0f}, -m_vel, type, _t);
+    return type;
+}
+
+void universe::spawnShip(
+        const ship_spec _type,
+        const aiTeam _t,
+        const vec3 _p
+        )
+{	
+    enemy newShip({0.0f, 0.0f}, -m_vel, _type, _t);
 
     if( _t == TEAM_PLAYER ) m_factionCounts[TEAM_PLAYER]++;
     else if( _t == TEAM_PLAYER_MINER ) m_factionCounts[TEAM_PLAYER_MINER]++;
@@ -1498,7 +1512,7 @@ void universe::spawnShip(
             addToSquad(&newShip, &s);
             m_agents.push_back(newShip);
 
-            if(type == FEDERATION_CAPITAL)
+            if(_type == FEDERATION_CAPITAL)
             {
                 std::vector<enemy> temp;
                 for(int q = 0; q < 10; ++q)
@@ -1506,15 +1520,15 @@ void universe::spawnShip(
                     enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
                     enemy temp2({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
 
-                    shipAddParent(&m_agents.back(), &temp1, {100.0f, q * 100.0f - 480.0f});
-                    shipAddParent(&m_agents.back(), &temp2, {-100.0f, q * 100.0f - 480.0f});
+                    shipAddParent(&m_agents.back(), &temp1, {100.0f, q * 100.0f - 480.0f, 0.0f});
+                    shipAddParent(&m_agents.back(), &temp2, {-100.0f, q * 100.0f - 480.0f, 0.0f});
 
                     temp.push_back(temp1);
                     temp.push_back(temp2);
                 }
                 for(auto &q : temp) m_agents.push_back(q);
             }
-            else if(type == PIRATE_CAPITAL)
+            else if(_type == PIRATE_CAPITAL)
             {
                 std::vector<enemy> temp;
                 for(int p = 1; p < 3; ++p)
@@ -1531,6 +1545,68 @@ void universe::spawnShip(
                 }
                 for(auto &q : temp) m_agents.push_back(q);
             }
+            else if(_type == COMMUNIST_CAPITAL)
+            {
+                std::vector<enemy> temp;
+                vec3 base = {-92.0f, -302.0f, 0.0f};
+
+                for(int i = 0; i < 3; ++i)
+                {
+                    base = {-60.0f, -302.0f, 0.0f};
+                    for(int j = 0; j < 4; ++j)
+                    {
+                        vec3 pos = {60.0f * i, 60.0f * j, 0.0f};
+                        pos += base;
+                        //std::cout << "SPACE TURRET SPAWNED " << pos.m_x << ", " << pos.m_y << std::endl;
+                        enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, COMMUNIST_TURRET, SPACE_COMMUNISTS);
+
+                        shipAddParent(&m_agents.back(), &temp1, pos);
+
+                        temp.push_back(temp1);
+                    }
+                }
+                for(auto &q : temp) m_agents.push_back(q);
+            }
+            else if(_type == PLAYER_CAPITAL)
+            {
+                std::vector<enemy> temp;
+
+                vec3 base;
+                for(int i = 0; i < 3; ++i)
+                {
+                    base = {-82.0f, -212.0f};
+                    for(int j = 0; j < 3; ++j)
+                    {
+                        vec3 pos = {82.0f * i, 40.0f * j, 0.0f};
+                        pos += base;
+                        //std::cout << "SPACE TURRET SPAWNED " << pos.m_x << ", " << pos.m_y << std::endl;
+                        enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
+
+                        shipAddParent(&m_agents.back(), &temp1, pos);
+
+                        temp.push_back(temp1);
+                    }
+                }
+
+                for(int j = 1; j < 3; ++j)
+                {
+                    base = {0.0f, 143.0f};
+                    for(int i = 0; i < 360; i += 60)
+                    {
+                        vec3 pos = {cos(rad(i)), sin(rad(i)), 0.0f};
+                        pos *= j * 50.0f;
+                        pos += base;
+
+                        enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
+
+                        shipAddParent(&m_agents.back(), &temp1, pos);
+
+                        temp.push_back(temp1);
+                    }
+                }
+
+                for(auto &q : temp) m_agents.push_back(q);
+            }
 
             return;
         }
@@ -1543,7 +1619,7 @@ void universe::spawnShip(
     m_squads.push_back(temp);
     m_agents.push_back(newShip);
 
-    if(type == FEDERATION_CAPITAL)
+    if(_type == FEDERATION_CAPITAL)
     {
         std::vector<enemy> temp;
         for(int q = 0; q < 10; ++q)
@@ -1551,18 +1627,18 @@ void universe::spawnShip(
             enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
             enemy temp2({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
 
-            shipAddParent(&m_agents.back(), &temp1, {100.0f, q * 100.0f - 480.0f});
-            shipAddParent(&m_agents.back(), &temp2, {-100.0f, q * 100.0f - 480.0f});
+            shipAddParent(&m_agents.back(), &temp1, {100.0f, q * 100.0f - 480.0f, 0.0f});
+            shipAddParent(&m_agents.back(), &temp2, {-100.0f, q * 100.0f - 480.0f, 0.0f});
 
             temp.push_back(temp1);
             temp.push_back(temp2);
         }
         for(auto &q : temp) m_agents.push_back(q);
     }
-    else if(type == PIRATE_CAPITAL)
+    else if(_type == PIRATE_CAPITAL)
     {
         std::vector<enemy> temp;
-        for(int p = 0; p < 2; ++p)
+        for(int p = 1; p < 3; ++p)
         {
             for(int pang = 0; pang < 360; pang += 60)
             {
@@ -1576,6 +1652,68 @@ void universe::spawnShip(
         }
         for(auto &q : temp) m_agents.push_back(q);
     }
+    else if(_type == COMMUNIST_CAPITAL)
+    {
+        std::vector<enemy> temp;
+        vec3 base = {-92.0f, -302.0f, 0.0f};
+
+        for(int i = 0; i < 3; ++i)
+        {
+            base = {-60.0f, -302.0f, 0.0f};
+            for(int j = 0; j < 4; ++j)
+            {
+                vec3 pos = {60.0f * i, 60.0f * j, 0.0f};
+                pos += base;
+                //std::cout << "SPACE TURRET SPAWNED " << pos.m_x << ", " << pos.m_y << std::endl;
+                enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, COMMUNIST_TURRET, SPACE_COMMUNISTS);
+
+                shipAddParent(&m_agents.back(), &temp1, pos);
+
+                temp.push_back(temp1);
+            }
+        }
+        for(auto &q : temp) m_agents.push_back(q);
+    }
+    else if(_type == PLAYER_CAPITAL)
+    {
+        std::vector<enemy> temp;
+
+        vec3 base;
+        for(int i = 0; i < 3; ++i)
+        {
+            base = {-82.0f, -212.0f};
+            for(int j = 0; j < 3; ++j)
+            {
+                vec3 pos = {82.0f * i, 40.0f * j, 0.0f};
+                pos += base;
+                //std::cout << "SPACE TURRET SPAWNED " << pos.m_x << ", " << pos.m_y << std::endl;
+                enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
+
+                shipAddParent(&m_agents.back(), &temp1, pos);
+
+                temp.push_back(temp1);
+            }
+        }
+
+        for(int j = 1; j < 3; ++j)
+        {
+            base = {0.0f, 143.0f};
+            for(int i = 0; i < 360; i += 60)
+            {
+                vec3 pos = {cos(rad(i)), sin(rad(i)), 0.0f};
+                pos *= j * 50.0f;
+                pos += base;
+
+                enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
+
+                shipAddParent(&m_agents.back(), &temp1, pos);
+
+                temp.push_back(temp1);
+            }
+        }
+
+        for(auto &q : temp) m_agents.push_back(q);
+    }
 }
 
 void universe::spawnSquad(
@@ -1587,7 +1725,7 @@ void universe::spawnSquad(
     vec3 p = tovec3(randVec2(_min, _max));
     for(int i = 0; i < _i; ++i)
     {
-        spawnShip(_t, p + tovec3(randVec2(512.0f)));
+        spawnShip(getRandomShipType(_t), _t, p + tovec3(randVec2(512.0f)));
     }
 }
 
@@ -1653,8 +1791,8 @@ void universe::reload(const bool _newGame)
     m_factionMaxCounts[SPACE_COMMUNISTS] = 1;
 
     m_ply.setWeapData(0,0);
-    //m_ply.setWeapData(1,1);
-    //m_ply.setWeapData(2,2);
+    m_ply.setWeapData(1,1);
+    m_ply.setWeapData(2,2);
 
     m_ply.setEnginePower(5.0f);
 
@@ -1666,9 +1804,6 @@ void universe::reload(const bool _newGame)
     }
     m_ply.setMissiles(3);
     setScore(16);
-    enemy newTurret({0.0f, 0.0f}, {0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
-    shipAddParent(&m_ply, &newTurret, {20.0f, 0.0f});
-    m_agents.push_back(newTurret);
 }
 
 void universe::addBuild(const ship_spec _type)
@@ -1713,7 +1848,7 @@ void universe::addBuild(
     default:
         break;
     }
-    addpfx(_p, {0,0}, {0,0}, rand()%20 + 50, rand()%30 + 2);
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2);
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, randVec3(6.0f), "SMOKE");
     playSnd(PLACE_SND);
     playSnd(CLUNK_SND);
@@ -1795,6 +1930,9 @@ void universe::initUI()
 
     button upgrades_station("STATION (1024)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.55f},{w,h},1024);
     upgrades_menu.add(upgrades_station);
+
+    button upgrades_capital("CAPITAL (1536)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.49f},{w,h},1024);
+    upgrades_menu.add(upgrades_capital);
 
     m_ui.add(energy_menu);
     m_ui.add(upgrades_menu);

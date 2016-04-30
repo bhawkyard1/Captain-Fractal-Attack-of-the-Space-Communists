@@ -477,10 +477,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
                   uni->addWingman();
                   playSnd(CLUNK_SND);
                 }
-                else if(ret.m_button_val == 7) uni->setMouseState(7);
-                else if(ret.m_button_val == 8) uni->setMouseState(8);
-                else if(ret.m_button_val == 9) uni->setMouseState(9);
-                else if(ret.m_button_val == 10) uni->setMouseState(10);
+                else if(ret.m_button_val >= 7) uni->setMouseState( ret.m_button_val );
             }
             else if(ret.m_sel_val == 2)
             {
@@ -503,10 +500,6 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
                 case 2:
                     *keymod = 0;
                     uni->reload(true);
-                    uni->setPause(false);
-                    uni->escMenuTog();
-                    uni->getUI()->pop();
-                    uni->initUI();
                     loadGame(uni);
                     break;
                 case 3:
@@ -570,6 +563,9 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
         break;
     case 10:
         uni->addBuild(pos, PLAYER_STATION);
+        break;
+    case 11:
+        uni->spawnShip(PLAYER_CAPITAL, TEAM_PLAYER, pos);
         break;
     default:
         break;

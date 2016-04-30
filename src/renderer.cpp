@@ -294,10 +294,10 @@ void renderer::drawTextureSet(std::string _key,
     dst.w = w;
     dst.h = h;
 
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(1), _col[0]);
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(2), _col[1]);
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(3), _col[2]);
-    SDL_SetTextureAlphaMod(m_textures.at(_key).at(4), _col[3]);
+    SDL_SetTextureAlphaMod(m_textures[_key][1], _col[0]);
+    SDL_SetTextureAlphaMod(m_textures[_key][2], _col[1]);
+    SDL_SetTextureAlphaMod(m_textures[_key][3], _col[2]);
+    SDL_SetTextureAlphaMod(m_textures[_key][4], _col[3]);
     //SDL_SetTextureColorMod(m_textures.at(key).at(3), weapons[curWeap][4], weapons[curWeap][5], weapons[curWeap][6]);
 
     SDL_RenderCopyEx(m_renderer, m_textures[_key][5], NULL, &dst, 0, NULL, SDL_FLIP_NONE);

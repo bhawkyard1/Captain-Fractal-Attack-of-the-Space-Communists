@@ -166,14 +166,14 @@ void loadGame(universe * uni)
 
         for(size_t i = 0; i < strings.size(); i++)
         {
-            if(strings.at(i) == "score") uni->setScore( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings.at(i) == "mec") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), GALACTIC_FEDERATION );
-            else if(strings.at(i) == "mcc") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), SPACE_COMMUNISTS );
-            else if(strings.at(i) == "mwc") uni->setMaxWingmanCount( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings.at(i) == "mmc") uni->setMaxMinerCount( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings.at(i) == "nm") uni->getPly()->setMissiles( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings.at(i) == "d") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
-            else if(strings.at(i) == "u")
+            if(strings[i] == "score") uni->setScore( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "mec") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), GALACTIC_FEDERATION );
+            else if(strings[i] == "mcc") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), SPACE_COMMUNISTS );
+            else if(strings[i] == "mwc") uni->setMaxWingmanCount( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "mmc") uni->setMaxMinerCount( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "nm") uni->getPly()->setMissiles( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "d") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+            else if(strings[i] == "u")
             {
                 for(int j = 0; j < UPGRADES_LEN; ++j)
                 {
@@ -184,7 +184,7 @@ void loadGame(universe * uni)
                     uni->upgradeSetLabels(1, j, uni->getPly()->getUpgrade(j));
                 }
             }
-            else if(strings.at(i) == "ps")
+            else if(strings[i] == "ps")
             {
                 std::vector<std::string> stats = split(strings.at(i + 1), ',');
                 vec3 vel = {std::stof(stats[0]), std::stof(stats[1]), 0.0f};
@@ -198,8 +198,8 @@ void loadGame(universe * uni)
                 ply->setShield(shield);
                 ply->setEnergy(energy);
             }
-            else if(strings.at(i) == "enemies") { if(strings.size() > 1) readVectorEnemy(strings.at(i + 1), uni); }
-            else if(strings.at(i) == "asteroids") { if(strings.size() > 1) readVectorAsteroid(strings.at(i + 1), uni); }
+            else if(strings[i] == "enemies") { if(strings.size() > 1) readVectorEnemy(strings.at(i + 1), uni); }
+            else if(strings[i] == "asteroids") { if(strings.size() > 1) readVectorAsteroid(strings.at(i + 1), uni); }
         }
     }
     save.close();
@@ -221,11 +221,11 @@ void loadConfig()
 
     for(size_t i = 0; i < strings.size(); i++)
     {
-      if(strings.at(i) == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings.at(i) == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings.at(i) == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings.at(i) == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
-      else if(strings.at(i) == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+      if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
+      else if(strings[i] == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
+      else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
     }
   }
   config.close();

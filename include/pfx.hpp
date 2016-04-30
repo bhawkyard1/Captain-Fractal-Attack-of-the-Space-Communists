@@ -50,7 +50,7 @@ public:
     /// @brief Alpha getters
     //----------------------------------------------------------------------------------------------------------------------
     float getAlpha() const {return m_glowA;}
-    float getAlpha(const int index) const {return m_alphas.at(index);}
+    float getAlpha(const int index) const {return m_alphas[index];}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Identifier getter

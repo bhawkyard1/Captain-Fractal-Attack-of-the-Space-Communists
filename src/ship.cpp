@@ -76,6 +76,27 @@ ship::ship(
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
         break;
+    case COMMUNIST_CAPITAL:
+        m_identifier = "COMMUNIST_CAPITAL";
+        setMaxHealth(4000.0f,true);
+        setMaxShield(1500.0f,true);
+        setMaxEnergy(1000.0f,true);
+        m_inertia = 0.00025f;
+        m_enginePower = 5.0f;
+        m_weapons.push_back( g_weapons[WEAPON_COMMUNIST_CAPITAL] );
+        m_curWeap = 0;
+        break;
+    case COMMUNIST_TURRET:
+        m_identifier = "COMMUNIST_TURRET";
+        setMaxHealth(100.0f,true);
+        setMaxShield(200.0f,true);
+        setMaxEnergy(300.0f,true);
+        m_inertia = 0.1f;
+        m_enginePower = 4.0f;
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
+        m_curWeap = 0;
+        m_canMove = false;
+        break;
     case FEDERATION_MKI:
         m_identifier = "FEDERATION_MKI";
         setMaxHealth(30.0f,true);
@@ -309,6 +330,16 @@ ship::ship(
         m_canMove = false;
         m_canShoot = false;
         break;
+    case PLAYER_CAPITAL:
+        m_identifier = "PLAYER_CAPITAL";
+        setMaxHealth(4000.0f,true);
+        setMaxShield(4000.0f,true);
+        setMaxEnergy(1000.0f,true);
+        m_inertia = 0.00025f;
+        m_enginePower = 5.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
+        m_curWeap = 0;
+        break;
     case PLAYER_TURRET:
         m_identifier = "PLAYER_TURRET";
         setMaxHealth(100.0f,true);
@@ -435,6 +466,10 @@ ship::ship(
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
         break;
+    case COMMUNIST_CAPITAL:
+        m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
+        m_curWeap = 0;
+        break;
     case FEDERATION_MKI:
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
@@ -499,6 +534,10 @@ ship::ship(
         break;
     case PLAYER_MINER_DROID:
         m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
+        m_curWeap = 0;
+        break;
+    case PLAYER_CAPITAL:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
         break;
     case PLAYER_TURRET:
@@ -622,7 +661,7 @@ void ship::update(const float _dt)
 
     if(rand()%999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
-    m_steeringGlow = clamp(m_steeringGlow - 10.0f, 0.0f, 255.0f);
+    m_steeringGlow = clamp(m_steeringGlow - 5.0f, 0.0f, 255.0f);
     m_shieldGlow = clamp(m_shieldGlow - 10.0f, 0.0f, 255.0f);
     m_engineGlow = clamp(m_engineGlow - 20.0f, 0.0f, 255.0f);
 
