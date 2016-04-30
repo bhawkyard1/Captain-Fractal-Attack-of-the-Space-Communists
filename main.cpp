@@ -194,7 +194,6 @@ void mainMenu(universe &uni)
         pos += {600.0f, 300.0f};
         uni.addBuild(pos, PLAYER_TURRET);
     }
-    //for(auto i = uni.getAgents()->begin(); i != uni.getAgents()->end(); ++i) i->setVel(-scrollVel);
 
     for(int i = 0; i < 10; ++i)
     {
