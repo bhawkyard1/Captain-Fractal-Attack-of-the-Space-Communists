@@ -32,7 +32,7 @@ pfx::pfx(
         particle.setPos(_p);
         particle.setPPos(_p);
 
-        particle.setVel( { randFloat(-_force, _force), randFloat(-_force, _force) } );
+        particle.setVel( { randNum(-_force, _force), randNum(-_force, _force) } );
         particle.setWVel( _v + _wv );
 
         m_particles.push_back(particle);

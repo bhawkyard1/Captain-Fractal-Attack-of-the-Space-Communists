@@ -27,7 +27,7 @@ void stardust::gen(
     const std::array<float, 3> &_col
     )
 {
-  addPos({0.0f, 0.0f, randFloat(0.05f, 1.1f)});
+  addPos({0.0f, 0.0f, randNum(0.05f, 1.1f)});
 
   int colProb = rand()%100;
 
@@ -54,8 +54,8 @@ void stardust::gen(
 
   if(_regen == false)
   {
-    setVel( {randFloat(-0.1f, 0.1f), randFloat(-0.1f, 0.1f)} );
-    setPos({randFloat(-g_WIN_WIDTH / 2.0f, g_WIN_WIDTH / 2.0f), randFloat(-g_WIN_HEIGHT / 2.0f, g_WIN_HEIGHT / 2.0f)});
+    setVel( {randNum(-0.1f, 0.1f), randNum(-0.1f, 0.1f)} );
+    setPos({randNum(-g_WIN_WIDTH / 2.0f, g_WIN_WIDTH / 2.0f), randNum(-g_WIN_HEIGHT / 2.0f, g_WIN_HEIGHT / 2.0f)});
     setPPos(getPos());
   }
   else

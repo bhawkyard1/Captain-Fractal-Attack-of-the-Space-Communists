@@ -15,136 +15,204 @@
 
 #include "vectors.hpp"
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Max and infinite values for floats. Useful when you want to loop through a bunch of values to find the highest/
+/// lowest.
+//----------------------------------------------------------------------------------------------------------------------
 #define F_MAX std::numeric_limits<float>::max()
 #define F_INF std::numeric_limits<float>::infinity()
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Max and infinite values for ints. Useful when you want to loop through a bunch of values to find the highest/
+/// lowest.
+//----------------------------------------------------------------------------------------------------------------------
 #define I_MAX std::numeric_limits<int>::max()
 #define I_INF std::numeric_limits<int>::max()
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief A value used for all calculations involving pi. NGL has its own, but this game can run without NGL.
+//----------------------------------------------------------------------------------------------------------------------
 #define UPI 3.14159265359
 
-void toOctant(int*,int*,int);
+//----------------------------------------------------------------------------------------------------------------------
+/// @file util.hpp
+/// @brief A small file containing lots of useful values and functions, used across the project.
+/// @author Ben Hawkyard
+/// @version 1.0
+/// @date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game
+//----------------------------------------------------------------------------------------------------------------------
 
-float toDeg(float rad);
-float toRad(float deg);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given a 2d vector, converts it to an angle.
+/// @param _v vector to convert.
+//----------------------------------------------------------------------------------------------------------------------
+float computeAngle(vec2 _v);
 
-float computeAngle(vec2 v);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Converts a given angle to a 2d vector.
+/// @param _angle angle to convert.
+//----------------------------------------------------------------------------------------------------------------------
+vec2 computeVector(float _angle);
 
-vec2 computeVector(float angle);
-
-void equateArrays(int arr1[], int arr2[], int ind);
-
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Clamps a value of any type to two values of the same type.
+/// @param _v input value, _m minimum threshold, _M maximum threshold.
+//----------------------------------------------------------------------------------------------------------------------
 template<typename tt>
-tt clamp(tt v, tt m, tt M)
+tt clamp(tt _v, tt _m, tt _M)
 {
-    if(v < m) return m;
-    else if(v > M) return M;
-    return v;
+    if(_v < _m) return _m;
+    else if(_v > _M) return _M;
+    return _v;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief A rolling clamp, a value which exceeds the max will roll back around to the minimum.
+/// @param _v input value, _m minimum threshold, _M maximum threshold.
+//----------------------------------------------------------------------------------------------------------------------
 template<typename tt>
-tt clampdblsw(tt val, tt lim1, tt lim2)
+tt clampRoll(tt _v, tt _m, tt _M)
 {
-  tt min, max;
-
-  if(lim1 < lim2)
+  if(_v < _m)
   {
-    min = lim1;
-    max = lim2;
+    return _M;
   }
-  else if(lim2 > lim1)
+  else if(_v > _M)
   {
-    min = lim2;
-    max = lim1;
+    return _m;
   }
-  else
-  {
-    return lim1;
-  }
-
-  if(val < min)
-  {
-    return min;
-  }
-  else if(val > max)
-  {
-    return max;
-  }
-  return val;
+  return _v;
 }
 
-template<typename tt>
-tt clampRoll(tt val, tt min, tt max)
-{
-  if(val < min)
-  {
-    return max;
-  }
-  else if(val > max)
-  {
-    return min;
-  }
-  return val;
-}
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given two angles in degrees, this function will return the shortest angle between them, also in degrees.
+/// @param _ang1 first angle, _ang2 second angle.
+//----------------------------------------------------------------------------------------------------------------------
+float shortestAngle(float _ang1, float _ang2);
 
-float shortestAngle(float ang1, float ang2);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Squares the given argument. Often quicker than typing it twice.
+/// @param _arg value to square.
+//----------------------------------------------------------------------------------------------------------------------
+float sqr(float _arg);
 
-int factorial(int val);
-
-double dotProd(double x0, double y0, double x1, double y1);
-
-//DELETE THESE
-
-//void drawCircle(SDL_Renderer *renderer, int center[], int radius);
-
-//void drawLineGr(SDL_Renderer *renderer, vec2 start, vec2 end, float scol[], float ecol[]);
-
-float sqr(float arg);
-
-float randFloat(int low, int high);
-
-float randFloat(float low, float high);
-
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Returns a random number between two values.
+/// @param _low lover limit, _high upper limit.
+//----------------------------------------------------------------------------------------------------------------------
 template<class t>
-t randNum(t low, t high)
+t randNum(t _low, t _high)
 {
-  return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(high-low))+low;
+  return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(_high-_low))+_low;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @author Greg Walsh
+/// @brief Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed
+/// to Greg Walsh.
+/// @param _val function returns the inverse square root of this value.
+/// Modified From :-
+/// Hansen, P. C., 2012. 0x5f3759df. Hummus and Magnets. 15 September 2012. Available from: http://h14s.p5r.org/2012/09/0x5f3759df.html [Accessed 30 April 2016].
+//----------------------------------------------------------------------------------------------------------------------
 float fastInvSqrt(float _val);
 
-double diffClock(clock_t clock1, clock_t clock2);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
+/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+//----------------------------------------------------------------------------------------------------------------------
+bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim);
 
-bool pointInRect(vec2 p, SDL_Rect * r);
-bool pointInRect(vec2 p, vec2 r_pos, vec2 r_dim);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Returns a vec2 with a magnitude between two floats.
+/// @param _m min length, _M max length.
+//----------------------------------------------------------------------------------------------------------------------
+vec2 randVec2(float _m, float _M);
 
-bool strToBool(std::string str);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Returns a point inside the circle with a radius f.
+/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+//----------------------------------------------------------------------------------------------------------------------
+vec2 randVec2(float _f);
 
-vec2 randVec2(float m, float M);
-vec2 randVec2(float f);
-vec2 randVec2(vec2 min, vec2 max);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Returns a point in the rectangle defined by a minimum and maximum point.
+/// @param _min the minimum point, _max the maximum point.
+//----------------------------------------------------------------------------------------------------------------------
+vec2 randVec2(vec2 _min, vec2 _max);
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Returns a vec3 with a magnitude between two floats.
+/// @param _m min length, _M max length.
+//----------------------------------------------------------------------------------------------------------------------
 vec3 randVec3(float m, float M);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Returns a point inside the sphere with a radius f.
+/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+//----------------------------------------------------------------------------------------------------------------------
 vec3 randVec3(float f);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
+/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+//----------------------------------------------------------------------------------------------------------------------
 vec3 randVec3(vec3 min, vec3 max);
 
-void toOctant(int * x, int * y, int octant);
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Splits a given string into a vector of strings, according to a given delimeter.
+/// @param _str given string, _delim delimiting character.
+//----------------------------------------------------------------------------------------------------------------------
+std::vector<std::string> split(std::string _str, char _delim);
 
-std::vector<std::string> split(std::string str, char delim);
-
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief To avoid shuffling all elements in a vector when removing one, we can simply swap the element to remove, and
+/// the element at the end, before popping. Of course, this should only be used when the order of the vector is
+/// unimportant. I came accross the idea online, but the implementation is my own.
+/// @param _vec pointer to the vector, _i index to remove.
+//----------------------------------------------------------------------------------------------------------------------
 template<class t>
-void swapnpop(std::vector<t> * vec, int i)
+void swapnpop(std::vector<t> * _vec, int _i)
 {
-  iter_swap( vec->begin() + i, vec->end() - 1 );
-  vec->pop_back();
+  iter_swap( _vec->begin() + _i, _vec->end() - 1 );
+  _vec->pop_back();
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given an angle, returns a vector pointing forwards.
+/// @param _ang angle.
+//----------------------------------------------------------------------------------------------------------------------
 vec2 front(float _ang);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given an angle, returns a vector pointing back.
+/// @param _ang angle.
+//----------------------------------------------------------------------------------------------------------------------
 vec2 back(float _ang);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given an angle, returns a vector pointing left.
+/// @param _ang angle.
+//----------------------------------------------------------------------------------------------------------------------
 vec2 left(float _ang);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given an angle, returns a vector pointing right.
+/// @param _ang angle.
+//----------------------------------------------------------------------------------------------------------------------
 vec2 right(float _ang);
 
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given a colour whose components range from 0-255, convert it to 0-1.
+/// @param _col colour to convert.
+//----------------------------------------------------------------------------------------------------------------------
 std::array<float, 4> col255to1(std::array<float, 4> _col);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// @brief Given a colour whose components range from 0-1, convert it to 0-255.
+/// @param _col colour to convert.
+//----------------------------------------------------------------------------------------------------------------------
 std::array<float, 4> col255to1(std::array<int, 4> _col);
 
 #endif

@@ -11,12 +11,12 @@ enemy::enemy(
   m_curGoal = GOAL_IDLE;
   setPos(_p);
   setVel(_v);
-  m_stopDist = randFloat(200.0f,600.0f);
-  if(_type == PLAYER_MINER_DROID) m_stopDist = randFloat(20.0f, 60.0f);
+  m_stopDist = randNum(200.0f,600.0f);
+  if(_type == PLAYER_MINER_DROID) m_stopDist = randNum(20.0f, 60.0f);
   m_target = nullptr;
   m_curGoal = GOAL_IDLE;
   m_team = _team;
-  m_confidence = randFloat(5.0f, 20.0f);
+  m_confidence = randNum(5.0f, 20.0f);
   m_squadID = -1;
 }
 
@@ -44,7 +44,7 @@ void enemy::behvrUpdate(float _dt)
   }
   else if(m_curGoal == GOAL_IDLE)
   {
-    m_tPos = {randFloat(-30000.0f, 30000.0f), randFloat(-30000.0f, 30000.0f)};
+    m_tPos = {randNum(-30000.0f, 30000.0f), randNum(-30000.0f, 30000.0f)};
     m_tVel = {0.0f, 0.0f};
     m_curGoal = GOAL_IDLE;
   }
@@ -131,6 +131,8 @@ void enemy::steering()
   {
     accelerate(utv, accelMul*angleMul);
   }
+
+  if(m_curGoal == GOAL_TURRET) dist -= 200.0f;
 
   if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f
      and dist < 800.0f + radius

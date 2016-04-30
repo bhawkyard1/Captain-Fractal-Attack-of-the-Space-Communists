@@ -219,6 +219,12 @@ public:
     /// @param _s magnitude
     //----------------------------------------------------------------------------------------------------------------------
     void addShake(float _s);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief Used to draw circles, converts a pair of coordinates to a specified octant.
+    /// @param _x x coordinate reference, _y y coordinate reference, _octant octant to convert to.
+    //----------------------------------------------------------------------------------------------------------------------
+    void toOctant(int * _x, int * _y, int _octant);
 };
 
 #endif

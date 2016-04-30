@@ -15,8 +15,8 @@ stardust_sprite::stardust_sprite(
   m_identifier = identifier;
 
   m_dim = std::max(_w, _h) / 2;
-  m_ang = randFloat(0.0f,360.0f);
-  m_angVel = randFloat(-0.12f, 0.12f);
+  m_ang = randNum(0.0f,360.0f);
+  m_angVel = randNum(-0.12f, 0.12f);
 
   setPos( {(rand() % (g_WIN_WIDTH + _w) - _w) * g_BG_DENSITY,
            (rand() % (g_WIN_HEIGHT + _h) - _h) * g_BG_DENSITY} );
@@ -35,8 +35,8 @@ stardust_sprite::stardust_sprite(
 
   m_dim = std::max(_w, _h) / 2;
 
-  m_ang = randFloat(0.0f,360.0f);
-  m_angVel = randFloat(-0.12f, 0.12f);
+  m_ang = randNum(0.0f,360.0f);
+  m_angVel = randNum(-0.12f, 0.12f);
 
 }
 
@@ -45,8 +45,8 @@ void stardust_sprite::spriteGen(
     const int _w,
     const int _h)
 {
-  m_ang = randFloat(0.0f, 360.0f);
-  m_angVel = randFloat(-0.12f, 0.12f);
+  m_ang = randNum(0.0f, 360.0f);
+  m_angVel = randNum(-0.12f, 0.12f);
 
   int m = std::max(_w, _h);
   m *= g_ZOOM_LEVEL;
@@ -77,7 +77,7 @@ void stardust_sprite::spriteGen(
   if(side == 0)
   {
     //Top
-    vec = { randFloat(0, (g_WIN_WIDTH + 2 * m) ) - m, randFloat(0, m) - 2 * m, 0.0f };
+    vec = { randNum(0, (g_WIN_WIDTH + 2 * m) ) - m, randNum(0, m) - 2 * m, 0.0f };
     vec *= g_BG_DENSITY;
     setPos(vec);
     setPPos(getPos());
@@ -85,7 +85,7 @@ void stardust_sprite::spriteGen(
   else if(side == 1)
   {
     //Left
-    vec = { randFloat(0, m) - 2 * m, randFloat(0, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
+    vec = { randNum(0, m) - 2 * m, randNum(0, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
     vec *= g_BG_DENSITY;
     setPos(vec);
     setPPos(getPos());
@@ -93,7 +93,7 @@ void stardust_sprite::spriteGen(
   else if(side == 2)
   {
     //Right
-    vec = { 2*m - randFloat(0, m), randFloat(0, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
+    vec = { 2*m - randNum(0, m), randNum(0, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
     vec *= g_BG_DENSITY;
     vec.m_x += g_WIN_WIDTH;
     setPos(vec);
@@ -102,7 +102,7 @@ void stardust_sprite::spriteGen(
   else if(side == 3)
   {
     //Bottom
-    vec = { randFloat(0, g_WIN_WIDTH + 2 * m) - m, 2 * m - randFloat(0, m), 0.0f };
+    vec = { randNum(0, g_WIN_WIDTH + 2 * m) - m, 2 * m - randNum(0, m), 0.0f };
     vec *= g_BG_DENSITY;
     vec.m_y += g_WIN_HEIGHT;
     setPos(vec);

@@ -60,7 +60,6 @@ void handleUserKeyUpInput(int,int*);
 void handleUserMouseDownInput(int, int *, player*, universe*);
 void handleUserMouseUpInput(int,int,player*,universe*);
 void handleUserScroll(int,player*);
-double diffClock(clock_t clock1, clock_t clock2);
 
 void mainMenu(universe &uni);
 void playGame(universe &uni);

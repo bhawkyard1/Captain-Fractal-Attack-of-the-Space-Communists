@@ -682,3 +682,43 @@ void renderer::addShake(float _s)
     m_cameraShake += _s;
     m_cameraShakeTargetOffset = randVec2(m_cameraShake);
 }
+
+void renderer::toOctant(int * x, int * y, int octant)
+{
+    switch(octant)
+    {
+    int t;
+    case 0:
+        break;
+    case 1:
+        t = *x;
+        *x = *y;
+        *y = t;
+        break;
+    case 2:
+        t = *x;
+        *x = -*y;
+        *y = t;
+        break;
+    case 3:
+        *x = -*x;
+        break;
+    case 4:
+        *x = -*x;
+        *y = -*y;
+        break;
+    case 5:
+        t = *x;
+        *x = -*y;
+        *y = -t;
+        break;
+    case 6:
+        t = *x;
+        *x = *y;
+        *y = -t;
+        break;
+    case 7:
+        *y = -*y;
+        break;
+    }
+}

@@ -302,7 +302,7 @@ ship::ship(
         setMaxHealth(200.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_angVel = randFloat(-1.0f, 1.0f);
+        m_angVel = randNum(-1.0f, 1.0f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -313,7 +313,7 @@ ship::ship(
         setMaxHealth(1000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_angVel = randFloat(-1.0f, 1.0f);
+        m_angVel = randNum(-1.0f, 1.0f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -324,7 +324,7 @@ ship::ship(
         setMaxHealth(2000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_angVel = randFloat(-1.0f, 1.0f);
+        m_angVel = randNum(-1.0f, 1.0f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -356,7 +356,7 @@ ship::ship(
         setMaxHealth(10000.0f,true);
         setMaxShield(10000.0f,true);
         setMaxEnergy(100000.0f,true);
-        m_angVel = randFloat(-0.1f, 0.1f);
+        m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -367,7 +367,7 @@ ship::ship(
         setMaxHealth(5000.0f,true);
         setMaxShield(5000.0f,true);
         setMaxEnergy(50000.0f,true);
-        m_angVel = randFloat(-0.1f, 0.1f);
+        m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -378,7 +378,7 @@ ship::ship(
         setMaxHealth(8000.0f,true);
         setMaxShield(8000.0f,true);
         setMaxEnergy(80000.0f,true);
-        m_angVel = randFloat(-0.1f, 0.1f);
+        m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;

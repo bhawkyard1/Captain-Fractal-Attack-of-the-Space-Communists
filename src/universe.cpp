@@ -4,13 +4,15 @@
 #include "shapes.hpp"
 #include "common.hpp"
 
+#include "sim_time.hpp"
+
 bool emnityCheck(const aiTeam _a, const aiTeam _b);
 
 universe::universe()
     :
       m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
       m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
-{   
+{
     showUI = true;
     m_time_elapsed = 0.0;
     m_pos = {0.0f, 0.0f};
@@ -134,9 +136,9 @@ void universe::update(const float _dt)
     //Randomly change background colour.
     if(rand()%1024 == 0)
     {
-        float p0 = randFloat(0.0f, 1.0f);
-        float p1 = randFloat(0.0f, 1.0f);
-        float p2 = randFloat(0.0f, 1.0f);
+        float p0 = randNum(0.0f, 1.0f);
+        float p1 = randNum(0.0f, 1.0f);
+        float p2 = randNum(0.0f, 1.0f);
         float total = p0 + p1 + p2;
 
         m_tCol[0] = ( p0 / total ) * 250.0f;
@@ -144,8 +146,8 @@ void universe::update(const float _dt)
         m_tCol[2] = ( p2 / total ) * 250.0f;
     }
 
-    if(rand()%10000 == 0) g_BG_DENSITY = randFloat(1.0f,10.0f);
-    if(rand()%10000 == 0) m_gameplay_intensity = randFloat(0.0f, 2.2f);
+    if(rand()%10000 == 0) g_BG_DENSITY = randNum(1.0f,10.0f);
+    if(rand()%10000 == 0) m_gameplay_intensity = randNum(0.0f, 2.2f);
 
     if(!g_GAME_OVER)
     {
@@ -172,7 +174,7 @@ void universe::update(const float _dt)
     {
         for(int p = 0; p < rand()%5 + 10; ++p)
         {
-            vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f), 0.0f};
+            vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
             pos += m_ply.getPos();
             addpfx(pos, m_ply.getVel(), m_vel, rand()%50 + 20, rand()%50 + 8);
         }
@@ -304,7 +306,7 @@ void universe::update(const float _dt)
             {
                 for(int p = 0; p < rand()%2 + 4; p++)
                 {
-                    vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f), 0.0f};
+                    vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_missiles[i].getPos();
                     addpfx(pos, m_missiles[i].getVel(), m_vel, rand()%50 + 50, rand()%50 + 8);
                 }
@@ -346,7 +348,7 @@ void universe::update(const float _dt)
             {
                 for(int fx = 0; fx < rand() % 5 + 1; fx++)
                 {
-                    vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f)};
+                    vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f)};
                     pos += m_asteroids[i].getPos();
                     addpfx(pos, m_asteroids[i].getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
                     for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + randVec3(6.0f), "SMOKE");
@@ -385,9 +387,9 @@ void universe::update(const float _dt)
             {
                 for(int p = 0; p < rand() % 5 + 1; p++)
                 {
-                    vec3 pos = {randFloat(-16.0f,16.0f), randFloat(-16.0f,16.0f), 0.0f};
+                    vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_agents[i].getPos();
-                    addpfx(pos, m_agents[i].getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
+                    addpfx(pos, m_agents[i].getVel(), m_vel, randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f));
                 }
                 addScore( m_agents[i].getScore() );
                 if( m_agents[i].getTeam() != SPACE_COMMUNISTS and rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
@@ -649,10 +651,10 @@ void universe::update(const float _dt)
 
         vec3 ppos;
         int side = rand() %4 ;
-        if(side == 0) ppos = {randFloat(-20000.0f,20000.0f), -20000.0f, 0.0f};
-        else if(side == 1) ppos = {randFloat(-20000.0f,20000.0f), 20000.0f, 0.0f};
-        else if(side == 2) ppos = {-20000.0f, randFloat(-20000.0f,20000.0f), 0.0f};
-        else if(side == 3) ppos = {20000.0f, randFloat(-20000.0f,20000.0f), 0.0f};
+        if(side == 0) ppos = {randNum(-20000.0f,20000.0f), -20000.0f, 0.0f};
+        else if(side == 1) ppos = {randNum(-20000.0f,20000.0f), 20000.0f, 0.0f};
+        else if(side == 2) ppos = {-20000.0f, randNum(-20000.0f,20000.0f), 0.0f};
+        else if(side == 3) ppos = {20000.0f, randNum(-20000.0f,20000.0f), 0.0f};
         ship a(ppos, size, m_drawer.getTextureRadius( size ));
         a.setVel( tovec3(randVec2(64.0f)) );
         a.update(_dt);
@@ -1028,7 +1030,7 @@ void universe::draw(float _dt)
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
         col = col255to1(col);
         vec3 ipos = i.getPos();
-        float idim = i.getForce() * 10.0f;
+        float idim = i.getForce() * 20.0f;
 
         if(col[3] > 0.05f)
         {
@@ -1236,7 +1238,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     harm = m_partitions.lasers[p][l]->getDmg();
 
                     d_dir = m_partitions.lasers[p][l]->getVel();
@@ -1267,7 +1269,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + randVec3(6.0f), "SMOKE");
                     harm = m_partitions.lasers[p][l]->getDmg();
 
@@ -1299,7 +1301,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
 
                     harm = m_shots[l].getDmg();
 
@@ -1332,7 +1334,7 @@ void universe::checkCollisions()
                 {
                     playSnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), m_vel, randFloat(3.0f, 8.0f), randFloat(3.0f, 8.0f));
+                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     harm = m_partitions.lasers[p][l]->getDmg();
 
                     d_dir = m_partitions.lasers[p][l]->getVel();
@@ -1413,7 +1415,7 @@ void universe::addParticleSprite(
         )
 {
     float col;
-    if( _tex == "SMOKE" ) col = randFloat(200.0f, 220.0f);
+    if( _tex == "SMOKE" ) col = randNum(200.0f, 220.0f);
     else if( _tex == "EXPLOSION" ) col = 255.0f;
 
     int w = 0, h = 0;
@@ -1430,10 +1432,10 @@ void universe::spawnShip(const aiTeam _t)
     int side = rand()%4;
     vec2 pass;
 
-    if(side == 0) pass = {randFloat(-20000.0f,20000.0f), -20000.0f};
-    else if(side == 1) pass = {-20000.0f,randFloat(-20000.0f, 20000.0f)};
-    else if(side == 2) pass = {randFloat(-20000.0f, 20000.0f), 20000.0f};
-    else if(side == 3) pass = {20000.0f, randFloat(-20000.0f, 20000.0f)};
+    if(side == 0) pass = {randNum(-20000.0f,20000.0f), -20000.0f};
+    else if(side == 1) pass = {-20000.0f,randNum(-20000.0f, 20000.0f)};
+    else if(side == 2) pass = {randNum(-20000.0f, 20000.0f), 20000.0f};
+    else if(side == 3) pass = {20000.0f, randNum(-20000.0f, 20000.0f)};
 
     spawnShip(getRandomShipType(_t), _t, tovec3(pass));
 }
@@ -1811,10 +1813,10 @@ void universe::addBuild(const ship_spec _type)
     vec2 pass;
 
     int side = rand() % 4;
-    if(side == 0) pass = {randFloat(-20000.0f,20000.0f), -20000.0f};
-    else if(side == 1) pass = {-20000.0f,randFloat(-20000.0f, 20000.0f)};
-    else if(side == 2) pass = {randFloat(-20000.0f, 20000.0f), 20000.0f};
-    else if(side == 3) pass = {20000.0f, randFloat(-20000.0f, 20000.0f)};
+    if(side == 0) pass = {randNum(-20000.0f,20000.0f), -20000.0f};
+    else if(side == 1) pass = {-20000.0f,randNum(-20000.0f, 20000.0f)};
+    else if(side == 2) pass = {randNum(-20000.0f, 20000.0f), 20000.0f};
+    else if(side == 3) pass = {20000.0f, randNum(-20000.0f, 20000.0f)};
 
     addBuild(tovec3(pass), _type);
 }
