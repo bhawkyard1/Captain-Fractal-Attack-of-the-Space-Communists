@@ -345,7 +345,7 @@ vec3 closest(vec3 p1, vec3 m1, vec3 p2)
 
 vec3 tovec3(vec2 vec)
 {
-    return {vec.m_x, vec.m_y, 0};
+    return {vec.m_x, vec.m_y, 0.0f};
 }
 
 vec2 tovec2(vec3 vec)

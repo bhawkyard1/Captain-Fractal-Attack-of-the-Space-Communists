@@ -127,10 +127,10 @@ void mainMenu(universe &uni)
 
     ui::selection optionsHeader;
     ui::button optionsHeaderBtn("OPTIONS (REQUIRE GAME RESTART)", blank, blank, {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 150.0f}, {200.0f, 20.0f});
-    ui::button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 80.0f}, {200.0f, 20.0f});
-    ui::button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 90.0f, g_HALFWIN.m_y + 35.0f}, {200.0f, 20.0f});
-    ui::button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 135.0f}, {200.0f, 20.0f});
-    ui::button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 200.0f}, {200.0f, 80.0f});
+    ui::button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 110.0f}, {200.0f, 20.0f});
+    ui::button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 90.0f, g_HALFWIN.m_y + -5.0f}, {200.0f, 20.0f});
+    ui::button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 20.0f});
+    ui::button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 240.0f}, {200.0f, 80.0f});
     optionsHeader.add(optionsHeaderBtn);
     optionsHeader.add(resolutionHeaderBtn);
     optionsHeader.add(graphicsHeaderBtn);

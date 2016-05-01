@@ -1095,6 +1095,7 @@ void universe::drawUI()
         }
         m_drawer.useShader("plain");
         m_drawer.drawRects(false);
+        m_drawer.clearVectors();
 
         for(auto k = i->getButtons()->begin(); k != i->getButtons()->end(); ++k)
         {
@@ -1105,17 +1106,15 @@ void universe::drawUI()
 
             kpos.m_x += kdim.m_x * 0.25f;
             kpos.m_y += kdim.m_y * 0.5f;
-
             if(k->isDark())
             {
                 for(auto &u : col) u += 0.05f;
-                m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
             }
             else
             {
-                for(auto &u : col) u += 0.8f;
-                m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
+                for(auto &u : col) u += 0.8f;  
             }
+            m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
         }
     }
 }

@@ -1129,7 +1129,7 @@ void renderer_ngl::drawText(std::string _text,
         h *= _mul;
         //w = 8;
 
-        drawRect({x, y}, {(float)w, (float)h}, 0.0f, _ws);
+        drawRect({x, y, 0.0f}, {(float)w, (float)h}, 0.0f, _ws);
         x += w;
     }
 }

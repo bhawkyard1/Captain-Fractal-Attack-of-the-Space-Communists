@@ -5,3 +5,5 @@ build*
 MakeFile
 Elite_Dangerous_v2
 resources/
+*.obj
+*.ilk
