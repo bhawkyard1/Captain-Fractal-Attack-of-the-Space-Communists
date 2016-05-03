@@ -75,7 +75,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
                          ngl::Vec3(0,1,0));
 
 
-    float yOffset = g_WIN_HEIGHT * 0.075;
+    float yOffset = g_WIN_HEIGHT * 0.015;
     float divz = 1 / g_ZOOM_LEVEL;
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
@@ -517,7 +517,7 @@ void renderer_ngl::update(const float _dt)
 
     float divz = 1 / g_ZOOM_LEVEL;
 
-    float yOffset = g_WIN_HEIGHT * 0.075;
+    float yOffset = g_WIN_HEIGHT * 0.015;
 
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,

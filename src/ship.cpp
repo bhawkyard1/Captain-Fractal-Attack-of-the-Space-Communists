@@ -700,14 +700,15 @@ void ship::damage(float _d)
     m_damageTimer = 10.0f;
 }
 
-void ship::damage(float _d, const vec2 _v)
+void ship::damage(float _d, const vec3 _v)
 {
     //std::cout << " dot " << dotProd( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
     //Shots to the rear do more damage.
     if(m_canMove)
     {
-        _d *= (dotProd( vec(m_angle + 90), unit(_v) ) / 2.0f) + 1.5f;
-        addVel(tovec3(_v));
+        _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
+        vec3 add = {_v.m_x, _v.m_y, 0.0f};
+        addVel(add * m_inertia);
     }
 
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;

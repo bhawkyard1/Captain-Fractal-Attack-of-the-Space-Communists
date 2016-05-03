@@ -262,7 +262,7 @@ public:
     /// \brief Damages the ship.
     /// \param _d damage, _v knockback vector
     //----------------------------------------------------------------------------------------------------------------------
-    void damage(const float _d, const vec2 _v);
+    void damage(const float _d, const vec3 _v);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for m_upgrades.

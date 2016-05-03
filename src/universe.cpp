@@ -663,6 +663,9 @@ void universe::update(const float _dt)
     a.update(_dt);
     m_asteroids.push_back(a);
   }
+
+  if(rand() == 0) m_factionMaxCounts[GALACTIC_FEDERATION] = clamp(m_factionMaxCounts[GALACTIC_FEDERATION] - 1, 0, I_MAX);
+  if(rand() == 0) m_factionMaxCounts[SPACE_COMMUNISTS] = clamp(m_factionMaxCounts[SPACE_COMMUNISTS] - 1, 0, I_MAX);
 }
 
 #if RENDER_MODE == 0
@@ -1255,7 +1258,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.ships[p].at(s)->damage(harm, tovec2(d_dir) * stop * ei);
+          m_partitions.ships[p].at(s)->damage(harm, d_dir * stop * ei);
           break;
         }
       }
@@ -1286,7 +1289,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.rocks[p][r]->damage(harm, tovec2(d_dir) * stop * ei);
+          m_partitions.rocks[p][r]->damage(harm, d_dir * stop * ei);
           break;
         }
       }
@@ -1318,7 +1321,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_partitions.rockets[p].at(m)->damage(harm, tovec2(d_dir) * stop * ei);
+          m_partitions.rockets[p].at(m)->damage(harm, d_dir * stop * ei);
           break;
         }
       }
@@ -1350,7 +1353,7 @@ void universe::checkCollisions()
         }
         if(harm > 0)
         {
-          m_ply.damage(harm, tovec2(d_dir) * stop * m_ply.getInertia());
+          m_ply.damage(harm, d_dir * stop * m_ply.getInertia());
           //std::cout << "ADDING VEL (" << sv.m_x << "," << sv.m_y << " - " << ev.m_x << "," << ev.m_y << ") * " << stop << " = (" << ( (sv - ev) * stop ).m_x << ", " << ( (sv - ev) * stop ).m_y << ")" << std::endl;
           setVel(-m_ply.getVel());
         }
@@ -1380,13 +1383,26 @@ void universe::checkCollisions()
       }
     }
 
+    //It made sense at the time...
     for(int i = 0; i < m_partitions.ships[p].size(); ++i)
     {
       for(int j = i; j < m_partitions.ships[p].size(); ++j)
       {
-        resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(m_partitions.ships[p][j]));
+        if(emnityCheck(m_partitions.ships[p][i]->getTeam(), m_partitions.ships[p][j]->getTeam()))
+        {
+            resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(m_partitions.ships[p][j]));
+        }
       }
-      resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(&m_ply));
+      for(int j = 0; j < m_partitions.rocks[p].size(); ++j)
+      {
+          if(m_partitions.ships[p][i]->getTeam() != TEAM_PLAYER_MINER) resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(m_partitions.rocks[p][j]));
+          resolveCollision(reinterpret_cast<ship *>(m_partitions.rocks[p][j]), reinterpret_cast<ship *>(&m_ply));
+          for(int k = j; k < m_partitions.rocks[p].size(); ++k)
+          {
+              resolveCollision(reinterpret_cast<ship *>(m_partitions.rocks[p][j]), reinterpret_cast<ship *>(m_partitions.rocks[p][k]));
+          }
+      }
+      if(emnityCheck(m_partitions.ships[p][i]->getTeam(), TEAM_PLAYER))resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(&m_ply));
     }
   }
 }
@@ -1435,14 +1451,17 @@ void universe::resolveCollision(ship *_a, ship *_b)
   float separation = dotProd(rv, normal);
   if(separation < 0.0f) return;
 
-  float force = -separation;
-  force *= ainvmass + binvmass;
+  float force = -1.6f * separation;
+  force /= cinvmass;
 
-  vec3 impulse = rv * normal;
+  vec3 impulse = force * normal;
   impulse.m_z = 0.0f;
 
-  _a->addVel( ainvmass * impulse );
-  _b->addVel( binvmass * impulse );
+  _a->damage(fabs(force) * fmax(ainvmass, 0.05f), _b->getVel());
+  _b->damage(fabs(force) * fmax(binvmass, 0.05f), _a->getVel());
+
+  if(_a->getHealth() > 0.0f) _a->addVel( ainvmass * impulse );
+  if(_b->getHealth() > 0.0f) _b->addVel( -binvmass * impulse );
 }
 
 void universe::addpfx(
@@ -1934,6 +1953,10 @@ void universe::addBuild(
     m_factionMaxCounts[GALACTIC_FEDERATION] += 20;
     m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
     break;
+  case PLAYER_CAPITAL:
+    m_factionMaxCounts[GALACTIC_FEDERATION] += 15;
+    m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
+    break;
   default:
     break;
   }
@@ -2024,7 +2047,7 @@ void universe::initUI()
   button upgrades_station("STATION (1024)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.55f},{w,h},1024);
   upgrades_menu.add(upgrades_station);
 
-  button upgrades_capital("CAPITAL (1536)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.49f},{w,h},1024);
+  button upgrades_capital("CAPITAL (1536)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.49f},{w,h},1536);
   upgrades_menu.add(upgrades_capital);
 
   m_ui.add(energy_menu);
