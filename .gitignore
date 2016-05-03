@@ -3,7 +3,10 @@
 .qmake*
 build*
 MakeFile
-Elite_Dangerous_v2
+MakeFile.Debug
+MakeFile.Release
+"Captain Fractal- Attack of the Space Communists"
 resources/
-*.obj
+obj/
+moc/
 *.ilk
