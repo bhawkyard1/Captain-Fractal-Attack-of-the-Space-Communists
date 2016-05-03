@@ -1,10 +1,17 @@
 #version 410 core
 
-//This variable does some really weird shit, yo.
-//At low values, looks like a big space city.
-//Really trippy stuff.
-//TO-DO: Delete before Jon reads these comments.
-//#define formuparam 0.53
+//----------------------------------------------------------------------------------------------------------------------
+/// \file backgroundFragment.glsl
+/// \brief This file draws a large fractal, used for the space background. Originally taken form shadertoy, then I added
+/// the functionality for it to scroll as the player moves, and change colour over time.
+/// \author Kali, 2013. Star Nest. Shadertoy, Available from: https://www.shadertoy.com/view/XlfGRj [Accessed 2 May 2016].
+/// Adapted by Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game
+//----------------------------------------------------------------------------------------------------------------------
+
 
 #define volsteps 12
 #define stepsize 0.3
@@ -56,11 +63,6 @@ void main()
     //Multiply up by current aspect ratio.
     uv.y *= iResolution.y / iResolution.x;
 
-    /*float z = sqrt((2000.0 * 2000.0) - (uv.x * uv.x) - (uv.y * uv.y));
-    z /= 4000.0;
-    z = z * z * z;
-    uv *= z;*/
-
     //Don't know what this does. Seems to kind of link together current uv pos and the zoom level.
     vec3 uvzoom = vec3(uv * zoom, 20.0);
 
@@ -100,11 +102,4 @@ void main()
     v = mix( vec3(length(v)), v, saturation); //color adjust
 
     fragColour = vec4(v * 0.015, 1.0);
-
-    //FROM : http://casual-effects.blogspot.co.uk/2013/08/starfield-shader.html
-    // Motion blur; increases temporal coherence of undersampled flickering stars
-    // and provides temporal filtering under true motion.
-    /*float3 oldValue = texelFetch(oldImage, int2(gl_FragCoord.xy), 0).rgb;
-    gl_FragColor.rgb = lerp(oldValue - vec3(0.004), gl_FragColor.rgb, 0.5);
-    gl_FragColor.a = 1.0;*/
 }

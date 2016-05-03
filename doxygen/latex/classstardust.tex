@@ -1,0 +1,123 @@
+\hypertarget{classstardust}{\section{stardust Class Reference}
+\label{classstardust}\index{stardust@{stardust}}
+}
+
+
+Legacy class, used in the S\-D\-L renderer only (although a descendant is used by the opengl renderer).  
+
+
+
+
+{\ttfamily \#include $<$stardust.\-hpp$>$}
+
+Inheritance diagram for stardust\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classstardust}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classstardust_a4d48ae45d2e44771d4d26bab9c43b079}{stardust} (const std\-::array$<$ float, 3 $>$ \&\-\_\-col)
+\begin{DoxyCompactList}\small\item\em ctor for the stardust class. \end{DoxyCompactList}\item 
+\hyperlink{classstardust_a7258eecfcab3503db967f9791afef7f4}{stardust} (float \-\_\-alpha)
+\begin{DoxyCompactList}\small\item\em ctor for the stardust class. \end{DoxyCompactList}\item 
+void \hyperlink{classstardust_a6c3121d6ef68b5d39ef2cafeb88d8c46}{gen} (bool \-\_\-regen, const std\-::array$<$ float, 3 $>$ \&\-\_\-col)
+\begin{DoxyCompactList}\small\item\em Rather than deleting/creating stardust when it goes of screen, we call \hyperlink{classstardust_a6c3121d6ef68b5d39ef2cafeb88d8c46}{gen()} which randomises its member data. \end{DoxyCompactList}\item 
+void \hyperlink{classstardust_ac7d44d75f6f9f12b1c75fc17ad543c38}{update\-Pos} (float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em This is a slightly altered update\-Pos function. Since S\-D\-L is 2d, the position increment is based in part off of the z depth. \end{DoxyCompactList}\item 
+\hypertarget{classstardust_a5e74804e887f4d73304eb010b572afa3}{void \hyperlink{classstardust_a5e74804e887f4d73304eb010b572afa3}{set\-Z} (float \-\_\-z)}\label{classstardust_a5e74804e887f4d73304eb010b572afa3}
+
+\begin{DoxyCompactList}\small\item\em Setter and getter for z-\/depth. \end{DoxyCompactList}\item 
+\hypertarget{classstardust_a99e985c2828dd44f73b8b2043d6f2d75}{float {\bfseries get\-Z} ()}\label{classstardust_a99e985c2828dd44f73b8b2043d6f2d75}
+
+\item 
+\hypertarget{classstardust_aee14d29e161fdd8c3cee1d24b29dcabd}{float \hyperlink{classstardust_aee14d29e161fdd8c3cee1d24b29dcabd}{get\-Col} (int \-\_\-i)}\label{classstardust_aee14d29e161fdd8c3cee1d24b29dcabd}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the colour. \end{DoxyCompactList}\item 
+\hypertarget{classstardust_a5188397b6c9839a70841b4bb891b0ff3}{void {\bfseries set\-Col} (int \-\_\-i, float \-\_\-v)}\label{classstardust_a5188397b6c9839a70841b4bb891b0ff3}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Legacy class, used in the S\-D\-L renderer only (although a descendant is used by the opengl renderer). 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classstardust_a4d48ae45d2e44771d4d26bab9c43b079}{\index{stardust@{stardust}!stardust@{stardust}}
+\index{stardust@{stardust}!stardust@{stardust}}
+\subsubsection[{stardust}]{\setlength{\rightskip}{0pt plus 5cm}stardust\-::stardust (
+\begin{DoxyParamCaption}
+\item[{const std\-::array$<$ float, 3 $>$ \&}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classstardust_a4d48ae45d2e44771d4d26bab9c43b079}
+
+
+ctor for the stardust class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-col} & The colour for the stardust. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classstardust_a7258eecfcab3503db967f9791afef7f4}{\index{stardust@{stardust}!stardust@{stardust}}
+\index{stardust@{stardust}!stardust@{stardust}}
+\subsubsection[{stardust}]{\setlength{\rightskip}{0pt plus 5cm}stardust\-::stardust (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-alpha}
+\end{DoxyParamCaption}
+)}}\label{classstardust_a7258eecfcab3503db967f9791afef7f4}
+
+
+ctor for the stardust class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-alpha} & Alpha value of the stardust. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classstardust_a6c3121d6ef68b5d39ef2cafeb88d8c46}{\index{stardust@{stardust}!gen@{gen}}
+\index{gen@{gen}!stardust@{stardust}}
+\subsubsection[{gen}]{\setlength{\rightskip}{0pt plus 5cm}void stardust\-::gen (
+\begin{DoxyParamCaption}
+\item[{bool}]{\-\_\-regen, }
+\item[{const std\-::array$<$ float, 3 $>$ \&}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classstardust_a6c3121d6ef68b5d39ef2cafeb88d8c46}
+
+
+Rather than deleting/creating stardust when it goes of screen, we call \hyperlink{classstardust_a6c3121d6ef68b5d39ef2cafeb88d8c46}{gen()} which randomises its member data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-regen} & Whether the stardust is regenerating or if this is the initial generation \\
+\hline
+{\em \-\_\-col} & Colour of the stardust. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classstardust_ac7d44d75f6f9f12b1c75fc17ad543c38}{\index{stardust@{stardust}!update\-Pos@{update\-Pos}}
+\index{update\-Pos@{update\-Pos}!stardust@{stardust}}
+\subsubsection[{update\-Pos}]{\setlength{\rightskip}{0pt plus 5cm}void stardust\-::update\-Pos (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classstardust_ac7d44d75f6f9f12b1c75fc17ad543c38}
+
+
+This is a slightly altered update\-Pos function. Since S\-D\-L is 2d, the position increment is based in part off of the z depth. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & Time difference. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{stardust_8hpp}{stardust.\-hpp}\item 
+src/stardust.\-cpp\end{DoxyCompactItemize}

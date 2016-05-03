@@ -206,14 +206,19 @@ bool operator ==(const vec3 &lhs, const vec3 &rhs)
     return (lhs.m_x == rhs.m_x) and (lhs.m_y == rhs.m_y) and (lhs.m_z == rhs.m_z);
 }
 
-float sum(vec2 vec)
+float sum(vec2 _vec)
 {
-    return vec.m_x + vec.m_y;
+    return _vec.m_x + _vec.m_y;
 }
 
-float sum(vec3 vec)
+float sum(vec3 _vec)
 {
-    return vec.m_x + vec.m_y + vec.m_z;
+    return _vec.m_x + _vec.m_y + _vec.m_z;
+}
+
+float asum(vec3 _vec)
+{
+    return fabs(_vec.m_x) + fabs(_vec.m_y) + fabs(_vec.m_z);
 }
 
 //CROSS PRODUCT
@@ -255,7 +260,7 @@ float mag(vec2 vec)
 
 float mag(vec3 vec)
 {
-    return sqrt(vec.m_x*vec.m_x+vec.m_y*vec.m_y+vec.m_z*vec.m_z);
+    return sqrt(vec.m_x*vec.m_x + vec.m_y*vec.m_y + vec.m_z*vec.m_z);
 }
 
 float magns(vec2 vec)
@@ -301,22 +306,22 @@ vec2 normal(vec2 vec)
 
 //DOT PRODUCT
 
-float dotProd1(vec2 A, vec2 B)
+float dotProd(vec2 A, vec2 B)
 {
     return sum(A * B);
 }
 
-float dotProd2(vec2 A, vec2 B)
+float dotProdUnit(vec2 A, vec2 B)
 {
     return sum(unit(A) * unit(B));
 }
 
-float dotProd1(vec3 A, vec3 B)
+float dotProd(vec3 A, vec3 B)
 {
     return sum(A * B);
 }
 
-float dotProd2(vec3 A, vec3 B)
+float dotProdUnit(vec3 A, vec3 B)
 {
     return sum(unit(A) * unit(B));
 }
@@ -329,7 +334,7 @@ vec2 closest(vec2 p1, vec2 m1, vec2 p2)
     if(m == 0.0f) return p1;
     else m1 /= m;
 
-    return p1 + m1 * dotProd1( p2 - p1, m1 );
+    return p1 + m1 * dotProd( p2 - p1, m1 );
 }
 
 //Given a point p1 and a gradients m1, and the general point p2, will find the point on p1 + t(m1) closest to p2.
@@ -340,7 +345,7 @@ vec3 closest(vec3 p1, vec3 m1, vec3 p2)
     if(m == 0.0f) return p1;
     else m1 /= m;
 
-    return p1 + m1 * dotProd1( p2 - p1, m1 );
+    return p1 + m1 * dotProd( p2 - p1, m1 );
 }
 
 vec3 tovec3(vec2 vec)

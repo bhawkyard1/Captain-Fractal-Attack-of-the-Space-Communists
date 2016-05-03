@@ -1,0 +1,126 @@
+\hypertarget{sfx_8hpp}{\section{include/sfx.hpp File Reference}
+\label{sfx_8hpp}\index{include/sfx.\-hpp@{include/sfx.\-hpp}}
+}
+
+
+This file provides functions to load and play sound effects. Could be abstracted into a 'sound-\/player' class.  
+
+
+{\ttfamily \#include $<$S\-D\-L\-\_\-mixer.\-h$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{sfx_8hpp_ab2e1bc8c20cef206d2cc15ea3cbbc5a5}{sound} \{ \\*
+{\bfseries R\-E\-D\-\_\-\-L\-A\-S\-E\-R\-\_\-\-S\-N\-D}, 
+{\bfseries G\-R\-E\-E\-N\-\_\-\-L\-A\-S\-E\-R\-\_\-\-S\-N\-D}, 
+{\bfseries B\-L\-U\-E\-\_\-\-L\-A\-S\-E\-R\-\_\-\-S\-N\-D}, 
+{\bfseries E\-X\-P\-L\-O\-S\-I\-O\-N\-\_\-\-S\-N\-D}, 
+\\*
+{\bfseries R\-I\-C\-O\-C\-H\-E\-T\-\_\-\-S\-N\-D}, 
+{\bfseries S\-A\-V\-E\-\_\-\-S\-N\-D}, 
+{\bfseries P\-L\-A\-C\-E\-\_\-\-S\-N\-D}, 
+{\bfseries M\-E\-N\-U\-\_\-\-S\-E\-L\-E\-C\-T\-\_\-\-S\-N\-D}, 
+\\*
+{\bfseries M\-E\-N\-U\-\_\-\-F\-A\-I\-L\-\_\-\-S\-N\-D}, 
+{\bfseries C\-L\-U\-N\-K\-\_\-\-S\-N\-D}
+ \}
+\begin{DoxyCompactList}\small\item\em Enums for all available sounds. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{sfx_8hpp_a42ac36937be00066efc8b1b0d6c87ed3}{void \hyperlink{sfx_8hpp_a42ac36937be00066efc8b1b0d6c87ed3}{sfx\-Init} ()}\label{sfx_8hpp_a42ac36937be00066efc8b1b0d6c87ed3}
+
+\begin{DoxyCompactList}\small\item\em Initialises S\-D\-L mixer. \end{DoxyCompactList}\item 
+\hypertarget{sfx_8hpp_a8e425b0967a44d3d3a7a008d26d51b55}{void \hyperlink{sfx_8hpp_a8e425b0967a44d3d3a7a008d26d51b55}{load\-Sounds} ()}\label{sfx_8hpp_a8e425b0967a44d3d3a7a008d26d51b55}
+
+\begin{DoxyCompactList}\small\item\em Loads all sound effects. \end{DoxyCompactList}\item 
+\hypertarget{sfx_8hpp_a0e0f9d84e7ba23905ab73e2b0c74e483}{void \hyperlink{sfx_8hpp_a0e0f9d84e7ba23905ab73e2b0c74e483}{play\-Snd} (\hyperlink{sfx_8hpp_ab2e1bc8c20cef206d2cc15ea3cbbc5a5}{sound} \-\_\-snd)}\label{sfx_8hpp_a0e0f9d84e7ba23905ab73e2b0c74e483}
+
+\begin{DoxyCompactList}\small\item\em Loads all sound effects. \end{DoxyCompactList}\item 
+void \hyperlink{sfx_8hpp_a11dcfbf3752f07afaaee76815cf7eca8}{play\-Music} (size\-\_\-t \-\_\-mus)
+\begin{DoxyCompactList}\small\item\em Plays music. \end{DoxyCompactList}\item 
+\hypertarget{sfx_8hpp_ab0920b666f5af9a200e39bcd4c75088c}{void \hyperlink{sfx_8hpp_ab0920b666f5af9a200e39bcd4c75088c}{delete\-Sounds} ()}\label{sfx_8hpp_ab0920b666f5af9a200e39bcd4c75088c}
+
+\begin{DoxyCompactList}\small\item\em Frees all sounds, prevents memory leaks. \end{DoxyCompactList}\item 
+void \hyperlink{sfx_8hpp_a3c05d8c98297339ac8651a0b52b79078}{load\-Sound} (std\-::string \-\_\-path, int \-\_\-len)
+\begin{DoxyCompactList}\small\item\em Loads a sound effect. \end{DoxyCompactList}\item 
+void \hyperlink{sfx_8hpp_a91011e03ee9f12cc4b8dd31c995514d0}{load\-Music} (std\-::string \-\_\-path)
+\begin{DoxyCompactList}\small\item\em Loads a music file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{sfx_8hpp_aa73a81bd8b5c3e133fae69899f6124cb}{std\-::vector$<$ std\-::vector\\*
+$<$ Mix\-\_\-\-Chunk $\ast$ $>$ $>$ \hyperlink{sfx_8hpp_aa73a81bd8b5c3e133fae69899f6124cb}{g\-\_\-snds}}\label{sfx_8hpp_aa73a81bd8b5c3e133fae69899f6124cb}
+
+\begin{DoxyCompactList}\small\item\em Vector of sounds which can be played. \end{DoxyCompactList}\item 
+\hypertarget{sfx_8hpp_a91f1f5d8d1dac2792244d4f713d85ac0}{std\-::vector$<$ Mix\-\_\-\-Music $\ast$ $>$ \hyperlink{sfx_8hpp_a91f1f5d8d1dac2792244d4f713d85ac0}{g\-\_\-music}}\label{sfx_8hpp_a91f1f5d8d1dac2792244d4f713d85ac0}
+
+\begin{DoxyCompactList}\small\item\em Vector of music which can be played. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This file provides functions to load and play sound effects. Could be abstracted into a 'sound-\/player' class. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{sfx_8hpp_a91011e03ee9f12cc4b8dd31c995514d0}{\index{sfx.\-hpp@{sfx.\-hpp}!load\-Music@{load\-Music}}
+\index{load\-Music@{load\-Music}!sfx.hpp@{sfx.\-hpp}}
+\subsubsection[{load\-Music}]{\setlength{\rightskip}{0pt plus 5cm}void load\-Music (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-path}
+\end{DoxyParamCaption}
+)}}\label{sfx_8hpp_a91011e03ee9f12cc4b8dd31c995514d0}
+
+
+Loads a music file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-path} & path to the file \\
+\hline
+\end{DoxyParams}
+\hypertarget{sfx_8hpp_a3c05d8c98297339ac8651a0b52b79078}{\index{sfx.\-hpp@{sfx.\-hpp}!load\-Sound@{load\-Sound}}
+\index{load\-Sound@{load\-Sound}!sfx.hpp@{sfx.\-hpp}}
+\subsubsection[{load\-Sound}]{\setlength{\rightskip}{0pt plus 5cm}void load\-Sound (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-path, }
+\item[{int}]{\-\_\-len}
+\end{DoxyParamCaption}
+)}}\label{sfx_8hpp_a3c05d8c98297339ac8651a0b52b79078}
+
+
+Loads a sound effect. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-path} & path to the sound files \\
+\hline
+{\em \-\_\-len} & number of variations-\/ if 'laser\-\_\-red' has two variations, it will load 'laser\-\_\-red\-\_\-0' and 'laser\-\_\-red\-\_\-1' \\
+\hline
+\end{DoxyParams}
+\hypertarget{sfx_8hpp_a11dcfbf3752f07afaaee76815cf7eca8}{\index{sfx.\-hpp@{sfx.\-hpp}!play\-Music@{play\-Music}}
+\index{play\-Music@{play\-Music}!sfx.hpp@{sfx.\-hpp}}
+\subsubsection[{play\-Music}]{\setlength{\rightskip}{0pt plus 5cm}void play\-Music (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{\-\_\-mus}
+\end{DoxyParamCaption}
+)}}\label{sfx_8hpp_a11dcfbf3752f07afaaee76815cf7eca8}
+
+
+Plays music. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-mus} & index of g\-\_\-music to source the music from \\
+\hline
+\end{DoxyParams}

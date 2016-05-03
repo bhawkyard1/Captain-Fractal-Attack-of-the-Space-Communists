@@ -1,0 +1,122 @@
+\hypertarget{classlaser}{\section{laser Class Reference}
+\label{classlaser}\index{laser@{laser}}
+}
+
+
+Inherits from base, represents a laser and contains data such as faction, damage, colour etc.  
+
+
+
+
+{\ttfamily \#include $<$laser.\-hpp$>$}
+
+Inheritance diagram for laser\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classlaser}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classlaser_a1abd02fb58a2910ced3e4f0a17abe5bd}{laser} (\hyperlink{structvec3}{vec3} \-\_\-p, \hyperlink{structvec3}{vec3} \-\_\-v, float \-\_\-ang, std\-::array$<$ float, W\-E\-A\-P\-S\-\_\-\-W $>$ \-\_\-data, \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-team)
+\begin{DoxyCompactList}\small\item\em ctor for the laser class \end{DoxyCompactList}\item 
+\hypertarget{classlaser_a56ca50fb28973ec2025acb23c838b946}{int \hyperlink{classlaser_a56ca50fb28973ec2025acb23c838b946}{get\-Dmg} () const }\label{classlaser_a56ca50fb28973ec2025acb23c838b946}
+
+\begin{DoxyCompactList}\small\item\em returns damage \end{DoxyCompactList}\item 
+\hypertarget{classlaser_ad3291de2cda3b474646f6bb4828b0593}{float \hyperlink{classlaser_ad3291de2cda3b474646f6bb4828b0593}{get\-Stop} () const }\label{classlaser_ad3291de2cda3b474646f6bb4828b0593}
+
+\begin{DoxyCompactList}\small\item\em returns stopping power \end{DoxyCompactList}\item 
+void \hyperlink{classlaser_a43ea4522e0aa950cb9aeaacc5555562c}{update} (float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em updates the laser \end{DoxyCompactList}\item 
+\hypertarget{classlaser_afcebdadf90172d4b3d9e5c98690cbd9d}{\hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \hyperlink{classlaser_afcebdadf90172d4b3d9e5c98690cbd9d}{get\-Team} () const }\label{classlaser_afcebdadf90172d4b3d9e5c98690cbd9d}
+
+\begin{DoxyCompactList}\small\item\em returns the team \end{DoxyCompactList}\item 
+\hypertarget{classlaser_a9f267e7172d09b4c8964e2b395de9564}{std\-::array$<$ float, 4 $>$ \hyperlink{classlaser_a9f267e7172d09b4c8964e2b395de9564}{get\-Col} () const }\label{classlaser_a9f267e7172d09b4c8964e2b395de9564}
+
+\begin{DoxyCompactList}\small\item\em returns the colour of the laser. \end{DoxyCompactList}\item 
+float \hyperlink{classlaser_a524a8e81d17a3dcf785268a3b1909bb4}{get\-Col} (int \-\_\-index) const 
+\begin{DoxyCompactList}\small\item\em Getter for single colour component. \end{DoxyCompactList}\item 
+\hypertarget{classlaser_a276c7f92329ac1cb3b47a2eb9ce647b1}{float \hyperlink{classlaser_a276c7f92329ac1cb3b47a2eb9ce647b1}{get\-Power} () const }\label{classlaser_a276c7f92329ac1cb3b47a2eb9ce647b1}
+
+\begin{DoxyCompactList}\small\item\em Getter for laser power. \end{DoxyCompactList}\item 
+\hypertarget{classlaser_a567fa22c33643684175934144c53fd6d}{float \hyperlink{classlaser_a567fa22c33643684175934144c53fd6d}{get\-Ang} () const }\label{classlaser_a567fa22c33643684175934144c53fd6d}
+
+\begin{DoxyCompactList}\small\item\em Getter for the angle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Inherits from base, represents a laser and contains data such as faction, damage, colour etc. 
+
+Inherits from ship, contains basic steering functionality. In some ways it is like a pared-\/down 'enemy' class. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classlaser_a1abd02fb58a2910ced3e4f0a17abe5bd}{\index{laser@{laser}!laser@{laser}}
+\index{laser@{laser}!laser@{laser}}
+\subsubsection[{laser}]{\setlength{\rightskip}{0pt plus 5cm}laser\-::laser (
+\begin{DoxyParamCaption}
+\item[{{\bf vec3}}]{\-\_\-p, }
+\item[{{\bf vec3}}]{\-\_\-v, }
+\item[{float}]{\-\_\-ang, }
+\item[{std\-::array$<$ float, W\-E\-A\-P\-S\-\_\-\-W $>$}]{\-\_\-data, }
+\item[{{\bf ai\-Team}}]{\-\_\-team}
+\end{DoxyParamCaption}
+)}}\label{classlaser_a1abd02fb58a2910ced3e4f0a17abe5bd}
+
+
+ctor for the laser class 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & positio \\
+\hline
+{\em \-\_\-v} & velocity \\
+\hline
+{\em \-\_\-ang} & angle \\
+\hline
+{\em \-\_\-data} & copied from \hyperlink{weapons_8hpp}{weapons.\-hpp} \\
+\hline
+{\em \-\_\-team} & the lasers' team \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classlaser_a524a8e81d17a3dcf785268a3b1909bb4}{\index{laser@{laser}!get\-Col@{get\-Col}}
+\index{get\-Col@{get\-Col}!laser@{laser}}
+\subsubsection[{get\-Col}]{\setlength{\rightskip}{0pt plus 5cm}float laser\-::get\-Col (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-index}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classlaser_a524a8e81d17a3dcf785268a3b1909bb4}
+
+
+Getter for single colour component. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-index} & index of component to retrieve \\
+\hline
+\end{DoxyParams}
+\hypertarget{classlaser_a43ea4522e0aa950cb9aeaacc5555562c}{\index{laser@{laser}!update@{update}}
+\index{update@{update}!laser@{laser}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void laser\-::update (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classlaser_a43ea4522e0aa950cb9aeaacc5555562c}
+
+
+updates the laser 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{laser_8hpp}{laser.\-hpp}\item 
+src/laser.\-cpp\end{DoxyCompactItemize}

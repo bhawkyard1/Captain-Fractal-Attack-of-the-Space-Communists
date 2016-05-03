@@ -6,68 +6,72 @@
 #include "enemy.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @file squad.hpp
-/// @brief This file contains the squad struct, used to coordinate enemy behaviours.
-/// @author Ben Hawkyard
-/// @version 1.0
-/// @date 11/04/16
+/// \file squad.hpp
+/// \brief This file contains the squad struct, used to coordinate enemy behaviours.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
 /// Revision History :
 /// This is an initial version used for the game
-/// @class squad
-/// @brief Contains data that allows enemies to coordinate with one another. Also has a unique ID,
+/// \class squad
+/// \brief Contains data that allows enemies to coordinate with one another. Also has a unique ID,
 /// and ships in the squad are tagged with this.
 //----------------------------------------------------------------------------------------------------------------------
 
 struct squad
 {
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The unique ID for the squad. Rather than have the squad actually contain its ships, I
+    /// \brief The unique ID for the squad. Rather than have the squad actually contain its ships, I
     /// opted for a shallower structure to facilitate interaction between agents.
     //----------------------------------------------------------------------------------------------------------------------
     int m_id;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The number of ships in the squad.
+    /// \brief The number of ships in the squad.
     //----------------------------------------------------------------------------------------------------------------------
     int m_size;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The max size for the squad.
+    /// \brief The max size for the squad.
     //----------------------------------------------------------------------------------------------------------------------
     int m_max_size;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The team that the squad is on.
+    /// \brief The team that the squad is on.
     //----------------------------------------------------------------------------------------------------------------------
     aiTeam m_team;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The currents goal, used to coordinate member behaviours.
+    /// \brief The currents goal, used to coordinate member behaviours.
     //----------------------------------------------------------------------------------------------------------------------
     aiGoal m_squadGoal;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Typically set to the average position of the members, this acts as the squad center. Could
+    /// \brief Typically set to the average position of the members, this acts as the squad center. Could
     /// conceivably be set to leader position to alter behaviour.
     //----------------------------------------------------------------------------------------------------------------------
     vec3 m_centerPoint;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The average velocity of the members. Useful for Craig-Reynolds-eque alignment.
+    /// \brief The average velocity of the members. Useful for Craig-Reynolds-eque alignment.
     //----------------------------------------------------------------------------------------------------------------------
     vec3 m_averageVel;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Ships further than this distance from the squad center will attempt to regroup.
+    /// \brief Ships further than this distance from the squad center will attempt to regroup.
     //----------------------------------------------------------------------------------------------------------------------
     float m_regroupDist = 2000.0f;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Perceived strength of the squad, affects morale.
+    /// \brief Perceived strength of the squad, affects morale.
     //----------------------------------------------------------------------------------------------------------------------
     float m_strength;
 };
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Creates a squad, of a given team.
+/// \param _t faction for the squad
+//----------------------------------------------------------------------------------------------------------------------
 squad createSquad(aiTeam _t);
 
 #endif

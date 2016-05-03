@@ -1,0 +1,109 @@
+\hypertarget{classpfx}{\section{pfx Class Reference}
+\label{classpfx}\index{pfx@{pfx}}
+}
+
+
+Inherits from base, also contains instances of base.  
+
+
+
+
+{\ttfamily \#include $<$pfx.\-hpp$>$}
+
+Inheritance diagram for pfx\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classpfx}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classpfx_ac84c5ea0b457660ae81912e4c9eed7fa}{pfx} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec3}{vec3} \-\_\-v, const \hyperlink{structvec3}{vec3} \-\_\-wv, const size\-\_\-t \-\_\-no, const float \-\_\-force, const std\-::string \-\_\-identifier)
+\begin{DoxyCompactList}\small\item\em ctor for the pfx class \end{DoxyCompactList}\item 
+void \hyperlink{classpfx_ac004ec0e3f4862aef0eab62a8c116663}{update} (float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the system. \end{DoxyCompactList}\item 
+\hypertarget{classpfx_a16585641dad66de325de7614bf66363a}{bool \hyperlink{classpfx_a16585641dad66de325de7614bf66363a}{done} () const }\label{classpfx_a16585641dad66de325de7614bf66363a}
+
+\begin{DoxyCompactList}\small\item\em Has the effect finished? \end{DoxyCompactList}\item 
+\hypertarget{classpfx_a224a96eb769197e7f389c691566f16d0}{std\-::array$<$ float, 3 $>$ \hyperlink{classpfx_a224a96eb769197e7f389c691566f16d0}{get\-Col} () const }\label{classpfx_a224a96eb769197e7f389c691566f16d0}
+
+\begin{DoxyCompactList}\small\item\em Colour getters. \end{DoxyCompactList}\item 
+\hypertarget{classpfx_a6d2cc538e428a1a8f4a1c6b95f574620}{float {\bfseries get\-Col} (int i) const }\label{classpfx_a6d2cc538e428a1a8f4a1c6b95f574620}
+
+\item 
+\hypertarget{classpfx_ab18819f5c1a18f748fe5cc00dbdcca59}{float \hyperlink{classpfx_ab18819f5c1a18f748fe5cc00dbdcca59}{get\-Alpha} () const }\label{classpfx_ab18819f5c1a18f748fe5cc00dbdcca59}
+
+\begin{DoxyCompactList}\small\item\em Alpha getters. \end{DoxyCompactList}\item 
+\hypertarget{classpfx_af2cdb7ea2176235eba7a3b4af8b05ed7}{float {\bfseries get\-Alpha} (const int index) const }\label{classpfx_af2cdb7ea2176235eba7a3b4af8b05ed7}
+
+\item 
+\hypertarget{classpfx_aaa8626d7c9ec5d701fd4d953333f3473}{std\-::string \hyperlink{classpfx_aaa8626d7c9ec5d701fd4d953333f3473}{get\-Identifier} () const }\label{classpfx_aaa8626d7c9ec5d701fd4d953333f3473}
+
+\begin{DoxyCompactList}\small\item\em Identifier getter. \end{DoxyCompactList}\item 
+\hypertarget{classpfx_a2bd03654be340d4c43bb51e01c666b8a}{std\-::vector$<$ \hyperlink{classbase}{base} $>$ $\ast$ \hyperlink{classpfx_a2bd03654be340d4c43bb51e01c666b8a}{get\-Particles} ()}\label{classpfx_a2bd03654be340d4c43bb51e01c666b8a}
+
+\begin{DoxyCompactList}\small\item\em Returns the child particle vector. \end{DoxyCompactList}\item 
+\hypertarget{classpfx_a0744ef49ef96b16fa25ec417b59388c4}{float \hyperlink{classpfx_a0744ef49ef96b16fa25ec417b59388c4}{get\-Force} ()}\label{classpfx_a0744ef49ef96b16fa25ec417b59388c4}
+
+\begin{DoxyCompactList}\small\item\em Force getter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Inherits from base, also contains instances of base. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classpfx_ac84c5ea0b457660ae81912e4c9eed7fa}{\index{pfx@{pfx}!pfx@{pfx}}
+\index{pfx@{pfx}!pfx@{pfx}}
+\subsubsection[{pfx}]{\setlength{\rightskip}{0pt plus 5cm}pfx\-::pfx (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec3}}]{\-\_\-v, }
+\item[{const {\bf vec3}}]{\-\_\-wv, }
+\item[{const size\-\_\-t}]{\-\_\-no, }
+\item[{const float}]{\-\_\-force, }
+\item[{const std\-::string}]{\-\_\-identifier}
+\end{DoxyParamCaption}
+)}}\label{classpfx_ac84c5ea0b457660ae81912e4c9eed7fa}
+
+
+ctor for the pfx class 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-v} & center velocit y \\
+\hline
+{\em \-\_\-no} & number of children \\
+\hline
+{\em \-\_\-force} & velocity multiplier of children \\
+\hline
+{\em \-\_\-identifier} & type of effect, such as \char`\"{}\-S\-M\-O\-K\-E\char`\"{}, \char`\"{}\-E\-X\-P\-L\-O\-S\-I\-O\-N\char`\"{} etc \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classpfx_ac004ec0e3f4862aef0eab62a8c116663}{\index{pfx@{pfx}!update@{update}}
+\index{update@{update}!pfx@{pfx}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void pfx\-::update (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classpfx_ac004ec0e3f4862aef0eab62a8c116663}
+
+
+Updates the system. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & Time difference \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{pfx_8hpp}{pfx.\-hpp}\item 
+src/pfx.\-cpp\end{DoxyCompactItemize}

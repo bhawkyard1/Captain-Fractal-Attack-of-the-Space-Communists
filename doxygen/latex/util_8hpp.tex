@@ -1,0 +1,555 @@
+\hypertarget{util_8hpp}{\section{include/util.hpp File Reference}
+\label{util_8hpp}\index{include/util.\-hpp@{include/util.\-hpp}}
+}
+
+
+\hyperlink{struct_a}{A} small file containing lots of useful values and functions, used across the project.  
+
+
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$math.\-h$>$}\\*
+{\ttfamily \#include $<$limits$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include $<$sstream$>$}\\*
+{\ttfamily \#include $<$time.\-h$>$}\\*
+{\ttfamily \#include $<$array$>$}\\*
+{\ttfamily \#include $<$ciso646$>$}\\*
+{\ttfamily \#include \char`\"{}S\-D\-L2/\-S\-D\-L\-\_\-ttf.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}vectors.\-hpp\char`\"{}}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{util_8hpp_aa0b293b417126db6e8ddde328d829756}{\#define \hyperlink{util_8hpp_aa0b293b417126db6e8ddde328d829756}{F\-\_\-\-M\-A\-X}~std\-::numeric\-\_\-limits$<$float$>$\-::max()}\label{util_8hpp_aa0b293b417126db6e8ddde328d829756}
+
+\begin{DoxyCompactList}\small\item\em Max and infinite values for floats. Useful when you want to loop through a bunch of values to find the highest/ lowest. \end{DoxyCompactList}\item 
+\hypertarget{util_8hpp_ab8f73d0d4bdb91d63aa2c752069470a8}{\#define {\bfseries F\-\_\-\-I\-N\-F}~std\-::numeric\-\_\-limits$<$float$>$\-::infinity()}\label{util_8hpp_ab8f73d0d4bdb91d63aa2c752069470a8}
+
+\item 
+\hypertarget{util_8hpp_a0f66474c13206cee6d401b2d1a028cea}{\#define \hyperlink{util_8hpp_a0f66474c13206cee6d401b2d1a028cea}{I\-\_\-\-M\-A\-X}~std\-::numeric\-\_\-limits$<$int$>$\-::max()}\label{util_8hpp_a0f66474c13206cee6d401b2d1a028cea}
+
+\begin{DoxyCompactList}\small\item\em Max and infinite values for ints. Useful when you want to loop through a bunch of values to find the highest/ lowest. \end{DoxyCompactList}\item 
+\hypertarget{util_8hpp_ac3112668e3d5f145ff970415c1032be5}{\#define {\bfseries I\-\_\-\-I\-N\-F}~std\-::numeric\-\_\-limits$<$int$>$\-::max()}\label{util_8hpp_ac3112668e3d5f145ff970415c1032be5}
+
+\item 
+\hypertarget{util_8hpp_a670d4e291236ce88047c1fa5e1b600b4}{\#define \hyperlink{util_8hpp_a670d4e291236ce88047c1fa5e1b600b4}{U\-P\-I}~3.\-14159265359}\label{util_8hpp_a670d4e291236ce88047c1fa5e1b600b4}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} value used for all calculations involving pi. N\-G\-L has its own, but this game can run without N\-G\-L. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+float \hyperlink{util_8hpp_a67c33b3e70c994f4383550fb864adecd}{compute\-Angle} (\hyperlink{structvec2}{vec2} \-\_\-v)
+\begin{DoxyCompactList}\small\item\em Given a 2d vector, converts it to an angle. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename tt $>$ }\\tt \hyperlink{util_8hpp_ad411c11aee73073ece07ffafe8ce8d29}{clamp} (tt \-\_\-v, tt \-\_\-m, tt \-\_\-\-M)
+\begin{DoxyCompactList}\small\item\em Clamps a value of any type to two values of the same type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename tt $>$ }\\tt \hyperlink{util_8hpp_a47499c112dce2a39e029ed89416ce965}{clamp\-Roll} (tt \-\_\-v, tt \-\_\-m, tt \-\_\-\-M)
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} rolling clamp, a value which exceeds the max will roll back around to the minimum. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename tt $>$ }\\tt \hyperlink{util_8hpp_a7506939a0d2e9125d3e1de6310b23cc1}{in\-Range} (tt \-\_\-v, tt \-\_\-m, tt \-\_\-\-M)
+\begin{DoxyCompactList}\small\item\em Returns whether a given value is between two others. \end{DoxyCompactList}\item 
+float \hyperlink{util_8hpp_ab370ffd13cea5e5ae1e1dc2e30baf6ac}{shortest\-Angle} (float \-\_\-ang1, float \-\_\-ang2)
+\begin{DoxyCompactList}\small\item\em Given two angles in degrees, this function will return the shortest angle between them, also in degrees. \end{DoxyCompactList}\item 
+float \hyperlink{util_8hpp_a90bda3cc5ff8d5bbe1a3076068080837}{sqr} (float \-\_\-arg)
+\begin{DoxyCompactList}\small\item\em Squares the given argument. Often quicker than typing it twice. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class t $>$ }\\t \hyperlink{util_8hpp_a1a7943b293eb6dd3510f094fd9b544b8}{rand\-Num} (t \-\_\-low, t \-\_\-high)
+\begin{DoxyCompactList}\small\item\em Returns a random number between two values. \end{DoxyCompactList}\item 
+float \hyperlink{util_8hpp_a6069be028ed5cb20fc4cc2f085e43b71}{fast\-Inv\-Sqrt} (float \-\_\-val)
+\begin{DoxyCompactList}\small\item\em Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed to Greg Walsh. \end{DoxyCompactList}\item 
+bool \hyperlink{util_8hpp_a018a8b6fd96c05d223bf0ee1f22247f2}{point\-In\-Rect} (\hyperlink{structvec2}{vec2} \-\_\-point, \hyperlink{structvec2}{vec2} \-\_\-pos, \hyperlink{structvec2}{vec2} \-\_\-dim)
+\begin{DoxyCompactList}\small\item\em Given a point and two vectors representing a rectangle, returns whether the point lies inside. \end{DoxyCompactList}\item 
+bool \hyperlink{util_8hpp_a4009f5d421d916d401075f3524129b77}{point\-In\-Box} (\hyperlink{structvec3}{vec3} \-\_\-point, \hyperlink{structvec3}{vec3} \-\_\-start, \hyperlink{structvec3}{vec3} \-\_\-end)
+\begin{DoxyCompactList}\small\item\em Given a point and two vectors representing an cuboid, returns whether the point lies inside. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_ad19d7823eb5711d8ad47edadef052ddf}{rand\-Vec2} (float \-\_\-m, float \-\_\-\-M)
+\begin{DoxyCompactList}\small\item\em Returns a \hyperlink{structvec2}{vec2} with a magnitude between two floats. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_ace4e8e045de3694f0ce2a39319a33a76}{rand\-Vec2} (float \-\_\-f)
+\begin{DoxyCompactList}\small\item\em Returns a point inside the circle with a radius f. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_a7a0908aea78acf0aae01837b0008c83b}{rand\-Vec2} (\hyperlink{structvec2}{vec2} \-\_\-min, \hyperlink{structvec2}{vec2} \-\_\-max)
+\begin{DoxyCompactList}\small\item\em Returns a point in the rectangle defined by a minimum and maximum point. \end{DoxyCompactList}\item 
+\hyperlink{structvec3}{vec3} \hyperlink{util_8hpp_ac6a476d710dfd8bd70986c6a31e8b310}{rand\-Vec3} (float m, float M)
+\begin{DoxyCompactList}\small\item\em Returns a \hyperlink{structvec3}{vec3} with a magnitude between two floats. \end{DoxyCompactList}\item 
+\hyperlink{structvec3}{vec3} \hyperlink{util_8hpp_a9f125cfce0c7276cf7fcd3527ddf2537}{rand\-Vec3} (float f)
+\begin{DoxyCompactList}\small\item\em Returns a point inside the sphere with a radius f. \end{DoxyCompactList}\item 
+\hyperlink{structvec3}{vec3} \hyperlink{util_8hpp_a12a277b0b28cf9525dfce19b7502be8c}{rand\-Vec3} (\hyperlink{structvec3}{vec3} min, \hyperlink{structvec3}{vec3} max)
+\begin{DoxyCompactList}\small\item\em Given a point and two vectors representing a rectangle, returns whether the point lies inside. \end{DoxyCompactList}\item 
+std\-::vector$<$ std\-::string $>$ \hyperlink{util_8hpp_a860ecb33814527b775a1f7bae2d76908}{split} (std\-::string \-\_\-str, char \-\_\-delim)
+\begin{DoxyCompactList}\small\item\em Splits a given string into a vector of strings, according to a given delimeter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class t $>$ }\\void \hyperlink{util_8hpp_a9140f518cece4e0c851865aca71a573d}{swapnpop} (std\-::vector$<$ t $>$ $\ast$\-\_\-vec, int \-\_\-i)
+\begin{DoxyCompactList}\small\item\em To avoid shuffling all elements in a vector when removing one, we can simply swap the element to remove, and the element at the end, before popping. Of course, this should only be used when the order of the vector is unimportant. I came accross the idea online, but the implementation is my own. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_a63d501fc6858ffb355b8b471ddae44e5}{front} (float \-\_\-ang)
+\begin{DoxyCompactList}\small\item\em Given an angle, returns a vector pointing forwards. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_afe55ebc224f410e8f21cdd70f4eaacac}{back} (float \-\_\-ang)
+\begin{DoxyCompactList}\small\item\em Given an angle, returns a vector pointing back. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_ad59bf3478724bd189351934164671253}{left} (float \-\_\-ang)
+\begin{DoxyCompactList}\small\item\em Given an angle, returns a vector pointing left. \end{DoxyCompactList}\item 
+\hyperlink{structvec2}{vec2} \hyperlink{util_8hpp_aa8765039a66fb74cdb0a2c1cda8582c5}{right} (float \-\_\-ang)
+\begin{DoxyCompactList}\small\item\em Given an angle, returns a vector pointing right. \end{DoxyCompactList}\item 
+std\-::array$<$ float, 4 $>$ \hyperlink{util_8hpp_af4e23f495a804b7abe9ab6bababf4926}{col255to1} (std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Given a colour whose components range from 0-\/255, convert it to 0-\/1. \end{DoxyCompactList}\item 
+std\-::array$<$ float, 4 $>$ \hyperlink{util_8hpp_ade780af5998fee5147f208a7ba46e0b7}{col255to1} (std\-::array$<$ int, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Given a colour whose components range from 0-\/1, convert it to 0-\/255. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{struct_a}{A} small file containing lots of useful values and functions, used across the project. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{util_8hpp_afe55ebc224f410e8f21cdd70f4eaacac}{\index{util.\-hpp@{util.\-hpp}!back@{back}}
+\index{back@{back}!util.hpp@{util.\-hpp}}
+\subsubsection[{back}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} back (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-ang}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_afe55ebc224f410e8f21cdd70f4eaacac}
+
+
+Given an angle, returns a vector pointing back. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ang} & angle \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ad411c11aee73073ece07ffafe8ce8d29}{\index{util.\-hpp@{util.\-hpp}!clamp@{clamp}}
+\index{clamp@{clamp}!util.hpp@{util.\-hpp}}
+\subsubsection[{clamp}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename tt $>$ tt clamp (
+\begin{DoxyParamCaption}
+\item[{tt}]{\-\_\-v, }
+\item[{tt}]{\-\_\-m, }
+\item[{tt}]{\-\_\-\-M}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ad411c11aee73073ece07ffafe8ce8d29}
+
+
+Clamps a value of any type to two values of the same type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-v} & input value \\
+\hline
+{\em \-\_\-m} & minimum threshold \\
+\hline
+{\em \-\_\-\-M} & maximum threshold \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a47499c112dce2a39e029ed89416ce965}{\index{util.\-hpp@{util.\-hpp}!clamp\-Roll@{clamp\-Roll}}
+\index{clamp\-Roll@{clamp\-Roll}!util.hpp@{util.\-hpp}}
+\subsubsection[{clamp\-Roll}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename tt $>$ tt clamp\-Roll (
+\begin{DoxyParamCaption}
+\item[{tt}]{\-\_\-v, }
+\item[{tt}]{\-\_\-m, }
+\item[{tt}]{\-\_\-\-M}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a47499c112dce2a39e029ed89416ce965}
+
+
+\hyperlink{struct_a}{A} rolling clamp, a value which exceeds the max will roll back around to the minimum. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-v} & input value \\
+\hline
+{\em \-\_\-m} & minimum threshold \\
+\hline
+{\em \-\_\-\-M} & maximum threshold \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_af4e23f495a804b7abe9ab6bababf4926}{\index{util.\-hpp@{util.\-hpp}!col255to1@{col255to1}}
+\index{col255to1@{col255to1}!util.hpp@{util.\-hpp}}
+\subsubsection[{col255to1}]{\setlength{\rightskip}{0pt plus 5cm}std\-::array$<$float, 4$>$ col255to1 (
+\begin{DoxyParamCaption}
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_af4e23f495a804b7abe9ab6bababf4926}
+
+
+Given a colour whose components range from 0-\/255, convert it to 0-\/1. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-col} & colour to convert \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ade780af5998fee5147f208a7ba46e0b7}{\index{util.\-hpp@{util.\-hpp}!col255to1@{col255to1}}
+\index{col255to1@{col255to1}!util.hpp@{util.\-hpp}}
+\subsubsection[{col255to1}]{\setlength{\rightskip}{0pt plus 5cm}std\-::array$<$float, 4$>$ col255to1 (
+\begin{DoxyParamCaption}
+\item[{std\-::array$<$ int, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ade780af5998fee5147f208a7ba46e0b7}
+
+
+Given a colour whose components range from 0-\/1, convert it to 0-\/255. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-col} & colour to convert \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a67c33b3e70c994f4383550fb864adecd}{\index{util.\-hpp@{util.\-hpp}!compute\-Angle@{compute\-Angle}}
+\index{compute\-Angle@{compute\-Angle}!util.hpp@{util.\-hpp}}
+\subsubsection[{compute\-Angle}]{\setlength{\rightskip}{0pt plus 5cm}float compute\-Angle (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-v}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a67c33b3e70c994f4383550fb864adecd}
+
+
+Given a 2d vector, converts it to an angle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-v} & vector to convert. \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a6069be028ed5cb20fc4cc2f085e43b71}{\index{util.\-hpp@{util.\-hpp}!fast\-Inv\-Sqrt@{fast\-Inv\-Sqrt}}
+\index{fast\-Inv\-Sqrt@{fast\-Inv\-Sqrt}!util.hpp@{util.\-hpp}}
+\subsubsection[{fast\-Inv\-Sqrt}]{\setlength{\rightskip}{0pt plus 5cm}float fast\-Inv\-Sqrt (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-val}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a6069be028ed5cb20fc4cc2f085e43b71}
+
+
+Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed to Greg Walsh. 
+
+\begin{DoxyAuthor}{Author}
+Greg Walsh 
+\end{DoxyAuthor}
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-val} & function returns the inverse square root of this value. Modified From \-:-\/ Hansen, P. C., 2012. 0x5f3759df. Hummus and Magnets. 15 September 2012. Available from\-: \href{http://h14s.p5r.org/2012/09/0x5f3759df.html}{\tt http\-://h14s.\-p5r.\-org/2012/09/0x5f3759df.\-html} \mbox{[}Accessed 30 April 2016\mbox{]}. \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a63d501fc6858ffb355b8b471ddae44e5}{\index{util.\-hpp@{util.\-hpp}!front@{front}}
+\index{front@{front}!util.hpp@{util.\-hpp}}
+\subsubsection[{front}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} front (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-ang}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a63d501fc6858ffb355b8b471ddae44e5}
+
+
+Given an angle, returns a vector pointing forwards. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ang} & angle \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a7506939a0d2e9125d3e1de6310b23cc1}{\index{util.\-hpp@{util.\-hpp}!in\-Range@{in\-Range}}
+\index{in\-Range@{in\-Range}!util.hpp@{util.\-hpp}}
+\subsubsection[{in\-Range}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename tt $>$ tt in\-Range (
+\begin{DoxyParamCaption}
+\item[{tt}]{\-\_\-v, }
+\item[{tt}]{\-\_\-m, }
+\item[{tt}]{\-\_\-\-M}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a7506939a0d2e9125d3e1de6310b23cc1}
+
+
+Returns whether a given value is between two others. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-v} & input value \\
+\hline
+{\em \-\_\-m} & minimum threshold \\
+\hline
+{\em \-\_\-\-M} & maximum threshold \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ad59bf3478724bd189351934164671253}{\index{util.\-hpp@{util.\-hpp}!left@{left}}
+\index{left@{left}!util.hpp@{util.\-hpp}}
+\subsubsection[{left}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} left (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-ang}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ad59bf3478724bd189351934164671253}
+
+
+Given an angle, returns a vector pointing left. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ang} & angle \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a4009f5d421d916d401075f3524129b77}{\index{util.\-hpp@{util.\-hpp}!point\-In\-Box@{point\-In\-Box}}
+\index{point\-In\-Box@{point\-In\-Box}!util.hpp@{util.\-hpp}}
+\subsubsection[{point\-In\-Box}]{\setlength{\rightskip}{0pt plus 5cm}bool point\-In\-Box (
+\begin{DoxyParamCaption}
+\item[{{\bf vec3}}]{\-\_\-point, }
+\item[{{\bf vec3}}]{\-\_\-start, }
+\item[{{\bf vec3}}]{\-\_\-end}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a4009f5d421d916d401075f3524129b77}
+
+
+Given a point and two vectors representing an cuboid, returns whether the point lies inside. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-point} & point to test \\
+\hline
+{\em \-\_\-pos} & cuboid of the rectangle \\
+\hline
+{\em \-\_\-dim} & cuboid dimensions \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a018a8b6fd96c05d223bf0ee1f22247f2}{\index{util.\-hpp@{util.\-hpp}!point\-In\-Rect@{point\-In\-Rect}}
+\index{point\-In\-Rect@{point\-In\-Rect}!util.hpp@{util.\-hpp}}
+\subsubsection[{point\-In\-Rect}]{\setlength{\rightskip}{0pt plus 5cm}bool point\-In\-Rect (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-point, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{{\bf vec2}}]{\-\_\-dim}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a018a8b6fd96c05d223bf0ee1f22247f2}
+
+
+Given a point and two vectors representing a rectangle, returns whether the point lies inside. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-point} & point to test \\
+\hline
+{\em \-\_\-pos} & corner of the rectangle \\
+\hline
+{\em \-\_\-dim} & rectangle dimensions \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a1a7943b293eb6dd3510f094fd9b544b8}{\index{util.\-hpp@{util.\-hpp}!rand\-Num@{rand\-Num}}
+\index{rand\-Num@{rand\-Num}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Num}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class t $>$ t rand\-Num (
+\begin{DoxyParamCaption}
+\item[{t}]{\-\_\-low, }
+\item[{t}]{\-\_\-high}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a1a7943b293eb6dd3510f094fd9b544b8}
+
+
+Returns a random number between two values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-low} & lover limit \\
+\hline
+{\em \-\_\-high} & upper limit \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ad19d7823eb5711d8ad47edadef052ddf}{\index{util.\-hpp@{util.\-hpp}!rand\-Vec2@{rand\-Vec2}}
+\index{rand\-Vec2@{rand\-Vec2}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Vec2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} rand\-Vec2 (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-m, }
+\item[{float}]{\-\_\-\-M}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ad19d7823eb5711d8ad47edadef052ddf}
+
+
+Returns a \hyperlink{structvec2}{vec2} with a magnitude between two floats. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-m} & min length, \-\_\-\-M max length. \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ace4e8e045de3694f0ce2a39319a33a76}{\index{util.\-hpp@{util.\-hpp}!rand\-Vec2@{rand\-Vec2}}
+\index{rand\-Vec2@{rand\-Vec2}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Vec2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} rand\-Vec2 (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-f}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ace4e8e045de3694f0ce2a39319a33a76}
+
+
+Returns a point inside the circle with a radius f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-f} & radius \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a7a0908aea78acf0aae01837b0008c83b}{\index{util.\-hpp@{util.\-hpp}!rand\-Vec2@{rand\-Vec2}}
+\index{rand\-Vec2@{rand\-Vec2}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Vec2}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} rand\-Vec2 (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-min, }
+\item[{{\bf vec2}}]{\-\_\-max}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a7a0908aea78acf0aae01837b0008c83b}
+
+
+Returns a point in the rectangle defined by a minimum and maximum point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-min} & the minimum point \\
+\hline
+{\em \-\_\-max} & the maximum point \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ac6a476d710dfd8bd70986c6a31e8b310}{\index{util.\-hpp@{util.\-hpp}!rand\-Vec3@{rand\-Vec3}}
+\index{rand\-Vec3@{rand\-Vec3}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Vec3}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec3} rand\-Vec3 (
+\begin{DoxyParamCaption}
+\item[{float}]{m, }
+\item[{float}]{M}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ac6a476d710dfd8bd70986c6a31e8b310}
+
+
+Returns a \hyperlink{structvec3}{vec3} with a magnitude between two floats. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-m} & min length \\
+\hline
+{\em \-\_\-\-M} & max length. \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a9f125cfce0c7276cf7fcd3527ddf2537}{\index{util.\-hpp@{util.\-hpp}!rand\-Vec3@{rand\-Vec3}}
+\index{rand\-Vec3@{rand\-Vec3}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Vec3}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec3} rand\-Vec3 (
+\begin{DoxyParamCaption}
+\item[{float}]{f}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a9f125cfce0c7276cf7fcd3527ddf2537}
+
+
+Returns a point inside the sphere with a radius f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-point} & point to test \\
+\hline
+{\em \-\_\-pos} & corner of the rectangle \\
+\hline
+{\em \-\_\-dim} & rectangle dimensions \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a12a277b0b28cf9525dfce19b7502be8c}{\index{util.\-hpp@{util.\-hpp}!rand\-Vec3@{rand\-Vec3}}
+\index{rand\-Vec3@{rand\-Vec3}!util.hpp@{util.\-hpp}}
+\subsubsection[{rand\-Vec3}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec3} rand\-Vec3 (
+\begin{DoxyParamCaption}
+\item[{{\bf vec3}}]{min, }
+\item[{{\bf vec3}}]{max}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a12a277b0b28cf9525dfce19b7502be8c}
+
+
+Given a point and two vectors representing a rectangle, returns whether the point lies inside. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-point} & point to test \\
+\hline
+{\em \-\_\-pos} & corner of the rectangle \\
+\hline
+{\em \-\_\-dim} & rectangle dimensions \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_aa8765039a66fb74cdb0a2c1cda8582c5}{\index{util.\-hpp@{util.\-hpp}!right@{right}}
+\index{right@{right}!util.hpp@{util.\-hpp}}
+\subsubsection[{right}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec2} right (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-ang}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_aa8765039a66fb74cdb0a2c1cda8582c5}
+
+
+Given an angle, returns a vector pointing right. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ang} & angle \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_ab370ffd13cea5e5ae1e1dc2e30baf6ac}{\index{util.\-hpp@{util.\-hpp}!shortest\-Angle@{shortest\-Angle}}
+\index{shortest\-Angle@{shortest\-Angle}!util.hpp@{util.\-hpp}}
+\subsubsection[{shortest\-Angle}]{\setlength{\rightskip}{0pt plus 5cm}float shortest\-Angle (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-ang1, }
+\item[{float}]{\-\_\-ang2}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_ab370ffd13cea5e5ae1e1dc2e30baf6ac}
+
+
+Given two angles in degrees, this function will return the shortest angle between them, also in degrees. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ang1} & first angle \\
+\hline
+{\em \-\_\-ang2} & second angle \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a860ecb33814527b775a1f7bae2d76908}{\index{util.\-hpp@{util.\-hpp}!split@{split}}
+\index{split@{split}!util.hpp@{util.\-hpp}}
+\subsubsection[{split}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$std\-::string$>$ split (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-str, }
+\item[{char}]{\-\_\-delim}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a860ecb33814527b775a1f7bae2d76908}
+
+
+Splits a given string into a vector of strings, according to a given delimeter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-str} & given string \\
+\hline
+{\em \-\_\-delim} & delimiting character\\
+\hline
+\end{DoxyParams}
+Splits a given string into a vector of strings, according to a given delimeter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-str} & input string, \-\_\-delim delimiting character \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a90bda3cc5ff8d5bbe1a3076068080837}{\index{util.\-hpp@{util.\-hpp}!sqr@{sqr}}
+\index{sqr@{sqr}!util.hpp@{util.\-hpp}}
+\subsubsection[{sqr}]{\setlength{\rightskip}{0pt plus 5cm}float sqr (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-arg}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a90bda3cc5ff8d5bbe1a3076068080837}
+
+
+Squares the given argument. Often quicker than typing it twice. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-arg} & value to square. \\
+\hline
+\end{DoxyParams}
+\hypertarget{util_8hpp_a9140f518cece4e0c851865aca71a573d}{\index{util.\-hpp@{util.\-hpp}!swapnpop@{swapnpop}}
+\index{swapnpop@{swapnpop}!util.hpp@{util.\-hpp}}
+\subsubsection[{swapnpop}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class t $>$ void swapnpop (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ t $>$ $\ast$}]{\-\_\-vec, }
+\item[{int}]{\-\_\-i}
+\end{DoxyParamCaption}
+)}}\label{util_8hpp_a9140f518cece4e0c851865aca71a573d}
+
+
+To avoid shuffling all elements in a vector when removing one, we can simply swap the element to remove, and the element at the end, before popping. Of course, this should only be used when the order of the vector is unimportant. I came accross the idea online, but the implementation is my own. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-vec} & pointer to the vector \\
+\hline
+{\em \-\_\-i} & index to remove \\
+\hline
+\end{DoxyParams}

@@ -8,8 +8,25 @@
 #include "util.hpp"
 #include <array>
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \file weapons.hpp
+/// \brief Weapon related types and stats live here.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game.
+//----------------------------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief This type represents the different attributes of a given weapon. They are analogous to the index containing weapon
+/// data since they can be implicity converted to integers.
+//----------------------------------------------------------------------------------------------------------------------
 enum WEAPON_STAT {LASER_COUNT, SPREAD, DAMAGE, SPEED, COLOUR_RED, COLOUR_GREEN, COLOUR_BLUE, ENERGY_COST, COOLDOWN, STOPPING_POWER};
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Enum representing the different weapon types that exist. Can be used to index into our global weapon stat array.
+//----------------------------------------------------------------------------------------------------------------------
 enum WEAPON_TYPE {
     WEAPON_PLAYER_RED, WEAPON_PLAYER_GREEN, WEAPON_PLAYER_BLUE,
     WEAPON_DEBUG_YELLOW,
@@ -23,8 +40,9 @@ enum WEAPON_TYPE {
 };
 
 
-//Weapon definitions.
-//0 Lasers per shot, 1 spread, 2 dmg, 3 speed, 4 red, 5 green, 6 blue, 7 energy cost, 8 cooldown, 9 stopping power.
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Global array containing base stats of all weapons in-game. These are copied out to ships upon their construction.
+//----------------------------------------------------------------------------------------------------------------------
 static std::array<std::array<float,10>,23> g_weapons =
 {{
      {{1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.008f}},//Laser cannon	0
@@ -46,20 +64,20 @@ static std::array<std::array<float,10>,23> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 2	15
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 3	16
      {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}},//P gunship laser	17
-     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1 18
-     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2 19
+     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1 18
+     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	5.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2 19
      {{15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser capital 20
      {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
 }};
 
 inline float getEnergyCost(int weap)
 {
-    return g_weapons[weap][7];
+    return g_weapons[weap][ENERGY_COST];
 }
 
 inline float getCooldown(int weap)
 {
-    return g_weapons[weap][8];
+    return g_weapons[weap][COOLDOWN];
 }
 
 inline bool isOffScreen(vec2 pos, float dist)

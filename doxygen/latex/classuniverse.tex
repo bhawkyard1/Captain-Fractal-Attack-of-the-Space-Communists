@@ -1,0 +1,580 @@
+\hypertarget{classuniverse}{\section{universe Class Reference}
+\label{classuniverse}\index{universe@{universe}}
+}
+
+
+This class is huge, and touches almost every part of the game.  
+
+
+
+
+{\ttfamily \#include $<$universe.\-hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classuniverse_a53128b9e55c9bb4aff9b0a767db376ef}{\hyperlink{classuniverse_a53128b9e55c9bb4aff9b0a767db376ef}{universe} ()}\label{classuniverse_a53128b9e55c9bb4aff9b0a767db376ef}
+
+\begin{DoxyCompactList}\small\item\em ctor for the universe class, sets up the game and all rendering functionality. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_ac2990f82203890ee22f9a9de1aaec7a1}{void \hyperlink{classuniverse_ac2990f82203890ee22f9a9de1aaec7a1}{init\-U\-I} ()}\label{classuniverse_ac2990f82203890ee22f9a9de1aaec7a1}
+
+\begin{DoxyCompactList}\small\item\em Initialises the U\-I to default values. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a2f8a7a121a0f933d32789606144d8916}{\hyperlink{classplayer}{player} $\ast$ \hyperlink{classuniverse_a2f8a7a121a0f933d32789606144d8916}{get\-Ply} ()}\label{classuniverse_a2f8a7a121a0f933d32789606144d8916}
+
+\begin{DoxyCompactList}\small\item\em Getter for the player. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a2e9b69d19436492db80f60a15850b26e}{void \hyperlink{classuniverse_a2e9b69d19436492db80f60a15850b26e}{set\-Vel} (const \hyperlink{structvec3}{vec3} \-\_\-v)}\label{classuniverse_a2e9b69d19436492db80f60a15850b26e}
+
+\begin{DoxyCompactList}\small\item\em Velocity setter. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_aca6b40fadb1c8390469e6422d61b4c1c}{add\-Shot} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec3}{vec3} \-\_\-v, const float \-\_\-angle, const std\-::array$<$ float, W\-E\-A\-P\-S\-\_\-\-W $>$ \-\_\-weap, const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-team)
+\begin{DoxyCompactList}\small\item\em Adds a laser to the universe. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a84c5bf8acb410c81173e0de687fb8672}{add\-Missile} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec3}{vec3} \-\_\-v, const float \-\_\-angle, const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-team)
+\begin{DoxyCompactList}\small\item\em Adds a missile to the universe. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_afcfa317aadb3a1477e76e2fd8caff1e7}{spawn\-Ship} (const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t)
+\begin{DoxyCompactList}\small\item\em Adds a ship to the universe, with a random faction and type. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a74264fec3d84faf13ab70248be7469c5}{spawn\-Ship} (const \hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type, const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t, const \hyperlink{structvec3}{vec3} \-\_\-p)
+\begin{DoxyCompactList}\small\item\em Adds a ship to the universe, with a specified position and type. \end{DoxyCompactList}\item 
+\hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \hyperlink{classuniverse_ad711d97b18ae3f9e35535bf04dd3b0af}{get\-Random\-Ship\-Type} (const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t)
+\begin{DoxyCompactList}\small\item\em Returns a (weighted) random ship type from a given faction. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a4da6321942cd454ac4cadc8d3ccb1740}{spawn\-Squad} (const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t, const float \-\_\-min, const float \-\_\-max, const int \-\_\-i)
+\begin{DoxyCompactList}\small\item\em Spawns a series of ships. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_aacf31e60bd0e853b488e6a757e1c5c0a}{void \hyperlink{classuniverse_aacf31e60bd0e853b488e6a757e1c5c0a}{add\-Wingman} ()}\label{classuniverse_aacf31e60bd0e853b488e6a757e1c5c0a}
+
+\begin{DoxyCompactList}\small\item\em This function only actually incremements the max number of wingmen available, which are randomly spawned into the scene in the update function. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_af7fcdf7e564fbeabf2e48e698dfc1aad}{void \hyperlink{classuniverse_af7fcdf7e564fbeabf2e48e698dfc1aad}{add\-Miner} ()}\label{classuniverse_af7fcdf7e564fbeabf2e48e698dfc1aad}
+
+\begin{DoxyCompactList}\small\item\em This function only actually incremements the max number of miners available, which are randomly spawned into the scene in the update function. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_ad058c50da21f46d2eecb276254b79fb1}{add\-Build} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type)
+\begin{DoxyCompactList}\small\item\em Used to place static structures into the world, although under the hood it just spawns a ship with a given classification. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_aa7edd0f87d1ec40806203444edf84614}{add\-Build} (const \hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type)
+\begin{DoxyCompactList}\small\item\em Used to place static structures in random places. Could be useful for spawning enemy space stations in the future. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a3b08f92bb3489f1181d2e8efd5346a56}{update} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the universe by a given timestep. Physics/\-A\-I and rendering is decoupled, so this may be called multiple times in between each draw-\/call. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a7a1e6c6398b6a51e5e86e1f31efbb895}{void \hyperlink{classuniverse_a7a1e6c6398b6a51e5e86e1f31efbb895}{clear} ()}\label{classuniverse_a7a1e6c6398b6a51e5e86e1f31efbb895}
+
+\begin{DoxyCompactList}\small\item\em Clears the renderer. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a12f3e6d74426ea1165947ec072995eeb}{draw} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Draws the universe to the screen. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a2c7ae3efb623c29b37154726127c2d64}{void \hyperlink{classuniverse_a2c7ae3efb623c29b37154726127c2d64}{draw\-U\-I} ()}\label{classuniverse_a2c7ae3efb623c29b37154726127c2d64}
+
+\begin{DoxyCompactList}\small\item\em Draws the user interface to the screen. Does not handle user input. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a62ca92c3e40069cbf3a411c1a4a696b1}{void \hyperlink{classuniverse_a62ca92c3e40069cbf3a411c1a4a696b1}{swap} ()}\label{classuniverse_a62ca92c3e40069cbf3a411c1a4a696b1}
+
+\begin{DoxyCompactList}\small\item\em Updates the renderer. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_afd96a7a54d67a2f87a6c4542fb974f53}{detect\-Collisions} (const S\-D\-L\-\_\-\-Rect \-\_\-box, std\-::vector$<$ \hyperlink{classenemy}{enemy} $\ast$ $>$ \-\_\-ships, std\-::vector$<$ \hyperlink{classlaser}{laser} $\ast$ $>$ \-\_\-lasers, std\-::vector$<$ \hyperlink{classmissile}{missile} $\ast$ $>$ \-\_\-rockets, std\-::vector$<$ \hyperlink{classship}{ship} $\ast$ $>$ \-\_\-rocks, unsigned short int \-\_\-lvl)
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} broad phase, this is used to detect entities which are close to one another. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a5ca840e2d9777dd97867d360ae4d089f}{void \hyperlink{classuniverse_a5ca840e2d9777dd97867d360ae4d089f}{check\-Collisions} ()}\label{classuniverse_a5ca840e2d9777dd97867d360ae4d089f}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} narrow phase, this checks through the partitioned entities in detail. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a76efbef30d81b0893bbefbbb95697696}{addpfx} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec3}{vec3} \-\_\-v, const \hyperlink{structvec3}{vec3} \-\_\-wv, const int \-\_\-no, const float \-\_\-f)
+\begin{DoxyCompactList}\small\item\em Adds a particle system to the universe. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a1b868fe830fa921552b8d852ed74db1d}{add\-Particle\-Sprite} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec3}{vec3} \-\_\-v, const std\-::string \-\_\-tex)
+\begin{DoxyCompactList}\small\item\em Adds a particle sprite to the universe. This is a bit of a misnomer, since the opengl renderer uses billboards + glsl. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a4e6b1f07fdd28f8308499015855ddead}{std\-::vector$<$ \hyperlink{classenemy}{enemy} $>$ $\ast$ \hyperlink{classuniverse_a4e6b1f07fdd28f8308499015855ddead}{get\-Agents} ()}\label{classuniverse_a4e6b1f07fdd28f8308499015855ddead}
+
+\begin{DoxyCompactList}\small\item\em Gets a pointer to the agents vector. Mostly a quick and dirty way of doing stuff in the tutorial, and for file operations. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_ab93032a40b560a5059aa404450d08b20}{std\-::vector$<$ \hyperlink{classlaser}{laser} $>$ $\ast$ \hyperlink{classuniverse_ab93032a40b560a5059aa404450d08b20}{get\-Shots} ()}\label{classuniverse_ab93032a40b560a5059aa404450d08b20}
+
+\begin{DoxyCompactList}\small\item\em Gets a pointer to the laser vector. Mostly used for saving and loading the game. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_ab2639f597a44279b69fec654b2790f1f}{std\-::vector$<$ \hyperlink{classmissile}{missile} $>$ $\ast$ \hyperlink{classuniverse_ab2639f597a44279b69fec654b2790f1f}{get\-Missiles} ()}\label{classuniverse_ab2639f597a44279b69fec654b2790f1f}
+
+\begin{DoxyCompactList}\small\item\em Gets a pointer to the missile vector. Mostly used for saving and loading the game. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_af16581985c050c653eac9381d619f4b8}{std\-::vector$<$ \hyperlink{classship}{ship} $>$ $\ast$ \hyperlink{classuniverse_af16581985c050c653eac9381d619f4b8}{get\-Asteroids} ()}\label{classuniverse_af16581985c050c653eac9381d619f4b8}
+
+\begin{DoxyCompactList}\small\item\em Gets a pointer to the asteroid vector. Mostly used for saving and loading the game. \end{DoxyCompactList}\item 
+\hyperlink{classship}{ship} $\ast$ \hyperlink{classuniverse_a62c18e794bc3f09e1a724b8588ee46a4}{closest\-Enemy} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t)
+\begin{DoxyCompactList}\small\item\em Gets the closest enemy to a given point in space, mostly used for missile tracking. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_ab23b66c1edc3f954997475cdc0c9cd4a}{void \hyperlink{classuniverse_ab23b66c1edc3f954997475cdc0c9cd4a}{set\-Score} (const int \-\_\-s)}\label{classuniverse_ab23b66c1edc3f954997475cdc0c9cd4a}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for the score. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a6b615a23dcbb9b55c07ed301101b99ea}{void {\bfseries add\-Score} (const int \-\_\-s)}\label{classuniverse_a6b615a23dcbb9b55c07ed301101b99ea}
+
+\item 
+\hypertarget{classuniverse_a1d401f812d523ba736f2e2adc858c2e5}{int {\bfseries get\-Score} () const }\label{classuniverse_a1d401f812d523ba736f2e2adc858c2e5}
+
+\item 
+\hypertarget{classuniverse_a8b31cce5565fdd692fdbb476c6e54257}{int $\ast$ {\bfseries get\-Score\-Pt} ()}\label{classuniverse_a8b31cce5565fdd692fdbb476c6e54257}
+
+\item 
+\hypertarget{classuniverse_a618ef9595ad161031dacb3909a694330}{int \hyperlink{classuniverse_a618ef9595ad161031dacb3909a694330}{get\-Max\-Enemy\-Count} (\hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t) const }\label{classuniverse_a618ef9595ad161031dacb3909a694330}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the max enemy count. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a70b6a09e9fa7a93b65f1d6182f86181e}{void {\bfseries set\-Max\-Enemy\-Count} (const int m, const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t)}\label{classuniverse_a70b6a09e9fa7a93b65f1d6182f86181e}
+
+\item 
+\hypertarget{classuniverse_a02a9b87c10d761ba90bddcba429c8840}{int \hyperlink{classuniverse_a02a9b87c10d761ba90bddcba429c8840}{get\-Enemy\-Count} (\hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t) const }\label{classuniverse_a02a9b87c10d761ba90bddcba429c8840}
+
+\begin{DoxyCompactList}\small\item\em Getter for the enemy count. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a2f92ca94b16cb4734cc51b673488cd0d}{int \hyperlink{classuniverse_a2f92ca94b16cb4734cc51b673488cd0d}{get\-Max\-Wingman\-Count} () const }\label{classuniverse_a2f92ca94b16cb4734cc51b673488cd0d}
+
+\begin{DoxyCompactList}\small\item\em Getter for the max wingman count. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a200ab28e86c28228088919c3e667d90d}{void {\bfseries set\-Max\-Wingman\-Count} (const int m)}\label{classuniverse_a200ab28e86c28228088919c3e667d90d}
+
+\item 
+\hypertarget{classuniverse_a6889a4cb6b8aaecd6c8abe363c8a80ec}{int \hyperlink{classuniverse_a6889a4cb6b8aaecd6c8abe363c8a80ec}{get\-Max\-Miner\-Count} () const }\label{classuniverse_a6889a4cb6b8aaecd6c8abe363c8a80ec}
+
+\begin{DoxyCompactList}\small\item\em Getter for the max miner count. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a7e45dbd5f966aec0b90ba9d122586637}{void {\bfseries set\-Max\-Miner\-Count} (const int m)}\label{classuniverse_a7e45dbd5f966aec0b90ba9d122586637}
+
+\item 
+\hypertarget{classuniverse_aaaca317c6f2a23053c28550580e16d5c}{bool \hyperlink{classuniverse_aaaca317c6f2a23053c28550580e16d5c}{at\-Max\-Count} (\hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t) const }\label{classuniverse_aaaca317c6f2a23053c28550580e16d5c}
+
+\begin{DoxyCompactList}\small\item\em Check to see if a given faction has reached its max count. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_aa3bb66d17df83723a112dc75cd44fdcc}{reload} (const bool \-\_\-new\-Game)
+\begin{DoxyCompactList}\small\item\em Resets the universe, and clears containers. Used to start a new game. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a7246a93d0a18354e7b35f7f48f595ffa}{void \hyperlink{classuniverse_a7246a93d0a18354e7b35f7f48f595ffa}{load\-Ships} ()}\label{classuniverse_a7246a93d0a18354e7b35f7f48f595ffa}
+
+\begin{DoxyCompactList}\small\item\em Fills g\-\_\-ship\-\_\-templates, which we can copy from later on. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_ac311a26eb9b23ee745e93b94f358e6fb}{void \hyperlink{classuniverse_ac311a26eb9b23ee745e93b94f358e6fb}{pause} ()}\label{classuniverse_ac311a26eb9b23ee745e93b94f358e6fb}
+
+\begin{DoxyCompactList}\small\item\em Getter and setters for game pause. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a45ec0b47345bb1d4dc324f09100e9286}{void {\bfseries set\-Pause} (bool \-\_\-p)}\label{classuniverse_a45ec0b47345bb1d4dc324f09100e9286}
+
+\item 
+\hypertarget{classuniverse_ad5cc400800e499f80e1e7722515bc216}{bool {\bfseries is\-Paused} () const }\label{classuniverse_ad5cc400800e499f80e1e7722515bc216}
+
+\item 
+\hypertarget{classuniverse_a65fe9d463d02b0fbed6e1dc28b6657cb}{\hyperlink{classui_1_1user_interface}{ui\-::user\-Interface} $\ast$ \hyperlink{classuniverse_a65fe9d463d02b0fbed6e1dc28b6657cb}{get\-U\-I} ()}\label{classuniverse_a65fe9d463d02b0fbed6e1dc28b6657cb}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the U\-I. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a78ad78159c1e509f091cd0fac62a5fc1}{\hyperlink{classui_1_1user_interface}{ui\-::user\-Interface} {\bfseries set\-U\-I} (\hyperlink{classui_1_1user_interface}{ui\-::user\-Interface} \-\_\-i)}\label{classuniverse_a78ad78159c1e509f091cd0fac62a5fc1}
+
+\item 
+bool \hyperlink{classuniverse_a09a2c776eb45b5667e096ff9881c5e77}{upgrade\-Callback} (const int \-\_\-sel, const int \-\_\-btn)
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} function to tell whether we are allowed to upgrade (compares cost vs score etc). \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a1c7652330bd49d9f01e9ab32f89d90c9}{void {\bfseries upgrade\-Set\-Labels} (const int \-\_\-sel, const int \-\_\-btn, const int \-\_\-plvl)}\label{classuniverse_a1c7652330bd49d9f01e9ab32f89d90c9}
+
+\item 
+\hypertarget{classuniverse_ab2890c3b19620f5bbefbb31fce0774d7}{void \hyperlink{classuniverse_ab2890c3b19620f5bbefbb31fce0774d7}{set\-Mouse\-State} (const int \-\_\-i)}\label{classuniverse_ab2890c3b19620f5bbefbb31fce0774d7}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the mouse state. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a1c4472798eb406c841e46015d1ef418a}{int {\bfseries get\-Mouse\-State} () const }\label{classuniverse_a1c4472798eb406c841e46015d1ef418a}
+
+\item 
+void \hyperlink{classuniverse_a5125ff87385bdd80c1e96f302e0594f6}{add\-To\-Squad} (\hyperlink{classenemy}{enemy} $\ast$\-\_\-e, \hyperlink{structsquad}{squad} $\ast$\-\_\-s)
+\begin{DoxyCompactList}\small\item\em Adds a given enemy to a given squad. \end{DoxyCompactList}\item 
+void \hyperlink{classuniverse_a3af60fa4c1b4e0c691c940f0d9e2af88}{remove\-From\-Squad} (\hyperlink{classenemy}{enemy} $\ast$\-\_\-e, \hyperlink{structsquad}{squad} $\ast$\-\_\-s)
+\begin{DoxyCompactList}\small\item\em Removes a given enemy from a given squad. Requires you know which squad it is in. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_ac067d5e3b2a77871d317538d86638078}{void \hyperlink{classuniverse_ac067d5e3b2a77871d317538d86638078}{create\-Factions} ()}\label{classuniverse_ac067d5e3b2a77871d317538d86638078}
+
+\begin{DoxyCompactList}\small\item\em Creates the factions and stores them in m\-\_\-factions. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a1069edc3188cbb18edc64d73c3f9cce0}{\hyperlink{structsquad}{squad} $\ast$ \hyperlink{classuniverse_a1069edc3188cbb18edc64d73c3f9cce0}{get\-Squad\-From\-I\-D} (int \-\_\-id)}\label{classuniverse_a1069edc3188cbb18edc64d73c3f9cce0}
+
+\begin{DoxyCompactList}\small\item\em Given a squad I\-D, returns the associated squad. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a510e65884b42bae6d4e5469a476bd9e0}{\hyperlink{classrenderer__ngl}{renderer\-\_\-ngl} $\ast$ \hyperlink{classuniverse_a510e65884b42bae6d4e5469a476bd9e0}{get\-Renderer} ()}\label{classuniverse_a510e65884b42bae6d4e5469a476bd9e0}
+
+\begin{DoxyCompactList}\small\item\em Returns the renderer. Mostly used to hack text into the tutorial. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a14b80a5ddef84ee3dff40cd2d4a394b3}{bool \hyperlink{classuniverse_a14b80a5ddef84ee3dff40cd2d4a394b3}{is\-Esc\-Menu\-Shown} ()}\label{classuniverse_a14b80a5ddef84ee3dff40cd2d4a394b3}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the boolean associated with the in game options menu display. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a70c60dc136b8466aee31f314bbaa20c8}{void {\bfseries esc\-Menu\-Tog} ()}\label{classuniverse_a70c60dc136b8466aee31f314bbaa20c8}
+
+\item 
+\hypertarget{classuniverse_aeac69d5ee3f92bbfd9a66ed9ce41df82}{bool \hyperlink{classuniverse_aeac69d5ee3f92bbfd9a66ed9ce41df82}{U\-I\-Visible} () const }\label{classuniverse_aeac69d5ee3f92bbfd9a66ed9ce41df82}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for U\-I visibility. \end{DoxyCompactList}\item 
+\hypertarget{classuniverse_a096b56203fa8b57e10b7bc7f57eb6861}{void {\bfseries set\-U\-I\-Visible} (const bool \-\_\-b)}\label{classuniverse_a096b56203fa8b57e10b7bc7f57eb6861}
+
+\item 
+\hypertarget{classuniverse_a4756c43cd7d9852d1fa1a3b6e241a57c}{void {\bfseries toggle\-U\-I\-Visible} ()}\label{classuniverse_a4756c43cd7d9852d1fa1a3b6e241a57c}
+
+\item 
+void \hyperlink{classuniverse_a71dd4cdc7489ee3d8daabf37e3b65e3d}{ship\-Add\-Parent} (\hyperlink{classship}{ship} $\ast$\-\_\-parent, \hyperlink{classship}{ship} $\ast$\-\_\-child, \hyperlink{structvec3}{vec3} \-\_\-offset)
+\begin{DoxyCompactList}\small\item\em Gives a ship a parent, and an offset from said parent. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is huge, and touches almost every part of the game. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classuniverse_ad058c50da21f46d2eecb276254b79fb1}{\index{universe@{universe}!add\-Build@{add\-Build}}
+\index{add\-Build@{add\-Build}!universe@{universe}}
+\subsubsection[{add\-Build}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::add\-Build (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf ship\-\_\-spec}}]{\-\_\-type}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_ad058c50da21f46d2eecb276254b79fb1}
+
+
+Used to place static structures into the world, although under the hood it just spawns a ship with a given classification. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-type} & ship classification \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_aa7edd0f87d1ec40806203444edf84614}{\index{universe@{universe}!add\-Build@{add\-Build}}
+\index{add\-Build@{add\-Build}!universe@{universe}}
+\subsubsection[{add\-Build}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::add\-Build (
+\begin{DoxyParamCaption}
+\item[{const {\bf ship\-\_\-spec}}]{\-\_\-type}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_aa7edd0f87d1ec40806203444edf84614}
+
+
+Used to place static structures in random places. Could be useful for spawning enemy space stations in the future. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-type} & ship classification. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a84c5bf8acb410c81173e0de687fb8672}{\index{universe@{universe}!add\-Missile@{add\-Missile}}
+\index{add\-Missile@{add\-Missile}!universe@{universe}}
+\subsubsection[{add\-Missile}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::add\-Missile (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec3}}]{\-\_\-v, }
+\item[{const float}]{\-\_\-angle, }
+\item[{const {\bf ai\-Team}}]{\-\_\-team}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a84c5bf8acb410c81173e0de687fb8672}
+
+
+Adds a missile to the universe. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-v} & velocity \\
+\hline
+{\em \-\_\-angle} & initial angle \\
+\hline
+{\em \-\_\-team} & source of the missile \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a1b868fe830fa921552b8d852ed74db1d}{\index{universe@{universe}!add\-Particle\-Sprite@{add\-Particle\-Sprite}}
+\index{add\-Particle\-Sprite@{add\-Particle\-Sprite}!universe@{universe}}
+\subsubsection[{add\-Particle\-Sprite}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::add\-Particle\-Sprite (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec3}}]{\-\_\-v, }
+\item[{const std\-::string}]{\-\_\-tex}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a1b868fe830fa921552b8d852ed74db1d}
+
+
+Adds a particle sprite to the universe. This is a bit of a misnomer, since the opengl renderer uses billboards + glsl. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-v} & velocity \\
+\hline
+{\em \-\_\-tex} & surface identifier ie \char`\"{}\-S\-M\-O\-K\-E\char`\"{}. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a76efbef30d81b0893bbefbbb95697696}{\index{universe@{universe}!addpfx@{addpfx}}
+\index{addpfx@{addpfx}!universe@{universe}}
+\subsubsection[{addpfx}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::addpfx (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec3}}]{\-\_\-v, }
+\item[{const {\bf vec3}}]{\-\_\-wv, }
+\item[{const int}]{\-\_\-no, }
+\item[{const float}]{\-\_\-f}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a76efbef30d81b0893bbefbbb95697696}
+
+
+Adds a particle system to the universe. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-type} & ship classification. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_aca6b40fadb1c8390469e6422d61b4c1c}{\index{universe@{universe}!add\-Shot@{add\-Shot}}
+\index{add\-Shot@{add\-Shot}!universe@{universe}}
+\subsubsection[{add\-Shot}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::add\-Shot (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec3}}]{\-\_\-v, }
+\item[{const float}]{\-\_\-angle, }
+\item[{const std\-::array$<$ float, W\-E\-A\-P\-S\-\_\-\-W $>$}]{\-\_\-weap, }
+\item[{const {\bf ai\-Team}}]{\-\_\-team}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_aca6b40fadb1c8390469e6422d61b4c1c}
+
+
+Adds a laser to the universe. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-v} & velocity \\
+\hline
+{\em \-\_\-angle} & initial angle \\
+\hline
+{\em \-\_\-weap} & array of data such as damage \\
+\hline
+{\em \-\_\-team} & source of the shot \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a5125ff87385bdd80c1e96f302e0594f6}{\index{universe@{universe}!add\-To\-Squad@{add\-To\-Squad}}
+\index{add\-To\-Squad@{add\-To\-Squad}!universe@{universe}}
+\subsubsection[{add\-To\-Squad}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::add\-To\-Squad (
+\begin{DoxyParamCaption}
+\item[{{\bf enemy} $\ast$}]{\-\_\-e, }
+\item[{{\bf squad} $\ast$}]{\-\_\-s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classuniverse_a5125ff87385bdd80c1e96f302e0594f6}
+
+
+Adds a given enemy to a given squad. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-e} & enemy to add \\
+\hline
+{\em \-\_\-s} & squad to add to \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a62c18e794bc3f09e1a724b8588ee46a4}{\index{universe@{universe}!closest\-Enemy@{closest\-Enemy}}
+\index{closest\-Enemy@{closest\-Enemy}!universe@{universe}}
+\subsubsection[{closest\-Enemy}]{\setlength{\rightskip}{0pt plus 5cm}{\bf ship} $\ast$ universe\-::closest\-Enemy (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf ai\-Team}}]{\-\_\-t}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a62c18e794bc3f09e1a724b8588ee46a4}
+
+
+Gets the closest enemy to a given point in space, mostly used for missile tracking. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-t} & team to check against \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_afd96a7a54d67a2f87a6c4542fb974f53}{\index{universe@{universe}!detect\-Collisions@{detect\-Collisions}}
+\index{detect\-Collisions@{detect\-Collisions}!universe@{universe}}
+\subsubsection[{detect\-Collisions}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::detect\-Collisions (
+\begin{DoxyParamCaption}
+\item[{const S\-D\-L\-\_\-\-Rect}]{\-\_\-box, }
+\item[{std\-::vector$<$ {\bf enemy} $\ast$ $>$}]{\-\_\-ships, }
+\item[{std\-::vector$<$ {\bf laser} $\ast$ $>$}]{\-\_\-lasers, }
+\item[{std\-::vector$<$ {\bf missile} $\ast$ $>$}]{\-\_\-rockets, }
+\item[{std\-::vector$<$ {\bf ship} $\ast$ $>$}]{\-\_\-rocks, }
+\item[{unsigned short int}]{\-\_\-lvl}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_afd96a7a54d67a2f87a6c4542fb974f53}
+
+
+\hyperlink{struct_a}{A} broad phase, this is used to detect entities which are close to one another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-box} & Bounding box enclosing the entities to be sorted, \\
+\hline
+{\em \-\_\-ships} & references to ships to be sorted \\
+\hline
+{\em \-\_\-lasers} & references to lasers to be sorted \\
+\hline
+{\em \-\_\-rockets} & references to missiles to be sorted \\
+\hline
+{\em \-\_\-rocks} & references to asteroids to be sorted \\
+\hline
+{\em \-\_\-lvl} & current level of recursion \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a12f3e6d74426ea1165947ec072995eeb}{\index{universe@{universe}!draw@{draw}}
+\index{draw@{draw}!universe@{universe}}
+\subsubsection[{draw}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::draw (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a12f3e6d74426ea1165947ec072995eeb}
+
+
+Draws the universe to the screen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference, we can linearly interpolate objects being drawn to ensure that their movement is continuous. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_ad711d97b18ae3f9e35535bf04dd3b0af}{\index{universe@{universe}!get\-Random\-Ship\-Type@{get\-Random\-Ship\-Type}}
+\index{get\-Random\-Ship\-Type@{get\-Random\-Ship\-Type}!universe@{universe}}
+\subsubsection[{get\-Random\-Ship\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf ship\-\_\-spec} universe\-::get\-Random\-Ship\-Type (
+\begin{DoxyParamCaption}
+\item[{const {\bf ai\-Team}}]{\-\_\-t}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_ad711d97b18ae3f9e35535bf04dd3b0af}
+
+
+Returns a (weighted) random ship type from a given faction. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-t} & ship faction. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_aa3bb66d17df83723a112dc75cd44fdcc}{\index{universe@{universe}!reload@{reload}}
+\index{reload@{reload}!universe@{universe}}
+\subsubsection[{reload}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::reload (
+\begin{DoxyParamCaption}
+\item[{const bool}]{\-\_\-new\-Game}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_aa3bb66d17df83723a112dc75cd44fdcc}
+
+
+Resets the universe, and clears containers. Used to start a new game. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-new\-Game} & whether we are starting a new game. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a3af60fa4c1b4e0c691c940f0d9e2af88}{\index{universe@{universe}!remove\-From\-Squad@{remove\-From\-Squad}}
+\index{remove\-From\-Squad@{remove\-From\-Squad}!universe@{universe}}
+\subsubsection[{remove\-From\-Squad}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::remove\-From\-Squad (
+\begin{DoxyParamCaption}
+\item[{{\bf enemy} $\ast$}]{\-\_\-e, }
+\item[{{\bf squad} $\ast$}]{\-\_\-s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classuniverse_a3af60fa4c1b4e0c691c940f0d9e2af88}
+
+
+Removes a given enemy from a given squad. Requires you know which squad it is in. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-e} & enemy to remove \\
+\hline
+{\em \-\_\-s} & squad to remove from \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a71dd4cdc7489ee3d8daabf37e3b65e3d}{\index{universe@{universe}!ship\-Add\-Parent@{ship\-Add\-Parent}}
+\index{ship\-Add\-Parent@{ship\-Add\-Parent}!universe@{universe}}
+\subsubsection[{ship\-Add\-Parent}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::ship\-Add\-Parent (
+\begin{DoxyParamCaption}
+\item[{{\bf ship} $\ast$}]{\-\_\-parent, }
+\item[{{\bf ship} $\ast$}]{\-\_\-child, }
+\item[{{\bf vec3}}]{\-\_\-offset}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a71dd4cdc7489ee3d8daabf37e3b65e3d}
+
+
+Gives a ship a parent, and an offset from said parent. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-parent} & parent ship \\
+\hline
+{\em \-\_\-child} & child ship \\
+\hline
+{\em \-\_\-offset} & childs offset from the parent \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_afcfa317aadb3a1477e76e2fd8caff1e7}{\index{universe@{universe}!spawn\-Ship@{spawn\-Ship}}
+\index{spawn\-Ship@{spawn\-Ship}!universe@{universe}}
+\subsubsection[{spawn\-Ship}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::spawn\-Ship (
+\begin{DoxyParamCaption}
+\item[{const {\bf ai\-Team}}]{\-\_\-t}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_afcfa317aadb3a1477e76e2fd8caff1e7}
+
+
+Adds a ship to the universe, with a random faction and type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-t} & team of the ship \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a74264fec3d84faf13ab70248be7469c5}{\index{universe@{universe}!spawn\-Ship@{spawn\-Ship}}
+\index{spawn\-Ship@{spawn\-Ship}!universe@{universe}}
+\subsubsection[{spawn\-Ship}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::spawn\-Ship (
+\begin{DoxyParamCaption}
+\item[{const {\bf ship\-\_\-spec}}]{\-\_\-type, }
+\item[{const {\bf ai\-Team}}]{\-\_\-t, }
+\item[{const {\bf vec3}}]{\-\_\-p}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a74264fec3d84faf13ab70248be7469c5}
+
+
+Adds a ship to the universe, with a specified position and type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-type} & ship class \\
+\hline
+{\em \-\_\-t} & team of the ship \\
+\hline
+{\em \-\_\-p} & position \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a4da6321942cd454ac4cadc8d3ccb1740}{\index{universe@{universe}!spawn\-Squad@{spawn\-Squad}}
+\index{spawn\-Squad@{spawn\-Squad}!universe@{universe}}
+\subsubsection[{spawn\-Squad}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::spawn\-Squad (
+\begin{DoxyParamCaption}
+\item[{const {\bf ai\-Team}}]{\-\_\-t, }
+\item[{const float}]{\-\_\-min, }
+\item[{const float}]{\-\_\-max, }
+\item[{const int}]{\-\_\-i}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a4da6321942cd454ac4cadc8d3ccb1740}
+
+
+Spawns a series of ships. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-t} & team of the ships \\
+\hline
+{\em \-\_\-min} & minumum distance from origin \\
+\hline
+{\em \-\_\-max} & maximum distance from origin \\
+\hline
+{\em \-\_\-i} & number of ships to spawn \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a3b08f92bb3489f1181d2e8efd5346a56}{\index{universe@{universe}!update@{update}}
+\index{update@{update}!universe@{universe}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void universe\-::update (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a3b08f92bb3489f1181d2e8efd5346a56}
+
+
+Updates the universe by a given timestep. Physics/\-A\-I and rendering is decoupled, so this may be called multiple times in between each draw-\/call. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classuniverse_a09a2c776eb45b5667e096ff9881c5e77}{\index{universe@{universe}!upgrade\-Callback@{upgrade\-Callback}}
+\index{upgrade\-Callback@{upgrade\-Callback}!universe@{universe}}
+\subsubsection[{upgrade\-Callback}]{\setlength{\rightskip}{0pt plus 5cm}bool universe\-::upgrade\-Callback (
+\begin{DoxyParamCaption}
+\item[{const int}]{\-\_\-sel, }
+\item[{const int}]{\-\_\-btn}
+\end{DoxyParamCaption}
+)}}\label{classuniverse_a09a2c776eb45b5667e096ff9881c5e77}
+
+
+\hyperlink{struct_a}{A} function to tell whether we are allowed to upgrade (compares cost vs score etc). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-sel} & selection menu triggered \\
+\hline
+{\em \-\_\-btn} & button triggered \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{universe_8hpp}{universe.\-hpp}\item 
+src/universe.\-cpp\end{DoxyCompactItemize}

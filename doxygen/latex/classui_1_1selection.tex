@@ -1,0 +1,96 @@
+\hypertarget{classui_1_1selection}{\section{ui\-:\-:selection Class Reference}
+\label{classui_1_1selection}\index{ui\-::selection@{ui\-::selection}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classui_1_1selection_a738dc36d00684bfa3546afaa7e15a1fe}{\hyperlink{classui_1_1selection_a738dc36d00684bfa3546afaa7e15a1fe}{selection} ()}\label{classui_1_1selection_a738dc36d00684bfa3546afaa7e15a1fe}
+
+\begin{DoxyCompactList}\small\item\em ctor for the selection class. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_acb0698da739939001d4c4c38b2097422}{std\-::vector$<$ \hyperlink{classui_1_1button}{button} $>$ $\ast$ \hyperlink{classui_1_1selection_acb0698da739939001d4c4c38b2097422}{get\-Buttons} ()}\label{classui_1_1selection_acb0698da739939001d4c4c38b2097422}
+
+\begin{DoxyCompactList}\small\item\em Returns a pointer to the buttons. Used to draw them and alter them from within the universe class. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_af5d17f3015927ba212c13e30c525638d}{int \hyperlink{classui_1_1selection_af5d17f3015927ba212c13e30c525638d}{get\-Selected} ()}\label{classui_1_1selection_af5d17f3015927ba212c13e30c525638d}
+
+\begin{DoxyCompactList}\small\item\em Returns the index of the currently selected button. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_a89ae0261dbc75bed20e4749e63530b4a}{void \hyperlink{classui_1_1selection_a89ae0261dbc75bed20e4749e63530b4a}{add} (const \hyperlink{classui_1_1button}{button} b)}\label{classui_1_1selection_a89ae0261dbc75bed20e4749e63530b4a}
+
+\begin{DoxyCompactList}\small\item\em Adds a given button. \end{DoxyCompactList}\item 
+bool \hyperlink{classui_1_1selection_a6ad3cac61fc06b2fa42e34414a451e5c}{click} (\hyperlink{structvec2}{vec2} \-\_\-p)
+\begin{DoxyCompactList}\small\item\em Returns whether a click at a specific point has selected a button. \end{DoxyCompactList}\item 
+\hyperlink{classui_1_1button}{button} $\ast$ \hyperlink{classui_1_1selection_a7115901e3bccf2124257e4940325eae9}{get\-At} (size\-\_\-t \-\_\-i)
+\begin{DoxyCompactList}\small\item\em Returns a pointer to the button at a specific index. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_a3722c2936a44bafaa7b9cd384e99cd38}{void \hyperlink{classui_1_1selection_a3722c2936a44bafaa7b9cd384e99cd38}{reset} ()}\label{classui_1_1selection_a3722c2936a44bafaa7b9cd384e99cd38}
+
+\begin{DoxyCompactList}\small\item\em Resets the menu to its initial state. \end{DoxyCompactList}\item 
+void \hyperlink{classui_1_1selection_ad5a4ebe39592a9c3f0ba0466cefd2dc3}{update} (int \-\_\-s)
+\begin{DoxyCompactList}\small\item\em Updates the menu, and all of its buttons. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_a5b36fe0d746308833ef47577d15836c3}{void \hyperlink{classui_1_1selection_a5b36fe0d746308833ef47577d15836c3}{clear} ()}\label{classui_1_1selection_a5b36fe0d746308833ef47577d15836c3}
+
+\begin{DoxyCompactList}\small\item\em Removes all buttons. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_ac9eea8598aafeef507019e0ce7195cee}{bool \hyperlink{classui_1_1selection_ac9eea8598aafeef507019e0ce7195cee}{is\-Visible} () const }\label{classui_1_1selection_ac9eea8598aafeef507019e0ce7195cee}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for visibility. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1selection_a7bbe45ce076b17aceef7bf2b6e504b2e}{void {\bfseries set\-Visible} (const bool \-\_\-visibility)}\label{classui_1_1selection_a7bbe45ce076b17aceef7bf2b6e504b2e}
+
+\item 
+\hypertarget{classui_1_1selection_a97bfa895540b3f19a732c068fcfae316}{void \hyperlink{classui_1_1selection_a97bfa895540b3f19a732c068fcfae316}{toggle\-Visible} ()}\label{classui_1_1selection_a97bfa895540b3f19a732c068fcfae316}
+
+\begin{DoxyCompactList}\small\item\em Toggles menu visibility. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classui_1_1selection_a6ad3cac61fc06b2fa42e34414a451e5c}{\index{ui\-::selection@{ui\-::selection}!click@{click}}
+\index{click@{click}!ui::selection@{ui\-::selection}}
+\subsubsection[{click}]{\setlength{\rightskip}{0pt plus 5cm}bool selection\-::click (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-p}
+\end{DoxyParamCaption}
+)}}\label{classui_1_1selection_a6ad3cac61fc06b2fa42e34414a451e5c}
+
+
+Returns whether a click at a specific point has selected a button. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position of mouse. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1selection_a7115901e3bccf2124257e4940325eae9}{\index{ui\-::selection@{ui\-::selection}!get\-At@{get\-At}}
+\index{get\-At@{get\-At}!ui::selection@{ui\-::selection}}
+\subsubsection[{get\-At}]{\setlength{\rightskip}{0pt plus 5cm}{\bf button}$\ast$ ui\-::selection\-::get\-At (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{\-\_\-i}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classui_1_1selection_a7115901e3bccf2124257e4940325eae9}
+
+
+Returns a pointer to the button at a specific index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-i} & index of the button. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1selection_ad5a4ebe39592a9c3f0ba0466cefd2dc3}{\index{ui\-::selection@{ui\-::selection}!update@{update}}
+\index{update@{update}!ui::selection@{ui\-::selection}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void selection\-::update (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-s}
+\end{DoxyParamCaption}
+)}}\label{classui_1_1selection_ad5a4ebe39592a9c3f0ba0466cefd2dc3}
+
+
+Updates the menu, and all of its buttons. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & current score. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/ui/\hyperlink{selection_8hpp}{selection.\-hpp}\item 
+src/ui/selection.\-cpp\end{DoxyCompactItemize}

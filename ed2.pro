@@ -25,8 +25,7 @@ SOURCES += $$PWD/main.cpp \
            $$PWD/src/*.cpp \
            $$PWD/src/ui/*.cpp
 
-HEADERS += $$PWD/include/base.hpp \
-           $$PWD/include/*.hpp \
+HEADERS += $$PWD/include/*.hpp \
            $$PWD/include/ui/*.hpp
 
 CONFIG += console

@@ -1,0 +1,123 @@
+\hypertarget{classenemy}{\section{enemy Class Reference}
+\label{classenemy}\index{enemy@{enemy}}
+}
+
+
+Builds upon the ship class, adding variables like team, goal, targets etc.  
+
+
+
+
+{\ttfamily \#include $<$enemy.\-hpp$>$}
+
+Inheritance diagram for enemy\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classenemy}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classenemy_acca194a2f379300a8ee019ab3bb36298}{enemy} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec3}{vec3} \-\_\-v, const \hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type, const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-team)
+\begin{DoxyCompactList}\small\item\em ctor for the enemy class \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a98c55268826433d0b9ad4b1f1e7075fa}{void \hyperlink{classenemy_a98c55268826433d0b9ad4b1f1e7075fa}{set\-Goal} (\hyperlink{enemy_8hpp_a6e73eb3e8e86f5922e45adeb450ceb1e}{ai\-Goal} \-\_\-g)}\label{classenemy_a98c55268826433d0b9ad4b1f1e7075fa}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for curent goal. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a0cda47391d310982f33059297f6aa947}{\hyperlink{enemy_8hpp_a6e73eb3e8e86f5922e45adeb450ceb1e}{ai\-Goal} {\bfseries get\-Goal} ()}\label{classenemy_a0cda47391d310982f33059297f6aa947}
+
+\item 
+void \hyperlink{classenemy_a98c0bb6881129829530c2dddb46e7c3b}{behvr\-Update} (float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the behaviour of the agent, based on any target it has, and its relative position. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a335001d4aa50011d3031f637cc8bc19f}{void \hyperlink{classenemy_a335001d4aa50011d3031f637cc8bc19f}{steering} ()}\label{classenemy_a335001d4aa50011d3031f637cc8bc19f}
+
+\begin{DoxyCompactList}\small\item\em Applies forces to the agent, attempting to steer it towards the target. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a3d219aef97dd32ff974b67301875b553}{\hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \hyperlink{classenemy_a3d219aef97dd32ff974b67301875b553}{get\-Team} () const }\label{classenemy_a3d219aef97dd32ff974b67301875b553}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the team. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a38fea22ce884d392db8a48e91cdbfc44}{void {\bfseries set\-Team} (const \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \-\_\-t)}\label{classenemy_a38fea22ce884d392db8a48e91cdbfc44}
+
+\item 
+\hypertarget{classenemy_a8e33a832e8a4d8fb36b5515d9a135100}{\hyperlink{classship}{ship} $\ast$ \hyperlink{classenemy_a8e33a832e8a4d8fb36b5515d9a135100}{get\-Target} () const }\label{classenemy_a8e33a832e8a4d8fb36b5515d9a135100}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the target. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a4e1afdb5ec33f9a822274f4a91c08fb4}{void {\bfseries set\-Target} (\hyperlink{classship}{ship} $\ast$\-\_\-t)}\label{classenemy_a4e1afdb5ec33f9a822274f4a91c08fb4}
+
+\item 
+\hypertarget{classenemy_aa5c138596d70d5a05198706dc9bda3f2}{float \hyperlink{classenemy_aa5c138596d70d5a05198706dc9bda3f2}{get\-Confidence} ()}\label{classenemy_aa5c138596d70d5a05198706dc9bda3f2}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for confidence. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a9286b2d085a9a4ce18ad4e8c8fa8c9b1}{void {\bfseries set\-Confidence} (float c)}\label{classenemy_a9286b2d085a9a4ce18ad4e8c8fa8c9b1}
+
+\item 
+\hypertarget{classenemy_af1ae4819d9fc4618a43a63aca51846df}{void {\bfseries decr\-Confidence} (float d)}\label{classenemy_af1ae4819d9fc4618a43a63aca51846df}
+
+\item 
+\hypertarget{classenemy_ab0816a768444fd9882eeff8a6c029c11}{int \hyperlink{classenemy_ab0816a768444fd9882eeff8a6c029c11}{get\-Squad\-I\-D} () const }\label{classenemy_ab0816a768444fd9882eeff8a6c029c11}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for squad id. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_a5671bad5043e8c2501f25953e3926a33}{void {\bfseries set\-Squad\-I\-D} (int \-\_\-id)}\label{classenemy_a5671bad5043e8c2501f25953e3926a33}
+
+\item 
+\hypertarget{classenemy_ab8d678715024ec30ee700ffa58c4dae9}{void \hyperlink{classenemy_ab8d678715024ec30ee700ffa58c4dae9}{set\-T\-Pos} (\hyperlink{structvec3}{vec3} \-\_\-t\-Pos)}\label{classenemy_ab8d678715024ec30ee700ffa58c4dae9}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for the target position. \end{DoxyCompactList}\item 
+\hypertarget{classenemy_ad9c48b05b1055edbbd583188a0782466}{void {\bfseries set\-T\-Vel} (\hyperlink{structvec3}{vec3} \-\_\-t\-Vel)}\label{classenemy_ad9c48b05b1055edbbd583188a0782466}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Builds upon the ship class, adding variables like team, goal, targets etc. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classenemy_acca194a2f379300a8ee019ab3bb36298}{\index{enemy@{enemy}!enemy@{enemy}}
+\index{enemy@{enemy}!enemy@{enemy}}
+\subsubsection[{enemy}]{\setlength{\rightskip}{0pt plus 5cm}enemy\-::enemy (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec3}}]{\-\_\-v, }
+\item[{const {\bf ship\-\_\-spec}}]{\-\_\-type, }
+\item[{const {\bf ai\-Team}}]{\-\_\-team}
+\end{DoxyParamCaption}
+)}}\label{classenemy_acca194a2f379300a8ee019ab3bb36298}
+
+
+ctor for the enemy class 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-v} & velocity \\
+\hline
+{\em \-\_\-type} & the ship type (defined in the ship header) \\
+\hline
+{\em \-\_\-team} & the ai team of this agent \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classenemy_a98c0bb6881129829530c2dddb46e7c3b}{\index{enemy@{enemy}!behvr\-Update@{behvr\-Update}}
+\index{behvr\-Update@{behvr\-Update}!enemy@{enemy}}
+\subsubsection[{behvr\-Update}]{\setlength{\rightskip}{0pt plus 5cm}void enemy\-::behvr\-Update (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classenemy_a98c0bb6881129829530c2dddb46e7c3b}
+
+
+Updates the behaviour of the agent, based on any target it has, and its relative position. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference since last update \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{enemy_8hpp}{enemy.\-hpp}\item 
+src/enemy.\-cpp\end{DoxyCompactItemize}

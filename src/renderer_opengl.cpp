@@ -75,7 +75,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
                          ngl::Vec3(0,1,0));
 
 
-    float yOffset = g_WIN_HEIGHT * 0.025;
+    float yOffset = g_WIN_HEIGHT * 0.075;
     float divz = 1 / g_ZOOM_LEVEL;
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
@@ -106,7 +106,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     createShaderProgram("background", "backgroundVertex", "backgroundFragment");
     createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
     createShaderProgram("ship", "shipVertex", "shipFragment");
-    createShaderProgram("majorLazer", "laserVertex", "laserFragment");
+    createShaderProgram("laser", "laserVertex", "laserFragment");
     createShaderProgram("explosion", "explosionVertex", "explosionFragment");
     createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("smoke", "explosionVertex", "smokeFragment");
@@ -114,12 +114,12 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
-    m_shader->use("majorLazer");
+    m_shader->use("laser");
     m_shader->setRegisteredUniform("resolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
 
     m_shader->use("background");
     m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-    m_shader->setRegisteredUniform("iterations", (g_GRAPHICAL_DETAIL + 1.0f) * 4.0f);
+    m_shader->setRegisteredUniform("iterations", (g_GRAPHICAL_DETAIL + 2.0f) * 3.0f);
 
     loadAsset("COMMUNIST_1",         "commie_1");
     loadAsset("COMMUNIST_2",         "commie_2");
@@ -162,7 +162,6 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
     loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
     loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 20);
-
     loadFontSpriteSheet("pix90", g_RESOURCE_LOC + "fonts/pix.TTF", 60);
 
     glEnable(GL_BLEND);
@@ -223,12 +222,14 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
     m_pointVAO = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f)});
 
+
     m_shield = new ngl::Obj(g_RESOURCE_LOC + "models/shield.obj");
     m_shield->createVAO();
 }
 
 void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
 {
+    std::cout << "LOADING ASSET: " << _path << std::endl;
     std::vector<ngl::Obj*> models;
     models.push_back( loadObj(_path, "") );
     models.push_back( loadObj(_path, "_static") );
@@ -516,7 +517,8 @@ void renderer_ngl::update(const float _dt)
 
     float divz = 1 / g_ZOOM_LEVEL;
 
-    float yOffset = g_WIN_HEIGHT * 0.015;
+    float yOffset = g_WIN_HEIGHT * 0.075;
+
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
                 g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,

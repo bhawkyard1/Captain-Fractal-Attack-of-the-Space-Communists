@@ -8,7 +8,7 @@
 
 void saveGame(universe * uni)
 {
-    std::ofstream save(g_RESOURCE_LOC + "save.txt");
+    std::ofstream save( g_RESOURCE_LOC + "../" + "save.txt" );
 
     save 	<< "score " << uni->getScore() << std::endl
             << "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << std::endl
@@ -156,7 +156,7 @@ void readVectorAsteroid(std::string str, universe * _u)
 
 void loadGame(universe * uni)
 {
-    std::ifstream save(g_RESOURCE_LOC + "save.txt");
+    std::ifstream save(g_RESOURCE_LOC + "../" + "save.txt");
     std::string cur;
 
     while(getline( save, cur ))
@@ -210,7 +210,7 @@ void loadGame(universe * uni)
 
 void loadConfig()
 {
-  std::ifstream config( g_RESOURCE_LOC + "config.txt" );
+  std::ifstream config( g_RESOURCE_LOC + "../" + "config.txt" );
   std::string cur;
 
   while(getline( config, cur ))
@@ -225,6 +225,7 @@ void loadConfig()
       else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
       else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
       else if(strings[i] == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
+      else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
       else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
     }
   }
@@ -240,8 +241,8 @@ void loadConfig()
 
 void setConfigValue(const std::string _entry, const int _val)
 {
-  std::ifstream src(g_RESOURCE_LOC + "config.txt");
-  std::ofstream config(g_RESOURCE_LOC + "temp.txt");
+  std::ifstream src( g_RESOURCE_LOC + "../" + "config.txt");
+  std::ofstream config( g_RESOURCE_LOC + "../" + "temp.txt");
   std::string cur;
 
   while(getline( src, cur ))
@@ -261,6 +262,6 @@ void setConfigValue(const std::string _entry, const int _val)
   src.close();
   config.close();
 
-  std::remove((g_RESOURCE_LOC + "config.txt").c_str());
-  std::rename((g_RESOURCE_LOC + "temp.txt").c_str(), (g_RESOURCE_LOC + "config.txt").c_str());
+  std::remove(( g_RESOURCE_LOC + "../" + "config.txt").c_str());
+  std::rename(( g_RESOURCE_LOC + "../" + "temp.txt").c_str(), ( g_RESOURCE_LOC + "../" + "config.txt").c_str());
 }

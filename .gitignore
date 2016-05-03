@@ -6,7 +6,7 @@ MakeFile
 MakeFile.Debug
 MakeFile.Release
 "Captain Fractal- Attack of the Space Communists"
-resources/
 obj/
 moc/
+debug/
 *.ilk

@@ -54,6 +54,10 @@ ship::ship(
     m_hasParent = false;
     m_parent = -1;
 
+    for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
+    m_shieldMul = 1.0f;
+    m_generatorMul = 1.0f;
+
     switch(_type)
     {
     case COMMUNIST_1:
@@ -286,8 +290,9 @@ ship::ship(
         setMaxHealth(10.0f,true);
         setMaxShield(20.0f,true);
         setMaxEnergy(200.0f,true);
-        m_inertia = 0.3f;
-        m_enginePower = 2.0f;
+        m_inertia = 0.2f;
+        m_enginePower = 4.0f;
+        m_generatorMul = 5.0f;
         m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
         m_curWeap = 0;
         break;
@@ -390,10 +395,6 @@ ship::ship(
 
     m_priority = NONE;
 
-    for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
-    m_shieldMul = 1.0f;
-    m_generatorMul = 1.0f;
-
     m_classification = _type;
 
     m_radius = _radius;
@@ -440,7 +441,7 @@ ship::ship(
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
     m_shieldMul = 1.0f;
-    m_generatorMul = 1.0f;
+    m_generatorMul = _src.m_shieldMul;
 
     m_classification = _src.getClassification();
 
@@ -614,8 +615,8 @@ void ship::dodge(const float _side)
     }
 
     if(m_energy <= energyLoss) return;
-    vec2 vec = computeVector(getAng());
-    addVel(tovec3(vec )* _side * accelMult * m_inertia * m_enginePower);
+    vec2 avec = vec(getAng());
+    addVel( tovec3( avec )* _side * accelMult * m_inertia * m_enginePower );
     m_energy -= energyLoss * fabs(_side);
 }
 
@@ -686,7 +687,7 @@ void ship::setFiring(const bool _v)
 
 void ship::damage(float _d)
 {           
-    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
+    if(getShield() - _d > 0.0f) m_shieldGlow = 255.0f;
 
     float shieldDmg = clamp(_d, 0.0f, getShield());
     _d -= shieldDmg;
@@ -701,11 +702,11 @@ void ship::damage(float _d)
 
 void ship::damage(float _d, const vec2 _v)
 {
-    //std::cout << " dot " << dotProd1( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
+    //std::cout << " dot " << dotProd( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
     //Shots to the rear do more damage.
     if(m_canMove)
     {
-        _d *= (dotProd1( vec(m_angle + 90), unit(_v) ) / 2.0f) + 1.5f;
+        _d *= (dotProd( vec(m_angle + 90), unit(_v) ) / 2.0f) + 1.5f;
         addVel(tovec3(_v));
     }
 

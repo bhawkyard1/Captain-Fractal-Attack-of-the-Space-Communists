@@ -24,7 +24,9 @@ void enemy::behvrUpdate(float _dt)
 {
   if(m_target != nullptr)
   {
-    m_tPos = m_target->getPos();
+    float dist = mag(getPos() - m_target->getPos());
+    vec3 diff = (getPos() - m_target->getPos()) / dist;
+    m_tPos = m_target->getPos() - diff * fmin(m_target->getRadius(), dist);
     m_tVel = m_target->getVel();
   }
 
@@ -80,11 +82,11 @@ void enemy::steering()
   //This is the closing speed. Add player and ship vectors, find magnitude.
   //Initially I didn't know whether the vectors were converging or diverging.
   //I solved it by multiplying by the dot of the ship and m_target vectors.
-  float cSpd = mag( v - m_tVel ) * dotProd1(utv, uv);
+  float cSpd = mag( v - m_tVel ) * dotProd(utv, uv);
 
   //Whereas angleMul is all about the ships angle in relation to its m_target angle, this is about its vector in relation to its m_target angle.
   //ie where the ship is going vs where is should be going.
-  float vecMul = dotProd1(uv, utv);
+  float vecMul = dotProd(uv, utv);
 
   /*
         *The distance it will take the ship to stop, at max deceleration.
@@ -123,7 +125,7 @@ void enemy::steering()
 
   //If we are angled towards the m_target...
 
-  float tvMul = dotProd1(m_tVel, v);
+  float tvMul = dotProd(m_tVel, v);
   if( ( tvMul < 0.8f or tvMul > 1.2f )
       and ( getEnergy() / getMaxEnergy() > 0.1f or m_curGoal == GOAL_CONGREGATE )
       and getCanMove()
@@ -143,12 +145,12 @@ void enemy::steering()
   }
 
   //This variable represents the ships' direction versus its ideal direction.
-  float vecMulSide = dotProd1(tovec2(uv), computeVector(getTAng()));
+  float vecMulSide = dotProd(tovec2(uv), vec(getTAng()));
 
   if(fabs(vecMulSide) > 0.8f)
   {
     //closing speed * how sideways it is flying * its angle relative to velocity
-    float dv = clamp(cSpd * vecMulSide * dotProd1(tovec2(uv), computeVector(getAng())), 0.0f, 1.0f);
+    float dv = clamp(cSpd * vecMulSide * dotProd(tovec2(uv), vec(getAng())), 0.0f, 1.0f);
     if(vecMulSide < 0) dodge( dv );
     else if(vecMulSide > 0) dodge( -dv );
   }

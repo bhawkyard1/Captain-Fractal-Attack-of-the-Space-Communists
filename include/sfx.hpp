@@ -6,65 +6,66 @@
 #include <vector>
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @file sfx.hpp
-/// @brief This file provides functions to load and play sound effects. Could be abstracted into a 'sound-player' class.
-/// @author Ben Hawkyard
-/// @version 1.0
-/// @date 11/04/16
+/// \file sfx.hpp
+/// \brief This file provides functions to load and play sound effects. Could be abstracted into a 'sound-player' class.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
 /// Revision History :
 /// This is an initial version used for the game
 //----------------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Enums for all available sounds.
+/// \brief Enums for all available sounds.
 //----------------------------------------------------------------------------------------------------------------------
 enum sound {RED_LASER_SND, GREEN_LASER_SND, BLUE_LASER_SND, EXPLOSION_SND, RICOCHET_SND, SAVE_SND, PLACE_SND, MENU_SELECT_SND, MENU_FAIL_SND, CLUNK_SND};
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Vector of sounds which can be played.
+/// \brief Vector of sounds which can be played.
 //----------------------------------------------------------------------------------------------------------------------
 extern std::vector< std::vector<Mix_Chunk*> > g_snds;
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Vector of music which can be played.
+/// \brief Vector of music which can be played.
 //----------------------------------------------------------------------------------------------------------------------
 extern std::vector<Mix_Music*> g_music;
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Initialises SDL mixer.
+/// \brief Initialises SDL mixer.
 //----------------------------------------------------------------------------------------------------------------------
 void sfxInit();
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Loads all sound effects.
+/// \brief Loads all sound effects.
 //----------------------------------------------------------------------------------------------------------------------
 void loadSounds();
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Loads all sound effects.
+/// \brief Loads all sound effects.
 //----------------------------------------------------------------------------------------------------------------------
 void playSnd(sound _snd);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Plays music.
-/// @param _mus index of g_music to source the music from
+/// \brief Plays music.
+/// \param _mus index of g_music to source the music from
 //----------------------------------------------------------------------------------------------------------------------
 void playMusic(size_t _mus);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Frees all sounds, prevents memory leaks.
+/// \brief Frees all sounds, prevents memory leaks.
 //----------------------------------------------------------------------------------------------------------------------
 void deleteSounds();
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Loads a sound effect.
-/// @param _len number of variations- if 'laser_red' has two variations, it will load 'laser_red_0' and 'laser_red_1'
+/// \brief Loads a sound effect.
+/// \param _path path to the sound files
+/// \param _len number of variations- if 'laser_red' has two variations, it will load 'laser_red_0' and 'laser_red_1'
 //----------------------------------------------------------------------------------------------------------------------
 void loadSound(std::string _path, int _len);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Loads a music file.
-/// @param _path path to the file
+/// \brief Loads a music file.
+/// \param _path path to the file
 //----------------------------------------------------------------------------------------------------------------------
 void loadMusic(std::string _path);
 

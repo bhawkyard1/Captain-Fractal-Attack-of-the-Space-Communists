@@ -1,0 +1,52 @@
+\hypertarget{enemy_8hpp}{\section{include/enemy.hpp File Reference}
+\label{enemy_8hpp}\index{include/enemy.\-hpp@{include/enemy.\-hpp}}
+}
+
+
+This class is a ship with a brain, able to steer and react to input stimuli.  
+
+
+{\ttfamily \#include \char`\"{}ship.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}vectors.\-hpp\char`\"{}}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classenemy}{enemy}
+\begin{DoxyCompactList}\small\item\em Builds upon the ship class, adding variables like team, goal, targets etc. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{enemy_8hpp_a6e73eb3e8e86f5922e45adeb450ceb1e}{ai\-Goal} \{ \\*
+{\bfseries G\-O\-A\-L\-\_\-\-I\-D\-L\-E}, 
+{\bfseries G\-O\-A\-L\-\_\-\-C\-O\-N\-G\-R\-E\-G\-A\-T\-E}, 
+{\bfseries G\-O\-A\-L\-\_\-\-A\-V\-O\-I\-D}, 
+{\bfseries G\-O\-A\-L\-\_\-\-A\-T\-T\-A\-C\-K}, 
+\\*
+{\bfseries G\-O\-A\-L\-\_\-\-F\-L\-E\-E}, 
+{\bfseries G\-O\-A\-L\-\_\-\-T\-U\-R\-R\-E\-T}, 
+{\bfseries G\-O\-A\-L\-\_\-\-S\-P\-A\-C\-E\-\_\-\-S\-T\-A\-T\-I\-O\-N}
+ \}
+\begin{DoxyCompactList}\small\item\em The goals that a ship can have. \end{DoxyCompactList}\item 
+enum \hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \{ \\*
+{\bfseries T\-E\-A\-M\-\_\-\-P\-L\-A\-Y\-E\-R}, 
+{\bfseries T\-E\-A\-M\-\_\-\-P\-L\-A\-Y\-E\-R\-\_\-\-M\-I\-N\-E\-R}, 
+{\bfseries G\-A\-L\-A\-C\-T\-I\-C\-\_\-\-F\-E\-D\-E\-R\-A\-T\-I\-O\-N}, 
+{\bfseries S\-P\-O\-O\-K\-Y\-\_\-\-S\-P\-A\-C\-E\-\_\-\-P\-I\-R\-A\-T\-E\-S}, 
+\\*
+{\bfseries S\-P\-A\-C\-E\-\_\-\-C\-O\-M\-M\-U\-N\-I\-S\-T\-S}, 
+{\bfseries N\-E\-U\-T\-R\-A\-L}, 
+{\bfseries N\-O\-N\-E}
+ \}
+\begin{DoxyCompactList}\small\item\em The teams that a ship can be on. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is a ship with a brain, able to steer and react to input stimuli. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game. 
+\end{DoxyDate}

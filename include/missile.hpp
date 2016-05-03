@@ -5,64 +5,65 @@
 #include "enemy.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @file missile.hpp
-/// @brief Contains the missile class.
-/// @author Ben Hawkyard
-/// @version 1.0
-/// @date 11/04/16
+/// \file missile.hpp
+/// \brief Contains the missile class.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
 /// Revision History :
 /// This is the initial version.
-/// @class laser
-/// @brief Inherits from ship, contains basic steering functionality. In some ways it is like a pared-down 'enemy' class.
+/// \class laser
+/// \brief Inherits from ship, contains basic steering functionality. In some ways it is like a pared-down 'enemy' class.
 //----------------------------------------------------------------------------------------------------------------------
 
 class missile: public ship
 {
 public:
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief ctor for the missile class
-  /// @param _p position, _r physical radius of the missile
+  /// \brief ctor for the missile class
+  /// \param _p position
+  /// \param _r physical radius of the missile
   //----------------------------------------------------------------------------------------------------------------------
   missile(const vec3 _p, const float _r);
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief sets the missiles' target
-  /// @param _s the new target
+  /// \brief sets the missiles' target
+  /// \param _s the new target
   //----------------------------------------------------------------------------------------------------------------------
   void setTarget(ship * _s) {m_target = _s;}
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief target getter
+  /// \brief target getter
   //----------------------------------------------------------------------------------------------------------------------
   ship * getTarget() const {return m_target;}
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief steers the missile towards the target
+  /// \brief steers the missile towards the target
   //----------------------------------------------------------------------------------------------------------------------
   void steering();
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief m_det getter
+  /// \brief m_det getter
   //----------------------------------------------------------------------------------------------------------------------
   bool detonate() const {return m_det;}
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief team getter
+  /// \brief team getter
   //----------------------------------------------------------------------------------------------------------------------
   aiTeam getTeam() const {return m_team;}
 private:
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the ai team, currently only the player is able to fire missiles, but this could easily be extended
+  /// \brief the ai team, currently only the player is able to fire missiles, but this could easily be extended
   //----------------------------------------------------------------------------------------------------------------------
   aiTeam m_team;
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the target ship
+  /// \brief the target ship
   //----------------------------------------------------------------------------------------------------------------------
   ship * m_target;
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief whether the missile is detonating
+  /// \brief whether the missile is detonating
   //----------------------------------------------------------------------------------------------------------------------
   bool m_det;
 };

@@ -18,7 +18,8 @@ int g_GRAPHICAL_DETAIL = 2;
 int g_DIFFICULTY = 1;
 vec2 g_HALFWIN;
 float g_MAX_DIM = 1920.0f;
-bool g_DEV_MODE = true;
+bool g_DEV_MODE = false;
+bool g_BEAST_MODE = false;
 bool g_GAME_OVER = false;
 
 float g_TARG_ZOOM_LEVEL = 1.0f;

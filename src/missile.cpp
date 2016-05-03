@@ -29,7 +29,7 @@ void missile::steering()
         vec3 tPPos = m_target->getPos() + m_target->getVel() * frames;
         float tPPDist = mag(tPPos - getPos());
 
-        float vecMul = dotProd1(unit(getVel()),tovec3(computeVector(getTAng() + 90)));
+        float vecMul = dotProd(unit(getVel()),tovec3(vec(getTAng() + 90)));
 
         float stoppingDistance = (cSpd*cSpd)/2;
         if(vecMul < 0) stoppingDistance *= -1;

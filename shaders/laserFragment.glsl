@@ -1,14 +1,19 @@
 #version 410 core
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \file laserFragment.glsl
+/// \brief Produces a laser, essentially a gradient from vertColour to white and back.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game
+//----------------------------------------------------------------------------------------------------------------------
 
-uniform vec2 resolution;
 
 in vec4 gl_FragCoord;
 in vec4 vertColour;
 in vec2 UV;
-
-in vec2 fstart;
-in vec2 fend;
 
 out vec4 fragColour;
 

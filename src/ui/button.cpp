@@ -75,8 +75,8 @@ button::button(const std::string _txt,
 
 button::button(
     const std::string _txt,
-    const std::array<int, 8> _b_col,
-    const std::array<int, 8> _t_col,
+    const std::array<int, 8> _label,
+    const std::array<int, 8> _pcol,
     const vec2 _pos,
     const vec2 _dim,
     const int _pcost
@@ -91,11 +91,11 @@ button::button(
 
   for(size_t i = 0; i < 8; i++)
   {
-    m_col[i] = _b_col[i];
+    m_col[i] = _label[i];
   }
   for(size_t i = 0; i < 8; i++)
   {
-    m_tcol[i] = _t_col[i];
+    m_tcol[i] = _pcol[i];
   }
 
   m_pos.m_x = _pos.m_x;
@@ -111,7 +111,7 @@ button::button(
 
 void button::update(int _pts)
 {
-  if(_pts > m_cost)
+  if(_pts >= m_cost)
   {
     m_dark = false;
     m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
@@ -123,9 +123,9 @@ void button::update(int _pts)
   }
 }
 
-void button::updateText(std::string _text)
+void button::updateText(std::string _str)
 {
-  m_label = _text;
+  m_label = _str;
 }
 
 void button::select()

@@ -48,7 +48,7 @@ void stardust_sprite::spriteGen(
   m_ang = randNum(0.0f, 360.0f);
   m_angVel = randNum(-0.12f, 0.12f);
 
-  int m = std::max(_w, _h);
+  float m = static_cast<float>(std::max(_w, _h));
   m *= g_ZOOM_LEVEL;
 
   int colProb = rand()%100;
@@ -77,7 +77,7 @@ void stardust_sprite::spriteGen(
   if(side == 0)
   {
     //Top
-    vec = { randNum(0, (g_WIN_WIDTH + 2 * m) ) - m, randNum(0, m) - 2 * m, 0.0f };
+    vec = { randNum(0.0f, (g_WIN_WIDTH + 2 * m) ) - m, randNum(0.0f, m) - 2 * m, 0.0f };
     vec *= g_BG_DENSITY;
     setPos(vec);
     setPPos(getPos());
@@ -85,7 +85,7 @@ void stardust_sprite::spriteGen(
   else if(side == 1)
   {
     //Left
-    vec = { randNum(0, m) - 2 * m, randNum(0, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
+    vec = { randNum(0.0f, m) - 2 * m, randNum(0.0f, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
     vec *= g_BG_DENSITY;
     setPos(vec);
     setPPos(getPos());
@@ -93,7 +93,7 @@ void stardust_sprite::spriteGen(
   else if(side == 2)
   {
     //Right
-    vec = { 2*m - randNum(0, m), randNum(0, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
+    vec = { 2*m - randNum(0.0f, m), randNum(0.0f, g_WIN_HEIGHT + 2 * m) - m, 0.0f };
     vec *= g_BG_DENSITY;
     vec.m_x += g_WIN_WIDTH;
     setPos(vec);
@@ -102,7 +102,7 @@ void stardust_sprite::spriteGen(
   else if(side == 3)
   {
     //Bottom
-    vec = { randNum(0, g_WIN_WIDTH + 2 * m) - m, 2 * m - randNum(0, m), 0.0f };
+    vec = { randNum(0.0f, g_WIN_WIDTH + 2 * m) - m, 2 * m - randNum(0.0f, m), 0.0f };
     vec *= g_BG_DENSITY;
     vec.m_y += g_WIN_HEIGHT;
     setPos(vec);

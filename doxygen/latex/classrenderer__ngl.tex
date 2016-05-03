@@ -1,0 +1,868 @@
+\hypertarget{classrenderer__ngl}{\section{renderer\-\_\-ngl Class Reference}
+\label{classrenderer__ngl}\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}}
+}
+
+
+Contains all the data for the window, elements, primitives to be drawn.  
+
+
+
+
+{\ttfamily \#include $<$renderer\-\_\-opengl.\-hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classrenderer__ngl_a2c599a4e6f5c39cdaadbd888a9b10c4f}{renderer\-\_\-ngl} (int \-\_\-w, int \-\_\-h)
+\begin{DoxyCompactList}\small\item\em ctor for the ngl renderer \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a5591cac62e43ce26545d489e91386a11}{\hyperlink{classrenderer__ngl_a5591cac62e43ce26545d489e91386a11}{$\sim$renderer\-\_\-ngl} ()}\label{classrenderer__ngl_a5591cac62e43ce26545d489e91386a11}
+
+\begin{DoxyCompactList}\small\item\em dtor for our N\-G\-L drawing class \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a7e355871e6c9537aee3c3ed76f12f9d0}{int \hyperlink{classrenderer__ngl_a7e355871e6c9537aee3c3ed76f12f9d0}{init} ()}\label{classrenderer__ngl_a7e355871e6c9537aee3c3ed76f12f9d0}
+
+\begin{DoxyCompactList}\small\item\em Initialises S\-D\-L for use in creating the window. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a369ca2d986609210b25930c214e83cd9}{create\-Shader\-Program} (const std\-::string \-\_\-name, const std\-::string \-\_\-vert, const std\-::string \-\_\-frag)
+\begin{DoxyCompactList}\small\item\em Creates a shader program using a vertex and fragment file, using ngl\-::\-Shader\-Lib. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_acd7d251987286559146ed9b53cf92f88}{update} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the renderer, mostly for screen shaking. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a1cd4a1d0f26f09d11220825a79f93423}{use\-Shader} (const std\-::string \-\_\-shader)
+\begin{DoxyCompactList}\small\item\em Sets the shader for the renderer to use. \end{DoxyCompactList}\item 
+G\-Luint \hyperlink{classrenderer__ngl_a99b9e6141013b96e0e3e5ab9c43767f1}{create\-V\-A\-O} (std\-::vector$<$ ngl\-::\-Vec3 $>$ \-\_\-verts)
+\begin{DoxyCompactList}\small\item\em Creates a V\-A\-O, returns the id. \end{DoxyCompactList}\item 
+G\-Luint \hyperlink{classrenderer__ngl_a076cc765b2833b046887f092c2472257}{create\-V\-A\-O} (std\-::vector$<$ ngl\-::\-Vec3 $>$ \-\_\-verts, std\-::vector$<$ ngl\-::\-Vec4 $>$ \-\_\-cols)
+\begin{DoxyCompactList}\small\item\em Creates a V\-A\-O, returns the id. \end{DoxyCompactList}\item 
+G\-Luint \hyperlink{classrenderer__ngl_a3686dedd948e19cd997321f2a31af185}{create\-V\-A\-O} (std\-::vector$<$ ngl\-::\-Vec3 $>$ \-\_\-verts, std\-::vector$<$ ngl\-::\-Vec4 $>$ \-\_\-cols, std\-::vector$<$ ngl\-::\-Vec2 $>$ \-\_\-\-U\-Vs)
+\begin{DoxyCompactList}\small\item\em Creates a V\-A\-O, returns the id. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a65697ddd91050e11eac943df3f363374}{clear\-Vectors} ()
+\begin{DoxyCompactList}\small\item\em Clears the vectors m\-\_\-verts, m\-\_\-colours and m\-\_\-\-U\-Vs. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a94df23320b9273397a468f14dcbece0d}{draw\-Background} (float \-\_\-dt, \hyperlink{structvec2}{vec2} \-\_\-v, \hyperlink{structvec2}{vec2} \-\_\-p, std\-::array$<$ float, 3 $>$ \-\_\-c\-Col)
+\begin{DoxyCompactList}\small\item\em Draws the background. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_abfbfd39558f07ef49e3e95c8e3b59914}{draw\-Button} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec2}{vec2} \-\_\-d, const float \-\_\-ang, std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws a button (ie glorified coloured rectangle) \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_ad59d37f1adc3ac09e3c510733e77bf6d}{add\-Rect} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec2}{vec2} \-\_\-d, const float \-\_\-ang, const std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Adds six verts to the member vertex attribute vectors. This allows me to batch draw simple objects. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a98313f3934c11a90f72defdf2a18fc73}{draw\-Rects} (const bool \-\_\-ws)
+\begin{DoxyCompactList}\small\item\em Takes the vert attribute vectors, treats them as rectangles, and draw them. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a8788a0ac1282ae3cd243396fc54948bd}{draw\-Rect} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{structvec2}{vec2} \-\_\-d, const float \-\_\-ang, const bool \-\_\-ws)
+\begin{DoxyCompactList}\small\item\em Draw a single rectangle. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a00d1db511cd9a1b1e23e0e0297faee9b}{draw\-Smoke} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Draws m\-\_\-verts as rectangles, using the smoke shader. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a17eb2048a47bb90a66277102653af4f0}{draw\-Circle} (const \hyperlink{structvec3}{vec3} \-\_\-p, const float \-\_\-d, const bool \-\_\-ws)
+\begin{DoxyCompactList}\small\item\em Draws a circle. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_ac7cd899413624ff605b81f7aa6d02b94}{void \hyperlink{classrenderer__ngl_ac7cd899413624ff605b81f7aa6d02b94}{make\-Current} () const }\label{classrenderer__ngl_ac7cd899413624ff605b81f7aa6d02b94}
+
+\begin{DoxyCompactList}\small\item\em Makes the member gl context and window active. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a907b24556b5dbb90fd87386ebbee9d1f}{void \hyperlink{classrenderer__ngl_a907b24556b5dbb90fd87386ebbee9d1f}{clear} () const }\label{classrenderer__ngl_a907b24556b5dbb90fd87386ebbee9d1f}
+
+\begin{DoxyCompactList}\small\item\em Clears the window. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a24783a427b22c7f6f2f52e1ffa4c4322}{error\-Exit} (const std\-::string \&\-\_\-msg)
+\begin{DoxyCompactList}\small\item\em Exits the program, prints and error message. \end{DoxyCompactList}\item 
+ngl\-::\-Obj $\ast$ \hyperlink{classrenderer__ngl_ab881da5a90bb5e8891b5c0a6cbee3101}{load\-Obj} (const std\-::string \-\_\-path, const std\-::string \-\_\-append)
+\begin{DoxyCompactList}\small\item\em Loads an obj file and texture, returns a pointer to the ngl\-::\-Obj. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a42887efb2959cf6d5f13907ef898e45c}{load\-Asset} (const std\-::string \-\_\-key, const std\-::string \-\_\-path)
+\begin{DoxyCompactList}\small\item\em Loads an obj and texture file, stores it in m\-\_\-models. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_add771866e6e27910d453f53acc38eb6b}{draw\-Asset} (const \hyperlink{structvec3}{vec3} \-\_\-p, const float \-\_\-ang, const std\-::string \-\_\-asset)
+\begin{DoxyCompactList}\small\item\em Draws an textured model. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a0d40948a440705a450b2a5a782b99111}{draw\-Asset} (const \hyperlink{structvec2}{vec2} \-\_\-p, const float \-\_\-ang, const std\-::string \-\_\-asset, const float \-\_\-alpha)
+\begin{DoxyCompactList}\small\item\em Draws an textured model, but with a supplied alpha. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_ab0969a50b535e72b2ebdbb2848a073fc}{draw\-Shield} (const \hyperlink{structvec3}{vec3} \-\_\-p, const float \-\_\-r, const float \-\_\-dt, const float \-\_\-alpha, const std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws an shield of a given radius, with a fancy shader. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a28a8b1d91e2594ec7dcdee612ed10a2c}{draw\-Ship} (const \hyperlink{structvec3}{vec3} \-\_\-p, const float \-\_\-ang, const std\-::string \-\_\-asset, const std\-::array$<$ float, 4 $>$ \-\_\-l\-Col)
+\begin{DoxyCompactList}\small\item\em Draws a ship. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a772bdcdb6d7962b8ba501c7201dbc468}{void \hyperlink{classrenderer__ngl_a772bdcdb6d7962b8ba501c7201dbc468}{draw\-Lasers} ()}\label{classrenderer__ngl_a772bdcdb6d7962b8ba501c7201dbc468}
+
+\begin{DoxyCompactList}\small\item\em Treats the entries in the vertex attribute vectors as lines, and draws them with a laser shader. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a6608a08333dad313c0c04e861609e893}{draw\-Lines} (float \-\_\-width)
+\begin{DoxyCompactList}\small\item\em Treats the entries in the vertex attribute vectors as lines, and draws them. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_ae180513edc9d7af4ce8bf178cd2158c2}{draw\-Explosion} (const \hyperlink{structvec3}{vec3} \-\_\-pos, const float \-\_\-d, const std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws an explosion. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a4d2b812e4c18a52020b53971f22adf52}{void {\bfseries draw\-Explosion} (const \hyperlink{structvec3}{vec3} \-\_\-pos, const \hyperlink{structvec2}{vec2} \-\_\-d, const std\-::array$<$ float, 4 $>$ \-\_\-col)}\label{classrenderer__ngl_a4d2b812e4c18a52020b53971f22adf52}
+
+\item 
+void \hyperlink{classrenderer__ngl_adf24e3a17ffbf93af089722e815a8f66}{draw\-Flames} (const \hyperlink{structvec3}{vec3} \-\_\-pos, const \hyperlink{structvec2}{vec2} \-\_\-d, float \-\_\-ang, std\-::array$<$ float, 4 $>$ \-\_\-col, const float \-\_\-t, const float \-\_\-speed)
+\begin{DoxyCompactList}\small\item\em Draws jet flames. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a856a772090764eb794ad20425ecfed4d}{load\-Font\-Sprite\-Sheet} (std\-::string \-\_\-name, std\-::string \-\_\-path, int \-\_\-size)
+\begin{DoxyCompactList}\small\item\em Loads ascii characters using S\-D\-L\-\_\-\-T\-T\-F, and saves them as open\-G\-L textures. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_ac5f5f689c79ce54fa88d6c81ed2b733b}{draw\-Text} (std\-::string \-\_\-text, std\-::string \-\_\-font, \hyperlink{structvec2}{vec2} \-\_\-pos, const bool \-\_\-ws, const float \-\_\-scale)
+\begin{DoxyCompactList}\small\item\em Draws white text. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a379a4c77b8a21e60774ce9034fcd9c1b}{draw\-Text} (std\-::string \-\_\-text, std\-::string \-\_\-font, \hyperlink{structvec2}{vec2} \-\_\-pos, const bool \-\_\-ws, const float \-\_\-scale, const std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws coloured text. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a5fbc227d0398f6a8dbf5690e75c319bc}{add\-Line} (const \hyperlink{structvec3}{vec3} \-\_\-start, const \hyperlink{structvec3}{vec3} \-\_\-end, const std\-::array$<$ float, 4 $>$ \-\_\-l\-Col)
+\begin{DoxyCompactList}\small\item\em Adds a line to the member vertex attribute vectors, with position, uvs and colour. \end{DoxyCompactList}\item 
+float \hyperlink{classrenderer__ngl_a5523a0b8263680dc91f74e2492fe0f8d}{get\-Texture\-Radius} (\hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type)
+\begin{DoxyCompactList}\small\item\em Gets the radius of a ship. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a297f3cbb2e49b00369ec3803a380d130}{draw\-Map} (std\-::vector$<$ \hyperlink{classmissile}{missile} $>$ $\ast$\-\_\-mp, std\-::vector$<$ \hyperlink{classenemy}{enemy} $>$ $\ast$\-\_\-ep, std\-::vector$<$ \hyperlink{classship}{ship} $>$ $\ast$\-\_\-ap, std\-::vector$<$ \hyperlink{classlaser}{laser} $>$ $\ast$\-\_\-lp, std\-::vector$<$ \hyperlink{structfaction}{faction} $>$ $\ast$\-\_\-fp)
+\begin{DoxyCompactList}\small\item\em Draws the minimap. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a437b65ae85730f47dff971bef2b25068}{status\-Bars} (\hyperlink{classplayer}{player} $\ast$\-\_\-ply)
+\begin{DoxyCompactList}\small\item\em Draws health, shield and energy bars. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a6cd253dc107dcdbb19267654c7213772}{draw\-Weapon\-Stats} (\hyperlink{classplayer}{player} $\ast$\-\_\-ply)
+\begin{DoxyCompactList}\small\item\em Draw the stats of the current weapon. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a585e3934d5261cbecff6aeb64b30bbd9}{void \hyperlink{classrenderer__ngl_a585e3934d5261cbecff6aeb64b30bbd9}{finalise} ()}\label{classrenderer__ngl_a585e3934d5261cbecff6aeb64b30bbd9}
+
+\begin{DoxyCompactList}\small\item\em Swaps the window. \end{DoxyCompactList}\item 
+S\-D\-L\-\_\-\-Surface $\ast$ \hyperlink{classrenderer__ngl_a3e1c366e6e0e66d99e411100b771a159}{get\-Surface} (std\-::string \-\_\-path)
+\begin{DoxyCompactList}\small\item\em Loads an image and returns a S\-D\-L\-\_\-\-Surface. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer__ngl_a8447288e940b8fea53f9f3de7040123f}{add\-Shake} (float \-\_\-s)
+\begin{DoxyCompactList}\small\item\em Adds camera shake. \end{DoxyCompactList}\item 
+G\-Luint \hyperlink{classrenderer__ngl_ada76a8e1ed7d74abb6caa2d1922fc5ef}{S\-D\-L\-Surface\-To\-G\-L\-Texture} (S\-D\-L\-\_\-\-Surface $\ast$\-\_\-s)
+\begin{DoxyCompactList}\small\item\em Converts an S\-D\-L\-\_\-\-Surface to an open\-G\-L texture, returns the I\-D. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a7bcf6b776284c8ffe2c3abfd5a3bd8ed}{void \hyperlink{classrenderer__ngl_a7bcf6b776284c8ffe2c3abfd5a3bd8ed}{enable\-Depth\-Sorting} ()}\label{classrenderer__ngl_a7bcf6b776284c8ffe2c3abfd5a3bd8ed}
+
+\begin{DoxyCompactList}\small\item\em Enables depth-\/based fragment culling. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer__ngl_a4087dcb780db4791e931a13736dd81b9}{void \hyperlink{classrenderer__ngl_a4087dcb780db4791e931a13736dd81b9}{disable\-Depth\-Sorting} ()}\label{classrenderer__ngl_a4087dcb780db4791e931a13736dd81b9}
+
+\begin{DoxyCompactList}\small\item\em Disables depth-\/based fragment culling. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains all the data for the window, elements, primitives to be drawn. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classrenderer__ngl_a2c599a4e6f5c39cdaadbd888a9b10c4f}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!renderer\-\_\-ngl@{renderer\-\_\-ngl}}
+\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{renderer\-\_\-ngl}]{\setlength{\rightskip}{0pt plus 5cm}renderer\-\_\-ngl\-::renderer\-\_\-ngl (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-w, }
+\item[{int}]{\-\_\-h}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a2c599a4e6f5c39cdaadbd888a9b10c4f}
+
+
+ctor for the ngl renderer 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-w} & window width \\
+\hline
+{\em \-\_\-h} & window height \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classrenderer__ngl_a5fbc227d0398f6a8dbf5690e75c319bc}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!add\-Line@{add\-Line}}
+\index{add\-Line@{add\-Line}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{add\-Line}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::add\-Line (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-start, }
+\item[{const {\bf vec3}}]{\-\_\-end, }
+\item[{const std\-::array$<$ float, 4 $>$}]{\-\_\-l\-Col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a5fbc227d0398f6a8dbf5690e75c319bc}
+
+
+Adds a line to the member vertex attribute vectors, with position, uvs and colour. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-start} & start of the line \\
+\hline
+{\em \-\_\-end} & end of the line \\
+\hline
+{\em \-\_\-l\-Col} & colour of the line \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_ad59d37f1adc3ac09e3c510733e77bf6d}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!add\-Rect@{add\-Rect}}
+\index{add\-Rect@{add\-Rect}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{add\-Rect}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::add\-Rect (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec2}}]{\-\_\-d, }
+\item[{const float}]{\-\_\-ang, }
+\item[{const std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_ad59d37f1adc3ac09e3c510733e77bf6d}
+
+
+Adds six verts to the member vertex attribute vectors. This allows me to batch draw simple objects. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference \\
+\hline
+{\em \-\_\-v} & velocity of the universe \\
+\hline
+{\em \-\_\-p} & position of the universe \\
+\hline
+{\em \-\_\-c\-Col} & colour of the universe \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a8447288e940b8fea53f9f3de7040123f}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!add\-Shake@{add\-Shake}}
+\index{add\-Shake@{add\-Shake}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{add\-Shake}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::add\-Shake (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-s}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a8447288e940b8fea53f9f3de7040123f}
+
+
+Adds camera shake. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & shake magnitude \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a65697ddd91050e11eac943df3f363374}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!clear\-Vectors@{clear\-Vectors}}
+\index{clear\-Vectors@{clear\-Vectors}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{clear\-Vectors}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::clear\-Vectors (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a65697ddd91050e11eac943df3f363374}
+
+
+Clears the vectors m\-\_\-verts, m\-\_\-colours and m\-\_\-\-U\-Vs. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-verts} & vector of vertices \\
+\hline
+{\em \-\_\-cols} & vector of colours \\
+\hline
+{\em \-\_\-\-U\-Vs} & vector of uv coordinates \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a369ca2d986609210b25930c214e83cd9}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!create\-Shader\-Program@{create\-Shader\-Program}}
+\index{create\-Shader\-Program@{create\-Shader\-Program}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{create\-Shader\-Program}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::create\-Shader\-Program (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{\-\_\-name, }
+\item[{const std\-::string}]{\-\_\-vert, }
+\item[{const std\-::string}]{\-\_\-frag}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a369ca2d986609210b25930c214e83cd9}
+
+
+Creates a shader program using a vertex and fragment file, using ngl\-::\-Shader\-Lib. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-name} & name of the program, \\
+\hline
+{\em \-\_\-vert} & name of the vertex file (minus .glsl) \\
+\hline
+{\em \-\_\-frag} & name of the frag file (minus .glsl) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a99b9e6141013b96e0e3e5ab9c43767f1}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!create\-V\-A\-O@{create\-V\-A\-O}}
+\index{create\-V\-A\-O@{create\-V\-A\-O}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{create\-V\-A\-O}]{\setlength{\rightskip}{0pt plus 5cm}G\-Luint renderer\-\_\-ngl\-::create\-V\-A\-O (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ ngl\-::\-Vec3 $>$}]{\-\_\-verts}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a99b9e6141013b96e0e3e5ab9c43767f1}
+
+
+Creates a V\-A\-O, returns the id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-verts} & vector of vertices \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a076cc765b2833b046887f092c2472257}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!create\-V\-A\-O@{create\-V\-A\-O}}
+\index{create\-V\-A\-O@{create\-V\-A\-O}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{create\-V\-A\-O}]{\setlength{\rightskip}{0pt plus 5cm}G\-Luint renderer\-\_\-ngl\-::create\-V\-A\-O (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ ngl\-::\-Vec3 $>$}]{\-\_\-verts, }
+\item[{std\-::vector$<$ ngl\-::\-Vec4 $>$}]{\-\_\-cols}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a076cc765b2833b046887f092c2472257}
+
+
+Creates a V\-A\-O, returns the id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-verts} & vector of vertices \\
+\hline
+{\em \-\_\-cols} & vector of colours \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a3686dedd948e19cd997321f2a31af185}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!create\-V\-A\-O@{create\-V\-A\-O}}
+\index{create\-V\-A\-O@{create\-V\-A\-O}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{create\-V\-A\-O}]{\setlength{\rightskip}{0pt plus 5cm}G\-Luint renderer\-\_\-ngl\-::create\-V\-A\-O (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ ngl\-::\-Vec3 $>$}]{\-\_\-verts, }
+\item[{std\-::vector$<$ ngl\-::\-Vec4 $>$}]{\-\_\-cols, }
+\item[{std\-::vector$<$ ngl\-::\-Vec2 $>$}]{\-\_\-\-U\-Vs}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a3686dedd948e19cd997321f2a31af185}
+
+
+Creates a V\-A\-O, returns the id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-verts} & vector of vertices \\
+\hline
+{\em \-\_\-cols} & vector of colours \\
+\hline
+{\em \-\_\-\-U\-Vs} & vector of uv coordinates \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_add771866e6e27910d453f53acc38eb6b}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Asset@{draw\-Asset}}
+\index{draw\-Asset@{draw\-Asset}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Asset}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Asset (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const float}]{\-\_\-ang, }
+\item[{const std\-::string}]{\-\_\-asset}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_add771866e6e27910d453f53acc38eb6b}
+
+
+Draws an textured model. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-ang} & asset angle \\
+\hline
+{\em \-\_\-asset} & asset key in m\-\_\-objects \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a0d40948a440705a450b2a5a782b99111}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Asset@{draw\-Asset}}
+\index{draw\-Asset@{draw\-Asset}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Asset}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Asset (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec2}}]{\-\_\-p, }
+\item[{const float}]{\-\_\-ang, }
+\item[{const std\-::string}]{\-\_\-asset, }
+\item[{const float}]{\-\_\-alpha}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a0d40948a440705a450b2a5a782b99111}
+
+
+Draws an textured model, but with a supplied alpha. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-ang} & asset angle \\
+\hline
+{\em \-\_\-asset} & asset key in m\-\_\-objects \\
+\hline
+{\em \-\_\-alpha} & transparency \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a94df23320b9273397a468f14dcbece0d}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Background@{draw\-Background}}
+\index{draw\-Background@{draw\-Background}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Background}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Background (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-dt, }
+\item[{{\bf vec2}}]{\-\_\-v, }
+\item[{{\bf vec2}}]{\-\_\-p, }
+\item[{std\-::array$<$ float, 3 $>$}]{\-\_\-c\-Col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a94df23320b9273397a468f14dcbece0d}
+
+
+Draws the background. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference \\
+\hline
+{\em \-\_\-v} & velocity of the universe \\
+\hline
+{\em \-\_\-p} & position of the universe \\
+\hline
+{\em \-\_\-c\-Col} & colour of the universe \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_abfbfd39558f07ef49e3e95c8e3b59914}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Button@{draw\-Button}}
+\index{draw\-Button@{draw\-Button}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Button}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Button (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec2}}]{\-\_\-d, }
+\item[{const float}]{\-\_\-ang, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_abfbfd39558f07ef49e3e95c8e3b59914}
+
+
+Draws a button (ie glorified coloured rectangle) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position of the button \\
+\hline
+{\em \-\_\-d} & button dimensions \\
+\hline
+{\em \-\_\-ang} & angle of the button \\
+\hline
+{\em \-\_\-col} & colour of the button \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a17eb2048a47bb90a66277102653af4f0}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Circle@{draw\-Circle}}
+\index{draw\-Circle@{draw\-Circle}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Circle}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Circle (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const float}]{\-\_\-d, }
+\item[{const bool}]{\-\_\-ws}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a17eb2048a47bb90a66277102653af4f0}
+
+
+Draws a circle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-d} & radius \\
+\hline
+{\em \-\_\-ws} & world space (true) or screen space (false) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_ae180513edc9d7af4ce8bf178cd2158c2}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Explosion@{draw\-Explosion}}
+\index{draw\-Explosion@{draw\-Explosion}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Explosion}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Explosion (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-pos, }
+\item[{const float}]{\-\_\-d, }
+\item[{const std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_ae180513edc9d7af4ce8bf178cd2158c2}
+
+
+Draws an explosion. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-pos} & position \\
+\hline
+{\em \-\_\-d} & dimensions \\
+\hline
+{\em \-\_\-col} & colour tint \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_adf24e3a17ffbf93af089722e815a8f66}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Flames@{draw\-Flames}}
+\index{draw\-Flames@{draw\-Flames}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Flames}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Flames (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-pos, }
+\item[{const {\bf vec2}}]{\-\_\-d, }
+\item[{float}]{\-\_\-ang, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col, }
+\item[{const float}]{\-\_\-t, }
+\item[{const float}]{\-\_\-speed}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_adf24e3a17ffbf93af089722e815a8f66}
+
+
+Draws jet flames. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-width} & width of the lines \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a6608a08333dad313c0c04e861609e893}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Lines@{draw\-Lines}}
+\index{draw\-Lines@{draw\-Lines}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Lines}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Lines (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-width}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a6608a08333dad313c0c04e861609e893}
+
+
+Treats the entries in the vertex attribute vectors as lines, and draws them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-width} & width of the lines \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a297f3cbb2e49b00369ec3803a380d130}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Map@{draw\-Map}}
+\index{draw\-Map@{draw\-Map}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Map}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Map (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ {\bf missile} $>$ $\ast$}]{\-\_\-mp, }
+\item[{std\-::vector$<$ {\bf enemy} $>$ $\ast$}]{\-\_\-ep, }
+\item[{std\-::vector$<$ {\bf ship} $>$ $\ast$}]{\-\_\-ap, }
+\item[{std\-::vector$<$ {\bf laser} $>$ $\ast$}]{\-\_\-lp, }
+\item[{std\-::vector$<$ {\bf faction} $>$ $\ast$}]{\-\_\-fp}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a297f3cbb2e49b00369ec3803a380d130}
+
+
+Draws the minimap. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-mp} & ref to missile vector \\
+\hline
+{\em \-\_\-ep} & ref to agent vector \\
+\hline
+{\em \-\_\-ap} & ref to asteroid vector \\
+\hline
+{\em \-\_\-lp} & ref to laser vector \\
+\hline
+{\em \-\_\-fp} & ref to faction pointer \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a8788a0ac1282ae3cd243396fc54948bd}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Rect@{draw\-Rect}}
+\index{draw\-Rect@{draw\-Rect}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Rect}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Rect (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf vec2}}]{\-\_\-d, }
+\item[{const float}]{\-\_\-ang, }
+\item[{const bool}]{\-\_\-ws}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a8788a0ac1282ae3cd243396fc54948bd}
+
+
+Draw a single rectangle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position of the rectangle \\
+\hline
+{\em \-\_\-d} & dimensions \\
+\hline
+{\em \-\_\-ang} & angle \\
+\hline
+{\em \-\_\-ws} & place in-\/world (true) or on the screen (false) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a98313f3934c11a90f72defdf2a18fc73}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Rects@{draw\-Rects}}
+\index{draw\-Rects@{draw\-Rects}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Rects}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Rects (
+\begin{DoxyParamCaption}
+\item[{const bool}]{\-\_\-ws}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a98313f3934c11a90f72defdf2a18fc73}
+
+
+Takes the vert attribute vectors, treats them as rectangles, and draw them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ws} & place the rectangles in the world (true), or on the screen (false) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_ab0969a50b535e72b2ebdbb2848a073fc}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Shield@{draw\-Shield}}
+\index{draw\-Shield@{draw\-Shield}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Shield}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Shield (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const float}]{\-\_\-r, }
+\item[{const float}]{\-\_\-dt, }
+\item[{const float}]{\-\_\-alpha, }
+\item[{const std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_ab0969a50b535e72b2ebdbb2848a073fc}
+
+
+Draws an shield of a given radius, with a fancy shader. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-r} & radius \\
+\hline
+{\em \-\_\-dt} & global time for shader \\
+\hline
+{\em \-\_\-alpha} & transparency \\
+\hline
+{\em \-\_\-col} & colour tint \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a28a8b1d91e2594ec7dcdee612ed10a2c}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Ship@{draw\-Ship}}
+\index{draw\-Ship@{draw\-Ship}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Ship}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Ship (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const float}]{\-\_\-ang, }
+\item[{const std\-::string}]{\-\_\-asset, }
+\item[{const std\-::array$<$ float, 4 $>$}]{\-\_\-l\-Col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a28a8b1d91e2594ec7dcdee612ed10a2c}
+
+
+Draws a ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-ang} & asset angle \\
+\hline
+{\em \-\_\-asset} & asset key in m\-\_\-objects \\
+\hline
+{\em \-\_\-col} & colour of muzzle flash \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a00d1db511cd9a1b1e23e0e0297faee9b}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Smoke@{draw\-Smoke}}
+\index{draw\-Smoke@{draw\-Smoke}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Smoke}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Smoke (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a00d1db511cd9a1b1e23e0e0297faee9b}
+
+
+Draws m\-\_\-verts as rectangles, using the smoke shader. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time step for the shader \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_ac5f5f689c79ce54fa88d6c81ed2b733b}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Text@{draw\-Text}}
+\index{draw\-Text@{draw\-Text}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Text}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Text (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-text, }
+\item[{std\-::string}]{\-\_\-font, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{const bool}]{\-\_\-ws, }
+\item[{const float}]{\-\_\-scale}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_ac5f5f689c79ce54fa88d6c81ed2b733b}
+
+
+Draws white text. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-text} & text to draw \\
+\hline
+{\em \-\_\-font} & font to use \\
+\hline
+{\em \-\_\-pos} & start position \\
+\hline
+{\em \-\_\-ws} & world or screen space \\
+\hline
+{\em \-\_\-scale} & text scale \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a379a4c77b8a21e60774ce9034fcd9c1b}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Text@{draw\-Text}}
+\index{draw\-Text@{draw\-Text}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Text}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Text (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-text, }
+\item[{std\-::string}]{\-\_\-font, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{const bool}]{\-\_\-ws, }
+\item[{const float}]{\-\_\-scale, }
+\item[{const std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a379a4c77b8a21e60774ce9034fcd9c1b}
+
+
+Draws coloured text. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-text} & text to draw \\
+\hline
+{\em \-\_\-font} & font to use \\
+\hline
+{\em \-\_\-pos} & start position \\
+\hline
+{\em \-\_\-ws} & world or screen space \\
+\hline
+{\em \-\_\-scale} & text scale \\
+\hline
+{\em \-\_\-col} & text colour \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a6cd253dc107dcdbb19267654c7213772}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!draw\-Weapon\-Stats@{draw\-Weapon\-Stats}}
+\index{draw\-Weapon\-Stats@{draw\-Weapon\-Stats}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{draw\-Weapon\-Stats}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::draw\-Weapon\-Stats (
+\begin{DoxyParamCaption}
+\item[{{\bf player} $\ast$}]{\-\_\-ply}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a6cd253dc107dcdbb19267654c7213772}
+
+
+Draw the stats of the current weapon. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ply} & ref to the player \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a24783a427b22c7f6f2f52e1ffa4c4322}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!error\-Exit@{error\-Exit}}
+\index{error\-Exit@{error\-Exit}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{error\-Exit}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::error\-Exit (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{\-\_\-msg}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a24783a427b22c7f6f2f52e1ffa4c4322}
+
+
+Exits the program, prints and error message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-msg} & message to print \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a3e1c366e6e0e66d99e411100b771a159}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!get\-Surface@{get\-Surface}}
+\index{get\-Surface@{get\-Surface}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{get\-Surface}]{\setlength{\rightskip}{0pt plus 5cm}S\-D\-L\-\_\-\-Surface$\ast$ renderer\-\_\-ngl\-::get\-Surface (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-path}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a3e1c366e6e0e66d99e411100b771a159}
+
+
+Loads an image and returns a S\-D\-L\-\_\-\-Surface. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-path} & path to image file \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a5523a0b8263680dc91f74e2492fe0f8d}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!get\-Texture\-Radius@{get\-Texture\-Radius}}
+\index{get\-Texture\-Radius@{get\-Texture\-Radius}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{get\-Texture\-Radius}]{\setlength{\rightskip}{0pt plus 5cm}float renderer\-\_\-ngl\-::get\-Texture\-Radius (
+\begin{DoxyParamCaption}
+\item[{{\bf ship\-\_\-spec}}]{\-\_\-type}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classrenderer__ngl_a5523a0b8263680dc91f74e2492fe0f8d}
+
+
+Gets the radius of a ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-type} & the type of ship (types defined in ship header) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a42887efb2959cf6d5f13907ef898e45c}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!load\-Asset@{load\-Asset}}
+\index{load\-Asset@{load\-Asset}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{load\-Asset}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::load\-Asset (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{\-\_\-key, }
+\item[{const std\-::string}]{\-\_\-path}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a42887efb2959cf6d5f13907ef898e45c}
+
+
+Loads an obj and texture file, stores it in m\-\_\-models. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-key} & stores it in the unordered map with this key \\
+\hline
+{\em \-\_\-path} & path to the asset files \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a856a772090764eb794ad20425ecfed4d}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!load\-Font\-Sprite\-Sheet@{load\-Font\-Sprite\-Sheet}}
+\index{load\-Font\-Sprite\-Sheet@{load\-Font\-Sprite\-Sheet}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{load\-Font\-Sprite\-Sheet}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::load\-Font\-Sprite\-Sheet (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-name, }
+\item[{std\-::string}]{\-\_\-path, }
+\item[{int}]{\-\_\-size}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a856a772090764eb794ad20425ecfed4d}
+
+
+Loads ascii characters using S\-D\-L\-\_\-\-T\-T\-F, and saves them as open\-G\-L textures. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-name} & the name to give the vector of \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_ab881da5a90bb5e8891b5c0a6cbee3101}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!load\-Obj@{load\-Obj}}
+\index{load\-Obj@{load\-Obj}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{load\-Obj}]{\setlength{\rightskip}{0pt plus 5cm}ngl\-::\-Obj$\ast$ renderer\-\_\-ngl\-::load\-Obj (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{\-\_\-path, }
+\item[{const std\-::string}]{\-\_\-append}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_ab881da5a90bb5e8891b5c0a6cbee3101}
+
+
+Loads an obj file and texture, returns a pointer to the ngl\-::\-Obj. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-path} & path of the model \\
+\hline
+{\em \-\_\-append} & for other parts of the mesh, ie load\-Obj(\char`\"{}ship\-\_\-1\char`\"{}, \char`\"{}\-\_\-base\char`\"{}) would load ship\-\_\-1\-\_\-base.\-obj (useful for objects with multiple meshes) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_ada76a8e1ed7d74abb6caa2d1922fc5ef}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!S\-D\-L\-Surface\-To\-G\-L\-Texture@{S\-D\-L\-Surface\-To\-G\-L\-Texture}}
+\index{S\-D\-L\-Surface\-To\-G\-L\-Texture@{S\-D\-L\-Surface\-To\-G\-L\-Texture}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{S\-D\-L\-Surface\-To\-G\-L\-Texture}]{\setlength{\rightskip}{0pt plus 5cm}G\-Luint renderer\-\_\-ngl\-::\-S\-D\-L\-Surface\-To\-G\-L\-Texture (
+\begin{DoxyParamCaption}
+\item[{S\-D\-L\-\_\-\-Surface $\ast$}]{\-\_\-s}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_ada76a8e1ed7d74abb6caa2d1922fc5ef}
+
+
+Converts an S\-D\-L\-\_\-\-Surface to an open\-G\-L texture, returns the I\-D. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & the input S\-D\-L surface \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a437b65ae85730f47dff971bef2b25068}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!status\-Bars@{status\-Bars}}
+\index{status\-Bars@{status\-Bars}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{status\-Bars}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::status\-Bars (
+\begin{DoxyParamCaption}
+\item[{{\bf player} $\ast$}]{\-\_\-ply}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_a437b65ae85730f47dff971bef2b25068}
+
+
+Draws health, shield and energy bars. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ply} & ref to player \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_acd7d251987286559146ed9b53cf92f88}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!update@{update}}
+\index{update@{update}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::update (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classrenderer__ngl_acd7d251987286559146ed9b53cf92f88}
+
+
+Updates the renderer, mostly for screen shaking. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference since last call \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer__ngl_a1cd4a1d0f26f09d11220825a79f93423}{\index{renderer\-\_\-ngl@{renderer\-\_\-ngl}!use\-Shader@{use\-Shader}}
+\index{use\-Shader@{use\-Shader}!renderer_ngl@{renderer\-\_\-ngl}}
+\subsubsection[{use\-Shader}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-\_\-ngl\-::use\-Shader (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{\-\_\-shader}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classrenderer__ngl_a1cd4a1d0f26f09d11220825a79f93423}
+
+
+Sets the shader for the renderer to use. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-shader} & name of the shader program \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{renderer__opengl_8hpp}{renderer\-\_\-opengl.\-hpp}\end{DoxyCompactItemize}

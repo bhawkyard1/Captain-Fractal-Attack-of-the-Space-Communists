@@ -1,5 +1,16 @@
 #version 410 core
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \file shieldFragment.glsl
+/// \brief Draws a shield effect. Sourced from shadertoy. I added colour changing functionality.
+/// \author lusius, 2013. spaceshooter-shield. Shadertoy, Available from: https://www.shadertoy.com/view/ld2Gzz [Accessed 2 May 2016].
+/// Adapted by Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game
+//----------------------------------------------------------------------------------------------------------------------
+
 in vec4 fragCoord;
 in vec2 UV;
 in vec3 normal;

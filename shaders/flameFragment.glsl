@@ -1,5 +1,16 @@
 #version 410 core
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \file flameFragment.glsl
+/// \brief A flame shader sourced from shadertoy, I adapted and repositioned the elements, added variable speed and recolouring.
+/// \author xbe, 2014. Fires. Shadertoy, Available from: https://www.shadertoy.com/view/XsXSWS [Accessed 2 May 2016].
+/// Adapted by Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game
+//----------------------------------------------------------------------------------------------------------------------
+
 in vec4 gl_FragCoord;
 in vec2 UV;
 
@@ -52,10 +63,6 @@ float fbm(vec2 UV)
     return f;
 }
 
-// no defines, standard redish flames
-//#define BLUE_FLAME
-//#define GREEN_FLAME
-
 void main()
 {
     vec2 q = UV;
@@ -78,6 +85,4 @@ void main()
 
     fragColour = mix(vec4(col.rgb,0.0),vec4(col,1.0), a * (1.0 - UV.y));
     fragColour.rgb *= 2.0;
-
-    //fragColour.a = max( max(fragColour.r, fragColour.g), fragColour.b ) * flameCol.a;
 }

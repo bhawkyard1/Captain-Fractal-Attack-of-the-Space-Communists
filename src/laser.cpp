@@ -9,10 +9,10 @@ laser::laser(
         )
 {
     float temp_angle = _ang + randNum(-_data[1], _data[1]);
-    vec3 vAdd = tovec3(computeVector(temp_angle));
+    vec3 vAdd = tovec3(vec(temp_angle));
     vAdd.m_z = sin(randNum(-_data[1], _data[1]));
 
-    setVel({_v.m_x + vAdd.m_x * _data[3], _v.m_y + vAdd.m_y * _data[3], 0.0f});
+    setVel({_v.m_x + vAdd.m_x * _data[3], _v.m_y + vAdd.m_y * _data[3], _v.m_z + vAdd.m_z * _data[3] * 0.1f});
     setPos(_p);
     setPPos(_p);
 	

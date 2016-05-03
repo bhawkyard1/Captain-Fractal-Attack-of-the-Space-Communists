@@ -1,5 +1,16 @@
 #version 410 core
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \file smokeFragment.glsl
+/// \brief I combined a couple of noise functions I found on stackoverflow to produce a smoke-like effect.
+/// \author Kos, 2010. Random / noise functions for GLSL. Stackoverflow, Available from: http://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl [Accessed 2 May 2016].
+/// Adapted by Ben Hawkyard.
+/// \version 1.0
+/// \date 11/04/16
+/// Revision History :
+/// This is an initial version used for the game
+//----------------------------------------------------------------------------------------------------------------------
+
 #define PI 3.14159265358979323846
 
 in vec4 gl_FragCoord;

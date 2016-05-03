@@ -1,0 +1,177 @@
+\hypertarget{classui_1_1user_interface}{\section{ui\-:\-:user\-Interface Class Reference}
+\label{classui_1_1user_interface}\index{ui\-::user\-Interface@{ui\-::user\-Interface}}
+}
+
+
+Contains the entire U\-I.  
+
+
+
+
+{\ttfamily \#include $<$user\-\_\-interface.\-hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classui_1_1user_interface_ac23b546b6ac290af709dd1e1caf209aa}{\hyperlink{classui_1_1user_interface_ac23b546b6ac290af709dd1e1caf209aa}{user\-Interface} ()}\label{classui_1_1user_interface_ac23b546b6ac290af709dd1e1caf209aa}
+
+\begin{DoxyCompactList}\small\item\em ctor for the \hyperlink{classui_1_1user_interface}{user\-Interface} class. \end{DoxyCompactList}\item 
+\hyperlink{structui_1_1selection_return}{selection\-Return} \hyperlink{classui_1_1user_interface_a538308770df303f863b988055481dc0b}{handle\-Input} (\hyperlink{structvec2}{vec2} \-\_\-pos)
+\begin{DoxyCompactList}\small\item\em Checks mouse position agains each menu in turn, returns selected menu and button. \end{DoxyCompactList}\item 
+void \hyperlink{classui_1_1user_interface_a87be3b4a18dffe7c2a8e3de6ee5d49db}{add} (const \hyperlink{classui_1_1selection}{selection} \-\_\-s)
+\begin{DoxyCompactList}\small\item\em Adds a new menu to the U\-I. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1user_interface_a1b89247e7deaf5874d58c36e6d571bd3}{std\-::vector$<$ \hyperlink{classui_1_1selection}{selection} $>$ $\ast$ \hyperlink{classui_1_1user_interface_a1b89247e7deaf5874d58c36e6d571bd3}{get\-Elements} ()}\label{classui_1_1user_interface_a1b89247e7deaf5874d58c36e6d571bd3}
+
+\begin{DoxyCompactList}\small\item\em Returns a pointer to all of the menus. Used mostly to draw them, from inside the universe class. \end{DoxyCompactList}\item 
+\hyperlink{classui_1_1selection}{selection} \hyperlink{classui_1_1user_interface_a28fb182517232a8b60b594fb4c42fa04}{get\-Element} (size\-\_\-t \-\_\-i)
+\begin{DoxyCompactList}\small\item\em Gets a menu from a specific index. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1user_interface_a353bf7f2156f4a6fa4875c5a787508ca}{void \hyperlink{classui_1_1user_interface_a353bf7f2156f4a6fa4875c5a787508ca}{reset} ()}\label{classui_1_1user_interface_a353bf7f2156f4a6fa4875c5a787508ca}
+
+\begin{DoxyCompactList}\small\item\em Resets the U\-I to its initial state. \end{DoxyCompactList}\item 
+void \hyperlink{classui_1_1user_interface_a6c9107d3d83a92f3a94c0ca791656598}{update} (int \-\_\-s)
+\begin{DoxyCompactList}\small\item\em Updates all the menus, and all of their buttons. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1user_interface_a0b4cdf1e84cbd2ceca29306d2b6ab091}{void \hyperlink{classui_1_1user_interface_a0b4cdf1e84cbd2ceca29306d2b6ab091}{clear} ()}\label{classui_1_1user_interface_a0b4cdf1e84cbd2ceca29306d2b6ab091}
+
+\begin{DoxyCompactList}\small\item\em Clears the U\-I. \end{DoxyCompactList}\item 
+void \hyperlink{classui_1_1user_interface_a816b0cfecbb77b2f44fbca923486b91c}{remove} (int \-\_\-i)
+\begin{DoxyCompactList}\small\item\em Removes a specific menu from the U\-I. \end{DoxyCompactList}\item 
+\hypertarget{classui_1_1user_interface_ae847bb6c29be69d12ec77faa3bc45d43}{void \hyperlink{classui_1_1user_interface_ae847bb6c29be69d12ec77faa3bc45d43}{pop} ()}\label{classui_1_1user_interface_ae847bb6c29be69d12ec77faa3bc45d43}
+
+\begin{DoxyCompactList}\small\item\em Removes the last menu in m\-\_\-elements. \end{DoxyCompactList}\item 
+void \hyperlink{classui_1_1user_interface_a30e7d21b6e5b5802ded6182c414c6e12}{set\-Dark} (int \-\_\-i, bool \-\_\-dark)
+\begin{DoxyCompactList}\small\item\em Sets a whole menu to either clickable or unclickable. \end{DoxyCompactList}\item 
+void \hyperlink{classui_1_1user_interface_a1b1202cb9e8f7b96247edb07b5e56251}{set\-Dark} (int \-\_\-sel, int \-\_\-btn, bool \-\_\-dark)
+\begin{DoxyCompactList}\small\item\em Sets a specific buttons clickability. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains the entire U\-I. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classui_1_1user_interface_a87be3b4a18dffe7c2a8e3de6ee5d49db}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!add@{add}}
+\index{add@{add}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{add}]{\setlength{\rightskip}{0pt plus 5cm}void ui\-::user\-Interface\-::add (
+\begin{DoxyParamCaption}
+\item[{const {\bf selection}}]{\-\_\-s}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classui_1_1user_interface_a87be3b4a18dffe7c2a8e3de6ee5d49db}
+
+
+Adds a new menu to the U\-I. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & menu to add. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1user_interface_a28fb182517232a8b60b594fb4c42fa04}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!get\-Element@{get\-Element}}
+\index{get\-Element@{get\-Element}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{get\-Element}]{\setlength{\rightskip}{0pt plus 5cm}{\bf selection} ui\-::user\-Interface\-::get\-Element (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{\-\_\-i}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classui_1_1user_interface_a28fb182517232a8b60b594fb4c42fa04}
+
+
+Gets a menu from a specific index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-i} & index to retrieve from. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1user_interface_a538308770df303f863b988055481dc0b}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!handle\-Input@{handle\-Input}}
+\index{handle\-Input@{handle\-Input}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{handle\-Input}]{\setlength{\rightskip}{0pt plus 5cm}{\bf selection\-Return} ui\-::user\-Interface\-::handle\-Input (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-pos}
+\end{DoxyParamCaption}
+)}}\label{classui_1_1user_interface_a538308770df303f863b988055481dc0b}
+
+
+Checks mouse position agains each menu in turn, returns selected menu and button. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-pos} & position of the click. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1user_interface_a816b0cfecbb77b2f44fbca923486b91c}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!remove@{remove}}
+\index{remove@{remove}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{remove}]{\setlength{\rightskip}{0pt plus 5cm}void ui\-::user\-Interface\-::remove (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-i}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classui_1_1user_interface_a816b0cfecbb77b2f44fbca923486b91c}
+
+
+Removes a specific menu from the U\-I. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-i} & index to remove. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1user_interface_a30e7d21b6e5b5802ded6182c414c6e12}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!set\-Dark@{set\-Dark}}
+\index{set\-Dark@{set\-Dark}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{set\-Dark}]{\setlength{\rightskip}{0pt plus 5cm}void ui\-::user\-Interface\-::set\-Dark (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-i, }
+\item[{bool}]{\-\_\-dark}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classui_1_1user_interface_a30e7d21b6e5b5802ded6182c414c6e12}
+
+
+Sets a whole menu to either clickable or unclickable. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-i} & index of menu. \\
+\hline
+{\em \-\_\-dark} & clickability. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1user_interface_a1b1202cb9e8f7b96247edb07b5e56251}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!set\-Dark@{set\-Dark}}
+\index{set\-Dark@{set\-Dark}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{set\-Dark}]{\setlength{\rightskip}{0pt plus 5cm}void ui\-::user\-Interface\-::set\-Dark (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-sel, }
+\item[{int}]{\-\_\-btn, }
+\item[{bool}]{\-\_\-dark}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classui_1_1user_interface_a1b1202cb9e8f7b96247edb07b5e56251}
+
+
+Sets a specific buttons clickability. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-sel} & menu index. \\
+\hline
+{\em \-\_\-btn} & button index. \\
+\hline
+{\em \-\_\-dark} & clickability. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classui_1_1user_interface_a6c9107d3d83a92f3a94c0ca791656598}{\index{ui\-::user\-Interface@{ui\-::user\-Interface}!update@{update}}
+\index{update@{update}!ui::userInterface@{ui\-::user\-Interface}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void ui\-::user\-Interface\-::update (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-s}
+\end{DoxyParamCaption}
+)}}\label{classui_1_1user_interface_a6c9107d3d83a92f3a94c0ca791656598}
+
+
+Updates all the menus, and all of their buttons. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & current score. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/ui/\hyperlink{user__interface_8hpp}{user\-\_\-interface.\-hpp}\item 
+src/ui/user\-\_\-interface.\-cpp\end{DoxyCompactItemize}

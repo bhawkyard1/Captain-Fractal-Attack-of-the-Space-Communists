@@ -1,0 +1,99 @@
+\hypertarget{classbase}{\section{base Class Reference}
+\label{classbase}\index{base@{base}}
+}
+
+
+Contains position and velocity, and the functionality to update based on time difference.  
+
+
+
+
+{\ttfamily \#include $<$base.\-hpp$>$}
+
+Inheritance diagram for base\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classbase}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classbase_a90093f488dc92a1eede40eb47b622ef7}{void \hyperlink{classbase_a90093f488dc92a1eede40eb47b622ef7}{set\-Pos} (const \hyperlink{structvec3}{vec3} \-\_\-val)}\label{classbase_a90093f488dc92a1eede40eb47b622ef7}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for position. \end{DoxyCompactList}\item 
+\hypertarget{classbase_aeaa2eadbc7b45eceadb5a4c2af2e8933}{void {\bfseries add\-Pos} (const \hyperlink{structvec3}{vec3} \-\_\-vec)}\label{classbase_aeaa2eadbc7b45eceadb5a4c2af2e8933}
+
+\item 
+\hypertarget{classbase_ac76c779722a45ea5d1b2acacffc89d3a}{\hyperlink{structvec3}{vec3} {\bfseries get\-Pos} () const }\label{classbase_ac76c779722a45ea5d1b2acacffc89d3a}
+
+\item 
+\hypertarget{classbase_a3813c5f44f3353e0e5561e034b0d77c4}{\hyperlink{structvec3}{vec3} \hyperlink{classbase_a3813c5f44f3353e0e5561e034b0d77c4}{get\-P\-Pos} () const }\label{classbase_a3813c5f44f3353e0e5561e034b0d77c4}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for m\-\_\-prev\-Pos. \end{DoxyCompactList}\item 
+\hypertarget{classbase_ac445f374b2d57f6c5bb034cda3a340e2}{void {\bfseries set\-P\-Pos} (const \hyperlink{structvec3}{vec3} \-\_\-p)}\label{classbase_ac445f374b2d57f6c5bb034cda3a340e2}
+
+\item 
+\hypertarget{classbase_a55f39acb84460ec5cc72793d96515593}{void \hyperlink{classbase_a55f39acb84460ec5cc72793d96515593}{set\-Vel} (const \hyperlink{structvec3}{vec3} \-\_\-v)}\label{classbase_a55f39acb84460ec5cc72793d96515593}
+
+\begin{DoxyCompactList}\small\item\em Setters for velocity. \end{DoxyCompactList}\item 
+\hypertarget{classbase_abb66dade6add41fd6a85cb1052486127}{void {\bfseries set\-W\-Vel} (const \hyperlink{structvec3}{vec3} \-\_\-wv)}\label{classbase_abb66dade6add41fd6a85cb1052486127}
+
+\item 
+\hypertarget{classbase_aa55d4885e976c58b056b5bdb57ec81c6}{void {\bfseries add\-Vel} (const \hyperlink{structvec3}{vec3} \-\_\-v)}\label{classbase_aa55d4885e976c58b056b5bdb57ec81c6}
+
+\item 
+\hypertarget{classbase_a650afb671306510b180db4dc30c9f292}{\hyperlink{structvec3}{vec3} \hyperlink{classbase_a650afb671306510b180db4dc30c9f292}{get\-Vel} () const }\label{classbase_a650afb671306510b180db4dc30c9f292}
+
+\begin{DoxyCompactList}\small\item\em Getters for velocity. \end{DoxyCompactList}\item 
+\hypertarget{classbase_a54695a44b9266342f510130ffc440ca2}{\hyperlink{structvec3}{vec3} {\bfseries get\-W\-Vel} () const }\label{classbase_a54695a44b9266342f510130ffc440ca2}
+
+\item 
+void \hyperlink{classbase_abdbbabe4760b3b4b163218f1e0191158}{update\-Pos} (float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the position of the object based on velocity, wvel, and time differece. \end{DoxyCompactList}\item 
+\hyperlink{structvec3}{vec3} \hyperlink{classbase_ace83be5af90e232274c63a2e56fd3b15}{get\-Interpolated\-Position} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Returns a \hyperlink{structvec2}{vec2} interpolated between current and previous position. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains position and velocity, and the functionality to update based on time difference. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classbase_ace83be5af90e232274c63a2e56fd3b15}{\index{base@{base}!get\-Interpolated\-Position@{get\-Interpolated\-Position}}
+\index{get\-Interpolated\-Position@{get\-Interpolated\-Position}!base@{base}}
+\subsubsection[{get\-Interpolated\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf vec3} base\-::get\-Interpolated\-Position (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classbase_ace83be5af90e232274c63a2e56fd3b15}
+
+
+Returns a \hyperlink{structvec2}{vec2} interpolated between current and previous position. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & interpolant \\
+\hline
+\end{DoxyParams}
+\hypertarget{classbase_abdbbabe4760b3b4b163218f1e0191158}{\index{base@{base}!update\-Pos@{update\-Pos}}
+\index{update\-Pos@{update\-Pos}!base@{base}}
+\subsubsection[{update\-Pos}]{\setlength{\rightskip}{0pt plus 5cm}void base\-::update\-Pos (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classbase_abdbbabe4760b3b4b163218f1e0191158}
+
+
+Updates the position of the object based on velocity, wvel, and time differece. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & the time difference since the last update. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{base_8hpp}{base.\-hpp}\item 
+src/base.\-cpp\end{DoxyCompactItemize}

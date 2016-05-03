@@ -1,0 +1,50 @@
+\hypertarget{structsquad}{\section{squad Class Reference}
+\label{structsquad}\index{squad@{squad}}
+}
+
+
+Contains data that allows enemies to coordinate with one another. Also has a unique I\-D, and ships in the squad are tagged with this.  
+
+
+
+
+{\ttfamily \#include $<$squad.\-hpp$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structsquad_a7462a498cd5e759746adc25e312156c4}{int \hyperlink{structsquad_a7462a498cd5e759746adc25e312156c4}{m\-\_\-id}}\label{structsquad_a7462a498cd5e759746adc25e312156c4}
+
+\begin{DoxyCompactList}\small\item\em The unique I\-D for the squad. Rather than have the squad actually contain its ships, I opted for a shallower structure to facilitate interaction between agents. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_a480945019f91f6cd4e71c9a632f4090a}{int \hyperlink{structsquad_a480945019f91f6cd4e71c9a632f4090a}{m\-\_\-size}}\label{structsquad_a480945019f91f6cd4e71c9a632f4090a}
+
+\begin{DoxyCompactList}\small\item\em The number of ships in the squad. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_a470eb2e3b7123f5b565f36bf24e8c41d}{int \hyperlink{structsquad_a470eb2e3b7123f5b565f36bf24e8c41d}{m\-\_\-max\-\_\-size}}\label{structsquad_a470eb2e3b7123f5b565f36bf24e8c41d}
+
+\begin{DoxyCompactList}\small\item\em The max size for the squad. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_a6c73412eccda20dac696566e6e6716a8}{\hyperlink{enemy_8hpp_abac1fdbabb5a6be5f0d6ae40be5c5a58}{ai\-Team} \hyperlink{structsquad_a6c73412eccda20dac696566e6e6716a8}{m\-\_\-team}}\label{structsquad_a6c73412eccda20dac696566e6e6716a8}
+
+\begin{DoxyCompactList}\small\item\em The team that the squad is on. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_a99940fccf13785ab516fdf4afc68e328}{\hyperlink{enemy_8hpp_a6e73eb3e8e86f5922e45adeb450ceb1e}{ai\-Goal} \hyperlink{structsquad_a99940fccf13785ab516fdf4afc68e328}{m\-\_\-squad\-Goal}}\label{structsquad_a99940fccf13785ab516fdf4afc68e328}
+
+\begin{DoxyCompactList}\small\item\em The currents goal, used to coordinate member behaviours. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_ae5836de9f2556e38d2e9b78fda8c3abd}{\hyperlink{structvec3}{vec3} \hyperlink{structsquad_ae5836de9f2556e38d2e9b78fda8c3abd}{m\-\_\-center\-Point}}\label{structsquad_ae5836de9f2556e38d2e9b78fda8c3abd}
+
+\begin{DoxyCompactList}\small\item\em Typically set to the average position of the members, this acts as the squad center. Could conceivably be set to leader position to alter behaviour. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_ab0584c31fa3c89a99dc700d830619816}{\hyperlink{structvec3}{vec3} \hyperlink{structsquad_ab0584c31fa3c89a99dc700d830619816}{m\-\_\-average\-Vel}}\label{structsquad_ab0584c31fa3c89a99dc700d830619816}
+
+\begin{DoxyCompactList}\small\item\em The average velocity of the members. Useful for Craig-\/\-Reynolds-\/eque alignment. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_a53048bfba949abf5351e18982ca34d22}{float \hyperlink{structsquad_a53048bfba949abf5351e18982ca34d22}{m\-\_\-regroup\-Dist} = 2000.\-0f}\label{structsquad_a53048bfba949abf5351e18982ca34d22}
+
+\begin{DoxyCompactList}\small\item\em Ships further than this distance from the squad center will attempt to regroup. \end{DoxyCompactList}\item 
+\hypertarget{structsquad_a7e29621628f833feb8fd24525e044586}{float \hyperlink{structsquad_a7e29621628f833feb8fd24525e044586}{m\-\_\-strength}}\label{structsquad_a7e29621628f833feb8fd24525e044586}
+
+\begin{DoxyCompactList}\small\item\em Perceived strength of the squad, affects morale. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains data that allows enemies to coordinate with one another. Also has a unique I\-D, and ships in the squad are tagged with this. 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{squad_8hpp}{squad.\-hpp}\end{DoxyCompactItemize}

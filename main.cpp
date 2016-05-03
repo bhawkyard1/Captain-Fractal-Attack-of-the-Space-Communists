@@ -455,6 +455,8 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             {
                 playSnd(MENU_SELECT_SND);
                 ply->setEnergyPriority(ret.m_button_val);
+                uni->getUI()->setDark(ret.m_sel_val, true);
+                uni->getUI()->setDark(ret.m_sel_val, ret.m_button_val, false);
             }
             else if(ret.m_sel_val == 1)
             {
@@ -725,12 +727,12 @@ void playTutorial(universe &uni)
 
     g_GAME_OVER = false;
     uni.reload(true);
+    uni.setScore(0);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(60.0f);
-
     std::array<bool, 4> directionsTravelled = {false, false, false, false};
     float timer = 0.0f;
     //Keypress modifiers (shift, ctrl etc).

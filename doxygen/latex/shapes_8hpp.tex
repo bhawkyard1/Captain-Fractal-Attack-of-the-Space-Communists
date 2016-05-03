@@ -1,0 +1,136 @@
+\hypertarget{shapes_8hpp}{\section{include/shapes.hpp File Reference}
+\label{shapes_8hpp}\index{include/shapes.\-hpp@{include/shapes.\-hpp}}
+}
+
+
+This file provides functions to detect collisions between geometric shapes.  
+
+
+{\ttfamily \#include \char`\"{}util.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}vectors.\-hpp\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{shapes_8hpp_a28740c19d3083e53e6d046adbbf269ad}{line\-Intersect\-Circle} (\hyperlink{structvec2}{vec2} \-\_\-start, \hyperlink{structvec2}{vec2} \-\_\-end, \hyperlink{structvec2}{vec2} \-\_\-pos, float \-\_\-radius)
+\begin{DoxyCompactList}\small\item\em Returns whether a given line intersects a given circle. \end{DoxyCompactList}\item 
+bool \hyperlink{shapes_8hpp_a3ff68b7fad377833e554bcb735ff7e32}{point\-On\-Line} (\hyperlink{structvec2}{vec2} \-\_\-start, \hyperlink{structvec2}{vec2} \-\_\-end, \hyperlink{structvec2}{vec2} \-\_\-point)
+\begin{DoxyCompactList}\small\item\em Returns whether a given point lies on a line. \end{DoxyCompactList}\item 
+\hypertarget{shapes_8hpp_ac04d4cefe85b842d495863a5e0e6613f}{bool {\bfseries point\-On\-Line} (\hyperlink{structvec3}{vec3} \-\_\-start, \hyperlink{structvec3}{vec3} \-\_\-end, \hyperlink{structvec3}{vec3} \-\_\-point)}\label{shapes_8hpp_ac04d4cefe85b842d495863a5e0e6613f}
+
+\item 
+bool \hyperlink{shapes_8hpp_a8e80a6651ca5abb9099d5453569fdddd}{circle\-Intersect\-Rect} (\hyperlink{structvec2}{vec2} \-\_\-pos, float \-\_\-r, \hyperlink{structvec2}{vec2} \-\_\-min, \hyperlink{structvec2}{vec2} \-\_\-dim)
+\begin{DoxyCompactList}\small\item\em Returns whether a given circle intersects a given A\-A\-B\-B. \end{DoxyCompactList}\item 
+bool \hyperlink{shapes_8hpp_af5242877756774c3e7fa2a075ef9a831}{line\-Intersect\-Sphere} (\hyperlink{structvec3}{vec3} \-\_\-start, \hyperlink{structvec3}{vec3} \-\_\-end, \hyperlink{structvec3}{vec3} \-\_\-pos, float \-\_\-radius)
+\begin{DoxyCompactList}\small\item\em Returns whether a line intersects a given sphere. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This file provides functions to detect collisions between geometric shapes. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{shapes_8hpp_a8e80a6651ca5abb9099d5453569fdddd}{\index{shapes.\-hpp@{shapes.\-hpp}!circle\-Intersect\-Rect@{circle\-Intersect\-Rect}}
+\index{circle\-Intersect\-Rect@{circle\-Intersect\-Rect}!shapes.hpp@{shapes.\-hpp}}
+\subsubsection[{circle\-Intersect\-Rect}]{\setlength{\rightskip}{0pt plus 5cm}bool circle\-Intersect\-Rect (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{float}]{\-\_\-r, }
+\item[{{\bf vec2}}]{\-\_\-min, }
+\item[{{\bf vec2}}]{\-\_\-dim}
+\end{DoxyParamCaption}
+)}}\label{shapes_8hpp_a8e80a6651ca5abb9099d5453569fdddd}
+
+
+Returns whether a given circle intersects a given A\-A\-B\-B. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-start} & line start, \\
+\hline
+{\em \-\_\-end} & line end \\
+\hline
+{\em \-\_\-min} & minimum point of the A\-A\-B\-B \\
+\hline
+{\em \-\_\-dim} & dimensions of the A\-A\-B\-B \\
+\hline
+\end{DoxyParams}
+\hypertarget{shapes_8hpp_a28740c19d3083e53e6d046adbbf269ad}{\index{shapes.\-hpp@{shapes.\-hpp}!line\-Intersect\-Circle@{line\-Intersect\-Circle}}
+\index{line\-Intersect\-Circle@{line\-Intersect\-Circle}!shapes.hpp@{shapes.\-hpp}}
+\subsubsection[{line\-Intersect\-Circle}]{\setlength{\rightskip}{0pt plus 5cm}bool line\-Intersect\-Circle (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-start, }
+\item[{{\bf vec2}}]{\-\_\-end, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{float}]{\-\_\-radius}
+\end{DoxyParamCaption}
+)}}\label{shapes_8hpp_a28740c19d3083e53e6d046adbbf269ad}
+
+
+Returns whether a given line intersects a given circle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-start} & line start \\
+\hline
+{\em \-\_\-end} & line end \\
+\hline
+{\em \-\_\-pos} & circle position \\
+\hline
+{\em \-\_\-radius} & circle radius \\
+\hline
+\end{DoxyParams}
+\hypertarget{shapes_8hpp_af5242877756774c3e7fa2a075ef9a831}{\index{shapes.\-hpp@{shapes.\-hpp}!line\-Intersect\-Sphere@{line\-Intersect\-Sphere}}
+\index{line\-Intersect\-Sphere@{line\-Intersect\-Sphere}!shapes.hpp@{shapes.\-hpp}}
+\subsubsection[{line\-Intersect\-Sphere}]{\setlength{\rightskip}{0pt plus 5cm}bool line\-Intersect\-Sphere (
+\begin{DoxyParamCaption}
+\item[{{\bf vec3}}]{\-\_\-start, }
+\item[{{\bf vec3}}]{\-\_\-end, }
+\item[{{\bf vec3}}]{\-\_\-pos, }
+\item[{float}]{\-\_\-radius}
+\end{DoxyParamCaption}
+)}}\label{shapes_8hpp_af5242877756774c3e7fa2a075ef9a831}
+
+
+Returns whether a line intersects a given sphere. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-start} & line start \\
+\hline
+{\em \-\_\-end} & line end \\
+\hline
+{\em \-\_\-pos} & sphere position \\
+\hline
+{\em \-\_\-radius} & sphere radius \\
+\hline
+\end{DoxyParams}
+\hypertarget{shapes_8hpp_a3ff68b7fad377833e554bcb735ff7e32}{\index{shapes.\-hpp@{shapes.\-hpp}!point\-On\-Line@{point\-On\-Line}}
+\index{point\-On\-Line@{point\-On\-Line}!shapes.hpp@{shapes.\-hpp}}
+\subsubsection[{point\-On\-Line}]{\setlength{\rightskip}{0pt plus 5cm}bool point\-On\-Line (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-start, }
+\item[{{\bf vec2}}]{\-\_\-end, }
+\item[{{\bf vec2}}]{\-\_\-point}
+\end{DoxyParamCaption}
+)}}\label{shapes_8hpp_a3ff68b7fad377833e554bcb735ff7e32}
+
+
+Returns whether a given point lies on a line. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-start} & line start \\
+\hline
+{\em \-\_\-end} & line end \\
+\hline
+{\em \-\_\-point} & point to test \\
+\hline
+\end{DoxyParams}

@@ -43,19 +43,19 @@ void loadMusic(std::string _path)
 
 void loadSounds()
 {
-    loadSound(g_RESOURCE_LOC + "sfx/red_laser_", 3);
-    loadSound(g_RESOURCE_LOC + "sfx/green_laser_", 3);
-    loadSound(g_RESOURCE_LOC + "sfx/blue_laser_", 3);
-    loadSound(g_RESOURCE_LOC + "sfx/explosion_", 3);
-    loadSound(g_RESOURCE_LOC + "sfx/ricochet_", 1);
-    loadSound(g_RESOURCE_LOC + "sfx/save_", 1);
-    loadSound(g_RESOURCE_LOC + "sfx/place_", 4);
-    loadSound(g_RESOURCE_LOC + "sfx/menu_button_", 1);
-    loadSound(g_RESOURCE_LOC + "sfx/ui_fail_", 1);
-    loadSound(g_RESOURCE_LOC + "sfx/clunk_", 1);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/red_laser_", 3);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/green_laser_", 3);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/blue_laser_", 3);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/explosion_", 3);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/ricochet_", 1);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/save_", 1);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/place_", 4);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/menu_button_", 1);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/ui_fail_", 1);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/clunk_", 1);
 
-    loadMusic(g_RESOURCE_LOC + "sfx/deep_space_0");
-    loadMusic(g_RESOURCE_LOC + "sfx/soviet_national_anthem_0");
+    loadMusic(g_RESOURCE_LOC + "../" + "sfx/deep_space_0");
+    loadMusic(g_RESOURCE_LOC + "../" + "sfx/soviet_national_anthem_0");
 }
 
 void playSnd(sound _snd)

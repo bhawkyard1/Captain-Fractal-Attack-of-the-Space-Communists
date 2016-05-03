@@ -1,0 +1,96 @@
+\hypertarget{weapons_8hpp}{\section{include/weapons.hpp File Reference}
+\label{weapons_8hpp}\index{include/weapons.\-hpp@{include/weapons.\-hpp}}
+}
+
+
+Weapon related types and stats live here.  
+
+
+{\ttfamily \#include \char`\"{}common.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}util.\-hpp\char`\"{}}\\*
+{\ttfamily \#include $<$array$>$}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{weapons_8hpp_a607031f505ab536b686f0cb2ab6eb3df}{\#define {\bfseries W\-E\-A\-P\-S\-\_\-\-W}~10}\label{weapons_8hpp_a607031f505ab536b686f0cb2ab6eb3df}
+
+\item 
+\hypertarget{weapons_8hpp_a597e0141a01b333a01188fb7c3720721}{\#define {\bfseries W\-E\-A\-P\-S\-\_\-\-H}~18}\label{weapons_8hpp_a597e0141a01b333a01188fb7c3720721}
+
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{weapons_8hpp_ac6523c0263d02b0fbdbe8b8e958a50b5}{W\-E\-A\-P\-O\-N\-\_\-\-S\-T\-A\-T} \{ \\*
+{\bfseries L\-A\-S\-E\-R\-\_\-\-C\-O\-U\-N\-T}, 
+{\bfseries S\-P\-R\-E\-A\-D}, 
+{\bfseries D\-A\-M\-A\-G\-E}, 
+{\bfseries S\-P\-E\-E\-D}, 
+\\*
+{\bfseries C\-O\-L\-O\-U\-R\-\_\-\-R\-E\-D}, 
+{\bfseries C\-O\-L\-O\-U\-R\-\_\-\-G\-R\-E\-E\-N}, 
+{\bfseries C\-O\-L\-O\-U\-R\-\_\-\-B\-L\-U\-E}, 
+{\bfseries E\-N\-E\-R\-G\-Y\-\_\-\-C\-O\-S\-T}, 
+\\*
+{\bfseries C\-O\-O\-L\-D\-O\-W\-N}, 
+{\bfseries S\-T\-O\-P\-P\-I\-N\-G\-\_\-\-P\-O\-W\-E\-R}
+ \}
+\begin{DoxyCompactList}\small\item\em This type represents the different attributes of a given weapon. They are analogous to the index containing weapon data since they can be implicity converted to integers. \end{DoxyCompactList}\item 
+enum \hyperlink{weapons_8hpp_adee3cd4bc0db6b52507cfc49432856f2}{W\-E\-A\-P\-O\-N\-\_\-\-T\-Y\-P\-E} \{ \\*
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-L\-A\-Y\-E\-R\-\_\-\-R\-E\-D}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-L\-A\-Y\-E\-R\-\_\-\-G\-R\-E\-E\-N}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-L\-A\-Y\-E\-R\-\_\-\-B\-L\-U\-E}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-D\-E\-B\-U\-G\-\_\-\-Y\-E\-L\-L\-O\-W}, 
+\\*
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-F\-E\-D\-\_\-1}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-F\-E\-D\-\_\-2}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-F\-E\-D\-\_\-3}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-F\-E\-D\-\_\-\-T\-U\-R\-R\-E\-T}, 
+\\*
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-F\-E\-D\-\_\-\-B\-O\-S\-S\-\_\-1}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-F\-E\-D\-\_\-\-B\-O\-S\-S\-\_\-2}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-W\-I\-N\-G\-M\-A\-N\-\_\-1}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-W\-I\-N\-G\-M\-A\-N\-\_\-2}, 
+\\*
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-W\-I\-N\-G\-M\-A\-N\-\_\-3}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-M\-I\-N\-E\-R\-\_\-\-L\-A\-S\-E\-R}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-T\-U\-R\-R\-E\-T\-\_\-\-L\-A\-S\-E\-R}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-I\-R\-A\-T\-E\-\_\-1}, 
+\\*
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-I\-R\-A\-T\-E\-\_\-2}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-I\-R\-A\-T\-E\-\_\-3}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-P\-I\-R\-A\-T\-E\-\_\-\-B\-O\-S\-S\-\_\-1}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-1}, 
+\\*
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-2}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-\-C\-A\-P\-I\-T\-A\-L}, 
+{\bfseries W\-E\-A\-P\-O\-N\-\_\-\-E\-N\-D}
+ \}
+\begin{DoxyCompactList}\small\item\em Enum representing the different weapon types that exist. Can be used to index into our global weapon stat array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{weapons_8hpp_a983b6c43e56d82aa2aae94244adc5092}{float {\bfseries get\-Energy\-Cost} (int weap)}\label{weapons_8hpp_a983b6c43e56d82aa2aae94244adc5092}
+
+\item 
+\hypertarget{weapons_8hpp_a754fe7945c2fbd19553493facefd5827}{float {\bfseries get\-Cooldown} (int weap)}\label{weapons_8hpp_a754fe7945c2fbd19553493facefd5827}
+
+\item 
+\hypertarget{weapons_8hpp_ab7898885f2612b67e1b1dbaf89ffe6cb}{bool {\bfseries is\-Off\-Screen} (\hyperlink{structvec2}{vec2} pos, float dist)}\label{weapons_8hpp_ab7898885f2612b67e1b1dbaf89ffe6cb}
+
+\item 
+\hypertarget{weapons_8hpp_ab091cd9c4a766dfeb8f28dad276d23d1}{bool {\bfseries is\-Off\-Screen} (\hyperlink{structvec3}{vec3} pos, float dist)}\label{weapons_8hpp_ab091cd9c4a766dfeb8f28dad276d23d1}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Weapon related types and stats live here. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game. 
+\end{DoxyDate}

@@ -1,0 +1,542 @@
+\hypertarget{classrenderer}{\section{renderer Class Reference}
+\label{classrenderer}\index{renderer@{renderer}}
+}
+
+
+Wrapper around S\-D\-L rendering functionality. Has not been updated in a bit, use at your own risk.  
+
+
+
+
+{\ttfamily \#include $<$renderer.\-hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classrenderer_ab24dfda8eda699409c6f64eaa3d3d681}{renderer} (int \-\_\-w, int \-\_\-h)
+\begin{DoxyCompactList}\small\item\em ctor for the renderer \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_a5c7f1cfc1cd1292c2ec8519dacdce0a6}{\hyperlink{classrenderer_a5c7f1cfc1cd1292c2ec8519dacdce0a6}{$\sim$renderer} ()}\label{classrenderer_a5c7f1cfc1cd1292c2ec8519dacdce0a6}
+
+\begin{DoxyCompactList}\small\item\em dtor for the renderer, frees up memory tied to all the dynamically allocated S\-D\-L objects \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_a92f72123ee07357e08173e8eea641ad4}{int \hyperlink{classrenderer_a92f72123ee07357e08173e8eea641ad4}{init} ()}\label{classrenderer_a92f72123ee07357e08173e8eea641ad4}
+
+\begin{DoxyCompactList}\small\item\em Initialises essential S\-D\-L functionality. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_a025d4becc60b9ef886b7f0fee06d015a}{void \hyperlink{classrenderer_a025d4becc60b9ef886b7f0fee06d015a}{load\-Textures} ()}\label{classrenderer_a025d4becc60b9ef886b7f0fee06d015a}
+
+\begin{DoxyCompactList}\small\item\em Loads all of the required textures. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_ad06ba9c15401bb0dcdafb525cfd8f201}{update} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the renderer, mostly used to update camera shake. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_abab0176fc41988510f7602da75e885fc}{load\-Font\-Sprite\-Sheet} (std\-::string \-\_\-name, std\-::string \-\_\-path, int \-\_\-size)
+\begin{DoxyCompactList}\small\item\em Loads glyphs from a font and renders them to S\-D\-L textures. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a56924d177465861dc6273e6ff5de220d}{load\-Texture} (std\-::string \-\_\-key, std\-::string \-\_\-path, S\-D\-L\-\_\-\-Blend\-Mode \-\_\-b)
+\begin{DoxyCompactList}\small\item\em Loads an image and stores it as an S\-D\-L texture. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_acc26e337a27867cfc52193774986ff7c}{load\-Texture\-Set} (std\-::string \-\_\-key, std\-::string \-\_\-set)
+\begin{DoxyCompactList}\small\item\em Loads a set of images, converts them to textures, and stores them. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a9355f220b4ea6a7a528913b6878bded2}{set\-Blend\-Mode} (S\-D\-L\-\_\-\-Blend\-Mode \-\_\-b)
+\begin{DoxyCompactList}\small\item\em Loads a set of images, converts them to textures, and stores them. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_aab9e421ec4b4fa5a1ce6ebe4dfa9b22c}{void \hyperlink{classrenderer_aab9e421ec4b4fa5a1ce6ebe4dfa9b22c}{clear} ()}\label{classrenderer_aab9e421ec4b4fa5a1ce6ebe4dfa9b22c}
+
+\begin{DoxyCompactList}\small\item\em Clears the screen. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_aff2e7ad5dc4d7b8b26e496b5baa5a8de}{draw\-Texture\-Set} (std\-::string \-\_\-key, \hyperlink{structvec2}{vec2} \-\_\-pos, float \-\_\-orient, std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws a set of textures to the screen, used for objects like ships, which have multiple components. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a6afff3128edc0e0caab88d51a1de022b}{draw\-Texture} (std\-::string \-\_\-key, size\-\_\-t \-\_\-index, \hyperlink{structvec2}{vec2} \-\_\-pos, float \-\_\-orient, std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws a texture to the screen. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a430af103157a244d083c16b41a6b839b}{draw\-Text} (std\-::string \-\_\-text, std\-::string \-\_\-font, \hyperlink{structvec2}{vec2} \-\_\-pos, bool \-\_\-ss, const float \-\_\-mul)
+\begin{DoxyCompactList}\small\item\em Draws text to the screen. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a7c6f70612d8fc6e6c1d9520c73e81f94}{draw\-Line} (\hyperlink{structvec2}{vec2} \-\_\-start, \hyperlink{structvec2}{vec2} \-\_\-end, std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} wrapper around S\-D\-L's line drawing function, draws a coloured line. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_a0a19a18380a5b0155a0741bc9cf5f1d5}{void {\bfseries draw\-Line} (\hyperlink{structvec2}{vec2} \-\_\-start, \hyperlink{structvec2}{vec2} \-\_\-end, std\-::array$<$ int, 4 $>$ \-\_\-col)}\label{classrenderer_a0a19a18380a5b0155a0741bc9cf5f1d5}
+
+\item 
+void \hyperlink{classrenderer_a3564517ce29f05e45b881a4c8afa3f96}{draw\-Line\-Gr} (\hyperlink{structvec2}{vec2} \-\_\-p, \hyperlink{structvec2}{vec2} \-\_\-e, std\-::array$<$ float, 4 $>$ \-\_\-scol, std\-::array$<$ float, 4 $>$ \-\_\-ecol)
+\begin{DoxyCompactList}\small\item\em Draws line whose colour varies. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_afc96317d24e4c0210053dffc0d191d6e}{draw\-Rect} (\hyperlink{structvec2}{vec2} \-\_\-p, \hyperlink{structvec2}{vec2} \-\_\-d, std\-::array$<$ int, 4 $>$ col, bool \-\_\-wire)
+\begin{DoxyCompactList}\small\item\em Draws a rectangle. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a575e3c10997f1fe8ec941dfa1e4efd01}{draw\-Circle} (int \-\_\-x, int \-\_\-y, int \-\_\-radius, std\-::array$<$ float, 4 $>$ \-\_\-col)
+\begin{DoxyCompactList}\small\item\em Draws a circle. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_a93e0d322c1bace835ccf19f3f6bc184d}{void {\bfseries draw\-Circle\-U\-I} (int \-\_\-x, int \-\_\-y, int \-\_\-radius, std\-::array$<$ int, 4 $>$ \-\_\-col)}\label{classrenderer_a93e0d322c1bace835ccf19f3f6bc184d}
+
+\item 
+void \hyperlink{classrenderer_a70a52c25aab83762d2e6a9e89a7e3f68}{query\-Texture} (std\-::string \-\_\-identifier, int \-\_\-index, int $\ast$\-\_\-w, int $\ast$\-\_\-h)
+\begin{DoxyCompactList}\small\item\em Returns the dimensions of a texture. \end{DoxyCompactList}\item 
+float \hyperlink{classrenderer_a560b721679d96689a77155fb4d2bf36a}{get\-Texture\-Radius} (\hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type)
+\begin{DoxyCompactList}\small\item\em Returns the radius of the texture of a ship type. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a705585261bc8aeca559e96cfe558712e}{draw\-Map} (std\-::vector$<$ \hyperlink{classmissile}{missile} $>$ $\ast$\-\_\-mp, std\-::vector$<$ \hyperlink{classenemy}{enemy} $>$ $\ast$\-\_\-ep, std\-::vector$<$ \hyperlink{classship}{ship} $>$ $\ast$\-\_\-ap, std\-::vector$<$ \hyperlink{classlaser}{laser} $>$ $\ast$\-\_\-lp, std\-::vector$<$ \hyperlink{structfaction}{faction} $>$ $\ast$\-\_\-fp)
+\begin{DoxyCompactList}\small\item\em Draws the minimap. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a78e5ab3b46c708c369fddeac1202c692}{status\-Bars} (\hyperlink{classplayer}{player} $\ast$\-\_\-ply)
+\begin{DoxyCompactList}\small\item\em Draws health, shield and energy bars. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a0e00b3fbe340e2f152856bd3686b563a}{draw\-Weapon\-Stats} (\hyperlink{classplayer}{player} $\ast$\-\_\-ply)
+\begin{DoxyCompactList}\small\item\em Draw the stats of the current weapon. \end{DoxyCompactList}\item 
+\hypertarget{classrenderer_ae42befa84c772f9a79624411dc31a7dc}{void \hyperlink{classrenderer_ae42befa84c772f9a79624411dc31a7dc}{finalise} ()}\label{classrenderer_ae42befa84c772f9a79624411dc31a7dc}
+
+\begin{DoxyCompactList}\small\item\em Displays the contents of the renderer. \end{DoxyCompactList}\item 
+S\-D\-L\-\_\-\-Surface $\ast$ \hyperlink{classrenderer_a89fa8841ece29c81878f31f5aa02132c}{get\-Surface} (std\-::string \-\_\-path)
+\begin{DoxyCompactList}\small\item\em Loads an image as an S\-D\-L Surface, and returns a pointer to it. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_ac0fe40b19aa7e976a7c84b6a12318235}{add\-Shake} (float \-\_\-s)
+\begin{DoxyCompactList}\small\item\em Adds screen shake. \end{DoxyCompactList}\item 
+void \hyperlink{classrenderer_a7502c6754f0dec9b8324c154b10557ce}{to\-Octant} (int $\ast$\-\_\-x, int $\ast$\-\_\-y, int \-\_\-octant)
+\begin{DoxyCompactList}\small\item\em Used to draw circles, converts a pair of coordinates to a specified octant. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Wrapper around S\-D\-L rendering functionality. Has not been updated in a bit, use at your own risk. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classrenderer_ab24dfda8eda699409c6f64eaa3d3d681}{\index{renderer@{renderer}!renderer@{renderer}}
+\index{renderer@{renderer}!renderer@{renderer}}
+\subsubsection[{renderer}]{\setlength{\rightskip}{0pt plus 5cm}renderer\-::renderer (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-w, }
+\item[{int}]{\-\_\-h}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_ab24dfda8eda699409c6f64eaa3d3d681}
+
+
+ctor for the renderer 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-w} & window width \\
+\hline
+{\em \-\_\-h} & window height \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classrenderer_ac0fe40b19aa7e976a7c84b6a12318235}{\index{renderer@{renderer}!add\-Shake@{add\-Shake}}
+\index{add\-Shake@{add\-Shake}!renderer@{renderer}}
+\subsubsection[{add\-Shake}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::add\-Shake (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-s}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_ac0fe40b19aa7e976a7c84b6a12318235}
+
+
+Adds screen shake. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & magnitude \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a575e3c10997f1fe8ec941dfa1e4efd01}{\index{renderer@{renderer}!draw\-Circle@{draw\-Circle}}
+\index{draw\-Circle@{draw\-Circle}!renderer@{renderer}}
+\subsubsection[{draw\-Circle}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Circle (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-x, }
+\item[{int}]{\-\_\-y, }
+\item[{int}]{\-\_\-radius, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a575e3c10997f1fe8ec941dfa1e4efd01}
+
+
+Draws a circle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-x} & x-\/coord \\
+\hline
+{\em \-\_\-y} & y-\/coord \\
+\hline
+{\em \-\_\-radius} & circle radius \\
+\hline
+{\em \-\_\-col} & circle colour \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a7c6f70612d8fc6e6c1d9520c73e81f94}{\index{renderer@{renderer}!draw\-Line@{draw\-Line}}
+\index{draw\-Line@{draw\-Line}!renderer@{renderer}}
+\subsubsection[{draw\-Line}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Line (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-start, }
+\item[{{\bf vec2}}]{\-\_\-end, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a7c6f70612d8fc6e6c1d9520c73e81f94}
+
+
+\hyperlink{struct_a}{A} wrapper around S\-D\-L's line drawing function, draws a coloured line. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-start} & start position \\
+\hline
+{\em \-\_\-end} & end position \\
+\hline
+{\em \-\_\-col} & line colour \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a3564517ce29f05e45b881a4c8afa3f96}{\index{renderer@{renderer}!draw\-Line\-Gr@{draw\-Line\-Gr}}
+\index{draw\-Line\-Gr@{draw\-Line\-Gr}!renderer@{renderer}}
+\subsubsection[{draw\-Line\-Gr}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Line\-Gr (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-p, }
+\item[{{\bf vec2}}]{\-\_\-e, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-scol, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-ecol}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a3564517ce29f05e45b881a4c8afa3f96}
+
+
+Draws line whose colour varies. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & line start \\
+\hline
+{\em \-\_\-e} & line end \\
+\hline
+{\em \-\_\-scol} & start colour \\
+\hline
+{\em \-\_\-ecol} & end colour \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a705585261bc8aeca559e96cfe558712e}{\index{renderer@{renderer}!draw\-Map@{draw\-Map}}
+\index{draw\-Map@{draw\-Map}!renderer@{renderer}}
+\subsubsection[{draw\-Map}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Map (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ {\bf missile} $>$ $\ast$}]{\-\_\-mp, }
+\item[{std\-::vector$<$ {\bf enemy} $>$ $\ast$}]{\-\_\-ep, }
+\item[{std\-::vector$<$ {\bf ship} $>$ $\ast$}]{\-\_\-ap, }
+\item[{std\-::vector$<$ {\bf laser} $>$ $\ast$}]{\-\_\-lp, }
+\item[{std\-::vector$<$ {\bf faction} $>$ $\ast$}]{\-\_\-fp}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a705585261bc8aeca559e96cfe558712e}
+
+
+Draws the minimap. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-mp} & ref to missile vector \\
+\hline
+{\em \-\_\-ep} & ref to agent vector \\
+\hline
+{\em \-\_\-ap} & ref to asteroid vector \\
+\hline
+{\em \-\_\-lp} & ref to laser vector \\
+\hline
+{\em \-\_\-fp} & ref to faction pointer \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_afc96317d24e4c0210053dffc0d191d6e}{\index{renderer@{renderer}!draw\-Rect@{draw\-Rect}}
+\index{draw\-Rect@{draw\-Rect}!renderer@{renderer}}
+\subsubsection[{draw\-Rect}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Rect (
+\begin{DoxyParamCaption}
+\item[{{\bf vec2}}]{\-\_\-p, }
+\item[{{\bf vec2}}]{\-\_\-d, }
+\item[{std\-::array$<$ int, 4 $>$}]{col, }
+\item[{bool}]{\-\_\-wire}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_afc96317d24e4c0210053dffc0d191d6e}
+
+
+Draws a rectangle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-d} & dimensions \\
+\hline
+{\em \-\_\-col} & colour \\
+\hline
+{\em \-\_\-wire} & draw a rectangle outline, or a filled rectangle \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a430af103157a244d083c16b41a6b839b}{\index{renderer@{renderer}!draw\-Text@{draw\-Text}}
+\index{draw\-Text@{draw\-Text}!renderer@{renderer}}
+\subsubsection[{draw\-Text}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Text (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-text, }
+\item[{std\-::string}]{\-\_\-font, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{bool}]{\-\_\-ss, }
+\item[{const float}]{\-\_\-mul}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a430af103157a244d083c16b41a6b839b}
+
+
+Draws text to the screen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-text} & text to draw \\
+\hline
+{\em \-\_\-font} & the font id \\
+\hline
+{\em \-\_\-pos} & starting position \\
+\hline
+{\em \-\_\-ss} & whether to draw the text in screen-\/space \\
+\hline
+{\em \-\_\-mul} & size multiplier \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a6afff3128edc0e0caab88d51a1de022b}{\index{renderer@{renderer}!draw\-Texture@{draw\-Texture}}
+\index{draw\-Texture@{draw\-Texture}!renderer@{renderer}}
+\subsubsection[{draw\-Texture}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Texture (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-key, }
+\item[{size\-\_\-t}]{\-\_\-index, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{float}]{\-\_\-orient, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a6afff3128edc0e0caab88d51a1de022b}
+
+
+Draws a texture to the screen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-key} & identifier for the texture, \\
+\hline
+{\em \-\_\-index} & index of the texture in the vector at '\-\_\-key' \\
+\hline
+{\em \-\_\-pos} & position \\
+\hline
+{\em \-\_\-orient} & angle \\
+\hline
+{\em \-\_\-col} & colour tint \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_aff2e7ad5dc4d7b8b26e496b5baa5a8de}{\index{renderer@{renderer}!draw\-Texture\-Set@{draw\-Texture\-Set}}
+\index{draw\-Texture\-Set@{draw\-Texture\-Set}!renderer@{renderer}}
+\subsubsection[{draw\-Texture\-Set}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Texture\-Set (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-key, }
+\item[{{\bf vec2}}]{\-\_\-pos, }
+\item[{float}]{\-\_\-orient, }
+\item[{std\-::array$<$ float, 4 $>$}]{\-\_\-col}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_aff2e7ad5dc4d7b8b26e496b5baa5a8de}
+
+
+Draws a set of textures to the screen, used for objects like ships, which have multiple components. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-key} & identifier for the set \\
+\hline
+{\em \-\_\-pos} & position \\
+\hline
+{\em \-\_\-orient} & angle \\
+\hline
+{\em \-\_\-col} & colour tint \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a0e00b3fbe340e2f152856bd3686b563a}{\index{renderer@{renderer}!draw\-Weapon\-Stats@{draw\-Weapon\-Stats}}
+\index{draw\-Weapon\-Stats@{draw\-Weapon\-Stats}!renderer@{renderer}}
+\subsubsection[{draw\-Weapon\-Stats}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::draw\-Weapon\-Stats (
+\begin{DoxyParamCaption}
+\item[{{\bf player} $\ast$}]{\-\_\-ply}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a0e00b3fbe340e2f152856bd3686b563a}
+
+
+Draw the stats of the current weapon. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ply} & ref to the player \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a89fa8841ece29c81878f31f5aa02132c}{\index{renderer@{renderer}!get\-Surface@{get\-Surface}}
+\index{get\-Surface@{get\-Surface}!renderer@{renderer}}
+\subsubsection[{get\-Surface}]{\setlength{\rightskip}{0pt plus 5cm}S\-D\-L\-\_\-\-Surface $\ast$ renderer\-::get\-Surface (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-path}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a89fa8841ece29c81878f31f5aa02132c}
+
+
+Loads an image as an S\-D\-L Surface, and returns a pointer to it. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-path} & path to the image file \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a560b721679d96689a77155fb4d2bf36a}{\index{renderer@{renderer}!get\-Texture\-Radius@{get\-Texture\-Radius}}
+\index{get\-Texture\-Radius@{get\-Texture\-Radius}!renderer@{renderer}}
+\subsubsection[{get\-Texture\-Radius}]{\setlength{\rightskip}{0pt plus 5cm}float renderer\-::get\-Texture\-Radius (
+\begin{DoxyParamCaption}
+\item[{{\bf ship\-\_\-spec}}]{\-\_\-type}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classrenderer_a560b721679d96689a77155fb4d2bf36a}
+
+
+Returns the radius of the texture of a ship type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-type} & ship type to test for \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_abab0176fc41988510f7602da75e885fc}{\index{renderer@{renderer}!load\-Font\-Sprite\-Sheet@{load\-Font\-Sprite\-Sheet}}
+\index{load\-Font\-Sprite\-Sheet@{load\-Font\-Sprite\-Sheet}!renderer@{renderer}}
+\subsubsection[{load\-Font\-Sprite\-Sheet}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::load\-Font\-Sprite\-Sheet (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-name, }
+\item[{std\-::string}]{\-\_\-path, }
+\item[{int}]{\-\_\-size}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_abab0176fc41988510f7602da75e885fc}
+
+
+Loads glyphs from a font and renders them to S\-D\-L textures. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-name} & identifier for the set of loaded glyphs \\
+\hline
+{\em \-\_\-path} & path to the font \\
+\hline
+{\em \-\_\-size} & font size \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a56924d177465861dc6273e6ff5de220d}{\index{renderer@{renderer}!load\-Texture@{load\-Texture}}
+\index{load\-Texture@{load\-Texture}!renderer@{renderer}}
+\subsubsection[{load\-Texture}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::load\-Texture (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-key, }
+\item[{std\-::string}]{\-\_\-path, }
+\item[{S\-D\-L\-\_\-\-Blend\-Mode}]{\-\_\-b}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a56924d177465861dc6273e6ff5de220d}
+
+
+Loads an image and stores it as an S\-D\-L texture. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-key} & identifier for the texture \\
+\hline
+{\em \-\_\-path} & path to the image \\
+\hline
+{\em \-\_\-b} & blendmode for the texture (transparency handling) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_acc26e337a27867cfc52193774986ff7c}{\index{renderer@{renderer}!load\-Texture\-Set@{load\-Texture\-Set}}
+\index{load\-Texture\-Set@{load\-Texture\-Set}!renderer@{renderer}}
+\subsubsection[{load\-Texture\-Set}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::load\-Texture\-Set (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-key, }
+\item[{std\-::string}]{\-\_\-set}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_acc26e337a27867cfc52193774986ff7c}
+
+
+Loads a set of images, converts them to textures, and stores them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-key} & identifier for the set \\
+\hline
+{\em \-\_\-set} & path to the files \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a70a52c25aab83762d2e6a9e89a7e3f68}{\index{renderer@{renderer}!query\-Texture@{query\-Texture}}
+\index{query\-Texture@{query\-Texture}!renderer@{renderer}}
+\subsubsection[{query\-Texture}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::query\-Texture (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-identifier, }
+\item[{int}]{\-\_\-index, }
+\item[{int $\ast$}]{\-\_\-w, }
+\item[{int $\ast$}]{\-\_\-h}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a70a52c25aab83762d2e6a9e89a7e3f68}
+
+
+Returns the dimensions of a texture. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-identifier} & texture identifier \\
+\hline
+{\em \-\_\-index} & index of the texture at '\-\_\-identifier' \\
+\hline
+{\em \-\_\-w} & reference to be filled with texture width \\
+\hline
+{\em \-\_\-h} & reference to be filled with texture height \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a9355f220b4ea6a7a528913b6878bded2}{\index{renderer@{renderer}!set\-Blend\-Mode@{set\-Blend\-Mode}}
+\index{set\-Blend\-Mode@{set\-Blend\-Mode}!renderer@{renderer}}
+\subsubsection[{set\-Blend\-Mode}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::set\-Blend\-Mode (
+\begin{DoxyParamCaption}
+\item[{S\-D\-L\-\_\-\-Blend\-Mode}]{\-\_\-b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classrenderer_a9355f220b4ea6a7a528913b6878bded2}
+
+
+Loads a set of images, converts them to textures, and stores them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-key} & identifier for the set \\
+\hline
+{\em \-\_\-set} & path to the files \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a78e5ab3b46c708c369fddeac1202c692}{\index{renderer@{renderer}!status\-Bars@{status\-Bars}}
+\index{status\-Bars@{status\-Bars}!renderer@{renderer}}
+\subsubsection[{status\-Bars}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::status\-Bars (
+\begin{DoxyParamCaption}
+\item[{{\bf player} $\ast$}]{\-\_\-ply}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a78e5ab3b46c708c369fddeac1202c692}
+
+
+Draws health, shield and energy bars. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-ply} & ref to player \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_a7502c6754f0dec9b8324c154b10557ce}{\index{renderer@{renderer}!to\-Octant@{to\-Octant}}
+\index{to\-Octant@{to\-Octant}!renderer@{renderer}}
+\subsubsection[{to\-Octant}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::to\-Octant (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{\-\_\-x, }
+\item[{int $\ast$}]{\-\_\-y, }
+\item[{int}]{\-\_\-octant}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_a7502c6754f0dec9b8324c154b10557ce}
+
+
+Used to draw circles, converts a pair of coordinates to a specified octant. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-x} & x coordinate reference \\
+\hline
+{\em \-\_\-y} & y coordinate reference \\
+\hline
+{\em \-\_\-octant} & octant to convert to \\
+\hline
+\end{DoxyParams}
+\hypertarget{classrenderer_ad06ba9c15401bb0dcdafb525cfd8f201}{\index{renderer@{renderer}!update@{update}}
+\index{update@{update}!renderer@{renderer}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void renderer\-::update (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classrenderer_ad06ba9c15401bb0dcdafb525cfd8f201}
+
+
+Updates the renderer, mostly used to update camera shake. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time difference \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{renderer_8hpp}{renderer.\-hpp}\item 
+src/renderer.\-cpp\end{DoxyCompactItemize}

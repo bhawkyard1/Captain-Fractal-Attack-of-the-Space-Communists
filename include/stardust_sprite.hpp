@@ -7,35 +7,80 @@
 
 class stardust_sprite: public stardust
 {
+public:
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief Texture key of the sprite.
+    /// \brief ctor for the stardust_sprite class.
+    /// \param _identifier string identifier for the sprite
+    /// \param _col colour of the sprite
+    /// \param _w width of the sprite
+    /// \param _h height of the sprite
+    //----------------------------------------------------------------------------------------------------------------------
+    stardust_sprite(const std::string _identifier, const std::array<float, 3> _col, const int _w, const int _h);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief ctor for the stardust_sprite class.
+    /// \param _identifier string identifier for the sprite
+    /// \param _alph alpha of the sprite
+    /// \param _w width of the sprite
+    /// \param _h height of the sprite
+    //----------------------------------------------------------------------------------------------------------------------
+    stardust_sprite(const std::string _identifier, const float _alph, const int _w, const int _h);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Regenerates stardust sprite attributes.
+    /// \param _col colour of the sprite
+    /// \param _w width of the sprite
+    /// \param _h height of the sprite
+    //----------------------------------------------------------------------------------------------------------------------
+    void spriteGen(const std::array<float, 3> &_col, const int _w, const int _h);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Updates the sprite.
+    /// \param _dt timestep
+    //----------------------------------------------------------------------------------------------------------------------
+    void updateSprite(const float _dt);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Updates the sprite dimensions.
+    /// \param _dt timestep
+    //----------------------------------------------------------------------------------------------------------------------
+    void incrDim(float _dt);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Getter for dimensions.
+    //----------------------------------------------------------------------------------------------------------------------
+    float getDim() const {return m_dim;}
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Getter for angle.
+    //----------------------------------------------------------------------------------------------------------------------
+    float getAng() const {return m_ang;}
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Getter for texture identifier.
+    //----------------------------------------------------------------------------------------------------------------------
+    std::string getIdentifier() {return m_identifier;}
+
+private:
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Texture key of the sprite.
     //----------------------------------------------------------------------------------------------------------------------
     std::string m_identifier;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The angle of the sprite.
+    /// \brief The angle of the sprite.
     //----------------------------------------------------------------------------------------------------------------------
     float m_ang;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The angular velocity of the sprite.
+    /// \brief The angular velocity of the sprite.
     //----------------------------------------------------------------------------------------------------------------------
     float m_angVel;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief The dimensions.
+    /// \brief The dimensions.
     //----------------------------------------------------------------------------------------------------------------------
     float m_dim;
-public:
-    stardust_sprite(const std::string _identifier, const std::array<float, 3> _col, const int _w, const int _h);
-    stardust_sprite(const std::string _identifier, const float _alph, const int _w, const int _h);
-    void spriteGen(const std::array<float, 3> &_col, const int _w, const int _h);
-    std::string getTex() const {return m_identifier;}
-    void updateSprite(const float _dt);
-    void incrDim(float _dt);
-    float getDim() const {return m_dim;}
-    float getAng() const {return m_ang;}
-    std::string getIdentifier() {return m_identifier;}
 };
 
 #endif

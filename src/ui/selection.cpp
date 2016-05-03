@@ -9,14 +9,14 @@ selection::selection()
     m_visible = true;
 }
 
-bool selection::click(vec2 p)
+bool selection::click(vec2 _p)
 {
   if(!m_visible) return false;
   bool any = false;
   for(auto &i : m_buttons)
   {
     if(i.isDark()) continue;
-    if(pointInRect(p, i.getPos(), i.getDim()))
+    if(pointInRect(_p, i.getPos(), i.getDim()))
     {
       any = true;
     }
@@ -28,7 +28,7 @@ bool selection::click(vec2 p)
   {
     m_buttons[i].set(false);
     if(m_buttons[i].isDark()) continue;
-    if(pointInRect(p, m_buttons[i].getPos(), m_buttons[i].getDim()))
+    if(pointInRect(_p, m_buttons[i].getPos(), m_buttons[i].getDim()))
     {
       m_buttons[i].select();
       m_selected = i;

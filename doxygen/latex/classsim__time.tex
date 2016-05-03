@@ -1,0 +1,84 @@
+\hypertarget{classsim__time}{\section{sim\-\_\-time Class Reference}
+\label{classsim__time}\index{sim\-\_\-time@{sim\-\_\-time}}
+}
+
+
+Used to control time-\/stepping in-\/game. Also stores some values it probably needn't, since they aren't strictly necessary for the class to function, but I found it useful to have them all in one place.  
+
+
+
+
+{\ttfamily \#include $<$sim\-\_\-time.\-hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsim__time_a42885957f994feacfe3ae4246875be6a}{sim\-\_\-time} (float \-\_\-fps)
+\begin{DoxyCompactList}\small\item\em ctor for the \hyperlink{classsim__time}{sim\-\_\-time} class. \end{DoxyCompactList}\item 
+\hypertarget{classsim__time_ae4e4e0ec9b08c69ed694fc55af087d8f}{void \hyperlink{classsim__time_ae4e4e0ec9b08c69ed694fc55af087d8f}{set\-Start} ()}\label{classsim__time_ae4e4e0ec9b08c69ed694fc55af087d8f}
+
+\begin{DoxyCompactList}\small\item\em Setter for m\-\_\-start, also recalculates m\-\_\-diff and m\-\_\-time\-\_\-since\-\_\-creation. \end{DoxyCompactList}\item 
+\hypertarget{classsim__time_a53ec26919841cbb2eb4aeca2b4839e95}{void \hyperlink{classsim__time_a53ec26919841cbb2eb4aeca2b4839e95}{set\-Cur} ()}\label{classsim__time_a53ec26919841cbb2eb4aeca2b4839e95}
+
+\begin{DoxyCompactList}\small\item\em Setter for m\-\_\-cur, also recalculates m\-\_\-diff and m\-\_\-time\-\_\-since\-\_\-creation. \end{DoxyCompactList}\item 
+\hypertarget{classsim__time_a3dfeae677bf25cc05120a70d03c0e1f2}{double \hyperlink{classsim__time_a3dfeae677bf25cc05120a70d03c0e1f2}{get\-Diff} () const }\label{classsim__time_a3dfeae677bf25cc05120a70d03c0e1f2}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-diff. \end{DoxyCompactList}\item 
+\hypertarget{classsim__time_af2a38a2f13c8f49d2b2f1185e5e6f185}{double \hyperlink{classsim__time_af2a38a2f13c8f49d2b2f1185e5e6f185}{get\-Time} () const }\label{classsim__time_af2a38a2f13c8f49d2b2f1185e5e6f185}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-time\-\_\-since\-\_\-creation. \end{DoxyCompactList}\item 
+\hypertarget{classsim__time_a98cee05c12e80d66458df3d1ac98b0b7}{double \hyperlink{classsim__time_a98cee05c12e80d66458df3d1ac98b0b7}{get\-Frame} () const }\label{classsim__time_a98cee05c12e80d66458df3d1ac98b0b7}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-sim\-\_\-dt. \end{DoxyCompactList}\item 
+\hypertarget{classsim__time_a1b2c3fecdfbd433fb66c314ed8906e1b}{double \hyperlink{classsim__time_a1b2c3fecdfbd433fb66c314ed8906e1b}{get\-Acc} () const }\label{classsim__time_a1b2c3fecdfbd433fb66c314ed8906e1b}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-sim\-\_\-accumulator. \end{DoxyCompactList}\item 
+void \hyperlink{classsim__time_a5044d04f14dd03986a67340eef498a24}{incr\-Acc} (float \-\_\-incr)
+\begin{DoxyCompactList}\small\item\em Increments m\-\_\-sim\-\_\-accumulator by a given value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Used to control time-\/stepping in-\/game. Also stores some values it probably needn't, since they aren't strictly necessary for the class to function, but I found it useful to have them all in one place. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classsim__time_a42885957f994feacfe3ae4246875be6a}{\index{sim\-\_\-time@{sim\-\_\-time}!sim\-\_\-time@{sim\-\_\-time}}
+\index{sim\-\_\-time@{sim\-\_\-time}!sim_time@{sim\-\_\-time}}
+\subsubsection[{sim\-\_\-time}]{\setlength{\rightskip}{0pt plus 5cm}sim\-\_\-time\-::sim\-\_\-time (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-fps}
+\end{DoxyParamCaption}
+)}}\label{classsim__time_a42885957f994feacfe3ae4246875be6a}
+
+
+ctor for the \hyperlink{classsim__time}{sim\-\_\-time} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-fps} & Stores the fps at which we will update the game. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsim__time_a5044d04f14dd03986a67340eef498a24}{\index{sim\-\_\-time@{sim\-\_\-time}!incr\-Acc@{incr\-Acc}}
+\index{incr\-Acc@{incr\-Acc}!sim_time@{sim\-\_\-time}}
+\subsubsection[{incr\-Acc}]{\setlength{\rightskip}{0pt plus 5cm}void sim\-\_\-time\-::incr\-Acc (
+\begin{DoxyParamCaption}
+\item[{float}]{\-\_\-incr}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classsim__time_a5044d04f14dd03986a67340eef498a24}
+
+
+Increments m\-\_\-sim\-\_\-accumulator by a given value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-incr} & Increment value \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{sim__time_8hpp}{sim\-\_\-time.\-hpp}\item 
+src/sim\-\_\-time.\-cpp\end{DoxyCompactItemize}

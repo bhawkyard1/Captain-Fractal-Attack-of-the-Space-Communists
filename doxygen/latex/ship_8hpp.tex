@@ -1,0 +1,123 @@
+\hypertarget{ship_8hpp}{\section{include/ship.hpp File Reference}
+\label{ship_8hpp}\index{include/ship.\-hpp@{include/ship.\-hpp}}
+}
+
+
+This file contains the ship class, and a small, related, utility struct.  
+
+
+{\ttfamily \#include $<$array$>$}\\*
+{\ttfamily \#include $<$unordered\-\_\-map$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include \char`\"{}weapons.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}common.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}util.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}base.\-hpp\char`\"{}}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structtinfo}{tinfo}
+\begin{DoxyCompactList}\small\item\em Contains the dimensions for each ship, based off of its texture. \end{DoxyCompactList}\item 
+class \hyperlink{classship}{ship}
+\begin{DoxyCompactList}\small\item\em Inherits from ship, contains data such as weapon type, engine power, shield strength. It does not, however, contain any functionality to behave autonomously. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ship_8hpp_ac4a935727a75c400ad782617ec242e3b}{\#define {\bfseries U\-P\-G\-R\-A\-D\-E\-S\-\_\-\-L\-E\-N}~4}\label{ship_8hpp_ac4a935727a75c400ad782617ec242e3b}
+
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \{ \\*
+{\bfseries C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-1}, 
+{\bfseries C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-2}, 
+{\bfseries C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-\-C\-A\-P\-I\-T\-A\-L}, 
+{\bfseries C\-O\-M\-M\-U\-N\-I\-S\-T\-\_\-\-T\-U\-R\-R\-E\-T}, 
+\\*
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-M\-K\-I}, 
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-M\-K\-I\-I}, 
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-M\-K\-I\-I\-I}, 
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-M\-K\-I\-V}, 
+\\*
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-G\-U\-N\-S\-H\-I\-P}, 
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-C\-A\-P\-I\-T\-A\-L}, 
+{\bfseries F\-E\-D\-E\-R\-A\-T\-I\-O\-N\-\_\-\-T\-U\-R\-R\-E\-T}, 
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-G\-N\-A\-T}, 
+\\*
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-C\-R\-U\-I\-S\-E\-R}, 
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-W\-R\-A\-N\-G\-L\-E\-R}, 
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-M\-A\-R\-A\-U\-D\-E\-R}, 
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-G\-U\-N\-S\-H\-I\-P}, 
+\\*
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-C\-A\-P\-I\-T\-A\-L}, 
+{\bfseries P\-I\-R\-A\-T\-E\-\_\-\-T\-U\-R\-R\-E\-T}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-M\-I\-N\-E\-R\-\_\-\-D\-R\-O\-I\-D}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-C\-A\-P\-I\-T\-A\-L}, 
+\\*
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-T\-U\-R\-R\-E\-T}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-S\-T\-A\-T\-I\-O\-N}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-G\-R\-A\-V\-W\-E\-L\-L}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-B\-A\-R\-R\-A\-C\-K\-S}, 
+\\*
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-S\-H\-I\-P}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-H\-U\-N\-T\-E\-R}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-D\-E\-F\-E\-N\-D\-E\-R}, 
+{\bfseries P\-L\-A\-Y\-E\-R\-\_\-\-D\-E\-S\-T\-R\-O\-Y\-E\-R}, 
+\\*
+{\bfseries I\-O\-N\-\_\-\-M\-I\-S\-S\-I\-L\-E\-\_\-\-M\-K\-I}, 
+{\bfseries A\-S\-T\-E\-R\-O\-I\-D\-\_\-\-S\-M\-A\-L\-L}, 
+{\bfseries A\-S\-T\-E\-R\-O\-I\-D\-\_\-\-M\-I\-D}, 
+{\bfseries A\-S\-T\-E\-R\-O\-I\-D\-\_\-\-L\-A\-R\-G\-E}, 
+\\*
+{\bfseries S\-H\-I\-P\-S\-\_\-\-E\-N\-D}
+ \}
+\begin{DoxyCompactList}\small\item\em Represents ship types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\-::string \hyperlink{ship_8hpp_a4066477b6a1946265e5968eed9f2c186}{get\-Texture\-Key} (\hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-s)
+\begin{DoxyCompactList}\small\item\em Returns an identifier from a ship type, which we can look up the radius for in g\-\_\-texture\-\_\-keys. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ship_8hpp_afadf708bb56bd7795ddb43ba3e094f17}{long unsigned int \hyperlink{ship_8hpp_afadf708bb56bd7795ddb43ba3e094f17}{g\-\_\-ship\-I\-D\-Counter}}\label{ship_8hpp_afadf708bb56bd7795ddb43ba3e094f17}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} global long unsigned int, increments on each ship creation, gives a new I\-D to use. \end{DoxyCompactList}\item 
+\hypertarget{ship_8hpp_a20e18e011eab48cb0896597e839ca911}{std\-::vector$<$ \hyperlink{structtinfo}{tinfo} $>$ \hyperlink{ship_8hpp_a20e18e011eab48cb0896597e839ca911}{g\-\_\-texture\-\_\-keys}}\label{ship_8hpp_a20e18e011eab48cb0896597e839ca911}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} global vector, containing texture identifiers and their radii. \end{DoxyCompactList}\item 
+\hypertarget{ship_8hpp_ae5fda3debc69088132d7e13f6e4fae68}{std\-::vector$<$ \hyperlink{classship}{ship} $>$ \hyperlink{ship_8hpp_ae5fda3debc69088132d7e13f6e4fae68}{g\-\_\-ship\-\_\-templates}}\label{ship_8hpp_ae5fda3debc69088132d7e13f6e4fae68}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} global vector of ships, which we will copy from, rather than constructing from scratch. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This file contains the ship class, and a small, related, utility struct. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game, an alternative S\-D\-L based renderer is available in \hyperlink{renderer_8hpp}{renderer.\-hpp} 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{ship_8hpp_a4066477b6a1946265e5968eed9f2c186}{\index{ship.\-hpp@{ship.\-hpp}!get\-Texture\-Key@{get\-Texture\-Key}}
+\index{get\-Texture\-Key@{get\-Texture\-Key}!ship.hpp@{ship.\-hpp}}
+\subsubsection[{get\-Texture\-Key}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string get\-Texture\-Key (
+\begin{DoxyParamCaption}
+\item[{{\bf ship\-\_\-spec}}]{\-\_\-s}
+\end{DoxyParamCaption}
+)}}\label{ship_8hpp_a4066477b6a1946265e5968eed9f2c186}
+
+
+Returns an identifier from a ship type, which we can look up the radius for in g\-\_\-texture\-\_\-keys. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-s} & ship type \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,175 @@
+\hypertarget{file_8hpp}{\section{include/file.hpp File Reference}
+\label{file_8hpp}\index{include/file.\-hpp@{include/file.\-hpp}}
+}
+
+
+Performs simple file operations. Mainly used for saving and loading the game.  
+
+
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$sstream$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include \char`\"{}enemy.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}ship.\-hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}universe.\-hpp\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{file_8hpp_a16f178c8d0091dc78b530322fb3eae75}{save\-Game} (\hyperlink{classuniverse}{universe} $\ast$\-\_\-uni)
+\begin{DoxyCompactList}\small\item\em Saves the game to a txt file. \end{DoxyCompactList}\item 
+void \hyperlink{file_8hpp_aa6b466fac7e5911b18c5093472ed40bd}{write\-Vector\-Enemy} (std\-::ostream \&\-\_\-file, std\-::vector$<$ \hyperlink{classenemy}{enemy} $>$ $\ast$\-\_\-u)
+\begin{DoxyCompactList}\small\item\em Writes essential data out to txt from the universes vector of enemies. \end{DoxyCompactList}\item 
+void \hyperlink{file_8hpp_a01e7dd6b664df218c2e03089365267a3}{write\-Vector\-Asteroid} (std\-::ostream \&\-\_\-file, std\-::vector$<$ \hyperlink{classship}{ship} $>$ $\ast$\-\_\-u)
+\begin{DoxyCompactList}\small\item\em Writes essential data out to txt from the universes vector of asteroids. \end{DoxyCompactList}\item 
+void \hyperlink{file_8hpp_a64c8a7d115c56a4bb0d1063fff68edf7}{read\-Vector\-Enemy} (std\-::string \-\_\-str, \hyperlink{classuniverse}{universe} $\ast$\-\_\-u)
+\begin{DoxyCompactList}\small\item\em Reads a string and creates enemies. \end{DoxyCompactList}\item 
+void \hyperlink{file_8hpp_a68f080b9f67b5c5d8b05d69a6cadb8be}{read\-Vector\-Asteroid} (std\-::string \-\_\-str, \hyperlink{classuniverse}{universe} $\ast$\-\_\-u)
+\begin{DoxyCompactList}\small\item\em Reads a string and creates asteroids. \end{DoxyCompactList}\item 
+void \hyperlink{file_8hpp_abbd6cbb9bdd080d438803484ff95a387}{load\-Game} (\hyperlink{classuniverse}{universe} $\ast$\-\_\-uni)
+\begin{DoxyCompactList}\small\item\em Loads the game stored in save.\-txt. \end{DoxyCompactList}\item 
+\hypertarget{file_8hpp_ad5ed6ddd9940c0097cc91774056df1c2}{void \hyperlink{file_8hpp_ad5ed6ddd9940c0097cc91774056df1c2}{load\-Config} ()}\label{file_8hpp_ad5ed6ddd9940c0097cc91774056df1c2}
+
+\begin{DoxyCompactList}\small\item\em Called during initialisation, reads config.\-txt and sets important variables. \end{DoxyCompactList}\item 
+void \hyperlink{file_8hpp_ad4450a39c95cb2053db14727c3cd5885}{set\-Config\-Value} (const std\-::string \-\_\-entry, const int \-\_\-val)
+\begin{DoxyCompactList}\small\item\em Sets a value in config.\-txt, used in the options menu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Performs simple file operations. Mainly used for saving and loading the game. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is the initial version. 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{file_8hpp_abbd6cbb9bdd080d438803484ff95a387}{\index{file.\-hpp@{file.\-hpp}!load\-Game@{load\-Game}}
+\index{load\-Game@{load\-Game}!file.hpp@{file.\-hpp}}
+\subsubsection[{load\-Game}]{\setlength{\rightskip}{0pt plus 5cm}void load\-Game (
+\begin{DoxyParamCaption}
+\item[{{\bf universe} $\ast$}]{\-\_\-uni}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_abbd6cbb9bdd080d438803484ff95a387}
+
+
+Loads the game stored in save.\-txt. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-uni} & ref to the universe \\
+\hline
+\end{DoxyParams}
+\hypertarget{file_8hpp_a68f080b9f67b5c5d8b05d69a6cadb8be}{\index{file.\-hpp@{file.\-hpp}!read\-Vector\-Asteroid@{read\-Vector\-Asteroid}}
+\index{read\-Vector\-Asteroid@{read\-Vector\-Asteroid}!file.hpp@{file.\-hpp}}
+\subsubsection[{read\-Vector\-Asteroid}]{\setlength{\rightskip}{0pt plus 5cm}void read\-Vector\-Asteroid (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-str, }
+\item[{{\bf universe} $\ast$}]{\-\_\-u}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_a68f080b9f67b5c5d8b05d69a6cadb8be}
+
+
+Reads a string and creates asteroids. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-str} & the string \\
+\hline
+{\em \-\_\-u} & a ref to the asteroids \\
+\hline
+\end{DoxyParams}
+\hypertarget{file_8hpp_a64c8a7d115c56a4bb0d1063fff68edf7}{\index{file.\-hpp@{file.\-hpp}!read\-Vector\-Enemy@{read\-Vector\-Enemy}}
+\index{read\-Vector\-Enemy@{read\-Vector\-Enemy}!file.hpp@{file.\-hpp}}
+\subsubsection[{read\-Vector\-Enemy}]{\setlength{\rightskip}{0pt plus 5cm}void read\-Vector\-Enemy (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{\-\_\-str, }
+\item[{{\bf universe} $\ast$}]{\-\_\-u}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_a64c8a7d115c56a4bb0d1063fff68edf7}
+
+
+Reads a string and creates enemies. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-str} & the string \\
+\hline
+{\em \-\_\-u} & a ref to the universe \\
+\hline
+\end{DoxyParams}
+\hypertarget{file_8hpp_a16f178c8d0091dc78b530322fb3eae75}{\index{file.\-hpp@{file.\-hpp}!save\-Game@{save\-Game}}
+\index{save\-Game@{save\-Game}!file.hpp@{file.\-hpp}}
+\subsubsection[{save\-Game}]{\setlength{\rightskip}{0pt plus 5cm}void save\-Game (
+\begin{DoxyParamCaption}
+\item[{{\bf universe} $\ast$}]{\-\_\-uni}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_a16f178c8d0091dc78b530322fb3eae75}
+
+
+Saves the game to a txt file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-uni} & reference to the universe \\
+\hline
+\end{DoxyParams}
+\hypertarget{file_8hpp_ad4450a39c95cb2053db14727c3cd5885}{\index{file.\-hpp@{file.\-hpp}!set\-Config\-Value@{set\-Config\-Value}}
+\index{set\-Config\-Value@{set\-Config\-Value}!file.hpp@{file.\-hpp}}
+\subsubsection[{set\-Config\-Value}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Config\-Value (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{\-\_\-entry, }
+\item[{const int}]{\-\_\-val}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_ad4450a39c95cb2053db14727c3cd5885}
+
+
+Sets a value in config.\-txt, used in the options menu. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-entry} & the entry to set \\
+\hline
+{\em \-\_\-val} & the value to set \-\_\-entry to \\
+\hline
+\end{DoxyParams}
+\hypertarget{file_8hpp_a01e7dd6b664df218c2e03089365267a3}{\index{file.\-hpp@{file.\-hpp}!write\-Vector\-Asteroid@{write\-Vector\-Asteroid}}
+\index{write\-Vector\-Asteroid@{write\-Vector\-Asteroid}!file.hpp@{file.\-hpp}}
+\subsubsection[{write\-Vector\-Asteroid}]{\setlength{\rightskip}{0pt plus 5cm}void write\-Vector\-Asteroid (
+\begin{DoxyParamCaption}
+\item[{std\-::ostream \&}]{\-\_\-file, }
+\item[{std\-::vector$<$ {\bf ship} $>$ $\ast$}]{\-\_\-u}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_a01e7dd6b664df218c2e03089365267a3}
+
+
+Writes essential data out to txt from the universes vector of asteroids. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-file} & the file to write to, \-\_\-u a ref to the vector of asteroids \\
+\hline
+\end{DoxyParams}
+\hypertarget{file_8hpp_aa6b466fac7e5911b18c5093472ed40bd}{\index{file.\-hpp@{file.\-hpp}!write\-Vector\-Enemy@{write\-Vector\-Enemy}}
+\index{write\-Vector\-Enemy@{write\-Vector\-Enemy}!file.hpp@{file.\-hpp}}
+\subsubsection[{write\-Vector\-Enemy}]{\setlength{\rightskip}{0pt plus 5cm}void write\-Vector\-Enemy (
+\begin{DoxyParamCaption}
+\item[{std\-::ostream \&}]{\-\_\-file, }
+\item[{std\-::vector$<$ {\bf enemy} $>$ $\ast$}]{\-\_\-u}
+\end{DoxyParamCaption}
+)}}\label{file_8hpp_aa6b466fac7e5911b18c5093472ed40bd}
+
+
+Writes essential data out to txt from the universes vector of enemies. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-file} & the file to write to \\
+\hline
+{\em \-\_\-u} & a ref to the vector of enemies \\
+\hline
+\end{DoxyParams}

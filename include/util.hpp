@@ -1,6 +1,8 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
+#include <iostream>
+
 #include <vector>
 #include <math.h>
 #include <limits>
@@ -16,49 +18,45 @@
 #include "vectors.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Max and infinite values for floats. Useful when you want to loop through a bunch of values to find the highest/
+/// \brief Max and infinite values for floats. Useful when you want to loop through a bunch of values to find the highest/
 /// lowest.
 //----------------------------------------------------------------------------------------------------------------------
 #define F_MAX std::numeric_limits<float>::max()
 #define F_INF std::numeric_limits<float>::infinity()
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Max and infinite values for ints. Useful when you want to loop through a bunch of values to find the highest/
+/// \brief Max and infinite values for ints. Useful when you want to loop through a bunch of values to find the highest/
 /// lowest.
 //----------------------------------------------------------------------------------------------------------------------
 #define I_MAX std::numeric_limits<int>::max()
 #define I_INF std::numeric_limits<int>::max()
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief A value used for all calculations involving pi. NGL has its own, but this game can run without NGL.
+/// \brief A value used for all calculations involving pi. NGL has its own, but this game can run without NGL.
 //----------------------------------------------------------------------------------------------------------------------
 #define UPI 3.14159265359
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @file util.hpp
-/// @brief A small file containing lots of useful values and functions, used across the project.
-/// @author Ben Hawkyard
-/// @version 1.0
-/// @date 11/04/16
+/// \file util.hpp
+/// \brief A small file containing lots of useful values and functions, used across the project.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 11/04/16
 /// Revision History :
 /// This is an initial version used for the game
 //----------------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given a 2d vector, converts it to an angle.
-/// @param _v vector to convert.
+/// \brief Given a 2d vector, converts it to an angle.
+/// \param _v vector to convert.
 //----------------------------------------------------------------------------------------------------------------------
 float computeAngle(vec2 _v);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Converts a given angle to a 2d vector.
-/// @param _angle angle to convert.
-//----------------------------------------------------------------------------------------------------------------------
-vec2 computeVector(float _angle);
-
-//----------------------------------------------------------------------------------------------------------------------
-/// @brief Clamps a value of any type to two values of the same type.
-/// @param _v input value, _m minimum threshold, _M maximum threshold.
+/// \brief Clamps a value of any type to two values of the same type.
+/// \param _v input value
+/// \param _m minimum threshold
+/// \param _M maximum threshold
 //----------------------------------------------------------------------------------------------------------------------
 template<typename tt>
 tt clamp(tt _v, tt _m, tt _M)
@@ -69,149 +67,189 @@ tt clamp(tt _v, tt _m, tt _M)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief A rolling clamp, a value which exceeds the max will roll back around to the minimum.
-/// @param _v input value, _m minimum threshold, _M maximum threshold.
+/// \brief A rolling clamp, a value which exceeds the max will roll back around to the minimum.
+/// \param _v input value
+/// \param _m minimum threshold
+/// \param _M maximum threshold
 //----------------------------------------------------------------------------------------------------------------------
 template<typename tt>
 tt clampRoll(tt _v, tt _m, tt _M)
 {
-  if(_v < _m)
-  {
-    return _M;
-  }
-  else if(_v > _M)
-  {
-    return _m;
-  }
-  return _v;
+    if(_v < _m)
+    {
+        return _M;
+    }
+    else if(_v > _M)
+    {
+        return _m;
+    }
+    return _v;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given two angles in degrees, this function will return the shortest angle between them, also in degrees.
-/// @param _ang1 first angle, _ang2 second angle.
+/// \brief Returns whether a given value is between two others.
+/// \param _v input value
+/// \param _m minimum threshold
+/// \param _M maximum threshold
+//----------------------------------------------------------------------------------------------------------------------
+template<typename tt>
+tt inRange(tt _v, tt _m, tt _M)
+{
+    if(_M < _m)
+    {
+        tt temp = _M;
+        _M = _m;
+        _m = temp;
+    }
+    return _v <= _M and _v >= _m;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Given two angles in degrees, this function will return the shortest angle between them, also in degrees.
+/// \param _ang1 first angle
+/// \param _ang2 second angle
 //----------------------------------------------------------------------------------------------------------------------
 float shortestAngle(float _ang1, float _ang2);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Squares the given argument. Often quicker than typing it twice.
-/// @param _arg value to square.
+/// \brief Squares the given argument. Often quicker than typing it twice.
+/// \param _arg value to square.
 //----------------------------------------------------------------------------------------------------------------------
 float sqr(float _arg);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Returns a random number between two values.
-/// @param _low lover limit, _high upper limit.
+/// \brief Returns a random number between two values.
+/// \param _low lover limit
+/// \param _high upper limit
 //----------------------------------------------------------------------------------------------------------------------
 template<class t>
 t randNum(t _low, t _high)
 {
-  return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(_high-_low))+_low;
+    return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(_high-_low))+_low;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @author Greg Walsh
-/// @brief Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed
+/// \author Greg Walsh
+/// \brief Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed
 /// to Greg Walsh.
-/// @param _val function returns the inverse square root of this value.
+/// \param _val function returns the inverse square root of this value.
 /// Modified From :-
 /// Hansen, P. C., 2012. 0x5f3759df. Hummus and Magnets. 15 September 2012. Available from: http://h14s.p5r.org/2012/09/0x5f3759df.html [Accessed 30 April 2016].
 //----------------------------------------------------------------------------------------------------------------------
 float fastInvSqrt(float _val);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
-/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+/// \brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
+/// \param _point point to test
+/// \param _pos corner of the rectangle
+/// \param _dim rectangle dimensions
 //----------------------------------------------------------------------------------------------------------------------
 bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Returns a vec2 with a magnitude between two floats.
-/// @param _m min length, _M max length.
+/// \brief Given a point and two vectors representing an cuboid, returns whether the point lies inside.
+/// \param _point point to test
+/// \param _pos cuboid of the rectangle
+/// \param _dim cuboid dimensions
+//----------------------------------------------------------------------------------------------------------------------
+bool pointInBox(vec3 _point, vec3 _start, vec3 _end);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Returns a vec2 with a magnitude between two floats.
+/// \param _m min length, _M max length.
 //----------------------------------------------------------------------------------------------------------------------
 vec2 randVec2(float _m, float _M);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Returns a point inside the circle with a radius f.
-/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+/// \brief Returns a point inside the circle with a radius f.
+/// \param _f radius
 //----------------------------------------------------------------------------------------------------------------------
 vec2 randVec2(float _f);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Returns a point in the rectangle defined by a minimum and maximum point.
-/// @param _min the minimum point, _max the maximum point.
+/// \brief Returns a point in the rectangle defined by a minimum and maximum point.
+/// \param _min the minimum point
+/// \param _max the maximum point
 //----------------------------------------------------------------------------------------------------------------------
 vec2 randVec2(vec2 _min, vec2 _max);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Returns a vec3 with a magnitude between two floats.
-/// @param _m min length, _M max length.
+/// \brief Returns a vec3 with a magnitude between two floats.
+/// \param _m min length
+/// \param _M max length.
 //----------------------------------------------------------------------------------------------------------------------
 vec3 randVec3(float m, float M);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Returns a point inside the sphere with a radius f.
-/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+/// \brief Returns a point inside the sphere with a radius f.
+/// \param _point point to test
+/// \param _pos corner of the rectangle
+/// \param _dim rectangle dimensions
 //----------------------------------------------------------------------------------------------------------------------
-vec3 randVec3(float f);
+vec3 randVec3(float _f);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
-/// @param _point point to test, _pos corner of the rectangle, _dim rectangle dimensions.
+/// \brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
+/// \param _point point to test
+/// \param _pos corner of the rectangle
+/// \param _dim rectangle dimensions
 //----------------------------------------------------------------------------------------------------------------------
 vec3 randVec3(vec3 min, vec3 max);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Splits a given string into a vector of strings, according to a given delimeter.
-/// @param _str given string, _delim delimiting character.
+/// \brief Splits a given string into a vector of strings, according to a given delimeter.
+/// \param _str given string
+/// \param _delim delimiting character
 //----------------------------------------------------------------------------------------------------------------------
 std::vector<std::string> split(std::string _str, char _delim);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief To avoid shuffling all elements in a vector when removing one, we can simply swap the element to remove, and
+/// \brief To avoid shuffling all elements in a vector when removing one, we can simply swap the element to remove, and
 /// the element at the end, before popping. Of course, this should only be used when the order of the vector is
 /// unimportant. I came accross the idea online, but the implementation is my own.
-/// @param _vec pointer to the vector, _i index to remove.
+/// \param _vec pointer to the vector
+/// \param _i index to remove
 //----------------------------------------------------------------------------------------------------------------------
 template<class t>
 void swapnpop(std::vector<t> * _vec, int _i)
 {
-  iter_swap( _vec->begin() + _i, _vec->end() - 1 );
-  _vec->pop_back();
+    iter_swap( _vec->begin() + _i, _vec->end() - 1 );
+    _vec->pop_back();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given an angle, returns a vector pointing forwards.
-/// @param _ang angle.
+/// \brief Given an angle, returns a vector pointing forwards.
+/// \param _ang angle
 //----------------------------------------------------------------------------------------------------------------------
 vec2 front(float _ang);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given an angle, returns a vector pointing back.
-/// @param _ang angle.
+/// \brief Given an angle, returns a vector pointing back.
+/// \param _ang angle
 //----------------------------------------------------------------------------------------------------------------------
 vec2 back(float _ang);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given an angle, returns a vector pointing left.
-/// @param _ang angle.
+/// \brief Given an angle, returns a vector pointing left.
+/// \param _ang angle
 //----------------------------------------------------------------------------------------------------------------------
 vec2 left(float _ang);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given an angle, returns a vector pointing right.
-/// @param _ang angle.
+/// \brief Given an angle, returns a vector pointing right.
+/// \param _ang angle
 //----------------------------------------------------------------------------------------------------------------------
 vec2 right(float _ang);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given a colour whose components range from 0-255, convert it to 0-1.
-/// @param _col colour to convert.
+/// \brief Given a colour whose components range from 0-255, convert it to 0-1.
+/// \param _col colour to convert
 //----------------------------------------------------------------------------------------------------------------------
 std::array<float, 4> col255to1(std::array<float, 4> _col);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @brief Given a colour whose components range from 0-1, convert it to 0-255.
-/// @param _col colour to convert.
+/// \brief Given a colour whose components range from 0-1, convert it to 0-255.
+/// \param _col colour to convert
 //----------------------------------------------------------------------------------------------------------------------
 std::array<float, 4> col255to1(std::array<int, 4> _col);
 

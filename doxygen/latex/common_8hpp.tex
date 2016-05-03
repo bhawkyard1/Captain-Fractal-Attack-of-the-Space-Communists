@@ -1,0 +1,131 @@
+\hypertarget{common_8hpp}{\section{include/common.hpp File Reference}
+\label{common_8hpp}\index{include/common.\-hpp@{include/common.\-hpp}}
+}
+
+
+Keeps track of the global variables used in the game.  
+
+
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$S\-D\-L.\-h$>$}\\*
+{\ttfamily \#include $<$S\-D\-L2/\-S\-D\-L\-\_\-image.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}vectors.\-hpp\char`\"{}}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{common_8hpp_af5a6cfa37e1e41ef8b64a0589d35ec01}{\#define \hyperlink{common_8hpp_af5a6cfa37e1e41ef8b64a0589d35ec01}{R\-E\-N\-D\-E\-R\-\_\-\-M\-O\-D\-E}~1}\label{common_8hpp_af5a6cfa37e1e41ef8b64a0589d35ec01}
+
+\begin{DoxyCompactList}\small\item\em 0 = Rendered using S\-D\-L, 1 = Rendered using N\-G\-L. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{common_8hpp_a5d069ca8708a30d3ae09a065989ec1f7}{game\-\_\-mode} \{ {\bfseries M\-O\-D\-E\-\_\-\-M\-E\-N\-U}, 
+{\bfseries M\-O\-D\-E\-\_\-\-T\-U\-T\-O\-R\-I\-A\-L}, 
+{\bfseries M\-O\-D\-E\-\_\-\-G\-A\-M\-E}, 
+{\bfseries M\-O\-D\-E\-\_\-\-Q\-U\-I\-T}
+ \}
+\begin{DoxyCompactList}\small\item\em Identifies the game state, whether the user is at the main menu, playing a normal game, the tutorial, or wants to quit the game. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\-::vector$<$ std\-::string $>$ \hyperlink{common_8hpp_a2f5263619f432305380aa58c4f4518d1}{split} (const std\-::string \-\_\-str, const char \-\_\-delim)
+\begin{DoxyCompactList}\small\item\em Splits a string given a character delimiter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{common_8hpp_aaf084904f75454b19773deed3b3f79df}{\hyperlink{common_8hpp_a5d069ca8708a30d3ae09a065989ec1f7}{game\-\_\-mode} {\bfseries g\-\_\-\-G\-A\-M\-E\-\_\-\-S\-T\-A\-T\-E}}\label{common_8hpp_aaf084904f75454b19773deed3b3f79df}
+
+\item 
+\hypertarget{common_8hpp_ad02608ca6ef7be80d3b5607914624774}{std\-::string \hyperlink{common_8hpp_ad02608ca6ef7be80d3b5607914624774}{g\-\_\-\-R\-E\-S\-O\-U\-R\-C\-E\-\_\-\-L\-O\-C}}\label{common_8hpp_ad02608ca6ef7be80d3b5607914624774}
+
+\begin{DoxyCompactList}\small\item\em Locations of game resources, differs for N\-G\-L and S\-D\-L versions. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_a6ef5106fcfe859ffdfd1dbec1a918528}{double \hyperlink{common_8hpp_a6ef5106fcfe859ffdfd1dbec1a918528}{g\-\_\-\-G\-L\-O\-B\-A\-L\-\_\-\-T\-I\-M\-E}}\label{common_8hpp_a6ef5106fcfe859ffdfd1dbec1a918528}
+
+\begin{DoxyCompactList}\small\item\em The time elapsed since the game started. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_ad37ad7cb730bfc37a07241a4459ba0b6}{int \hyperlink{common_8hpp_ad37ad7cb730bfc37a07241a4459ba0b6}{g\-\_\-\-W\-I\-N\-\_\-\-H\-E\-I\-G\-H\-T}}\label{common_8hpp_ad37ad7cb730bfc37a07241a4459ba0b6}
+
+\begin{DoxyCompactList}\small\item\em Positions and dimensions of the window. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_a86c8a0cb4d4c4f8fac7910cc72ca2d40}{int {\bfseries g\-\_\-\-W\-I\-N\-\_\-\-W\-I\-D\-T\-H}}\label{common_8hpp_a86c8a0cb4d4c4f8fac7910cc72ca2d40}
+
+\item 
+\hypertarget{common_8hpp_a9745207aba3535e57a05cf1f0e379bc2}{int {\bfseries g\-\_\-\-W\-I\-N\-\_\-\-P\-O\-S\-\_\-\-X}}\label{common_8hpp_a9745207aba3535e57a05cf1f0e379bc2}
+
+\item 
+\hypertarget{common_8hpp_aea35de613e72a83fb115d7f02e0e8fdb}{int {\bfseries g\-\_\-\-W\-I\-N\-\_\-\-P\-O\-S\-\_\-\-Y}}\label{common_8hpp_aea35de613e72a83fb115d7f02e0e8fdb}
+
+\item 
+\hypertarget{common_8hpp_ae595463b5e42ecda3ef5a225c10adbff}{int \hyperlink{common_8hpp_ae595463b5e42ecda3ef5a225c10adbff}{g\-\_\-\-G\-R\-A\-P\-H\-I\-C\-A\-L\-\_\-\-D\-E\-T\-A\-I\-L}}\label{common_8hpp_ae595463b5e42ecda3ef5a225c10adbff}
+
+\begin{DoxyCompactList}\small\item\em Graphical fidelity. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_ab20ed97360c9f9228405df4da4cfd5af}{int \hyperlink{common_8hpp_ab20ed97360c9f9228405df4da4cfd5af}{g\-\_\-\-D\-I\-F\-F\-I\-C\-U\-L\-T\-Y}}\label{common_8hpp_ab20ed97360c9f9228405df4da4cfd5af}
+
+\begin{DoxyCompactList}\small\item\em Difficulty level of the game. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_a877c6197048d73cb0fdecd8b1b9b2c2d}{\hyperlink{structvec2}{vec2} \hyperlink{common_8hpp_a877c6197048d73cb0fdecd8b1b9b2c2d}{g\-\_\-\-H\-A\-L\-F\-W\-I\-N}}\label{common_8hpp_a877c6197048d73cb0fdecd8b1b9b2c2d}
+
+\begin{DoxyCompactList}\small\item\em Half of the window size, as a \hyperlink{structvec2}{vec2}. \end{DoxyCompactList}\item 
+bool \hyperlink{common_8hpp_a1b7a47cb2d19c2363f5966dcf5e90103}{g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E}
+\begin{DoxyCompactList}\small\item\em The maximum dimension of the window, used in some places to cull objects which are too far away, in the S\-D\-L version. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_ae2869326f6717ee166b1447c9d56a35b}{bool \hyperlink{common_8hpp_ae2869326f6717ee166b1447c9d56a35b}{g\-\_\-\-G\-A\-M\-E\-\_\-\-O\-V\-E\-R}}\label{common_8hpp_ae2869326f6717ee166b1447c9d56a35b}
+
+\begin{DoxyCompactList}\small\item\em Whether the game is over, typically used to tell the game to ignore the player. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_aa99efb0211fcb5b6b188b67cd2b0791b}{float \hyperlink{common_8hpp_aa99efb0211fcb5b6b188b67cd2b0791b}{g\-\_\-\-T\-A\-R\-G\-\_\-\-Z\-O\-O\-M\-\_\-\-L\-E\-V\-E\-L}}\label{common_8hpp_aa99efb0211fcb5b6b188b67cd2b0791b}
+
+\begin{DoxyCompactList}\small\item\em The target zoom level. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_a1aedae44d207b94d4cc2970ca7d022a5}{float \hyperlink{common_8hpp_a1aedae44d207b94d4cc2970ca7d022a5}{g\-\_\-\-Z\-O\-O\-M\-\_\-\-L\-E\-V\-E\-L}}\label{common_8hpp_a1aedae44d207b94d4cc2970ca7d022a5}
+
+\begin{DoxyCompactList}\small\item\em The current zoom level. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_a6f2147a791077d96065087360a547a5b}{const float \hyperlink{common_8hpp_a6f2147a791077d96065087360a547a5b}{g\-\_\-\-P\-I\-X\-E\-L\-\_\-\-U\-N\-I\-T\-\_\-\-C\-O\-N\-V\-E\-R\-S\-I\-O\-N}}\label{common_8hpp_a6f2147a791077d96065087360a547a5b}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{struct_a}{A} multiplier for calculations using dt. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_ab342e19616956966f05bf9d301e29130}{float \hyperlink{common_8hpp_ab342e19616956966f05bf9d301e29130}{g\-\_\-\-T\-I\-M\-E\-\_\-\-S\-C\-A\-L\-E}}\label{common_8hpp_ab342e19616956966f05bf9d301e29130}
+
+\begin{DoxyCompactList}\small\item\em The time scale. \end{DoxyCompactList}\item 
+\hypertarget{common_8hpp_a0da56a99b4705964f9d71fa29d45b26e}{float \hyperlink{common_8hpp_a0da56a99b4705964f9d71fa29d45b26e}{g\-\_\-\-B\-G\-\_\-\-D\-E\-N\-S\-I\-T\-Y}}\label{common_8hpp_a0da56a99b4705964f9d71fa29d45b26e}
+
+\begin{DoxyCompactList}\small\item\em Density of background detail. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Keeps track of the global variables used in the game. \begin{DoxyAuthor}{Author}
+Ben Hawkyard 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+1.\-0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+11/04/16 Revision History \-: This is an initial version used for the game. 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{common_8hpp_a2f5263619f432305380aa58c4f4518d1}{\index{common.\-hpp@{common.\-hpp}!split@{split}}
+\index{split@{split}!common.hpp@{common.\-hpp}}
+\subsubsection[{split}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$std\-::string$>$ split (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{\-\_\-str, }
+\item[{const char}]{\-\_\-delim}
+\end{DoxyParamCaption}
+)}}\label{common_8hpp_a2f5263619f432305380aa58c4f4518d1}
+
+
+Splits a string given a character delimiter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-str} & input string, \-\_\-delim delimiting character \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Variable Documentation}
+\hypertarget{common_8hpp_a1b7a47cb2d19c2363f5966dcf5e90103}{\index{common.\-hpp@{common.\-hpp}!g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E@{g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E}}
+\index{g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E@{g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E}!common.hpp@{common.\-hpp}}
+\subsubsection[{g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E}]{\setlength{\rightskip}{0pt plus 5cm}bool g\-\_\-\-D\-E\-V\-\_\-\-M\-O\-D\-E}}\label{common_8hpp_a1b7a47cb2d19c2363f5966dcf5e90103}
+
+
+The maximum dimension of the window, used in some places to cull objects which are too far away, in the S\-D\-L version. 
+
+Whether the game is in developer mode (this can be changed in config.\-txt, in the resources folder) 

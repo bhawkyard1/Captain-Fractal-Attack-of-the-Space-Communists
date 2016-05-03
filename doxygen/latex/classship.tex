@@ -1,0 +1,463 @@
+\hypertarget{classship}{\section{ship Class Reference}
+\label{classship}\index{ship@{ship}}
+}
+
+
+Inherits from ship, contains data such as weapon type, engine power, shield strength. It does not, however, contain any functionality to behave autonomously.  
+
+
+
+
+{\ttfamily \#include $<$ship.\-hpp$>$}
+
+Inheritance diagram for ship\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classship}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classship_a3ca9f0f5ecbed6a53d7bae37b8e57704}{ship} (const \hyperlink{structvec3}{vec3} \-\_\-p, const \hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \-\_\-type, const float \-\_\-radius)
+\begin{DoxyCompactList}\small\item\em ctor for the ship class. \end{DoxyCompactList}\item 
+\hyperlink{classship_a2d79339fb680dce8b7b581103706c357}{ship} (const \hyperlink{classship}{ship} \&\-\_\-src, const \hyperlink{structvec3}{vec3} \-\_\-p)
+\begin{DoxyCompactList}\small\item\em Copy ctor for the ship class. \end{DoxyCompactList}\item 
+void \hyperlink{classship_a9c6d721f86324e034dd0c97deb903257}{add\-Vel\-S} (const \hyperlink{structvec3}{vec3} \-\_\-v)
+\begin{DoxyCompactList}\small\item\em Adds velocity to the ship. \end{DoxyCompactList}\item 
+void \hyperlink{classship_ac6075d376a2f10087a7daddd6dc4104e}{accelerate} (const float \-\_\-mult)
+\begin{DoxyCompactList}\small\item\em Accelerates the ship, in the direction that it is facing. \end{DoxyCompactList}\item 
+void \hyperlink{classship_a8ea8250d5797b7b3822997eca7059b6d}{accelerate} (const \hyperlink{structvec3}{vec3} \-\_\-dir, const float \-\_\-mult)
+\begin{DoxyCompactList}\small\item\em Adds velocity to the ship. \end{DoxyCompactList}\item 
+void \hyperlink{classship_a940069471464086ac4a47089c4ee7c1f}{set\-Accelerating} (const bool \-\_\-b)
+\begin{DoxyCompactList}\small\item\em Setter for m\-\_\-accelerating. \end{DoxyCompactList}\item 
+void \hyperlink{classship_a2e0ef103ac673f4cce05a364a1d5332e}{dodge} (const float \-\_\-side)
+\begin{DoxyCompactList}\small\item\em Adds velocity to the ship, perpendicular to the direction in which it is facing. \end{DoxyCompactList}\item 
+void \hyperlink{classship_a17c6d50f754a9d6466d315e74c8245dc}{update} (const float \-\_\-dt)
+\begin{DoxyCompactList}\small\item\em Updates the ship. \end{DoxyCompactList}\item 
+\hypertarget{classship_a85bbae8598da6aff13de499977174390}{void \hyperlink{classship_a85bbae8598da6aff13de499977174390}{set\-T\-Ang} (const float \-\_\-ang)}\label{classship_a85bbae8598da6aff13de499977174390}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-target\-Angle. \end{DoxyCompactList}\item 
+\hypertarget{classship_abc03617c92eb7c1a3c818749681fec5c}{float {\bfseries get\-T\-Ang} () const }\label{classship_abc03617c92eb7c1a3c818749681fec5c}
+
+\item 
+\hypertarget{classship_a0b5042369840df23927f796b83ccde29}{void \hyperlink{classship_a0b5042369840df23927f796b83ccde29}{set\-Ang} (const float \-\_\-ang)}\label{classship_a0b5042369840df23927f796b83ccde29}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-angle. \end{DoxyCompactList}\item 
+\hypertarget{classship_a43ce3e315c632d9fc13ea0b18b70b159}{float {\bfseries get\-Ang} () const }\label{classship_a43ce3e315c632d9fc13ea0b18b70b159}
+
+\item 
+void \hyperlink{classship_af16bf57c238b48028a8ca6a5d5aad5c1}{set\-Weap\-Data} (const int \-\_\-val, const int \-\_\-src)
+\begin{DoxyCompactList}\small\item\em Sets weapon data for a weapon slot. \end{DoxyCompactList}\item 
+\hypertarget{classship_a0b07c591c7fe869ef35b9d21dc774ead}{void \hyperlink{classship_a0b07c591c7fe869ef35b9d21dc774ead}{set\-Weap} (const int \-\_\-val)}\label{classship_a0b07c591c7fe869ef35b9d21dc774ead}
+
+\begin{DoxyCompactList}\small\item\em Sets, increments the current weapon. \end{DoxyCompactList}\item 
+\hypertarget{classship_a8cac59509b65e0aadcb30bd7206b6bbd}{void {\bfseries incr\-Weap} (const int \-\_\-val)}\label{classship_a8cac59509b65e0aadcb30bd7206b6bbd}
+
+\item 
+float \hyperlink{classship_a3376905d6b8e5428e9afb4c89d4b8ebb}{get\-Cur\-Weap\-Stat} (\hyperlink{weapons_8hpp_ac6523c0263d02b0fbdbe8b8e958a50b5}{W\-E\-A\-P\-O\-N\-\_\-\-S\-T\-A\-T} \-\_\-stat) const 
+\begin{DoxyCompactList}\small\item\em Gets a stat from the active weapon. \end{DoxyCompactList}\item 
+\hypertarget{classship_af49c18fa918ff3597b6adeef15c0483c}{std\-::array$<$ float, 4 $>$ \hyperlink{classship_af49c18fa918ff3597b6adeef15c0483c}{get\-Cur\-Weap\-Col} () const }\label{classship_af49c18fa918ff3597b6adeef15c0483c}
+
+\begin{DoxyCompactList}\small\item\em Returns the colour of the current weapon. \end{DoxyCompactList}\item 
+\hypertarget{classship_af33e5cfaec7c0ac036ecd1ca52d654a8}{std\-::array$<$ float, 4 $>$ \hyperlink{classship_af33e5cfaec7c0ac036ecd1ca52d654a8}{get\-Shield\-Col} () const }\label{classship_af33e5cfaec7c0ac036ecd1ca52d654a8}
+
+\begin{DoxyCompactList}\small\item\em Returns the colour of the shield. \end{DoxyCompactList}\item 
+\hypertarget{classship_aa8603eb9b3e23120b61c76379510a23f}{std\-::vector$<$ std\-::array$<$ float, 10 $>$ $>$ \hyperlink{classship_aa8603eb9b3e23120b61c76379510a23f}{get\-Weaps} () const }\label{classship_aa8603eb9b3e23120b61c76379510a23f}
+
+\begin{DoxyCompactList}\small\item\em Returns array of all of the ships weapons. \end{DoxyCompactList}\item 
+\hypertarget{classship_a30fc891ce056dab197aa2738a7c100aa}{std\-::array$<$ float, 10 $>$ \hyperlink{classship_a30fc891ce056dab197aa2738a7c100aa}{get\-Weap} () const }\label{classship_a30fc891ce056dab197aa2738a7c100aa}
+
+\begin{DoxyCompactList}\small\item\em Returns all data concerning a specific weapon. \end{DoxyCompactList}\item 
+\hypertarget{classship_ab6eddbf0796ca30adc6ac81927abc750}{int \hyperlink{classship_ab6eddbf0796ca30adc6ac81927abc750}{get\-Cur\-Weap} () const }\label{classship_ab6eddbf0796ca30adc6ac81927abc750}
+
+\begin{DoxyCompactList}\small\item\em Returns current weapon index. \end{DoxyCompactList}\item 
+\hypertarget{classship_aeb88d49d9a8cfb5d7f36665f1ff18858}{void \hyperlink{classship_aeb88d49d9a8cfb5d7f36665f1ff18858}{shoot} ()}\label{classship_aeb88d49d9a8cfb5d7f36665f1ff18858}
+
+\begin{DoxyCompactList}\small\item\em Sets m\-\_\-draw\-Shot to 255. \end{DoxyCompactList}\item 
+\hypertarget{classship_ad9ca88b4655b003dafb719cec3481efb}{void \hyperlink{classship_ad9ca88b4655b003dafb719cec3481efb}{set\-Firing} (const bool \-\_\-v)}\label{classship_ad9ca88b4655b003dafb719cec3481efb}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-shooting. \end{DoxyCompactList}\item 
+\hypertarget{classship_a694bdcef07e84d7f581f1c2cbf7d6a79}{bool {\bfseries is\-Firing} () const }\label{classship_a694bdcef07e84d7f581f1c2cbf7d6a79}
+
+\item 
+\hypertarget{classship_a6a8eef4a53c952a18de54e9083b35dbd}{void \hyperlink{classship_a6a8eef4a53c952a18de54e9083b35dbd}{set\-Max\-Health} (const float \-\_\-h, const bool \-\_\-match)}\label{classship_a6a8eef4a53c952a18de54e9083b35dbd}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-max\-Health. \end{DoxyCompactList}\item 
+\hypertarget{classship_a995188d2c9128c440ac34b316e6bfdf5}{float {\bfseries get\-Max\-Health} () const }\label{classship_a995188d2c9128c440ac34b316e6bfdf5}
+
+\item 
+\hypertarget{classship_af0c7edd4a30c5e270f5b57e222c316a1}{void \hyperlink{classship_af0c7edd4a30c5e270f5b57e222c316a1}{set\-Max\-Shield} (const float \-\_\-s, const bool \-\_\-match)}\label{classship_af0c7edd4a30c5e270f5b57e222c316a1}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-max\-Shield. \end{DoxyCompactList}\item 
+\hypertarget{classship_ad469c878cc8090c424c89cbf3a96a063}{float {\bfseries get\-Max\-Shield} () const }\label{classship_ad469c878cc8090c424c89cbf3a96a063}
+
+\item 
+\hypertarget{classship_a634e621176733941096c05dfcf3bff83}{void \hyperlink{classship_a634e621176733941096c05dfcf3bff83}{set\-Max\-Energy} (const float \-\_\-e, const bool \-\_\-match)}\label{classship_a634e621176733941096c05dfcf3bff83}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-max\-Energy. \end{DoxyCompactList}\item 
+\hypertarget{classship_a954fe1bf94be13826196c169250bd964}{float {\bfseries get\-Max\-Energy} () const }\label{classship_a954fe1bf94be13826196c169250bd964}
+
+\item 
+\hypertarget{classship_a211c3f3057bfa0edba1b308395fae839}{void \hyperlink{classship_a211c3f3057bfa0edba1b308395fae839}{set\-Health} (const float \-\_\-h)}\label{classship_a211c3f3057bfa0edba1b308395fae839}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for m\-\_\-health. \end{DoxyCompactList}\item 
+\hypertarget{classship_a62f52e8063ad01583c7b9fc3e5c2aca3}{float {\bfseries get\-Health} () const }\label{classship_a62f52e8063ad01583c7b9fc3e5c2aca3}
+
+\item 
+\hypertarget{classship_a879475726ca8825f5256d9bf77383da4}{void {\bfseries incr\-Health} (const float \-\_\-v)}\label{classship_a879475726ca8825f5256d9bf77383da4}
+
+\item 
+\hypertarget{classship_a96e9f6e8fae43c1fa8a03d490491b96c}{void \hyperlink{classship_a96e9f6e8fae43c1fa8a03d490491b96c}{set\-Shield} (const float \-\_\-s)}\label{classship_a96e9f6e8fae43c1fa8a03d490491b96c}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-health. \end{DoxyCompactList}\item 
+\hypertarget{classship_a090f2e29fbd4c9467ce85cb7d328a0b8}{float {\bfseries get\-Shield} () const }\label{classship_a090f2e29fbd4c9467ce85cb7d328a0b8}
+
+\item 
+\hypertarget{classship_a8eba58ae69aa02a01cf1d01a143b7a78}{void \hyperlink{classship_a8eba58ae69aa02a01cf1d01a143b7a78}{set\-Energy} (const float \-\_\-e)}\label{classship_a8eba58ae69aa02a01cf1d01a143b7a78}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-energy. \end{DoxyCompactList}\item 
+\hypertarget{classship_a5657cf00d4e80b03027e149c61624f54}{float {\bfseries get\-Energy} () const }\label{classship_a5657cf00d4e80b03027e149c61624f54}
+
+\item 
+\hypertarget{classship_a9d4cba0939f03d27c9f85d2ee6ca6d5f}{float \hyperlink{classship_a9d4cba0939f03d27c9f85d2ee6ca6d5f}{get\-Cooldown} () const }\label{classship_a9d4cba0939f03d27c9f85d2ee6ca6d5f}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-cooldown. \end{DoxyCompactList}\item 
+\hypertarget{classship_af6a10864d7d030e6a31ff1362cab790b}{void {\bfseries set\-Cooldown} (const float \-\_\-f)}\label{classship_af6a10864d7d030e6a31ff1362cab790b}
+
+\item 
+\hypertarget{classship_a6a4075497f5bede29ad9e9e5cb339238}{void \hyperlink{classship_a6a4075497f5bede29ad9e9e5cb339238}{set\-Missiles} (const int \-\_\-m)}\label{classship_a6a4075497f5bede29ad9e9e5cb339238}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for m\-\_\-missiles. \end{DoxyCompactList}\item 
+\hypertarget{classship_af4263788f57fca762ce8e5b2972bcaa5}{void {\bfseries incr\-Missiles} (const int \-\_\-m)}\label{classship_af4263788f57fca762ce8e5b2972bcaa5}
+
+\item 
+\hypertarget{classship_ac2a1cdc999b5c9d1528d39485aa980de}{int {\bfseries get\-Missiles} () const }\label{classship_ac2a1cdc999b5c9d1528d39485aa980de}
+
+\item 
+\hypertarget{classship_ac48ed042184a82f48389d0d7f9d3cbef}{void \hyperlink{classship_ac48ed042184a82f48389d0d7f9d3cbef}{set\-Energy\-Priority} (const int \-\_\-v)}\label{classship_ac48ed042184a82f48389d0d7f9d3cbef}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-priority. \end{DoxyCompactList}\item 
+\hypertarget{classship_a7350a3e1ccf4042f84b3c1c9630835a4}{int {\bfseries get\-Energy\-Priority} () const }\label{classship_a7350a3e1ccf4042f84b3c1c9630835a4}
+
+\item 
+void \hyperlink{classship_aa6750a5206440d777ac933e282f6479f}{damage} (const float \-\_\-d)
+\begin{DoxyCompactList}\small\item\em Damages the ship. \end{DoxyCompactList}\item 
+void \hyperlink{classship_ae365ae5221a1bee3b46f76e00e3aba31}{damage} (const float \-\_\-d, const \hyperlink{structvec2}{vec2} \-\_\-v)
+\begin{DoxyCompactList}\small\item\em Damages the ship. \end{DoxyCompactList}\item 
+\hypertarget{classship_a487b3030a123fb11d5173b039621cf30}{int \hyperlink{classship_a487b3030a123fb11d5173b039621cf30}{get\-Upgrade} (const int \-\_\-index)}\label{classship_a487b3030a123fb11d5173b039621cf30}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for m\-\_\-upgrades. \end{DoxyCompactList}\item 
+\hypertarget{classship_a2f0eebc8a3a9908bfbdea941a24798fa}{void {\bfseries set\-Grade\-Arr} (const int \-\_\-i, const int \-\_\-v)}\label{classship_a2f0eebc8a3a9908bfbdea941a24798fa}
+
+\item 
+\hypertarget{classship_a9304f314a13a2a81f73472d9530d0efb}{void {\bfseries set\-Grade} (const int \-\_\-i, const int \-\_\-v)}\label{classship_a9304f314a13a2a81f73472d9530d0efb}
+
+\item 
+int \hyperlink{classship_a3f99b4cc97a783e997e280667a884d8f}{upgrade} (const int \-\_\-i)
+\begin{DoxyCompactList}\small\item\em Upgrades the ship. \end{DoxyCompactList}\item 
+\hypertarget{classship_aacfbddf2d0b29db49f62523e9d60af9c}{void \hyperlink{classship_aacfbddf2d0b29db49f62523e9d60af9c}{set\-Inertia} (const float \-\_\-in)}\label{classship_aacfbddf2d0b29db49f62523e9d60af9c}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-inertia. \end{DoxyCompactList}\item 
+\hypertarget{classship_ad65743d746abadc12bf2c24cf465bfcd}{float {\bfseries get\-Inertia} () const }\label{classship_ad65743d746abadc12bf2c24cf465bfcd}
+
+\item 
+\hypertarget{classship_af1a5baf45ce6abd307284d604fc03685}{void \hyperlink{classship_af1a5baf45ce6abd307284d604fc03685}{set\-Generator\-Mul} (float \-\_\-g)}\label{classship_af1a5baf45ce6abd307284d604fc03685}
+
+\begin{DoxyCompactList}\small\item\em Setter for generator multiplier. \end{DoxyCompactList}\item 
+\hypertarget{classship_a336b4c1483e8d38bb53e611e6e16e737}{void \hyperlink{classship_a336b4c1483e8d38bb53e611e6e16e737}{set\-Engine\-Power} (const float \-\_\-val)}\label{classship_a336b4c1483e8d38bb53e611e6e16e737}
+
+\begin{DoxyCompactList}\small\item\em Getter and setter for m\-\_\-engine\-Power. \end{DoxyCompactList}\item 
+\hypertarget{classship_a472e2517a1285ba9b61d476233aef9c2}{float {\bfseries get\-Engine\-Power} () const }\label{classship_a472e2517a1285ba9b61d476233aef9c2}
+
+\item 
+\hypertarget{classship_a68b49f5befb6f882b2900d47d0f8a960}{\hyperlink{ship_8hpp_af74a63841701826d661cb9809aaf7092}{ship\-\_\-spec} \hyperlink{classship_a68b49f5befb6f882b2900d47d0f8a960}{get\-Classification} () const }\label{classship_a68b49f5befb6f882b2900d47d0f8a960}
+
+\begin{DoxyCompactList}\small\item\em m\-\_\-classification getter. \end{DoxyCompactList}\item 
+\hypertarget{classship_ab247165c9c55d122195cd4edec0d823d}{float \hyperlink{classship_ab247165c9c55d122195cd4edec0d823d}{get\-Radius} () const }\label{classship_ab247165c9c55d122195cd4edec0d823d}
+
+\begin{DoxyCompactList}\small\item\em m\-\_\-radius getter. \end{DoxyCompactList}\item 
+\hypertarget{classship_a905701667792667dd63e676e97864c15}{int \hyperlink{classship_a905701667792667dd63e676e97864c15}{get\-Score} () const }\label{classship_a905701667792667dd63e676e97864c15}
+
+\begin{DoxyCompactList}\small\item\em Returns the score value for the ship, how many points the player gets for blowing it up. \end{DoxyCompactList}\item 
+\hypertarget{classship_ab752c545e9f8a22fecff63dc77c3a5a9}{float \hyperlink{classship_ab752c545e9f8a22fecff63dc77c3a5a9}{get\-Ang\-Vel} () const }\label{classship_ab752c545e9f8a22fecff63dc77c3a5a9}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-ang\-Vel. \end{DoxyCompactList}\item 
+\hypertarget{classship_ae4232335b58866673ca45bb42e35c2a2}{bool \hyperlink{classship_ae4232335b58866673ca45bb42e35c2a2}{get\-Can\-Move} () const }\label{classship_ae4232335b58866673ca45bb42e35c2a2}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-can\-Move. \end{DoxyCompactList}\item 
+\hypertarget{classship_abe8c5d20cef002bb0013a33253cff7c4}{bool \hyperlink{classship_abe8c5d20cef002bb0013a33253cff7c4}{get\-Can\-Shoot} () const }\label{classship_abe8c5d20cef002bb0013a33253cff7c4}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-can\-Shoot. \end{DoxyCompactList}\item 
+\hypertarget{classship_ad86c5ef782779451e8539c44b9a23123}{bool \hyperlink{classship_ad86c5ef782779451e8539c44b9a23123}{in\-Combat} ()}\label{classship_ad86c5ef782779451e8539c44b9a23123}
+
+\begin{DoxyCompactList}\small\item\em Whether the ship can be considered to be in combat. \end{DoxyCompactList}\item 
+\hypertarget{classship_ab954d0adc48f4b6a358863969a40d478}{std\-::string \hyperlink{classship_ab954d0adc48f4b6a358863969a40d478}{get\-Identifier} () const }\label{classship_ab954d0adc48f4b6a358863969a40d478}
+
+\begin{DoxyCompactList}\small\item\em Getter for the ship type id. \end{DoxyCompactList}\item 
+\hypertarget{classship_a92cdedc492085eab5448222e5dc36296}{std\-::array$<$ float, 4 $>$ \hyperlink{classship_a92cdedc492085eab5448222e5dc36296}{get\-Alpha\-Stats} () const }\label{classship_a92cdedc492085eab5448222e5dc36296}
+
+\begin{DoxyCompactList}\small\item\em Gets the alpha values for various colours associated with the ship. \end{DoxyCompactList}\item 
+\hypertarget{classship_a1e4b3788fa205b41bad280859827d802}{float \hyperlink{classship_a1e4b3788fa205b41bad280859827d802}{get\-Shield\-Glow} () const }\label{classship_a1e4b3788fa205b41bad280859827d802}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-shield\-Glow. \end{DoxyCompactList}\item 
+\hypertarget{classship_a2a92ab0c77d62a5132ac69c19cb51292}{float \hyperlink{classship_a2a92ab0c77d62a5132ac69c19cb51292}{get\-Laser\-Glow} () const }\label{classship_a2a92ab0c77d62a5132ac69c19cb51292}
+
+\begin{DoxyCompactList}\small\item\em Getter for m\-\_\-draw\-Shot, converts it to the range 0-\/1. \end{DoxyCompactList}\item 
+\hypertarget{classship_ae9df18aea813f1007ab94462dec47c57}{bool \hyperlink{classship_ae9df18aea813f1007ab94462dec47c57}{has\-Parent} () const }\label{classship_ae9df18aea813f1007ab94462dec47c57}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for parents. \end{DoxyCompactList}\item 
+\hypertarget{classship_a5a8a7ba1a0fc40f976c1e00e6483efde}{long int {\bfseries get\-Parent} () const }\label{classship_a5a8a7ba1a0fc40f976c1e00e6483efde}
+
+\item 
+\hypertarget{classship_a4ce26110be178f9d91b0b063703fbf41}{void {\bfseries set\-Parent} (long int \-\_\-p)}\label{classship_a4ce26110be178f9d91b0b063703fbf41}
+
+\item 
+\hypertarget{classship_a26410a4b84949c59af4c942b39a91986}{\hyperlink{structvec3}{vec3} \hyperlink{classship_a26410a4b84949c59af4c942b39a91986}{get\-Parent\-Offset} ()}\label{classship_a26410a4b84949c59af4c942b39a91986}
+
+\begin{DoxyCompactList}\small\item\em Getters and setters for parent offsets. \end{DoxyCompactList}\item 
+\hypertarget{classship_abf758a42fb1802a44657a5174800640d}{void {\bfseries set\-Parent\-Offset} (\hyperlink{structvec3}{vec3} \-\_\-v)}\label{classship_abf758a42fb1802a44657a5174800640d}
+
+\item 
+\hypertarget{classship_a1b119471128280ae9527949e95fbaca3}{long unsigned int \hyperlink{classship_a1b119471128280ae9527949e95fbaca3}{get\-Unique\-I\-D} ()}\label{classship_a1b119471128280ae9527949e95fbaca3}
+
+\begin{DoxyCompactList}\small\item\em Getter for unique I\-D. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Inherits from ship, contains data such as weapon type, engine power, shield strength. It does not, however, contain any functionality to behave autonomously. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classship_a3ca9f0f5ecbed6a53d7bae37b8e57704}{\index{ship@{ship}!ship@{ship}}
+\index{ship@{ship}!ship@{ship}}
+\subsubsection[{ship}]{\setlength{\rightskip}{0pt plus 5cm}ship\-::ship (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-p, }
+\item[{const {\bf ship\-\_\-spec}}]{\-\_\-type, }
+\item[{const float}]{\-\_\-radius}
+\end{DoxyParamCaption}
+)}}\label{classship_a3ca9f0f5ecbed6a53d7bae37b8e57704}
+
+
+ctor for the ship class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-p} & position \\
+\hline
+{\em \-\_\-type} & ship type \\
+\hline
+{\em \-\_\-radius} & ship size \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a2d79339fb680dce8b7b581103706c357}{\index{ship@{ship}!ship@{ship}}
+\index{ship@{ship}!ship@{ship}}
+\subsubsection[{ship}]{\setlength{\rightskip}{0pt plus 5cm}ship\-::ship (
+\begin{DoxyParamCaption}
+\item[{const {\bf ship} \&}]{\-\_\-src, }
+\item[{const {\bf vec3}}]{\-\_\-p}
+\end{DoxyParamCaption}
+)}}\label{classship_a2d79339fb680dce8b7b581103706c357}
+
+
+Copy ctor for the ship class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-src} & source object \\
+\hline
+{\em \-\_\-p} & position \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classship_ac6075d376a2f10087a7daddd6dc4104e}{\index{ship@{ship}!accelerate@{accelerate}}
+\index{accelerate@{accelerate}!ship@{ship}}
+\subsubsection[{accelerate}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::accelerate (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-mult}
+\end{DoxyParamCaption}
+)}}\label{classship_ac6075d376a2f10087a7daddd6dc4104e}
+
+
+Accelerates the ship, in the direction that it is facing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-mult} & multiplier \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a8ea8250d5797b7b3822997eca7059b6d}{\index{ship@{ship}!accelerate@{accelerate}}
+\index{accelerate@{accelerate}!ship@{ship}}
+\subsubsection[{accelerate}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::accelerate (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-dir, }
+\item[{const float}]{\-\_\-mult}
+\end{DoxyParamCaption}
+)}}\label{classship_a8ea8250d5797b7b3822997eca7059b6d}
+
+
+Adds velocity to the ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dir} & base vector \\
+\hline
+{\em \-\_\-mult} & multiplier \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a9c6d721f86324e034dd0c97deb903257}{\index{ship@{ship}!add\-Vel\-S@{add\-Vel\-S}}
+\index{add\-Vel\-S@{add\-Vel\-S}!ship@{ship}}
+\subsubsection[{add\-Vel\-S}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::add\-Vel\-S (
+\begin{DoxyParamCaption}
+\item[{const {\bf vec3}}]{\-\_\-v}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classship_a9c6d721f86324e034dd0c97deb903257}
+
+
+Adds velocity to the ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-v} & base vector \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_aa6750a5206440d777ac933e282f6479f}{\index{ship@{ship}!damage@{damage}}
+\index{damage@{damage}!ship@{ship}}
+\subsubsection[{damage}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::damage (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-d}
+\end{DoxyParamCaption}
+)}}\label{classship_aa6750a5206440d777ac933e282f6479f}
+
+
+Damages the ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-d} & damage \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_ae365ae5221a1bee3b46f76e00e3aba31}{\index{ship@{ship}!damage@{damage}}
+\index{damage@{damage}!ship@{ship}}
+\subsubsection[{damage}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::damage (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-d, }
+\item[{const {\bf vec2}}]{\-\_\-v}
+\end{DoxyParamCaption}
+)}}\label{classship_ae365ae5221a1bee3b46f76e00e3aba31}
+
+
+Damages the ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-d} & damage, \-\_\-v knockback vector \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a2e0ef103ac673f4cce05a364a1d5332e}{\index{ship@{ship}!dodge@{dodge}}
+\index{dodge@{dodge}!ship@{ship}}
+\subsubsection[{dodge}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::dodge (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-side}
+\end{DoxyParamCaption}
+)}}\label{classship_a2e0ef103ac673f4cce05a364a1d5332e}
+
+
+Adds velocity to the ship, perpendicular to the direction in which it is facing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-side} & multiplier \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a3376905d6b8e5428e9afb4c89d4b8ebb}{\index{ship@{ship}!get\-Cur\-Weap\-Stat@{get\-Cur\-Weap\-Stat}}
+\index{get\-Cur\-Weap\-Stat@{get\-Cur\-Weap\-Stat}!ship@{ship}}
+\subsubsection[{get\-Cur\-Weap\-Stat}]{\setlength{\rightskip}{0pt plus 5cm}float ship\-::get\-Cur\-Weap\-Stat (
+\begin{DoxyParamCaption}
+\item[{{\bf W\-E\-A\-P\-O\-N\-\_\-\-S\-T\-A\-T}}]{\-\_\-stat}
+\end{DoxyParamCaption}
+) const}}\label{classship_a3376905d6b8e5428e9afb4c89d4b8ebb}
+
+
+Gets a stat from the active weapon. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-stat} & weapon stat to retrieve (enum defined in \hyperlink{weapons_8hpp}{weapons.\-hpp}) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a940069471464086ac4a47089c4ee7c1f}{\index{ship@{ship}!set\-Accelerating@{set\-Accelerating}}
+\index{set\-Accelerating@{set\-Accelerating}!ship@{ship}}
+\subsubsection[{set\-Accelerating}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::set\-Accelerating (
+\begin{DoxyParamCaption}
+\item[{const bool}]{\-\_\-b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classship_a940069471464086ac4a47089c4ee7c1f}
+
+
+Setter for m\-\_\-accelerating. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-b} & input \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_af16bf57c238b48028a8ca6a5d5aad5c1}{\index{ship@{ship}!set\-Weap\-Data@{set\-Weap\-Data}}
+\index{set\-Weap\-Data@{set\-Weap\-Data}!ship@{ship}}
+\subsubsection[{set\-Weap\-Data}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::set\-Weap\-Data (
+\begin{DoxyParamCaption}
+\item[{const int}]{\-\_\-val, }
+\item[{const int}]{\-\_\-src}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classship_af16bf57c238b48028a8ca6a5d5aad5c1}
+
+
+Sets weapon data for a weapon slot. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-val} & weapon slot to fill \\
+\hline
+{\em \-\_\-src} & source index from global weapon data array (\hyperlink{weapons_8hpp}{weapons.\-hpp}) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a17c6d50f754a9d6466d315e74c8245dc}{\index{ship@{ship}!update@{update}}
+\index{update@{update}!ship@{ship}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void ship\-::update (
+\begin{DoxyParamCaption}
+\item[{const float}]{\-\_\-dt}
+\end{DoxyParamCaption}
+)}}\label{classship_a17c6d50f754a9d6466d315e74c8245dc}
+
+
+Updates the ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-dt} & time-\/step \\
+\hline
+\end{DoxyParams}
+\hypertarget{classship_a3f99b4cc97a783e997e280667a884d8f}{\index{ship@{ship}!upgrade@{upgrade}}
+\index{upgrade@{upgrade}!ship@{ship}}
+\subsubsection[{upgrade}]{\setlength{\rightskip}{0pt plus 5cm}int ship\-::upgrade (
+\begin{DoxyParamCaption}
+\item[{const int}]{\-\_\-i}
+\end{DoxyParamCaption}
+)}}\label{classship_a3f99b4cc97a783e997e280667a884d8f}
+
+
+Upgrades the ship. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-i} & slot to upgrade \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{ship_8hpp}{ship.\-hpp}\item 
+src/ship.\-cpp\end{DoxyCompactItemize}
