@@ -10,6 +10,7 @@
 #include "missile.hpp"
 #include "pfx.hpp"
 #include "player.hpp"
+#include "popup.hpp"
 
 #if RENDER_MODE == 0
 #include "renderer.hpp"
@@ -387,6 +388,25 @@ public:
     /// \param _offset childs offset from the parent
     //----------------------------------------------------------------------------------------------------------------------
     void shipAddParent(ship *_parent, ship *_child, vec3 _offset);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Adds a text popup to the world.
+    /// \param _dmg damage dealt
+    /// \param _team recipient team
+    /// \param _pos position
+    /// \param _vel velocity
+    //----------------------------------------------------------------------------------------------------------------------
+    void addDamagePopup(int _dmg, aiTeam _team, vec3 _pos, vec3 _vel);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Adds a text popup to the world.
+    /// \param _label text label
+    /// \param _type controls colour
+    /// \param _smul size multiplier
+    /// \param _pos position
+    /// \param _vel velocity
+    //----------------------------------------------------------------------------------------------------------------------
+    void addPopup(std::string _label, popup_type _type, float _smul, vec3 _pos, vec3 _vel);
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
@@ -533,6 +553,11 @@ private:
     /// \brief Resolves a collision between two ships.
     //----------------------------------------------------------------------------------------------------------------------
     void resolveCollision(ship * _a, ship * _b);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Text popups
+    //----------------------------------------------------------------------------------------------------------------------
+    std::vector<popup> m_popups;
 };
 
 #endif

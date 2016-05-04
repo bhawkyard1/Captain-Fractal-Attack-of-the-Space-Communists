@@ -275,7 +275,7 @@ public:
   /// \param _pos start position
   /// \param _ws world or screen space
   /// \param _scale text scale
-  /// \param _col text colour
+  /// \param _col colour
   //----------------------------------------------------------------------------------------------------------------------
   void drawText(std::string _text, std::string _font, vec2 _pos, const bool _ws, const float _scale, const std::array<float, 4> _col);
 

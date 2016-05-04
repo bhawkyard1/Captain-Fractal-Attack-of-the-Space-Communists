@@ -308,9 +308,9 @@ ship::ship(
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
         m_angVel = randNum(-1.0f, 1.0f);
-        m_inertia = 0.0f;
+        m_inertia = 0.1f;
         m_enginePower = 0.0f;
-        m_canMove = false;
+        m_canMove = true;
         m_canShoot = false;
         break;
     case ASTEROID_MID:
@@ -319,9 +319,9 @@ ship::ship(
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
         m_angVel = randNum(-1.0f, 1.0f);
-        m_inertia = 0.0f;
+        m_inertia = 0.025f;
         m_enginePower = 0.0f;
-        m_canMove = false;
+        m_canMove = true;
         m_canShoot = false;
         break;
     case ASTEROID_LARGE:
@@ -330,9 +330,9 @@ ship::ship(
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
         m_angVel = randNum(-1.0f, 1.0f);
-        m_inertia = 0.0f;
+        m_inertia = 0.0025f;
         m_enginePower = 0.0f;
-        m_canMove = false;
+        m_canMove = true;
         m_canShoot = false;
         break;
     case PLAYER_CAPITAL:
