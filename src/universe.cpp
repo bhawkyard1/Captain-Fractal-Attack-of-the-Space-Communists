@@ -2227,7 +2227,7 @@ void universe::shipAddParent(ship * _parent, ship * _child, vec3 _offset)
 
 void universe::addPopup(std::string _label, popup_type _type, float _smul, vec3 _pos, vec3 _vel)
 {
-    popup temp (_label, _pos, _vel + m_vel + randVec3(2.0f), _smul, g_popupCols[_type]);
+    popup temp (_label, _pos, randVec3(2.0f), _smul, g_popupCols[_type]);
     m_popups.push_back(temp);
 }
 
