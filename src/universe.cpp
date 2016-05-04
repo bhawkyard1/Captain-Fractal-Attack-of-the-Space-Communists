@@ -82,6 +82,8 @@ universe::universe()
 
     if(g_BEAST_MODE) m_enemySpawnRate = 8;
     else m_enemySpawnRate = 36000;
+
+    m_balanceOfPower.assign(m_factions.size(), 0.0f);
 }
 
 void universe::addShot(
@@ -89,14 +91,15 @@ void universe::addShot(
         const vec3 _v,
         const float _angle,
         const std::array<float, WEAPS_W> _weap,
-        const aiTeam _team
+        const aiTeam _team,
+        const long int _owner
         )
 {
     int temp_angle = _angle + 90;
     for(int i = 0; i < _weap[0]; ++i)
     {
         //vec2 vec = vec(temp_angle);
-        laser temp( _p + _v, _v, temp_angle, _weap, _team);
+        laser temp( _p + _v, _v, temp_angle, _weap, _team, _owner);
         m_shots.push_back(temp);
     }
 }
@@ -126,6 +129,8 @@ void universe::update(const float _dt)
 {
     //If m_paused, we do not update the game.
     if(m_paused) return;
+
+    calcPowerBalance();
 
     m_drawer.update(_dt);
 
@@ -167,7 +172,7 @@ void universe::update(const float _dt)
     {
         playSnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
-        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER );
+        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, m_ply.getUniqueID() );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
         m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -192,7 +197,7 @@ void universe::update(const float _dt)
         m_ui.clear();
 
         g_GAME_OVER = true;
-    }
+    }    
 
 #if RENDER_MODE == 0
     for(auto &i : m_dots)
@@ -325,7 +330,7 @@ void universe::update(const float _dt)
 
                     dmg = 1/mag(mp - ep) * 30000;
                     m_agents[j].damage(dmg);
-                    addDamagePopup(dmg, m_agents[j].getTeam(), ep, m_agents[j].getVel());
+                    addDamagePopup(dmg, m_agents[j].getTeam(), ep, -m_vel + randVec3(2.0f));
                 }
 
                 vec3 pdiff = m_missiles[i].getPos() - m_ply.getPos();
@@ -333,7 +338,7 @@ void universe::update(const float _dt)
                 {
                     float dmg = invMag(pdiff) * 30000;
                     m_ply.damage(dmg);
-                    addDamagePopup(dmg, TEAM_PLAYER, m_ply.getPos(), m_ply.getVel());
+                    addDamagePopup(dmg, TEAM_PLAYER, m_ply.getPos(), randVec3(2.0f));
                 }
             }
             swapnpop(&m_missiles, i);
@@ -410,6 +415,23 @@ void universe::update(const float _dt)
             if(m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) m_factionCounts[GALACTIC_FEDERATION]--;
             else m_factionCounts[m_agents[i].getTeam()]--;
 
+            long int la = m_agents[i].getLastAttacker();
+            if(la != -1)
+            {
+                for(auto &j : m_agents)
+                {
+                    if(j.getUniqueID() == la and j.getTeam() == TEAM_PLAYER)
+                    {
+                        addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, j.getPos(), -m_vel + randVec3(2.0f) );
+                        break;
+                    }
+                }
+                if(la == m_ply.getUniqueID())
+                {
+                    addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, m_ply.getPos(), randVec3(2.0f) );
+                }
+            }
+
             swapnpop(&m_agents, i);
         }
     }
@@ -474,17 +496,21 @@ void universe::update(const float _dt)
             std::cout << "POS " << parent->getPos().m_x << ", " << parent->getPos().m_y << std::endl << std::endl;*/
         }
 
+        //Setting energy priorities----------------------------------------------------------------------------//
         if(m_agents[e].getHealth() < m_agents[e].getConfidence()) m_agents[e].setEnergyPriority(2);
         else if(m_agents[e].getHealth() < m_agents[e].getMaxHealth() * 0.75f) m_agents[e].setEnergyPriority(1);
         else m_agents[e].setEnergyPriority(0);
+        //-----------------------------------------------------------------------------------------------------//
         m_agents[e].update(_dt);
 
         vec3 p = m_agents[e].getPos();
 
-        //If the agent is damaged, add smokm_agents[e].
+        //If the agent is damaged, add smoke.
         if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius(), "SMOKE");
 
         float minDist = F_MAX;
+
+        //Reset target.
         m_agents[e].setTarget(nullptr);
 
         if(m_agents[e].getClassification() == PLAYER_MINER_DROID) //Set miner targets
@@ -539,15 +565,18 @@ void universe::update(const float _dt)
 
         //Setting the follow distances of the different units.
         float fd = 0.0f;
-        if(m_agents[e].getTeam() == TEAM_PLAYER) fd = 1500.0f;
+        if(m_agents[e].getTeam() == TEAM_PLAYER) fd = 15000.0f;
         else if(m_agents[e].getTeam() == TEAM_PLAYER_MINER) fd = 20000.0f;
+
+        if(m_agents[e].getTarget() != nullptr) fd /= 10.0f;
+
         float nd = magns(m_ply.getPos() - m_agents[e].getPos());
 
         if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and nd < minDist and !g_GAME_OVER )
         {
             //If the given agent is hostile, and the players distance is the closest ship.
-            m_agents[e].setTarget( (player*)&m_ply );
-            m_agents[e].setGoal(GOAL_ATTACK);
+            m_agents[e].setTarget( &m_ply );
+            m_agents[e].setGoal( GOAL_ATTACK );
             minDist = nd;
         }
         else if(m_agents[e].getCanMove() and !emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > fd * fd or m_agents[e].getTarget() == nullptr ) and !m_agents[e].inCombat())
@@ -558,8 +587,8 @@ void universe::update(const float _dt)
         }
         else if( m_agents[e].getTarget() == nullptr )
         {
-            //If the agent has no m_target, it becomes idlm_agents[e].
-            m_agents[e].setGoal( GOAL_IDLE );
+            //If the agent has no m_target, it becomes idle.
+            m_agents[e].setGoal( GOAL_WANDER );
         }
 
         if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
@@ -573,7 +602,7 @@ void universe::update(const float _dt)
         {
             //If the agent is shooting, add lasers.
             m_agents[e].shoot();
-            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam());
+            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), m_agents[e].getUniqueID());
             m_agents[e].setCooldown( (m_agents[e].getCurWeapStat(COOLDOWN)) );
             m_agents[e].setFiring(false);
         }
@@ -1120,7 +1149,6 @@ void universe::drawUI()
             jpos += jdim * 0.5f;
 
             m_drawer.addRect(tovec3(jpos), jdim, 0.0f, col);
-            //m_drawer.drawButton(tovec3(jpos), jdim, 0.0f, {col[0], col[1], col[2], col[3]});
         }
         m_drawer.useShader("plain");
         m_drawer.drawRects(false);
@@ -1146,6 +1174,19 @@ void universe::drawUI()
             m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
         }
     }
+
+    m_drawer.clearVectors();
+    float cumulative = 0.0f;
+    int i = 0;
+    for(auto &b : m_balanceOfPower)
+    {
+        cumulative += b * 128.0f;
+        m_drawer.addRect({g_WIN_WIDTH - 256.0f + cumulative, 272.0f}, {b * 256.0f, 16.0f}, 0.0f, col255to1(m_factions[i].m_colour));
+        cumulative += b * 128.0f;
+        ++i;
+    }
+    m_drawer.useShader("plain");
+    m_drawer.drawRects(false);
 }
 #endif
 
@@ -1247,6 +1288,7 @@ void universe::checkCollisions()
             vec3 sv = m_partitions.lasers[p][l]->getVel() * 5.0f;
             vec3 spv = sp + sv * 1.5;
             float stop = m_partitions.lasers[p][l]->getStop();
+            long int so = m_partitions.lasers[p][l]->getOwner();
 
             vec3 ep;
             vec3 ev;
@@ -1281,8 +1323,8 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_partitions.ships[p][s]->damage(harm, d_dir * stop * ei);
-                    addDamagePopup(harm, m_partitions.ships[p][s]->getTeam(), ep, ev);
+                    m_partitions.ships[p][s]->damage(harm, d_dir * stop * ei, so);
+                    addDamagePopup(harm, m_partitions.ships[p][s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
                 }
             }
@@ -1313,7 +1355,7 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_partitions.rocks[p][r]->damage(harm, d_dir * stop * ei);
+                    m_partitions.rocks[p][r]->damage(harm, d_dir * stop * ei, so);
                     break;
                 }
             }
@@ -1345,8 +1387,8 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_partitions.rockets[p][m]->damage(harm, d_dir * stop * ei);
-                    addDamagePopup(harm, TEAM_PLAYER, ep, ev);
+                    m_partitions.rockets[p][m]->damage(harm, d_dir * stop * ei, so);
+                    addDamagePopup(harm, TEAM_PLAYER, ep, -m_vel + randVec3(2.0f));
                     break;
                 }
             }
@@ -1378,7 +1420,7 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_ply.damage(harm, d_dir * stop * m_ply.getInertia());
+                    m_ply.damage(harm, d_dir * stop * m_ply.getInertia(), so);
                     //std::cout << "ADDING VEL (" << sv.m_x << "," << sv.m_y << " - " << ev.m_x << "," << ev.m_y << ") * " << stop << " = (" << ( (sv - ev) * stop ).m_x << ", " << ( (sv - ev) * stop ).m_y << ")" << std::endl;
                     setVel(-m_ply.getVel());
                 }
@@ -1727,7 +1769,6 @@ void universe::spawnShip(
 
                 for(auto &q : temp) m_agents.push_back(q);
             }
-
             return;
         }
     }
@@ -2179,31 +2220,31 @@ void universe::loadShips()
 void universe::createFactions()
 {
     faction player;
-    player.m_colour = {0, 255, 0};
+    player.m_colour = {0, 255, 0, 255};
     m_factions.push_back(player);
 
     faction player_miner;
-    player_miner.m_colour = {0, 255, 0};
+    player_miner.m_colour = {0, 255, 0, 255};
     m_factions.push_back(player_miner);
 
     faction galactic_fed;
-    galactic_fed.m_colour = {165, 14, 226};
+    galactic_fed.m_colour = {165, 14, 226, 255};
     m_factions.push_back(galactic_fed);
 
     faction spooky_pirates;
-    spooky_pirates.m_colour = {240, 211, 10};
+    spooky_pirates.m_colour = {240, 211, 10, 255};
     m_factions.push_back(spooky_pirates);
 
     faction space_communists;
-    space_communists.m_colour = {255, 0, 0};
+    space_communists.m_colour = {255, 0, 0, 255};
     m_factions.push_back(space_communists);
 
     faction neutral;
-    neutral.m_colour = {200, 200, 200};
+    neutral.m_colour = {200, 200, 200, 255};
     m_factions.push_back(neutral);
 
     faction none;
-    none.m_colour = {0, 0, 0};
+    none.m_colour = {0, 0, 0, 255};
     m_factions.push_back(none);
 }
 
@@ -2236,5 +2277,17 @@ void universe::addDamagePopup(int _dmg, aiTeam _team, vec3 _pos, vec3 _vel)
     popup_type p = POPUP_GOOD;
     if(!emnityCheck(_team, TEAM_PLAYER)) p = POPUP_BAD;
 
-    addPopup(std::to_string(_dmg), p, 4.0f, _pos, _vel);
+    addPopup(std::to_string(_dmg), p, 2.0f, _pos, _vel);
+}
+
+void universe::calcPowerBalance()
+{
+    m_balanceOfPower.assign(m_factions.size(), 0.0f);
+    for(auto &i : m_agents)
+    {
+        m_balanceOfPower[i.getTeam()] += i.getHealth() + i.getShield();
+    }
+    float total = 0.0f;
+    for(auto &i : m_balanceOfPower) total += i;
+    for(auto &i : m_balanceOfPower) i /= total;
 }

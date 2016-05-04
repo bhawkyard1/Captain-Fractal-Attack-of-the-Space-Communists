@@ -3,12 +3,15 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 #include "base.hpp"
 #include "vectors.hpp"
 
 enum popup_type {POPUP_GOOD, POPUP_BAD, POPUP_NEUTRAL};
+
 extern std::array< std::array<float, 4>, 3 > g_popupCols;
+extern std::vector<std::string> g_fragRemarks;
 
 class popup: public base
 {

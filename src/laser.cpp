@@ -1,12 +1,11 @@
 #include "laser.hpp"
 
-laser::laser(
-        vec3 _p,
+laser::laser(vec3 _p,
         vec3 _v,
         float _ang,
         std::array<float, WEAPS_W> _data,
-        aiTeam _team
-        )
+        aiTeam _team,
+        long int _parent)
 {
     float temp_angle = _ang + randNum(-_data[1], _data[1]);
     vec3 vAdd = tovec3(vec(temp_angle));
@@ -30,6 +29,8 @@ laser::laser(
     m_power = 255.0f;
 
     m_stop = _data[9];
+
+    m_ownerID = _parent;
 }
 
 void laser::update(float _dt)

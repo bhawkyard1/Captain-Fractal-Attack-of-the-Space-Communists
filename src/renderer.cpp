@@ -599,14 +599,16 @@ void renderer::drawMap(
         vec2 epp = tovec2(_ep->at(i).getPos());
         int radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
-        std::array<int, 4> col;
+        std::array<float, 4> col;
         col = _fp->at(_ep->at(i).getTeam()).m_colour;
         col[3] = 255;
 
         float x = clamp(epp.m_x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
         float y = clamp(epp.m_y / 156.0f + 128.0f, 0.0f, 256.0f);
 
-        drawCircleUI(x,y,radius,col);
+        std::array<int, 4> tcol;
+        for(int i = 0; i < 4; ++i) tcol[i] = static_cast<int>(col[i]);
+        drawCircleUI(x,y,radius,tcol);
     }
 }
 

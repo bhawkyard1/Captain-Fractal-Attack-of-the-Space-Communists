@@ -58,6 +58,8 @@ ship::ship(
     m_shieldMul = 1.0f;
     m_generatorMul = 1.0f;
 
+    m_lastAttacker = -1;
+
     switch(_type)
     {
     case COMMUNIST_1:
@@ -452,6 +454,8 @@ ship::ship(
     m_hasParent = _src.hasParent();
     m_parent = _src.getParent();
 
+    m_lastAttacker = _src.m_lastAttacker;
+
     for(size_t i = 0; i < _src.getWeaps().size(); ++i)
     {
         m_weapons.push_back(_src.getWeaps()[i]);
@@ -722,6 +726,31 @@ void ship::damage(float _d, const vec3 _v)
     setHealth(getHealth()-healthDmg);
 
     m_damageTimer = 10.0f;
+}
+
+void ship::damage(float _d, const vec3 _v, const long int _id)
+{
+    //std::cout << " dot " << dotProd( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
+    //Shots to the rear do more damage.
+    if(m_canMove)
+    {
+        _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
+        vec3 add = {_v.m_x, _v.m_y, 0.0f};
+        addVel(add * m_inertia);
+    }
+
+    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
+
+    float shieldDmg = clamp(_d, 0.0f, getShield());
+    _d -= shieldDmg;
+    setShield(getShield() - shieldDmg);
+
+    float healthDmg = clamp(_d, 0.0f, getHealth());
+    _d -= healthDmg;
+    setHealth(getHealth()-healthDmg);
+
+    m_damageTimer = 10.0f;
+    m_lastAttacker = _id;
 }
 
 int ship::upgrade(const int _i)

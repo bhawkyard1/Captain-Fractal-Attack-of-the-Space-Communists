@@ -109,7 +109,7 @@ public:
     /// \param _weap array of data such as damage
     /// \param _team source of the shot
     //----------------------------------------------------------------------------------------------------------------------
-    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team);
+    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, const long int _owner);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a missile to the universe.
@@ -555,9 +555,19 @@ private:
     void resolveCollision(ship * _a, ship * _b);
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Text popups
+    /// \brief Text popups.
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<popup> m_popups;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Represents balance of power between different factions.
+    //----------------------------------------------------------------------------------------------------------------------
+    std::vector<float> m_balanceOfPower;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Calculates power balance.
+    //----------------------------------------------------------------------------------------------------------------------
+    void calcPowerBalance();
 };
 
 #endif

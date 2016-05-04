@@ -67,6 +67,17 @@ tt clamp(tt _v, tt _m, tt _M)
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+/// \brief Gets a random entry from an vector.
+/// \param _v container ref
+//----------------------------------------------------------------------------------------------------------------------
+template<typename tt>
+tt getRandomEntry(std::vector<tt> * _ref)
+{
+    int ri = randNum(0, static_cast<int>(_ref->size()));
+    return (*_ref)[ri];
+}
+
+//----------------------------------------------------------------------------------------------------------------------
 /// \brief A rolling clamp, a value which exceeds the max will roll back around to the minimum.
 /// \param _v input value
 /// \param _m minimum threshold
