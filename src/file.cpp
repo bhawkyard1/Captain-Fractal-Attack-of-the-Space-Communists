@@ -17,16 +17,16 @@ void saveGame(universe * uni)
             << "mmc " << uni->getMaxMinerCount() << std::endl
             << "nm " << uni->getPly()->getMissiles() << std::endl
             << "ps " << uni->getPly()->getVel().m_x << "," << uni->getPly()->getVel().m_y << ","
-                     << uni->getPly()->getHealth() << ","
-                     << uni->getPly()->getShield() << ","
-                     << uni->getPly()->getEnergy() << std::endl
+            << uni->getPly()->getHealth() << ","
+            << uni->getPly()->getShield() << ","
+            << uni->getPly()->getEnergy() << std::endl
             << "d " << g_DIFFICULTY << std::endl
             << "u ";
 
     for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
 
     save 	<< std::endl
-          << "enemies ";
+            << "enemies ";
     writeVectorEnemy(save, uni->getAgents());
 
     save << std::endl
@@ -43,13 +43,13 @@ void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
 {    
     for(auto &i : *_u)
     {
-       _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
-             << i.getPos().m_x << "," << i.getPos().m_y << "|"
-             << i.getVel().m_x << "," << i.getVel().m_y << "|"
-             << i.getAng() << "|"
-             << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
-             << i.getRadius() << "|"
-                ;
+        _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
+              << i.getPos().m_x << "," << i.getPos().m_y << "|"
+              << i.getVel().m_x << "," << i.getVel().m_y << "|"
+              << i.getAng() << "|"
+              << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
+              << i.getRadius() << "|"
+                 ;
     }
 }
 
@@ -57,12 +57,12 @@ void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_u)
 {
     for(auto &i : *_u)
     {
-       _file << "/|" << i.getClassification() << "|"
-             << i.getPos().m_x << "," << i.getPos().m_y << "|"
-             << i.getVel().m_x << "," << i.getVel().m_y << "|"
-             << i.getAng() << "|"
-             << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
-                ;
+        _file << "/|" << i.getClassification() << "|"
+              << i.getPos().m_x << "," << i.getPos().m_y << "|"
+              << i.getVel().m_x << "," << i.getVel().m_y << "|"
+              << i.getAng() << "|"
+              << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
+                 ;
     }
 }
 
@@ -210,58 +210,88 @@ void loadGame(universe * uni)
 
 void loadConfig()
 {
-  std::ifstream config( g_RESOURCE_LOC + "../" + "config.txt" );
-  std::string cur;
+    std::ifstream config( g_RESOURCE_LOC + "../" + "config.txt" );
+    std::string cur;
 
-  while(getline( config, cur ))
-  {
-    if(cur.length() == 0) continue;
-
-    std::vector<std::string> strings = split(cur, ' ');
-
-    for(size_t i = 0; i < strings.size(); i++)
+    while(getline( config, cur ))
     {
-      if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
-      else if(strings[i] == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
-      else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
-      else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
-    }
-  }
-  config.close();
-  g_HALFWIN = {g_WIN_WIDTH / 2.0f, g_WIN_HEIGHT / 2.0f};
-  g_MAX_DIM = std::max( g_WIN_WIDTH, g_WIN_HEIGHT );
-  std::cout << "g_HALFWIN is " << g_HALFWIN.m_x << ", " << g_HALFWIN.m_y << std::endl;
+        if(cur.length() == 0) continue;
 
-  std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;
-  std::cout << "Difficulty: " << g_DIFFICULTY << std::endl;
-  std::cout << "Devmode: " << g_DEV_MODE << std::endl;
+        std::vector<std::string> strings = split(cur, ' ');
+
+        for(size_t i = 0; i < strings.size(); i++)
+        {
+            if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
+            else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
+            else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
+            else if(strings[i] == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+        }
+    }
+    config.close();
+    g_HALFWIN = {g_WIN_WIDTH / 2.0f, g_WIN_HEIGHT / 2.0f};
+    g_MAX_DIM = std::max( g_WIN_WIDTH, g_WIN_HEIGHT );
+    std::cout << "g_HALFWIN is " << g_HALFWIN.m_x << ", " << g_HALFWIN.m_y << std::endl;
+
+    std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;
+    std::cout << "Difficulty: " << g_DIFFICULTY << std::endl;
+    std::cout << "Devmode: " << g_DEV_MODE << std::endl;
 }
 
 void setConfigValue(const std::string _entry, const int _val)
 {
-  std::ifstream src( g_RESOURCE_LOC + "../" + "config.txt");
-  std::ofstream config( g_RESOURCE_LOC + "../" + "temp.txt");
-  std::string cur;
+    std::ifstream src( g_RESOURCE_LOC + "../" + "config.txt");
+    std::ofstream config( g_RESOURCE_LOC + "../" + "temp.txt");
+    std::string cur;
 
-  while(getline( src, cur ))
-  {
-      if(cur.length() == 0) continue;
-      std::vector<std::string> strings = split(cur, ' ');
+    while(getline( src, cur ))
+    {
+        if(cur.length() == 0) continue;
+        std::vector<std::string> strings = split(cur, ' ');
 
-      if(strings[0] == _entry)
-      {
-        config << _entry << " " << _val << std::endl;
-      }
-      else
-      {
-        config << cur << std::endl;
-      }
-  }
-  src.close();
-  config.close();
+        if(strings[0] == _entry)
+        {
+            config << _entry << " " << _val << std::endl;
+        }
+        else
+        {
+            config << cur << std::endl;
+        }
+    }
+    src.close();
+    config.close();
 
-  std::remove(( g_RESOURCE_LOC + "../" + "config.txt").c_str());
-  std::rename(( g_RESOURCE_LOC + "../" + "temp.txt").c_str(), ( g_RESOURCE_LOC + "../" + "config.txt").c_str());
+    std::remove(( g_RESOURCE_LOC + "../" + "config.txt").c_str());
+    std::rename(( g_RESOURCE_LOC + "../" + "temp.txt").c_str(), ( g_RESOURCE_LOC + "../" + "config.txt").c_str());
+}
+
+ui::selection loadSelection(const std::string _path)
+{
+    ui::selection menu;
+
+    std::ifstream data( g_RESOURCE_LOC + "../menus/" + _path );
+    std::string cur;
+
+    bool done = false;
+
+    while(!done)
+    {
+        ui::button temp;
+        //Process until we find a button start.
+        while(getline( data, cur ))
+        {
+            if(cur.length() == 0) continue;
+
+            std::vector<std::string> strings = split(cur, ' ');
+
+            if(strings.size() > 1 and strings[0] == "BUTTON" and strings[1] == "START")
+            {
+
+            }
+        }
+    }
+    data.close();
+
+    return menu;
 }

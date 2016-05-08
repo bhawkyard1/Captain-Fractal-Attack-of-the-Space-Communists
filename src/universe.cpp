@@ -431,7 +431,6 @@ void universe::update(const float _dt)
                     addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, m_ply.getPos(), randVec3(2.0f) );
                 }
             }
-
             swapnpop(&m_agents, i);
         }
     }

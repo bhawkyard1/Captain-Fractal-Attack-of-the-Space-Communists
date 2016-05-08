@@ -8,6 +8,7 @@
 
 #include "enemy.hpp"
 #include "ship.hpp"
+#include "ui/selection.hpp"
 #include "universe.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -71,5 +72,11 @@ void loadConfig();
 /// \param _val the value to set _entry to
 //----------------------------------------------------------------------------------------------------------------------
 void setConfigValue(const std::string _entry, const int _val);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Loads a menu from a text file
+/// \param _path path to the file
+//----------------------------------------------------------------------------------------------------------------------
+ui::selection loadSelection(const std::string _path);
 
 #endif
