@@ -666,7 +666,7 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::V
     return temp_vao;
 }
 
-void renderer_ngl::drawButton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col)
+void renderer_ngl::drawbutton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col)
 {
     m_shader->use("debug");
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
@@ -939,27 +939,27 @@ void renderer_ngl::statusBars(player * _ply)
 {
     //health base
     std::array<float, 4> col = {0.4f, 0.08f, 0.08f, 1.0f};
-    drawButton({128,40}, {256, 16}, 0.0f, col);
+    drawbutton({128,40}, {256, 16}, 0.0f, col);
 
     //health
     col = {0.9f, 0.2f, 0.2f, 1.0f};
-    drawButton({128,40}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, 0.0f, col);
+    drawbutton({128,40}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, 0.0f, col);
 
     //shield base
     col = {0.1f, 0.1f, 0.4f, 1.0f};
-    drawButton({128,56}, {256, 16}, 0.0f, col);
+    drawbutton({128,56}, {256, 16}, 0.0f, col);
 
     //shield
     col = {0.2f, 0.2f, 0.9f, 1.0f};
-    drawButton({128,56}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, 0.0f, col);
+    drawbutton({128,56}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, 0.0f, col);
 
     //energy base
     col = {0.08f, 0.4f, 0.08f, 1.0f};
-    drawButton({128,72}, {256, 16}, 0.0f, col);
+    drawbutton({128,72}, {256, 16}, 0.0f, col);
 
     //energy
     col = {0.2f, 0.9f, 0.2f, 1.0f};
-    drawButton({128,72}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, 0.0f, col);
+    drawbutton({128,72}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, 0.0f, col);
 }
 
 void renderer_ngl::drawWeaponStats(player *_ply)

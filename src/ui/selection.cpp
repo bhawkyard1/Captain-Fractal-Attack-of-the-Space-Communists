@@ -1,9 +1,6 @@
 #include "util.hpp"
 #include "ui/selection.hpp"
 
-namespace ui
-{
-
 selection::selection()
 {
     m_visible = true;
@@ -58,6 +55,4 @@ void selection::update(int _s)
     {
         i.update(_s);
     }
-}
-
 }

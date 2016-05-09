@@ -266,32 +266,103 @@ void setConfigValue(const std::string _entry, const int _val)
     std::rename(( g_RESOURCE_LOC + "../" + "temp.txt").c_str(), ( g_RESOURCE_LOC + "../" + "config.txt").c_str());
 }
 
-ui::selection loadSelection(const std::string _path)
+selection loadSelection(const std::string _path)
 {
-    ui::selection menu;
+    selection menu;
 
     std::ifstream data( g_RESOURCE_LOC + "../menus/" + _path );
     std::string cur;
+    std::vector< std::string > allStrings;
 
-    bool done = false;
-
-    while(!done)
+    while(getline( data, cur ))
     {
-        ui::button temp;
-        //Process until we find a button start.
-        while(getline( data, cur ))
-        {
-            if(cur.length() == 0) continue;
-
-            std::vector<std::string> strings = split(cur, ' ');
-
-            if(strings.size() > 1 and strings[0] == "BUTTON" and strings[1] == "START")
-            {
-
-            }
-        }
+        if(cur.length() > 0) allStrings.push_back(cur);
     }
     data.close();
 
+    for(auto i = allStrings.begin(); i != allStrings.end(); ++i)
+    {
+        if(*i == "BUTTON START")
+        {
+            button temp;
+            for(auto j = i; j != allStrings.end(); ++j)
+            {
+                if(*j == "BUTTON END")
+                {
+                    menu.add(temp);
+                    break;
+                }
+                std::vector<std::string> btnData = split(*j, ' ');
+
+                if(btnData[0] == "Name") temp.setLabel(btnData[1]);
+                else if(btnData[0] == "Pos") temp.setPos({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                else if(btnData[0] == "Dim") temp.setDim({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                else if(btnData[0] == "Cost") temp.setCost(std::stoi(btnData[1]));
+                else if(btnData[0] == "TextCol")
+                {
+                    temp.setTCol({
+                                     stof(btnData[1], nullptr),
+                                     stof(btnData[2], nullptr),
+                                     stof(btnData[3], nullptr),
+                                     stof(btnData[4], nullptr)
+                                 });
+                }
+                else if(btnData[0] == "BackCol")
+                {
+                    temp.setCol({
+                                     stof(btnData[1], nullptr),
+                                     stof(btnData[2], nullptr),
+                                     stof(btnData[3], nullptr),
+                                     stof(btnData[4], nullptr)
+                                });
+                }
+            }
+        }
+    }
+
     return menu;
+}
+
+float convertMeasureF(std::string _str)
+{
+    std::string toConvert = "";
+    for(int i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
+
+    switch(_str[ _str.length() - 1 ])
+    {
+    case 'a':
+        return std::stof(toConvert, nullptr);
+        break;
+    case 'w':
+        return std::stof(toConvert, nullptr) * g_WIN_WIDTH;
+        break;
+    case 'h':
+        return std::stof(toConvert, nullptr) * g_WIN_HEIGHT;
+        break;
+    default:
+        break;
+    }
+    return 0.0f;
+}
+
+int convertMeasureI(std::string _str)
+{
+    std::string toConvert = "";
+    for(int i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
+
+    switch(_str[ _str.length() - 1 ])
+    {
+    case 'a':
+        return std::stoi(toConvert, nullptr);
+        break;
+    case 'w':
+        return std::stoi(toConvert, nullptr) * g_WIN_WIDTH;
+        break;
+    case 'h':
+        return std::stoi(toConvert, nullptr) * g_WIN_HEIGHT;
+        break;
+    default:
+        break;
+    }
+    return 0.0f;
 }

@@ -20,9 +20,6 @@
 enum selectionType {SELECTION_STATIC, SELECTION_ROLLOUT};
 enum mouseState {MOUSE_OFF, MOUSE_OVER, MOUSE_DOWN};
 
-namespace ui
-{
-
 class selection
 {
 public:
@@ -39,7 +36,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns a pointer to the buttons. Used to draw them and alter them from within the universe class.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<button> * getButtons() {return &m_buttons;}
+    std::vector<button> * getbuttons() {return &m_buttons;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns the index of the currently selected button.
@@ -137,5 +134,4 @@ public:
     float m_interpolant;
 };
 
-}
 #endif

@@ -110,27 +110,27 @@ void mainMenu(universe &uni)
     uni.update(0.1f);
     uni.getUI()->clear();
 
-    std::array<int, 8> btncol = {20, 220, 255, 220, 20, 200, 255, 220};
-    std::array<int, 8> quitcol = {255, 25, 40, 220, 255, 5, 30, 220};
-    std::array<int, 8> blank = {0, 0, 0, 0, 0, 0, 0, 0};
+    std::array<int, 4> btncol = {20, 200, 255, 220};
+    std::array<int, 4> quitcol = {255, 5, 30, 220};
+    std::array<int, 4> blank = {0, 0, 0, 0};
 
-    ui::selection mainMenuSelection;
-    ui::button play ("PLAY GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    ui::button tut ("PLAY TUTORIAL", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
-    ui::button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
-    ui::button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 250.0f}, {200.0f, 80.0f});
+    selection mainMenuSelection;
+    button play ("PLAY GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    button tut ("PLAY TUTORIAL", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
+    button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 250.0f}, {200.0f, 80.0f});
     mainMenuSelection.add(play);
     mainMenuSelection.add(tut);
     mainMenuSelection.add(opt);
     mainMenuSelection.add(quit);
     uni.getUI()->add(mainMenuSelection);
 
-    ui::selection optionsHeader;
-    ui::button optionsHeaderBtn("OPTIONS (REQUIRE GAME RESTART)", blank, blank, {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 150.0f}, {200.0f, 20.0f});
-    ui::button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 110.0f}, {200.0f, 20.0f});
-    ui::button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 90.0f, g_HALFWIN.m_y + -5.0f}, {200.0f, 20.0f});
-    ui::button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 20.0f});
-    ui::button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 240.0f}, {200.0f, 80.0f});
+    selection optionsHeader;
+    button optionsHeaderBtn("OPTIONS (REQUIRE GAME RESTART)", blank, blank, {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 150.0f}, {200.0f, 20.0f});
+    button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 110.0f}, {200.0f, 20.0f});
+    button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 90.0f, g_HALFWIN.m_y + -5.0f}, {200.0f, 20.0f});
+    button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 20.0f});
+    button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 240.0f}, {200.0f, 80.0f});
     optionsHeader.add(optionsHeaderBtn);
     optionsHeader.add(resolutionHeaderBtn);
     optionsHeader.add(graphicsHeaderBtn);
@@ -140,32 +140,32 @@ void mainMenu(universe &uni)
     uni.getUI()->add(optionsHeader);
 
     float w = 90.0f, h = 50.0f;
-    ui::selection resolutionOptions;
-    resolutionOptions.add(ui::button("1280 x 720", btncol, btncol, {g_HALFWIN.m_x - 355.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1280 x 1024", btncol, btncol, {g_HALFWIN.m_x - 255.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1366 x 768", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1440 x 900", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1600 x 900", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1920 x 1080", btncol, btncol, {g_HALFWIN.m_x + 145.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(ui::button("1920 x 1200", btncol, btncol, {g_HALFWIN.m_x + 245.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    selection resolutionOptions;
+    resolutionOptions.add(button("1280 x 720", btncol, btncol, {g_HALFWIN.m_x - 355.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(button("1280 x 1024", btncol, btncol, {g_HALFWIN.m_x - 255.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(button("1366 x 768", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(button("1440 x 900", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(button("1600 x 900", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(button("1920 x 1080", btncol, btncol, {g_HALFWIN.m_x + 145.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    resolutionOptions.add(button("1920 x 1200", btncol, btncol, {g_HALFWIN.m_x + 245.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
     resolutionOptions.setVisible(false);
     uni.getUI()->add(resolutionOptions);
 
-    ui::selection qualityOptions;
-    qualityOptions.add(ui::button("Potato", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
-    qualityOptions.add(ui::button("Medium Rare", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
-    qualityOptions.add(ui::button("Da Vinci", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    selection qualityOptions;
+    qualityOptions.add(button("Potato", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    qualityOptions.add(button("Medium Rare", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    qualityOptions.add(button("Da Vinci", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
     qualityOptions.setVisible(false);
     uni.getUI()->add(qualityOptions);
 
     w = 140.0f;
     h = 50.0f;
-    ui::selection difficultyOptions;
-    difficultyOptions.add(ui::button("Cadet", btncol, btncol, {g_HALFWIN.m_x - 370.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Cosmonaut", btncol, btncol, {g_HALFWIN.m_x - 220.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Captain", btncol, btncol, {g_HALFWIN.m_x - 70.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Commander", btncol, btncol, {g_HALFWIN.m_x + 80.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(ui::button("Computing for Animation 1", btncol, btncol, {g_HALFWIN.m_x + 230.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    selection difficultyOptions;
+    difficultyOptions.add(button("Cadet", btncol, btncol, {g_HALFWIN.m_x - 370.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(button("Cosmonaut", btncol, btncol, {g_HALFWIN.m_x - 220.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(button("Captain", btncol, btncol, {g_HALFWIN.m_x - 70.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(button("Commander", btncol, btncol, {g_HALFWIN.m_x + 80.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    difficultyOptions.add(button("Computing for Animation 1", btncol, btncol, {g_HALFWIN.m_x + 230.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
     difficultyOptions.setVisible(false);
     uni.getUI()->add(difficultyOptions);
 
@@ -232,7 +232,7 @@ void mainMenu(universe &uni)
                 case SDL_BUTTON_LEFT:
                     int mx = 0, my = 0;
                     SDL_GetMouseState(&mx, &my);
-                    ui::selectionReturn mainMenuSelected = uni.getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    selectionReturn mainMenuSelected = uni.getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
                     std::cout << "CLICK : " << mainMenuSelected.m_sel_val << ", " << mainMenuSelected.m_button_val << std::endl;
                     if(mainMenuSelected.m_sel_val == 0)
                     {
@@ -450,7 +450,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
         {
             int x = 0, y = 0;
             SDL_GetMouseState(&x,&y);
-            ui::selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
+            selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
             if(ret.m_sel_val == 0)
             {
                 playSnd(MENU_SELECT_SND);
@@ -543,7 +543,7 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
 
-    ui::selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+    selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
     vec3 pos = {static_cast<float>(mx), static_cast<float>(my), 0.0f};
@@ -588,14 +588,14 @@ void handleUserScroll(int y, player * ply)
 void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
 {
     //The menu to appear when the user presses escape.
-    ui::selection escMenuSelection;
-    std::array<int, 8> btncol = {20, 200, 255, 220, 20, 200, 255, 220};
-    std::array<int, 8> quitcol = {255, 5, 30, 220, 255, 5, 30, 220};
-    ui::button resume ("RESUME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f}, {200.0f, 80.0f});
-    ui::button sGame ("SAVE GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    ui::button lGame ("LOAD GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 80.0f});
-    ui::button mm ("MAIN MENU", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 80.0f});
-    ui::button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    selection escMenuSelection;
+    std::array<int, 4> btncol = {20, 200, 255, 220};
+    std::array<int, 4> quitcol = {255, 5, 30, 220};
+    button resume ("RESUME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f}, {200.0f, 80.0f});
+    button sGame ("SAVE GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    button lGame ("LOAD GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 80.0f});
+    button mm ("MAIN MENU", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 80.0f});
+    button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
 
     escMenuSelection.add(resume);
     escMenuSelection.add(sGame);
@@ -916,7 +916,7 @@ void playTutorial(universe &uni)
         {
             uni.getRenderer()->drawText("THE RED BAR IS YOUR HEALTH, BLUE IS SHIELDS, AND GREEN IS ENERGY", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
             uni.getRenderer()->drawText("SHOOTING, MOVING AND RECHARGING SHIELDS ALL USE ENERGY, SO YOU HAVE TO BE CAREFUL", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
-            uni.getRenderer()->drawText("USE THE BUTTONS ON THE RIGHT TO PRIORITISE CERTAIN SYSTEMS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
+            uni.getRenderer()->drawText("USE THE buttonS ON THE RIGHT TO PRIORITISE CERTAIN SYSTEMS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
             uni.getRenderer()->drawText("CTRL CLICK SET THE PRIORITY TO 'GUNS'", "pix", {g_HALFWIN.m_x, g_HALFWIN.m_y - 80.0f}, false, 1.2f);
         }
         else if(tutStage == STAGE_ASTEROID_1 and timer > 1.0f)

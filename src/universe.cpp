@@ -1,10 +1,10 @@
-#include "universe.hpp"
-#include "sfx.hpp"
-#include "util.hpp"
-#include "shapes.hpp"
 #include "common.hpp"
-
+#include "file.hpp"
+#include "sfx.hpp"
+#include "shapes.hpp"
 #include "sim_time.hpp"
+#include "universe.hpp"
+#include "util.hpp"
 
 bool emnityCheck(const aiTeam _a, const aiTeam _b);
 
@@ -882,7 +882,7 @@ void universe::drawUI()
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
         if(!i->isVisible()) continue;
-        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
+        for(auto j = i->getbuttons()->begin(); j != i->getbuttons()->end(); ++j)
         {
             std::array<int, 8> col = j->getCol();
             if(!j->isSelected())
@@ -1138,7 +1138,7 @@ void universe::drawUI()
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
         if(!i->isVisible()) continue;
-        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
+        for(auto j = i->getbuttons()->begin(); j != i->getbuttons()->end(); ++j)
         {
             std::array<float, 4> col = j->getDrawCol();
 
@@ -1153,7 +1153,7 @@ void universe::drawUI()
         m_drawer.drawRects(false);
         m_drawer.clearVectors();
 
-        for(auto k = i->getButtons()->begin(); k != i->getButtons()->end(); ++k)
+        for(auto k = i->getbuttons()->begin(); k != i->getbuttons()->end(); ++k)
         {
             std::array<float, 4> col = k->getDrawCol();
 
@@ -2043,64 +2043,62 @@ void universe::addBuild(
 
 void universe::initUI()
 {
-    using ui::selection;
-    using ui::button;
     //Initialise the two selection menus.
     selection energy_menu;
-    selection upgrades_menu;
+    selection upgrades_menu = loadSelection("upgrades.txt");
 
     //Add buttons to the energy menu.
-    std::array<int, 8> arr1 = {20,20,20,200,100,100,100,255};
-    std::array<int, 8> arr2 = {100,100,100,200,250,250,250,255};
+    std::array<int, 4> arr1 = {100,100,100,255};
+    std::array<int, 4> arr2 = {250,250,250,255};
     button energy_menu_neutral("BALANCED",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.35f},{128.0f,64.0f});
     energy_menu_neutral.setDark(false);
     energy_menu.add(energy_menu_neutral);
 
     //Array 1 = bg colour
-    arr1 = {12,24,26,200,27,95,232,255};
-    arr2 = {45,67,188,200,119,156,238,255};
+    arr1 = {27,95,232,255};
+    arr2 = {119,156,238,255};
     button energy_menu_shields("SHIELDS",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.45f},{128.0f,64.0f});
     energy_menu.add(energy_menu_shields);
 
-    arr1 = {14,35,20,200,36,204,52,255};
-    arr2 = {65,127,64,200,129,241,127,255};
+    arr1 = {36,204,52,255};
+    arr2 = {129,241,127,255};
     button energy_menu_engines("ENGINES",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.55f},{128.0f,64.0f});
     energy_menu.add(energy_menu_engines);
 
-    arr1 = {35,23,23,200,232,31,31,255};
-    arr2 = {124,33,33,200,217,116,116,255};
+    arr1 = {232,31,31,255};
+    arr2 = {217,116,116,255};
     button energy_menu_guns("GUNS",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.65f},{128.0f,64.0f});
     energy_menu.add(energy_menu_guns);
 
     //Add buttons to the upgrades menu.
     float w = 150.0f, h = 50.0f;
-    arr1 = {50,5,5,200,250,50,50,255};
-    arr2 = {100,50,50,200,250,200,200,255};
+    arr1 = {250,50,50,255};
+    arr2 = {250,200,200,255};
     button upgrades_lasers("LASERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.0f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_lasers);
 
-    arr1 = {5,5,50,200,50,50,250,255};
-    arr2 = {50,50,100,200,200,200,250,255};
+    arr1 = {50,50,250,255};
+    arr2 = {200,200,250,255};
     button upgrades_shields("SHIELDS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.15f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_shields);
 
-    arr1 = {5,50,5,200,50,250,50,255};
-    arr2 = {50,100,50,200,200,250,200,255};
+    arr1 = {50,250,50,255};
+    arr2 = {200,250,200,255};
     button upgrades_generators("GENERATORS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.3f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_generators);
 
-    arr1 = {5,25,25,200,50,50,250,255};
-    arr2 = {50,50,80,200,200,200,220,255};
+    arr1 = {50,50,250,255};
+    arr2 = {200,200,220,255};
     button upgrades_thrusters("THRUSTERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.45f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_thrusters);
 
-    arr1 = {60,40,0,200,220,200,50,255};
-    arr2 = {255,210,0,200,255,253,100,255};
+    arr1 = {220,200,50,255};
+    arr2 = {255,253,100,255};
     button upgrades_m_missiles("MISSILE (4)",arr1,arr2,{g_WIN_WIDTH * 0.6f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_m_missiles);
 
-    arr1 = {50,100,140,200,180,220,255,255};
-    arr2 = {100,210,255,200,180,220,255,255};
+    arr1 = {180,220,255,255};
+    arr2 = {180,220,255,255};
     button upgrades_miner("MINER (16)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.85f},{w,h},16);
     upgrades_menu.add(upgrades_miner);
 
@@ -2134,17 +2132,17 @@ bool universe::upgradeCallback(
     //This function takes the selected button, looks at the cost vs the score, updates relevant values,
     //then returns a bool representing whether the upgrade was successful or unsuccessful.
 
-    ui::button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
+    button * selectedbutton = &m_ui.getElements()->at(_sel).getbuttons()->at(_btn);
     int lvl = m_ply.getUpgrade( _btn );
 
-    selectedButton->set(false);
+    selectedbutton->set(false);
 
-    if(selectedButton->getCost() > m_score or m_ply.getUpgrade(_btn) > 9) return false;
+    if(selectedbutton->getCost() > m_score or m_ply.getUpgrade(_btn) > 9) return false;
 
     if(lvl < 9)
     {
-        addScore( -selectedButton->getCost() );
-        if(_btn < 4) selectedButton->setCost(selectedButton->getCost() * 2);
+        addScore( -selectedbutton->getCost() );
+        if(_btn < 4) selectedbutton->setCost(selectedbutton->getCost() * 2);
     }
 
     m_ply.upgrade(_btn);
@@ -2161,7 +2159,7 @@ void universe::upgradeSetLabels(
         int _plvl
         )
 {
-    ui::button * selectedButton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
+    button * selectedbutton = &m_ui.getElements()->at(_sel).getbuttons()->at(_btn);
 
     std::string s1;
     int lvl;
@@ -2190,15 +2188,15 @@ void universe::upgradeSetLabels(
 
     if(lvl < 8)
     {
-        selectedButton->setCost(pow(2.0, lvl + 1) * 2);
+        selectedbutton->setCost(pow(2.0, lvl + 1) * 2);
         s1 += " (";
         std::stringstream ss;
-        ss << selectedButton->getCost();
+        ss << selectedbutton->getCost();
         s1 += ss.str();
         s1 += ")";
     }
 
-    selectedButton->updateText(s1);
+    selectedbutton->updateText(s1);
 
     addScore(0);
 

@@ -120,7 +120,7 @@ public:
   /// \param _ang angle of the button
   /// \param _col colour of the button
   //----------------------------------------------------------------------------------------------------------------------
-  void drawButton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
+  void drawbutton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Adds six verts to the member vertex attribute vectors. This allows me to batch draw simple objects.

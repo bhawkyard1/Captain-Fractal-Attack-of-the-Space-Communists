@@ -22,9 +22,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 extern std::array< std::string, 10> g_ROMAN_NUMS;
 
-namespace ui
-{
-
 //----------------------------------------------------------------------------------------------------------------------
 /// \struct selectionReturn
 /// \brief A utility struct, used to encapsulate menu and button which have just been clicked on.
@@ -109,7 +106,7 @@ public:
   /// \param _i index of menu.
   /// \param _dark clickability.
   //----------------------------------------------------------------------------------------------------------------------
-  void setDark(int _i, bool _dark) {for(auto &i : *m_elements[_i].getButtons()) i.setDark(_dark);}
+  void setDark(int _i, bool _dark) {for(auto &i : *m_elements[_i].getbuttons()) i.setDark(_dark);}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Sets a specific buttons clickability.
@@ -117,7 +114,7 @@ public:
   /// \param _btn button index.
   /// \param _dark clickability.
   //----------------------------------------------------------------------------------------------------------------------
-  void setDark(int _sel, int _btn, bool _dark) {(*m_elements[_sel].getButtons())[_btn].setDark(_dark);}
+  void setDark(int _sel, int _btn, bool _dark) {(*m_elements[_sel].getbuttons())[_btn].setDark(_dark);}
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
@@ -125,7 +122,5 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   std::vector<selection> m_elements;
 };
-
-}
 
 #endif

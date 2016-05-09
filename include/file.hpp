@@ -77,6 +77,13 @@ void setConfigValue(const std::string _entry, const int _val);
 /// \brief Loads a menu from a text file
 /// \param _path path to the file
 //----------------------------------------------------------------------------------------------------------------------
-ui::selection loadSelection(const std::string _path);
+selection loadSelection(const std::string _path);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Converts a string to a pixel value, either absolute or relative to the window dimensions.
+/// \param _str input string
+//----------------------------------------------------------------------------------------------------------------------
+float convertMeasureF(std::string _str);
+int convertMeasureI(std::string _str);
 
 #endif

@@ -17,9 +17,6 @@
 /// \brief Contains attributes such as colour, label and position.
 //----------------------------------------------------------------------------------------------------------------------
 
-namespace ui
-{
-
 class button
 {
 public:
@@ -36,7 +33,7 @@ public:
     /// \param _pos position.
     /// \param _dim dimensions.
     //----------------------------------------------------------------------------------------------------------------------
-    button(const std::string _label,const std::array<int, 8> _pcol,const std::array<int, 8> _tcol,const vec2 _pos, const vec2 _dim);
+    button(const std::string _label,const std::array<int, 4> _pcol,const std::array<int, 4> _tcol,const vec2 _pos, const vec2 _dim);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief ctor for the button class.
@@ -47,7 +44,7 @@ public:
     /// \param _dim dimensions.
     /// \param _smul size mult for the button text.
     //----------------------------------------------------------------------------------------------------------------------
-    button(const std::string _label, const std::array<int, 8> _pcol, const std::array<int, 8> _tcol, const vec2 _pos, const vec2 _dim, const float _smul);
+    button(const std::string _label, const std::array<int, 4> _pcol, const std::array<int, 4> _tcol, const vec2 _pos, const vec2 _dim, const float _smul);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief ctor for the button class.
@@ -58,7 +55,7 @@ public:
     /// \param _dim dimensions.
     /// \param _pcost button cost.
     //----------------------------------------------------------------------------------------------------------------------
-    button(const std::string _label, std::array<int, 8> _pcol, std::array<int, 8> _tcol, vec2 _pos, vec2 _dim, int _pcost);
+    button(const std::string _label, std::array<int, 4> _pcol, std::array<int, 4> _tcol, vec2 _pos, vec2 _dim, int _pcost);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Selects the button.
@@ -99,14 +96,16 @@ public:
     bool isDark() {return m_dark;}
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter for position.
+    /// \brief Getter and setter for position.
     //----------------------------------------------------------------------------------------------------------------------
     vec2 getPos() {return m_pos;}
+    void setPos(const vec2 _pos) {m_pos = _pos;}
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter for dimensions.
+    /// \brief Getter and setter for dimensions.
     //----------------------------------------------------------------------------------------------------------------------
     vec2 getDim() {return m_dim;}
+    void setDim(const vec2 _dim) {m_dim = _dim;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for draw colour.
@@ -114,14 +113,16 @@ public:
     std::array<float, 4> getDrawCol() {return m_dcol;}
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter for background colour.
+    /// \brief Getter and setter for background colour.
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<int, 8> getCol() {return m_col;}
+    std::array<int, 4> getCol() {return m_col;}
+    void setCol(std::array<int, 4> _col) {m_col = _col;}
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter for text colour.
+    /// \brief Getter and setter for text colour.
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<int, 8> getTCol() {return m_tcol;}
+    std::array<int, 4> getTCol() {return m_tcol;}
+    void setTCol(std::array<int, 4> _tcol) {m_tcol = _tcol;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for label.
@@ -158,12 +159,12 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Colour of the button when clickable (first 4) and unclickable (last 4).
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<int, 8> m_col;
+    std::array<int, 4> m_col;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Colour of the text when clickable (first 4) and unclickable (last 4).
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<int, 8> m_tcol;
+    std::array<int, 4> m_tcol;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Variable for the current draw colour.
@@ -220,6 +221,4 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     vec2 m_end;
 };
-
-}
 #endif

@@ -3,12 +3,14 @@
 
 #include "ui/button.hpp"
 
-namespace ui
+button::button()
 {
 
+}
+
 button::button(const std::string _txt,
-               const std::array<int, 8> _b_col,
-               const std::array<int, 8> _t_col,
+               const std::array<int, 4> _b_col,
+               const std::array<int, 4> _t_col,
                const vec2 _pos,
                const vec2 _dim)
 {
@@ -40,8 +42,8 @@ button::button(const std::string _txt,
 }
 
 button::button(const std::string _txt,
-               const std::array<int, 8> _b_col,
-               const std::array<int, 8> _t_col,
+               const std::array<int, 4> _b_col,
+               const std::array<int, 4> _t_col,
                const vec2 _pos,
                const vec2 _dim,
                const float _smul)
@@ -75,8 +77,8 @@ button::button(const std::string _txt,
 
 button::button(
         const std::string _txt,
-        const std::array<int, 8> _label,
-        const std::array<int, 8> _pcol,
+        const std::array<int, 4> _label,
+        const std::array<int, 4> _pcol,
         const vec2 _pos,
         const vec2 _dim,
         const int _pcost
@@ -144,6 +146,4 @@ void button::reset()
 {
     m_label = m_initLabel;
     m_cost = m_initCost;
-}
-
 }
