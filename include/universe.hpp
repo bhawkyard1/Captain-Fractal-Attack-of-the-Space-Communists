@@ -264,8 +264,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for the score.
     //----------------------------------------------------------------------------------------------------------------------
-    void setScore(const int _s) {m_score = _s; m_ui.update(m_score); m_ui.update(m_score);}
-    void addScore(const int _s) {m_score += _s; m_ui.update(m_score); m_ui.update(m_score);}
+    void setScore(const int _s) {m_score = _s; m_ui.update(m_score, getMousePos()); m_ui.update(m_score, getMousePos());}
+    void addScore(const int _s) {m_score += _s; m_ui.update(m_score, getMousePos()); m_ui.update(m_score, getMousePos());}
     int getScore() const  {return m_score;}
     int * getScorePt() {return &m_score;}
 

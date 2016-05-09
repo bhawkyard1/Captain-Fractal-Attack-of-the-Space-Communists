@@ -127,6 +127,7 @@ void universe::addMissile(const vec3 _p,
 
 void universe::update(const float _dt)
 {
+    m_ui.update(m_score, getMousePos());
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
@@ -197,7 +198,7 @@ void universe::update(const float _dt)
         m_ui.clear();
 
         g_GAME_OVER = true;
-    }    
+    }
 
 #if RENDER_MODE == 0
     for(auto &i : m_dots)
@@ -2072,7 +2073,7 @@ void universe::initUI()
 
     //Add buttons to the upgrades menu.
     float w = 150.0f, h = 50.0f;
-    arr1 = {250,50,50,255};
+    /*arr1 = {250,50,50,255};
     arr2 = {250,200,200,255};
     button upgrades_lasers("LASERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.0f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_lasers);
@@ -2095,7 +2096,7 @@ void universe::initUI()
     arr1 = {220,200,50,255};
     arr2 = {255,253,100,255};
     button upgrades_m_missiles("MISSILE (4)",arr1,arr2,{g_WIN_WIDTH * 0.6f, g_WIN_HEIGHT * 0.85f},{w,h},4);
-    upgrades_menu.add(upgrades_m_missiles);
+    upgrades_menu.add(upgrades_m_missiles);*/
 
     arr1 = {180,220,255,255};
     arr2 = {180,220,255,255};

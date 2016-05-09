@@ -46,13 +46,13 @@ void selection::reset()
     for(auto &i : m_buttons) i.reset();
 }
 
-void selection::update(int _s)
+void selection::update(const int _s, const vec2 _mouse)
 {
     if(m_mouseState == MOUSE_OVER) m_interpolant += 0.1f;
     else m_interpolant -= 0.1f;
 
     for(auto &i : m_buttons)
     {
-        i.update(_s);
+        i.update(_s, _mouse);
     }
 }

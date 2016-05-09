@@ -2,6 +2,7 @@
 #include <string>
 
 #include "ui/button.hpp"
+#include "shapes.hpp"
 
 button::button()
 {
@@ -15,7 +16,7 @@ button::button(const std::string _txt,
                const vec2 _dim)
 {
     m_smul = 1.0f;
-    m_dark = false;
+    m_state = BUTTON_STATE_DEFAULT;
     m_selected = false;
 
     m_initLabel = _txt;
@@ -49,7 +50,7 @@ button::button(const std::string _txt,
                const float _smul)
 {
     m_smul = _smul;
-    m_dark = false;
+    m_state = BUTTON_STATE_DEFAULT;
     m_selected = false;
 
     m_initLabel = _txt;
@@ -85,7 +86,7 @@ button::button(
         )
 {
     m_smul = 1.0f;
-    m_dark = true;
+    m_state = BUTTON_STATE_DISABLED;
     m_selected = false;
 
     m_initLabel = _txt;
@@ -111,18 +112,27 @@ button::button(
     m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
 }
 
-void button::update(int _pts)
+void button::update(const int _pts, const vec2 _mouse)
 {
+    for(int i = 0; i < 4; ++i) m_dcol[i] = static_cast<float>(m_col[i]);
+
     if(_pts >= m_cost)
     {
-        m_dark = false;
-        m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
+        m_state = BUTTON_STATE_DEFAULT;
+
+        if(pointInRect(_mouse, m_pos, m_dim))
+        {
+          m_state = BUTTON_STATE_OVER;
+          for(auto & i : m_dcol) i += 20.0f;
+        }
     }
     else
     {
-        m_dark = true;
-        m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
+        m_state = BUTTON_STATE_DISABLED;
+        for(auto & i : m_dcol) i /= 2.0f;
     }
+
+    for(auto & i : m_dcol) i /= 255.0f;
 }
 
 void button::updateText(std::string _str)
@@ -146,4 +156,10 @@ void button::reset()
 {
     m_label = m_initLabel;
     m_cost = m_initCost;
+}
+
+void button::setDark(bool b)
+{
+  if(b) m_state = BUTTON_STATE_DISABLED;
+  else m_state = BUTTON_STATE_DEFAULT;
 }

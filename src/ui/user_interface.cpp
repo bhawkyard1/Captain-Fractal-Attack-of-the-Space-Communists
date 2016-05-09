@@ -34,7 +34,7 @@ void userInterface::reset()
   for(auto &i : m_elements) i.reset();
 }
 
-void userInterface::update(int _s)
+void userInterface::update(const int _s, const vec2 _mouse)
 {
-  for(auto &i : m_elements) i.update(_s);
+  for(auto &i : m_elements) i.update(_s, _mouse);
 }

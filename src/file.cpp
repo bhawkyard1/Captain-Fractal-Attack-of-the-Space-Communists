@@ -290,6 +290,7 @@ selection loadSelection(const std::string _path)
                 if(*j == "BUTTON END")
                 {
                     menu.add(temp);
+                    i = j;
                     break;
                 }
                 std::vector<std::string> btnData = split(*j, ' ');
@@ -301,19 +302,19 @@ selection loadSelection(const std::string _path)
                 else if(btnData[0] == "TextCol")
                 {
                     temp.setTCol({
-                                     stof(btnData[1], nullptr),
-                                     stof(btnData[2], nullptr),
-                                     stof(btnData[3], nullptr),
-                                     stof(btnData[4], nullptr)
+                                     std::stoi(btnData[1]),
+                                     std::stoi(btnData[2]),
+                                     std::stoi(btnData[3]),
+                                     std::stoi(btnData[4])
                                  });
                 }
                 else if(btnData[0] == "BackCol")
                 {
                     temp.setCol({
-                                     stof(btnData[1], nullptr),
-                                     stof(btnData[2], nullptr),
-                                     stof(btnData[3], nullptr),
-                                     stof(btnData[4], nullptr)
+                                     std::stoi(btnData[1]),
+                                     std::stoi(btnData[2]),
+                                     std::stoi(btnData[3]),
+                                     std::stoi(btnData[4])
                                 });
                 }
             }

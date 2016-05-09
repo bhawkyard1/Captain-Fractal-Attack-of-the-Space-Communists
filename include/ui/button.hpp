@@ -17,6 +17,8 @@
 /// \brief Contains attributes such as colour, label and position.
 //----------------------------------------------------------------------------------------------------------------------
 
+enum buttonState {BUTTON_STATE_DEFAULT, BUTTON_STATE_OVER, BUTTON_STATE_DOWN, BUTTON_STATE_DISABLED};
+
 class button
 {
 public:
@@ -80,8 +82,9 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the button.
     /// \param _s current score.
+    /// \param _mouse current mouse position.
     //----------------------------------------------------------------------------------------------------------------------
-    void update(int _s);
+    void update(int _s, const vec2 _mouse);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for cost.
@@ -90,10 +93,12 @@ public:
     void setCost(int pcost) {m_cost = pcost;}
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter and setter for clickability.
+    /// \brief Getter and setter for state.
     //----------------------------------------------------------------------------------------------------------------------
-    void setDark(bool b) {m_dark = b;}
-    bool isDark() {return m_dark;}
+    void setDark(bool b);
+    void setState(const buttonState _state) {m_state = _state;}
+    buttonState getState() {return m_state;}
+    bool isDark() {return m_state == BUTTON_STATE_DISABLED;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for position.
@@ -192,9 +197,9 @@ private:
     int m_cost;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Whether the button is clickable.
+    /// \brief The state of the button.
     //----------------------------------------------------------------------------------------------------------------------
-    bool m_dark;
+    buttonState m_state;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The position of the button.
