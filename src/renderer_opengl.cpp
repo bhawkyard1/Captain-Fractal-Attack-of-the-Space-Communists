@@ -1069,12 +1069,13 @@ GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s)
     return textureID;
 }
 
-void renderer_ngl::drawText(std::string _text,
-                            std::string _font,
-                            vec2 _pos,
-                            bool _ws,
-                            const float _mul
-                            )
+void renderer_ngl::drawText(
+        const std::string _text,
+        const std::string _font,
+        const vec2 _pos,
+        const bool _ws,
+        const float _mul
+        )
 {
     spriteSheet * tmp = &m_letters[_font];
 
@@ -1102,13 +1103,14 @@ void renderer_ngl::drawText(std::string _text,
     }
 }
 
-void renderer_ngl::drawText(std::string _text,
-                            std::string _font,
-                            vec2 _pos,
-                            bool _ws,
-                            const float _mul,
-                            const std::array<float, 4> _col
-                            )
+void renderer_ngl::drawText(
+        const std::string _text,
+        const std::string _font,
+        const vec2 _pos,
+        const bool _ws,
+        const float _mul,
+        const std::array<float, 4> _col
+        )
 {
     spriteSheet * tmp = &m_letters[_font];
 
@@ -1131,7 +1133,7 @@ void renderer_ngl::drawText(std::string _text,
         h *= _mul;
         //w = 8;
 
-        drawRect({x, y}, {w, h}, 0.0f, _ws);
+        drawRect({x, y, 0.0f}, {w, h}, 0.0f, _ws);
         x += w;
     }
 }

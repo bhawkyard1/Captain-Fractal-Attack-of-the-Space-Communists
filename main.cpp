@@ -71,101 +71,53 @@ int main(int argc, char* argv[])
     loadConfig();
     universe uni;
 
-    sfxInit();
-    loadSounds();
-
     while(g_GAME_STATE != MODE_QUIT)
     {
         if(g_GAME_STATE == MODE_MENU)
         {
-            playMusic(1);
             gameInit();
             mainMenu(uni);
         }
         else if(g_GAME_STATE == MODE_TUTORIAL)
         {
-            playMusic(0);
             gameInit();
             playTutorial(uni);
         }
         else if(g_GAME_STATE == MODE_GAME)
         {
-            playMusic(0);
             gameInit();
             playGame(uni);
         }
     }
-    deleteSounds();
     return 0;
 }
 
 void mainMenu(universe &uni)
 {
-    playSnd(MENU_SELECT_SND);
-
     g_GAME_OVER = true;
 
+    uni.playMus(1);
     uni.reload(true);
     uni.getPly()->setHealth(-1);
     uni.update(0.1f);
     uni.getUI()->clear();
 
-    std::array<int, 4> btncol = {20, 200, 255, 220};
-    std::array<int, 4> quitcol = {255, 5, 30, 220};
-    std::array<int, 4> blank = {0, 0, 0, 0};
-
-    selection mainMenuSelection;
-    button play ("PLAY GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    button tut ("PLAY TUTORIAL", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 50.0f}, {200.0f, 80.0f});
-    button opt ("OPTIONS", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
-    button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 250.0f}, {200.0f, 80.0f});
-    mainMenuSelection.add(play);
-    mainMenuSelection.add(tut);
-    mainMenuSelection.add(opt);
-    mainMenuSelection.add(quit);
+    selection mainMenuSelection = loadSelection("mainMenuSelection.txt");
     uni.getUI()->add(mainMenuSelection);
 
-    selection optionsHeader;
-    button optionsHeaderBtn("OPTIONS (REQUIRE GAME RESTART)", blank, blank, {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 150.0f}, {200.0f, 20.0f});
-    button resolutionHeaderBtn("RESOLUTION", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 110.0f}, {200.0f, 20.0f});
-    button graphicsHeaderBtn("QUALITY", blank, blank, {g_HALFWIN.m_x - 90.0f, g_HALFWIN.m_y + -5.0f}, {200.0f, 20.0f});
-    button difficultyHeaderBtn("DIFFICULTY", blank, blank, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 20.0f});
-    button backToMainMenu("RETURN", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 240.0f}, {200.0f, 80.0f});
-    optionsHeader.add(optionsHeaderBtn);
-    optionsHeader.add(resolutionHeaderBtn);
-    optionsHeader.add(graphicsHeaderBtn);
-    optionsHeader.add(difficultyHeaderBtn);
-    optionsHeader.add(backToMainMenu);
+    selection optionsHeader = loadSelection("optionsHeaderMenu.txt");
     optionsHeader.setVisible(false);
     uni.getUI()->add(optionsHeader);
 
-    float w = 90.0f, h = 50.0f;
-    selection resolutionOptions;
-    resolutionOptions.add(button("1280 x 720", btncol, btncol, {g_HALFWIN.m_x - 355.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(button("1280 x 1024", btncol, btncol, {g_HALFWIN.m_x - 255.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(button("1366 x 768", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(button("1440 x 900", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(button("1600 x 900", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(button("1920 x 1080", btncol, btncol, {g_HALFWIN.m_x + 145.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
-    resolutionOptions.add(button("1920 x 1200", btncol, btncol, {g_HALFWIN.m_x + 245.0f, g_HALFWIN.m_y - 80.0f}, {w, h}, 0.8f));
+    selection resolutionOptions = loadSelection("optionsResolutionMenu.txt");
     resolutionOptions.setVisible(false);
     uni.getUI()->add(resolutionOptions);
 
-    selection qualityOptions;
-    qualityOptions.add(button("Potato", btncol, btncol, {g_HALFWIN.m_x - 155.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
-    qualityOptions.add(button("Medium Rare", btncol, btncol, {g_HALFWIN.m_x - 55.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
-    qualityOptions.add(button("Da Vinci", btncol, btncol, {g_HALFWIN.m_x + 45.0f, g_HALFWIN.m_y + 30.0f}, {w, h}, 0.8f));
+    selection qualityOptions = loadSelection("optionsGraphicsMenu.txt");
     qualityOptions.setVisible(false);
     uni.getUI()->add(qualityOptions);
 
-    w = 140.0f;
-    h = 50.0f;
-    selection difficultyOptions;
-    difficultyOptions.add(button("Cadet", btncol, btncol, {g_HALFWIN.m_x - 370.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(button("Cosmonaut", btncol, btncol, {g_HALFWIN.m_x - 220.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(button("Captain", btncol, btncol, {g_HALFWIN.m_x - 70.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(button("Commander", btncol, btncol, {g_HALFWIN.m_x + 80.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
-    difficultyOptions.add(button("Computing for Animation 1", btncol, btncol, {g_HALFWIN.m_x + 230.0f, g_HALFWIN.m_y + 130.0f}, {w, h}, 0.8f));
+    selection difficultyOptions = loadSelection("optionsDifficultyMenu.txt");
     difficultyOptions.setVisible(false);
     uni.getUI()->add(difficultyOptions);
 
@@ -204,7 +156,7 @@ void mainMenu(universe &uni)
 
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
-    sim_time clock(60.0f);
+    sim_time clock(120.0f);
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
     while(g_GAME_STATE == MODE_MENU)
@@ -232,11 +184,10 @@ void mainMenu(universe &uni)
                 case SDL_BUTTON_LEFT:
                     int mx = 0, my = 0;
                     SDL_GetMouseState(&mx, &my);
-                    selectionReturn mainMenuSelected = uni.getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    selectionReturn mainMenuSelected = uni.handleInput({static_cast<float>(mx), static_cast<float>(my)});
                     std::cout << "CLICK : " << mainMenuSelected.m_sel_val << ", " << mainMenuSelected.m_button_val << std::endl;
                     if(mainMenuSelected.m_sel_val == 0)
                     {
-                        playSnd(MENU_SELECT_SND);
                         switch(mainMenuSelected.m_button_val)
                         {
                         case 0:
@@ -261,7 +212,6 @@ void mainMenu(universe &uni)
                     }
                     else if(mainMenuSelected.m_sel_val == 1)
                     {
-                        playSnd(MENU_SELECT_SND);
                         if(mainMenuSelected.m_button_val == 4)
                         {
                             for(size_t i = 0; i < uni.getUI()->getElements()->size(); ++i)
@@ -272,7 +222,6 @@ void mainMenu(universe &uni)
                     }
                     else if(mainMenuSelected.m_sel_val == 2)
                     {
-                        playSnd(MENU_SELECT_SND);
                         switch(mainMenuSelected.m_button_val)
                         {
                         case 0:
@@ -309,12 +258,10 @@ void mainMenu(universe &uni)
                     }
                     else if(mainMenuSelected.m_sel_val == 3)
                     {
-                        playSnd(MENU_SELECT_SND);
                         setConfigValue("graphical_detail", mainMenuSelected.m_button_val);
                     }
                     else if(mainMenuSelected.m_sel_val == 4)
                     {
-                        playSnd(MENU_SELECT_SND);
                         setConfigValue("difficulty", mainMenuSelected.m_button_val + 1);
                     }
                     break;
@@ -350,17 +297,17 @@ void mainMenu(universe &uni)
 
 void playGame(universe &uni)
 {
-    playSnd(MENU_SELECT_SND);
     //universe uni;
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
 
     g_GAME_OVER = false;
+    uni.playMus(1);
     uni.reload(true);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
-    sim_time clock(60.0f);
+    sim_time clock(120.0f);
 
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
@@ -450,38 +397,31 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
         {
             int x = 0, y = 0;
             SDL_GetMouseState(&x,&y);
-            selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(x), static_cast<float>(y)});
+            selectionReturn ret = uni->handleInput({static_cast<float>(x), static_cast<float>(y)});
             if(ret.m_sel_val == 0)
             {
-                playSnd(MENU_SELECT_SND);
                 ply->setEnergyPriority(ret.m_button_val);
                 uni->getUI()->setDark(ret.m_sel_val, true);
                 uni->getUI()->setDark(ret.m_sel_val, ret.m_button_val, false);
             }
             else if(ret.m_sel_val == 1)
             {
-                if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) )
-                {
-                  playSnd(MENU_FAIL_SND);
-                  return;
-                }
-                playSnd(MENU_SELECT_SND);
+                if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
+
                 if(ret.m_button_val == 4) ply->incrMissiles(1);
+
                 else if(ret.m_button_val == 5)
                 {
                   uni->addMiner();
-                  playSnd(CLUNK_SND);
                 }
                 else if(ret.m_button_val == 6)
                 {
                   uni->addWingman();
-                  playSnd(CLUNK_SND);
                 }
                 else if(ret.m_button_val >= 7) uni->setMouseState( ret.m_button_val );
             }
             else if(ret.m_sel_val == 2)
             {
-                playSnd(MENU_SELECT_SND);
                 switch(ret.m_button_val)
                 {
                 case 0:
@@ -588,14 +528,17 @@ void handleUserScroll(int y, player * ply)
 void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
 {
     //The menu to appear when the user presses escape.
+    //Hard coded so it is fast.
+    //Or something like that.
     selection escMenuSelection;
     std::array<int, 4> btncol = {20, 200, 255, 220};
     std::array<int, 4> quitcol = {255, 5, 30, 220};
-    button resume ("RESUME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f}, {200.0f, 80.0f});
-    button sGame ("SAVE GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    button lGame ("LOAD GAME", btncol, btncol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 80.0f});
-    button mm ("MAIN MENU", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 80.0f});
-    button quit ("QUIT", quitcol, quitcol, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    std::array<int, 4> white = {255, 255, 255, 255};
+    button resume ("RESUME", btncol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f}, {200.0f, 80.0f});
+    button sGame ("SAVE GAME", btncol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
+    button lGame ("LOAD GAME", btncol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 80.0f});
+    button mm ("MAIN MENU", quitcol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 80.0f});
+    button quit ("QUIT", quitcol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
 
     escMenuSelection.add(resume);
     escMenuSelection.add(sGame);
@@ -719,20 +662,21 @@ void playTutorial(universe &uni)
         STAGE_COMBAT_2_DIED, STAGE_4_COMBAT_DIED,
     };
     stage tutStage = STAGE_BEGIN;
-    playSnd(MENU_SELECT_SND);
+
     //universe uni;
     std::cout << "LAUNCHING TUTORIAL..." << std::endl;
 
     g_DIFFICULTY = 0;
 
     g_GAME_OVER = false;
+    uni.playMus(0);
     uni.reload(true);
     uni.setScore(0);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
-    sim_time clock(60.0f);
+    sim_time clock(120.0f);
     std::array<bool, 4> directionsTravelled = {false, false, false, false};
     float timer = 0.0f;
     //Keypress modifiers (shift, ctrl etc).
@@ -925,7 +869,7 @@ void playTutorial(universe &uni)
             asteroid.setPos({0.0f, - 300.0f});
             asteroid.setVel(uni.getPly()->getVel());
             asteroid.setHealth(10);
-            playSnd(PLACE_SND);
+            uni.playSnd(PLACE_SND);
             uni.getAsteroids()->push_back(asteroid);
             tutStage = STAGE_ASTEROID_2;
             timer = 0.0f;

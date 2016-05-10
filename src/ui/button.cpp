@@ -10,8 +10,8 @@ button::button()
 }
 
 button::button(const std::string _txt,
-               const std::array<int, 4> _b_col,
-               const std::array<int, 4> _t_col,
+               const std::array<int, 4> _bcol,
+               const std::array<int, 4> _tcol,
                const vec2 _pos,
                const vec2 _dim)
 {
@@ -22,14 +22,9 @@ button::button(const std::string _txt,
     m_initLabel = _txt;
     m_label = _txt;
 
-    for(size_t i = 0; i < 8; i++)
-    {
-        m_col[i] = _b_col[i];
-    }
-    for(size_t i = 0; i < 8; i++)
-    {
-        m_tcol[i] = _t_col[i];
-    }
+    m_col = _bcol;
+
+    m_tcol = _tcol;
 
     m_pos.m_x = _pos.m_x;
     m_pos.m_y = _pos.m_y;
@@ -39,12 +34,12 @@ button::button(const std::string _txt,
     m_initCost = -1;
     m_cost = -1;
 
-    m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
+    m_dcol = col255to1(m_col);
 }
 
 button::button(const std::string _txt,
-               const std::array<int, 4> _b_col,
-               const std::array<int, 4> _t_col,
+               const std::array<int, 4> _bcol,
+               const std::array<int, 4> _tcol,
                const vec2 _pos,
                const vec2 _dim,
                const float _smul)
@@ -56,14 +51,8 @@ button::button(const std::string _txt,
     m_initLabel = _txt;
     m_label = _txt;
 
-    for(size_t i = 0; i < 8; i++)
-    {
-        m_col[i] = _b_col[i];
-    }
-    for(size_t i = 0; i < 8; i++)
-    {
-        m_tcol[i] = _t_col[i];
-    }
+    m_col = _bcol;
+    m_tcol = _tcol;
 
     m_pos.m_x = _pos.m_x;
     m_pos.m_y = _pos.m_y;
@@ -73,13 +62,13 @@ button::button(const std::string _txt,
     m_initCost = -1;
     m_cost = -1;
 
-    m_dcol = {m_col[4] / 255.0f, m_col[5] / 255.0f, m_col[6] / 255.0f, m_col[7] / 255.0f};
+    m_dcol = col255to1(m_col);
 }
 
 button::button(
         const std::string _txt,
-        const std::array<int, 4> _label,
-        const std::array<int, 4> _pcol,
+        const std::array<int, 4> _bcol,
+        const std::array<int, 4> _tcol,
         const vec2 _pos,
         const vec2 _dim,
         const int _pcost
@@ -92,14 +81,8 @@ button::button(
     m_initLabel = _txt;
     m_label = _txt;
 
-    for(size_t i = 0; i < 8; i++)
-    {
-        m_col[i] = _label[i];
-    }
-    for(size_t i = 0; i < 8; i++)
-    {
-        m_tcol[i] = _pcol[i];
-    }
+    m_col = _bcol;
+    m_tcol = _tcol;
 
     m_pos.m_x = _pos.m_x;
     m_pos.m_y = _pos.m_y;
@@ -109,7 +92,7 @@ button::button(
     m_initCost = _pcost;
     m_cost = _pcost;
 
-    m_dcol = {m_col[0] / 255.0f, m_col[1] / 255.0f, m_col[2] / 255.0f, m_col[3] / 255.0f};
+    m_dcol = col255to1(m_col);
 }
 
 void button::update(const int _pts, const vec2 _mouse)
@@ -122,14 +105,24 @@ void button::update(const int _pts, const vec2 _mouse)
 
         if(pointInRect(_mouse, m_pos, m_dim))
         {
-          m_state = BUTTON_STATE_OVER;
-          for(auto & i : m_dcol) i += 20.0f;
+            m_state = BUTTON_STATE_OVER;
+            for(auto & i : m_dcol) i += 20.0f;
         }
     }
     else
     {
         m_state = BUTTON_STATE_DISABLED;
         for(auto & i : m_dcol) i /= 2.0f;
+        for(auto & i : m_tcol) i /= 2;
+    }
+
+    if(m_selected)
+    {
+        for(auto &i : m_dcol) i += 20.0f;
+    }
+    else
+    {
+        for(auto &i : m_dcol) i -= 20.0f;
     }
 
     for(auto & i : m_dcol) i /= 255.0f;
@@ -160,6 +153,6 @@ void button::reset()
 
 void button::setDark(bool b)
 {
-  if(b) m_state = BUTTON_STATE_DISABLED;
-  else m_state = BUTTON_STATE_DEFAULT;
+    if(b) m_state = BUTTON_STATE_DISABLED;
+    else m_state = BUTTON_STATE_DEFAULT;
 }

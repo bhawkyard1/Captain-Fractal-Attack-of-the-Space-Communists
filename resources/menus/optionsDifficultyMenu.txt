@@ -1,0 +1,49 @@
+SELECTION START
+Type 0
+SaveSelection 0
+SELECTION END
+
+BUTTON START
+Name Cadet
+Pos -370.0i 130.0j
+Dim 140.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END
+
+BUTTON START
+Name Cosmonaut
+Pos -220.0i 130.0j
+Dim 140.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END
+
+BUTTON START
+Name Captain
+Pos -70.0i 130.0j
+Dim 140.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END
+
+BUTTON START
+Name Commander
+Pos 80.0i 130.0j
+Dim 140.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END
+
+BUTTON START
+Name Computing for Animation 1
+Pos 230.0i 130.0j
+Dim 140.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END

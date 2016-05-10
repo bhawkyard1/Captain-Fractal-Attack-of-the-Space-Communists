@@ -13,6 +13,9 @@ universe::universe()
       m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
       m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
 {
+    m_sounds.sfxInit();
+    m_sounds.loadSounds();
+
     showUI = true;
     m_time_elapsed = 0.0;
     m_pos = {0.0f, 0.0f};
@@ -171,7 +174,7 @@ void universe::update(const float _dt)
 
     if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
     {
-        playSnd( static_cast<sound>(m_ply.getCurWeap()) );
+        m_sounds.playSnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
         addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, m_ply.getUniqueID() );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
@@ -883,7 +886,7 @@ void universe::drawUI()
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
         if(!i->isVisible()) continue;
-        for(auto j = i->getbuttons()->begin(); j != i->getbuttons()->end(); ++j)
+        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
         {
             std::array<int, 8> col = j->getCol();
             if(!j->isSelected())
@@ -1139,7 +1142,7 @@ void universe::drawUI()
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
         if(!i->isVisible()) continue;
-        for(auto j = i->getbuttons()->begin(); j != i->getbuttons()->end(); ++j)
+        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
         {
             std::array<float, 4> col = j->getDrawCol();
 
@@ -1154,23 +1157,15 @@ void universe::drawUI()
         m_drawer.drawRects(false);
         m_drawer.clearVectors();
 
-        for(auto k = i->getbuttons()->begin(); k != i->getbuttons()->end(); ++k)
+        for(auto k = i->getButtons()->begin(); k != i->getButtons()->end(); ++k)
         {
-            std::array<float, 4> col = k->getDrawCol();
-
+            std::array<float, 4> col = col255to1(k->getTCol());
             vec2 kdim = k->getDim();
             vec2 kpos = k->getPos();
 
             kpos.m_x += kdim.m_x * 0.25f;
             kpos.m_y += kdim.m_y * 0.5f;
-            if(k->isDark())
-            {
-                for(auto &u : col) u += 0.05f;
-            }
-            else
-            {
-                for(auto &u : col) u += 0.8f;
-            }
+
             m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
         }
     }
@@ -1958,8 +1953,12 @@ void universe::reload(const bool _newGame)
     m_ply.setEnginePower(5.0f);
     m_ply.setGeneratorMul(1.0f);
 
-    if(!_newGame) return;
+    if(!_newGame)
+    {
+        return;
+    }
 
+    m_sounds.playSnd(SAVE_SND);
     for(int i = 0; i < UPGRADES_LEN; ++i)
     {
         m_ply.setGradeArr(i, 0);
@@ -2038,18 +2037,18 @@ void universe::addBuild(
 
     addpfx(_p, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2);
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
-    playSnd(PLACE_SND);
-    playSnd(CLUNK_SND);
+    m_sounds.playSnd(PLACE_SND);
+    m_sounds.playSnd(CLUNK_SND);
 }
 
 void universe::initUI()
 {
     //Initialise the two selection menus.
-    selection energy_menu;
-    selection upgrades_menu = loadSelection("upgrades.txt");
+    selection energy_menu = loadSelection("priorityMenu.txt");
+    selection upgrades_menu = loadSelection("upgradesMenu.txt");
 
     //Add buttons to the energy menu.
-    std::array<int, 4> arr1 = {100,100,100,255};
+    /*std::array<int, 4> arr1 = {100,100,100,255};
     std::array<int, 4> arr2 = {250,250,250,255};
     button energy_menu_neutral("BALANCED",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.35f},{128.0f,64.0f});
     energy_menu_neutral.setDark(false);
@@ -2069,10 +2068,10 @@ void universe::initUI()
     arr1 = {232,31,31,255};
     arr2 = {217,116,116,255};
     button energy_menu_guns("GUNS",arr1,arr2,{g_WIN_WIDTH * 0.9f, g_WIN_HEIGHT * 0.65f},{128.0f,64.0f});
-    energy_menu.add(energy_menu_guns);
+    energy_menu.add(energy_menu_guns);*/
 
     //Add buttons to the upgrades menu.
-    float w = 150.0f, h = 50.0f;
+    //float w = 150.0f, h = 50.0f;
     /*arr1 = {250,50,50,255};
     arr2 = {250,200,200,255};
     button upgrades_lasers("LASERS I (4)",arr1,arr2,{g_WIN_WIDTH * 0.0f, g_WIN_HEIGHT * 0.85f},{w,h},4);
@@ -2098,7 +2097,7 @@ void universe::initUI()
     button upgrades_m_missiles("MISSILE (4)",arr1,arr2,{g_WIN_WIDTH * 0.6f, g_WIN_HEIGHT * 0.85f},{w,h},4);
     upgrades_menu.add(upgrades_m_missiles);*/
 
-    arr1 = {180,220,255,255};
+    /*arr1 = {180,220,255,255};
     arr2 = {180,220,255,255};
     button upgrades_miner("MINER (16)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.85f},{w,h},16);
     upgrades_menu.add(upgrades_miner);
@@ -2119,7 +2118,7 @@ void universe::initUI()
     upgrades_menu.add(upgrades_station);
 
     button upgrades_capital("CAPITAL (1536)",arr1,arr2,{g_WIN_WIDTH * 0.75f, g_WIN_HEIGHT * 0.49f},{w,h},1536);
-    upgrades_menu.add(upgrades_capital);
+    upgrades_menu.add(upgrades_capital);*/
 
     m_ui.add(energy_menu);
     m_ui.add(upgrades_menu);
@@ -2133,12 +2132,16 @@ bool universe::upgradeCallback(
     //This function takes the selected button, looks at the cost vs the score, updates relevant values,
     //then returns a bool representing whether the upgrade was successful or unsuccessful.
 
-    button * selectedbutton = &m_ui.getElements()->at(_sel).getbuttons()->at(_btn);
+    button * selectedbutton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
     int lvl = m_ply.getUpgrade( _btn );
 
     selectedbutton->set(false);
 
-    if(selectedbutton->getCost() > m_score or m_ply.getUpgrade(_btn) > 9) return false;
+    if(selectedbutton->getCost() > m_score or m_ply.getUpgrade(_btn) > 9)
+    {
+        m_sounds.playSnd(MENU_FAIL_SND);
+        return false;
+    }
 
     if(lvl < 9)
     {
@@ -2160,7 +2163,7 @@ void universe::upgradeSetLabels(
         int _plvl
         )
 {
-    button * selectedbutton = &m_ui.getElements()->at(_sel).getbuttons()->at(_btn);
+    button * selectedbutton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
 
     std::string s1;
     int lvl;
@@ -2288,4 +2291,11 @@ void universe::calcPowerBalance()
     float total = 0.0f;
     for(auto &i : m_balanceOfPower) total += i;
     for(auto &i : m_balanceOfPower) i /= total;
+}
+
+selectionReturn universe::handleInput(vec2 _mouse)
+{
+    selectionReturn ret = m_ui.handleInput(_mouse);
+    if(ret.m_sel_val > -1) m_sounds.playSnd(MENU_SELECT_SND);
+    return ret;
 }

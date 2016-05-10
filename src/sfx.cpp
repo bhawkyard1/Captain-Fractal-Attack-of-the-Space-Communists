@@ -4,10 +4,7 @@
 #include <string>
 #include "common.hpp"
 
-std::vector< std::vector<Mix_Chunk*> > g_snds;
-std::vector<Mix_Music*> g_music;
-
-void sfxInit()
+void soundPlayer::sfxInit()
 {
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 1024 ) == -1 )
     {
@@ -17,7 +14,7 @@ void sfxInit()
     }
 }
 
-void loadSound(std::string _path, int _len)
+void soundPlayer::loadSound(std::string _path, int _len)
 {
     std::vector<Mix_Chunk*> temp_vec;
     for(int i = 0; i < _len; i++)
@@ -28,20 +25,20 @@ void loadSound(std::string _path, int _len)
         if(!temp) std::cerr << name + ": Sound loading error! " << SDL_GetError() << std::endl;
         temp_vec.push_back(temp);
     }
-    g_snds.push_back(temp_vec);
+    m_snds.push_back(temp_vec);
 }
 
-void loadMusic(std::string _path)
+void soundPlayer::loadMusic(std::string _path)
 {
 
     std::string name = _path;
     name += ".wav";
     Mix_Music * temp = Mix_LoadMUS( name.c_str() );
     if(!temp) std::cerr << name + ": Sound loading error! " << SDL_GetError() << std::endl;
-    g_music.push_back(temp);
+    m_music.push_back(temp);
 }
 
-void loadSounds()
+void soundPlayer::loadSounds()
 {
     loadSound(g_RESOURCE_LOC + "../" + "sfx/red_laser_", 3);
     loadSound(g_RESOURCE_LOC + "../" + "sfx/green_laser_", 3);
@@ -58,41 +55,41 @@ void loadSounds()
     loadMusic(g_RESOURCE_LOC + "../" + "sfx/soviet_national_anthem_0");
 }
 
-void playSnd(sound _snd)
+void soundPlayer::playSnd(sound _snd)
 {
     if(g_GAME_STATE == MODE_MENU and _snd != MENU_SELECT_SND) return;
     size_t snd = static_cast<size_t>(_snd);
-    if(snd >= g_snds.size()) return;
+    if(snd >= m_snds.size()) return;
 
-    size_t size = g_snds.at(snd).size();
+    size_t size = m_snds.at(snd).size();
 
-    Mix_Chunk * to_play = g_snds.at(snd).at(rand()%size);
+    Mix_Chunk * to_play = m_snds.at(snd).at(rand()%size);
     Mix_PlayChannel( -1, to_play, 0 );
 }
 
-void playMusic(size_t _mus)
+void soundPlayer::playMusic(size_t _mus)
 {
-    Mix_PlayMusic( g_music.at(_mus), -1 );
+    Mix_PlayMusic( m_music.at(_mus), -1 );
 }
 
 
-void deleteSounds()
+soundPlayer::~soundPlayer()
 {
-    for(auto &i : g_snds)
+    for(auto &i : m_snds)
     {
         for(auto &j : i)
         {
             Mix_FreeChunk(j);
         }
     }
-    g_snds.clear();
+    m_snds.clear();
 
     Mix_HaltMusic();
-    for(auto &i : g_music)
+    for(auto &i : m_music)
     {
         Mix_FreeMusic(i);
     }
-    g_music.clear();
+    m_music.clear();
 
     Mix_CloseAudio();
 }

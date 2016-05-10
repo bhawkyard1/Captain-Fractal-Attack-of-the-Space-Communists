@@ -5,12 +5,14 @@ selection::selection()
 {
     m_visible = true;
     m_interpolant = 0.0f;
+    m_saveSelected = false;
 }
 
 selection::selection(selectionType _type)
 {
     m_visible = true;
     m_interpolant = 0.0f;
+    m_saveSelected = false;
 }
 
 bool selection::click(vec2 _p)
@@ -34,7 +36,7 @@ bool selection::click(vec2 _p)
         if(m_buttons[i].isDark()) continue;
         if(pointInRect(_p, m_buttons[i].getPos(), m_buttons[i].getDim()))
         {
-            m_buttons[i].select();
+            m_buttons[i].set(true);
             m_selected = i;
         }
     }
@@ -53,6 +55,7 @@ void selection::update(const int _s, const vec2 _mouse)
 
     for(auto &i : m_buttons)
     {
+        if(!m_saveSelected) i.set(false);
         i.update(_s, _mouse);
     }
 }

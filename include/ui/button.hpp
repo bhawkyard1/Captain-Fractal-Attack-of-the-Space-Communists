@@ -35,7 +35,7 @@ public:
     /// \param _pos position.
     /// \param _dim dimensions.
     //----------------------------------------------------------------------------------------------------------------------
-    button(const std::string _label,const std::array<int, 4> _pcol,const std::array<int, 4> _tcol,const vec2 _pos, const vec2 _dim);
+    button(const std::string _label, const std::array<int, 4> _bcol, const std::array<int, 4> _tcol, const vec2 _pos, const vec2 _dim);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief ctor for the button class.
@@ -46,7 +46,7 @@ public:
     /// \param _dim dimensions.
     /// \param _smul size mult for the button text.
     //----------------------------------------------------------------------------------------------------------------------
-    button(const std::string _label, const std::array<int, 4> _pcol, const std::array<int, 4> _tcol, const vec2 _pos, const vec2 _dim, const float _smul);
+    button(const std::string _label, const std::array<int, 4> _bcol, const std::array<int, 4> _tcol, const vec2 _pos, const vec2 _dim, const float _smul);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief ctor for the button class.
@@ -90,7 +90,8 @@ public:
     /// \brief Getter and setter for cost.
     //----------------------------------------------------------------------------------------------------------------------
     int getCost() {return m_cost;}
-    void setCost(int pcost) {m_cost = pcost;}
+    void setCost(int _cost) {m_cost = _cost;}
+    void setInitCost(int _initCost) {m_initCost = _initCost;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for state.
@@ -134,6 +135,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     std::string getLabel() {return m_label;}
     void setLabel(const std::string _label) {m_label = _label;}
+    void setInitLabel(const std::string _initLabel) {m_initLabel = _initLabel;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Resets the button to its initial state.
@@ -144,6 +146,7 @@ public:
     /// \brief Getter for text size multiplier.
     //----------------------------------------------------------------------------------------------------------------------
     float getTextSizeMul() {return m_smul;}
+    void setTextSizeMul(const float _smul) {m_smul = _smul;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Setter for start.

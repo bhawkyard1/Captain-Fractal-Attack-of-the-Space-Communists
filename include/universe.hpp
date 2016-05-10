@@ -20,6 +20,7 @@
 
 #include "renderer_opengl.hpp"
 
+#include "sfx.hpp"
 #include "ship.hpp"
 #include "squad.hpp"
 #include "stardust.hpp"
@@ -153,13 +154,13 @@ public:
     /// \brief This function only actually incremements the max number of wingmen available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
-    void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++;}
+    void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++; m_sounds.playSnd(CLUNK_SND);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief This function only actually incremements the max number of miners available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
-    void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++;}
+    void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++; m_sounds.playSnd(CLUNK_SND);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Used to place static structures into the world, although under the hood it just spawns a ship with a given classification.
@@ -322,6 +323,11 @@ public:
     userInterface setUI(userInterface _i) {m_ui = _i;}
 
     //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Getter and setter for the UI.
+    //----------------------------------------------------------------------------------------------------------------------
+    selectionReturn handleInput(vec2 _mouse);
+
+    //----------------------------------------------------------------------------------------------------------------------
     /// \brief A function to tell whether we are allowed to upgrade (compares cost vs score etc).
     /// \param _sel selection menu triggered
     /// \param _btn button triggered
@@ -407,6 +413,14 @@ public:
     /// \param _vel velocity
     //----------------------------------------------------------------------------------------------------------------------
     void addPopup(std::string _label, popup_type _type, float _smul, vec3 _pos, vec3 _vel);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Plays a sound. I don't like this function much, but I need it to play sounds externally.
+    /// \param _sound to play
+    //----------------------------------------------------------------------------------------------------------------------
+    void playSnd(sound _sound) {m_sounds.playSnd(_sound);}
+    void playMus(int _music) {m_sounds.playMusic(_music);}
+
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
@@ -428,6 +442,8 @@ private:
 #elif RENDER_MODE == 1
     renderer_ngl m_drawer;
 #endif
+
+    soundPlayer m_sounds;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all lasers in the game.

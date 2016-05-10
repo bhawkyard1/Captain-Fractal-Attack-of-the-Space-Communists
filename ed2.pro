@@ -58,7 +58,8 @@ win32: {
 }
 
 OTHER_FILES += readme.md \
-            += ./shaders/*.glsl
+            += ./shaders/*.glsl \
+            += ./resources/menus/*.txt
 
 CONFIG += console
 

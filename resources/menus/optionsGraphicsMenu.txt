@@ -1,0 +1,31 @@
+SELECTION START
+Type 0
+SaveSelection 0
+SELECTION END
+
+BUTTON START
+Name Potato
+Pos -155.0i 30.0j
+Dim 90.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END
+
+BUTTON START
+Name Medium Rare
+Pos -55.0i 30.0j
+Dim 90.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END
+
+BUTTON START
+Name Da Vinci
+Pos 45.0i 30.0j
+Dim 90.0a 50.0a
+TextCol 255 255 255 255
+TextSize 0.8
+BackCol 20 200 255 220
+BUTTON END

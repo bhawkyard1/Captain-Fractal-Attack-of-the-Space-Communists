@@ -35,7 +35,6 @@ void saveGame(universe * uni)
 
     save.close();
 
-    playSnd(SAVE_SND);
     std::cout << "SAVED" << std::endl;
 }
 
@@ -204,7 +203,6 @@ void loadGame(universe * uni)
     }
     save.close();
 
-    playSnd(SAVE_SND);
     std::cout << "LOADED" << std::endl;
 }
 
@@ -224,8 +222,8 @@ void loadConfig()
             if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
             else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
             else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
-            else if(strings[i] == "devmode") g_DEV_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<int>( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "devmode") g_DEV_MODE = static_cast<bool>( stoi(strings.at(i+1), nullptr, 10) );
+            else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<bool>( stoi(strings.at(i+1), nullptr, 10) );
             else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
         }
     }
@@ -285,6 +283,9 @@ selection loadSelection(const std::string _path)
         if(*i == "BUTTON START")
         {
             button temp;
+            temp.setCost(-1);
+            temp.setInitCost(-1);
+
             for(auto j = i; j != allStrings.end(); ++j)
             {
                 if(*j == "BUTTON END")
@@ -295,10 +296,25 @@ selection loadSelection(const std::string _path)
                 }
                 std::vector<std::string> btnData = split(*j, ' ');
 
-                if(btnData[0] == "Name") temp.setLabel(btnData[1]);
+                if(btnData[0] == "Name")
+                {
+                    std::string tempStr = "";
+                    for(int k = 1; k < btnData.size(); ++k)
+                    {
+                        tempStr += btnData[k];
+                        if(k < btnData.size() - 1) tempStr += ' ';
+                    }
+                    temp.setLabel(tempStr);
+                    temp.setInitLabel(tempStr);
+                }
                 else if(btnData[0] == "Pos") temp.setPos({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
                 else if(btnData[0] == "Dim") temp.setDim({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
-                else if(btnData[0] == "Cost") temp.setCost(std::stoi(btnData[1]));
+                else if(btnData[0] == "Cost")
+                {
+                    temp.setCost(std::stoi(btnData[1]));
+                    temp.setInitCost(std::stoi(btnData[1]));
+                }
+                else if(btnData[0] == "TextSize") temp.setTextSizeMul(std::stof(btnData[1]));
                 else if(btnData[0] == "TextCol")
                 {
                     temp.setTCol({
@@ -311,16 +327,30 @@ selection loadSelection(const std::string _path)
                 else if(btnData[0] == "BackCol")
                 {
                     temp.setCol({
-                                     std::stoi(btnData[1]),
-                                     std::stoi(btnData[2]),
-                                     std::stoi(btnData[3]),
-                                     std::stoi(btnData[4])
+                                    std::stoi(btnData[1]),
+                                    std::stoi(btnData[2]),
+                                    std::stoi(btnData[3]),
+                                    std::stoi(btnData[4])
                                 });
                 }
             }
         }
-    }
+        else if(*i == "SELECTION START")
+        {
+            for(auto &j = i; j != allStrings.end(); ++j)
+            {
+                if(*j == "SELECTION END")
+                {
+                    i = j;
+                    break;
+                }
 
+                std::vector<std::string> slnData = split(*j, ' ');
+
+                if(slnData[0] == "SaveSelection") menu.setSaveSelected(static_cast<bool>( std::stoi( slnData[1], nullptr) ) );
+            }
+        }
+    }
     return menu;
 }
 
@@ -328,7 +358,6 @@ float convertMeasureF(std::string _str)
 {
     std::string toConvert = "";
     for(int i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
-
     switch(_str[ _str.length() - 1 ])
     {
     case 'a':
@@ -339,6 +368,12 @@ float convertMeasureF(std::string _str)
         break;
     case 'h':
         return std::stof(toConvert, nullptr) * g_WIN_HEIGHT;
+        break;
+    case 'i':
+        return std::stof(toConvert, nullptr) + g_HALFWIN.m_x;
+        break;
+    case 'j':
+        return std::stof(toConvert, nullptr) + g_HALFWIN.m_y;
         break;
     default:
         break;
