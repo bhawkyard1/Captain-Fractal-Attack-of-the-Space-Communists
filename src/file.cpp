@@ -307,7 +307,21 @@ selection loadSelection(const std::string _path)
                     temp.setLabel(tempStr);
                     temp.setInitLabel(tempStr);
                 }
-                else if(btnData[0] == "Pos") temp.setPos({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                else if(btnData[0] == "Pos")
+                {
+                    temp.setPos({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                    temp.setStart({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                    temp.setEnd({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                }
+                else if(btnData[0] == "StartPos")
+                {
+                    temp.setPos({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                    temp.setStart({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                }
+                else if(btnData[0] == "EndPos")
+                {
+                    temp.setEnd({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
+                }
                 else if(btnData[0] == "Dim") temp.setDim({convertMeasureF(btnData[1]), convertMeasureF(btnData[2])});
                 else if(btnData[0] == "Cost")
                 {
@@ -348,6 +362,7 @@ selection loadSelection(const std::string _path)
                 std::vector<std::string> slnData = split(*j, ' ');
 
                 if(slnData[0] == "SaveSelection") menu.setSaveSelected(static_cast<bool>( std::stoi( slnData[1], nullptr) ) );
+                else if(slnData[0] == "Type") menu.setType(std::stoi(slnData[1]));
             }
         }
     }

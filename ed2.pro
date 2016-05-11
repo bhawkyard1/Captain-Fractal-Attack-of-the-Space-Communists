@@ -79,3 +79,6 @@ else{ # note brace must be here
         message("Using custom NGL location")
         include($(NGLDIR)/UseNGL.pri)
 }
+
+DISTFILES += \
+    resources/menus/buyMenu.txt

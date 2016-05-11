@@ -36,9 +36,9 @@ selectionReturn userInterface::handleInput(vec2 _pos)
 
     if(r.m_sel_val != -1 and r.m_button_val != -1)
     {
-        for(auto &i : m_elements)
+        for(auto &i : *m_elements[r.m_sel_val].getButtons())
         {
-            for(auto &j : *i.getButtons()) j.set(false);
+            i.set(false);
         }
         if(b != nullptr) b->set(true);
     }

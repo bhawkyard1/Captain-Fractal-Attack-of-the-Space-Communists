@@ -409,18 +409,14 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
                 if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
 
                 if(ret.m_button_val == 4) ply->incrMissiles(1);
-
-                else if(ret.m_button_val == 5)
-                {
-                  uni->addMiner();
-                }
-                else if(ret.m_button_val == 6)
-                {
-                  uni->addWingman();
-                }
-                else if(ret.m_button_val >= 7) uni->setMouseState( ret.m_button_val );
             }
             else if(ret.m_sel_val == 2)
+            {
+                if(ret.m_button_val == 0) uni->addMiner();
+                else if(ret.m_button_val == 1) uni->addWingman();
+                else if(ret.m_button_val >= 2) uni->setMouseState( ret.m_button_val );
+            }
+            else if(ret.m_sel_val == 3)
             {
                 switch(ret.m_button_val)
                 {
@@ -492,19 +488,19 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
 
     switch(uni->getMouseState())
     {
-    case 7:
+    case 2:
         uni->addBuild(pos, PLAYER_TURRET);
         break;
-    case 8:
+    case 3:
         uni->addBuild(pos, PLAYER_GRAVWELL);
         break;
-    case 9:
+    case 4:
         uni->addBuild(pos, PLAYER_BARRACKS);
         break;
-    case 10:
+    case 5:
         uni->addBuild(pos, PLAYER_STATION);
         break;
-    case 11:
+    case 6:
         uni->spawnShip(PLAYER_CAPITAL, TEAM_PLAYER, pos);
         break;
     default:

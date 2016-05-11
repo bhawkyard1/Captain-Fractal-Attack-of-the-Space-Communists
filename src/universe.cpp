@@ -1005,20 +1005,20 @@ void universe::draw(float _dt)
 
     switch(m_mouse_state)
     {
-    case 7:
+    case 2:
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_TURRET", 0.5f);
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_TURRET", 0.5f);
         break;
-    case 8:
+    case 3:
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_GRAVWELL", 0.5f);
         break;
-    case 9:
+    case 4:
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_BARRACKS", 0.5f);
         break;
-    case 10:
+    case 5:
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_STATION", 0.5f);
         break;
-    case 11:
+    case 6:
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_CAPITAL", 0.5f);
         break;
     default:
@@ -1153,13 +1153,17 @@ void universe::drawUI()
 
             m_drawer.addRect(tovec3(jpos), jdim, 0.0f, col);
         }
+
         m_drawer.useShader("plain");
         m_drawer.drawRects(false);
         m_drawer.clearVectors();
 
         for(auto k = i->getButtons()->begin(); k != i->getButtons()->end(); ++k)
         {
-            std::array<float, 4> col = col255to1(k->getTCol());
+            std::array<float, 4> col = k->getDrawCol();
+            for(auto &l : col) {l += 0.1f; l *= 2.0f;}
+            col[3] = 1.0f;
+
             vec2 kdim = k->getDim();
             vec2 kpos = k->getPos();
 
@@ -2046,6 +2050,7 @@ void universe::initUI()
     //Initialise the two selection menus.
     selection energy_menu = loadSelection("priorityMenu.txt");
     selection upgrades_menu = loadSelection("upgradesMenu.txt");
+    selection buy_menu = loadSelection("buyMenu.txt");
 
     //Add buttons to the energy menu.
     /*std::array<int, 4> arr1 = {100,100,100,255};
@@ -2122,6 +2127,7 @@ void universe::initUI()
 
     m_ui.add(energy_menu);
     m_ui.add(upgrades_menu);
+    m_ui.add(buy_menu);
 }
 
 bool universe::upgradeCallback(

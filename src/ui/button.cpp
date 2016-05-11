@@ -26,10 +26,10 @@ button::button(const std::string _txt,
 
     m_tcol = _tcol;
 
-    m_pos.m_x = _pos.m_x;
-    m_pos.m_y = _pos.m_y;
-    m_dim.m_x = _dim.m_x;
-    m_dim.m_y = _dim.m_y;
+    m_pos = _pos;
+    m_start = _pos;
+    m_end = _pos;
+    m_dim = _dim;
 
     m_initCost = -1;
     m_cost = -1;
@@ -54,10 +54,10 @@ button::button(const std::string _txt,
     m_col = _bcol;
     m_tcol = _tcol;
 
-    m_pos.m_x = _pos.m_x;
-    m_pos.m_y = _pos.m_y;
-    m_dim.m_x = _dim.m_x;
-    m_dim.m_y = _dim.m_y;
+    m_pos = _pos;
+    m_start = _pos;
+    m_end = _pos;
+    m_dim = _dim;
 
     m_initCost = -1;
     m_cost = -1;
@@ -84,10 +84,10 @@ button::button(
     m_col = _bcol;
     m_tcol = _tcol;
 
-    m_pos.m_x = _pos.m_x;
-    m_pos.m_y = _pos.m_y;
-    m_dim.m_x = _dim.m_x;
-    m_dim.m_y = _dim.m_y;
+    m_pos = _pos;
+    m_start = _pos;
+    m_end = _pos;
+    m_dim = _dim;
 
     m_initCost = _pcost;
     m_cost = _pcost;
@@ -95,9 +95,11 @@ button::button(
     m_dcol = col255to1(m_col);
 }
 
-void button::update(const int _pts, const vec2 _mouse)
+void button::update(const int _pts, const vec2 _mouse, const float _interp)
 {
     for(int i = 0; i < 4; ++i) m_dcol[i] = static_cast<float>(m_col[i]);
+
+    m_pos = _interp * m_end + (1.0f - _interp) * m_start;
 
     if(_pts >= m_cost)
     {
@@ -113,7 +115,6 @@ void button::update(const int _pts, const vec2 _mouse)
     {
         m_state = BUTTON_STATE_DISABLED;
         for(auto & i : m_dcol) i /= 2.0f;
-        for(auto & i : m_tcol) i /= 2;
     }
 
     if(m_selected)
