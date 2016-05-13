@@ -12,7 +12,7 @@ enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The teams that a ship can be on
 //----------------------------------------------------------------------------------------------------------------------
-enum aiTeam{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_PIRATES, SPACE_COMMUNISTS, NEUTRAL, NONE};
+enum aiTeam{TEAM_PLAYER, TEAM_PLAYER_MINER, GALACTIC_FEDERATION, SPOOKY_SPACE_PIRATES, SPACE_COMMUNISTS, ALLIANCE, NEUTRAL, NONE};
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file enemy.hpp

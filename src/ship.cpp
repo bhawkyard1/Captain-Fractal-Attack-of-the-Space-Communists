@@ -6,6 +6,7 @@ std::vector<tinfo> g_texture_keys = {
     {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32}, {"COMMUNIST_CAPITAL", 1024}, {"COMMUNIST_TURRET", 16},
     {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024}, {"FEDERATION_TURRET", 16},
     {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024}, {"PIRATE_TURRET", 16},
+    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64},
     {"PLAYER_MINER_DROID", 16}, {"PLAYER_CAPITAL", 1024}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
     {"PLAYER_SHIP", 32},
     {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32},
@@ -244,6 +245,56 @@ ship::ship(
         m_weapons.push_back( g_weapons[WEAPON_PIRATE_1] );
         m_curWeap = 0;
         m_canMove = false;
+        break;
+    case ALLIANCE_SCOUT:
+        m_identifier = "ALLIANCE_SCOUT";
+        setMaxHealth(30.0f,true);
+        setMaxShield(50.0f,true);
+        setMaxEnergy(120.0f,true);
+        m_inertia = 0.1f;
+        m_enginePower = 8.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_TRACKER:
+        m_identifier = "ALLIANCE_TRACKER";
+        setMaxHealth(60.0f,true);
+        setMaxShield(90.0f,true);
+        setMaxEnergy(125.0f,true);
+        m_inertia = 0.09f;
+        m_enginePower = 11.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_PHOENIX:
+        m_identifier = "ALLIANCE_PHOENIX";
+        setMaxHealth(100.0f,true);
+        setMaxShield(120.0f,true);
+        setMaxEnergy(150.0f,true);
+        m_inertia = 0.07f;
+        m_enginePower = 15.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_DRAGON:
+        m_identifier = "ALLIANCE_DRAGON";
+        setMaxHealth(130.0f,true);
+        setMaxShield(160.0f,true);
+        setMaxEnergy(200.0f,true);
+        m_inertia = 0.05f;
+        m_enginePower = 16.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_GUNSHIP:
+        m_identifier = "ALLIANCE_GUNSHIP";
+        setMaxHealth(200.0f,true);
+        setMaxShield(250.0f,true);
+        setMaxEnergy(250.0f,true);
+        m_inertia = 0.02f;
+        m_enginePower = 22.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
         break;
     case PLAYER_SHIP:
         m_identifier = "PLAYER_SHIP";
@@ -517,6 +568,26 @@ ship::ship(
         break;
     case PIRATE_GUNSHIP:
         m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_SCOUT:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_TRACKER:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_PHOENIX:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_DRAGON:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
+    case ALLIANCE_GUNSHIP:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
         break;
     case PLAYER_SHIP:

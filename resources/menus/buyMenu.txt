@@ -7,6 +7,7 @@ BUTTON START
 Name MINER (16)
 Pos 0.75w 0.85h
 Dim 150.0a 50.0a
+Cost 16
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255
@@ -17,6 +18,7 @@ Name WINGMAN (32)
 StartPos 0.75w 0.85h
 EndPos 0.75w 0.79h
 Dim 150.0a 50.0a
+Cost 32
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255
@@ -27,6 +29,7 @@ Name TURRET (32)
 StartPos 0.75w 0.85h
 EndPos 0.75w 0.73h
 Dim 150.0a 50.0a
+Cost 32
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255
@@ -37,6 +40,7 @@ Name GRAVWELL (512)
 StartPos 0.75w 0.85h
 EndPos 0.75w 0.67h
 Dim 150.0a 50.0a
+Cost 512
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255
@@ -47,6 +51,7 @@ Name BARRACKS (1024)
 StartPos 0.75w 0.85h
 EndPos 0.75w 0.61h
 Dim 150.0a 50.0a
+Cost 1024
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255
@@ -57,6 +62,7 @@ Name STATION (1024)
 StartPos 0.75w 0.85h
 EndPos 0.75w 0.55h
 Dim 150.0a 50.0a
+Cost 1024
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255
@@ -67,6 +73,7 @@ Name CAPITAL (1536)
 StartPos 0.75w 0.85h
 EndPos 0.75w 0.49h
 Dim 150.0a 50.0a
+Cost 1536
 TextCol 255 255 255 255
 TextSize 1.0
 BackCol 20 200 255 255

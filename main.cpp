@@ -412,6 +412,8 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             }
             else if(ret.m_sel_val == 2)
             {
+                if( !uni->upgradeCallback(ret.m_sel_val, ret.m_button_val) ) return;
+
                 if(ret.m_button_val == 0) uni->addMiner();
                 else if(ret.m_button_val == 1) uni->addWingman();
                 else if(ret.m_button_val >= 2) uni->setMouseState( ret.m_button_val );
@@ -542,9 +544,6 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     escMenuSelection.add(mm);
     escMenuSelection.add(quit);
 
-    vec3 vel = ply->getVel();
-    float spd = mag(vel);
-    vec3 dir = -(vel / spd);
     switch (sym)
     { 
     case SDLK_w:
@@ -610,6 +609,9 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
             loadGame(uni);
         }
         break;
+    case SDLK_m:
+        uni->toggleMapMode();
+        break;
     case SDLK_SPACE:
         uni->pause();
         break;
@@ -625,7 +627,17 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         uni->toggleUIVisible();
         break;
     case SDLK_e:
+    {
+        vec3 vel = ply->getVel();
+        float spd = mag(vel);
+        vec3 dir;
+
+        if(spd > 0.0f) dir = -(vel / spd);
+        else dir = {0.0f, 0.0f};
+
         ply->accelerate(dir, clamp(spd, 0.0f, 1.0f));
+        break;
+    }
     default:
         break;
     }

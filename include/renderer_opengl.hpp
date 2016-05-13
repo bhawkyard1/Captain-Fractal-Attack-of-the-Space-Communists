@@ -302,7 +302,7 @@ public:
   /// \param _lp ref to laser vector
   /// \param _fp ref to faction pointer
   //----------------------------------------------------------------------------------------------------------------------
-  void drawMap(std::vector<missile> * _mp, std::vector<enemy> *_ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp);
+  void drawMap(std::vector<missile> * _mp, std::vector<enemy> *_ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp, const bool _mode);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Draws health, shield and energy bars

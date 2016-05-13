@@ -142,6 +142,12 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     loadAsset("PIRATE_CAPITAL",      "pirate_capital");
     loadAsset("PIRATE_TURRET",       "pirate_turret_1");
 
+    loadAsset("ALLIANCE_SCOUT",      "neutral_1");
+    loadAsset("ALLIANCE_TRACKER",    "neutral_2");
+    loadAsset("ALLIANCE_PHOENIX",    "neutral_3");
+    loadAsset("ALLIANCE_DRAGON",     "neutral_4");
+    loadAsset("ALLIANCE_GUNSHIP",    "neutral_5");
+
     loadAsset("PLAYER_SHIP",         "player");
     loadAsset("PLAYER_HUNTER",       "wingman_1");
     loadAsset("PLAYER_DEFENDER",     "wingman_2");
@@ -1149,22 +1155,39 @@ void renderer_ngl::disableDepthSorting()
     glDisable(GL_DEPTH_TEST);
 }
 
-void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp)
+void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp, const bool _mode)
 {
     m_shader->use("debug");
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 0.4f));
-    drawRect({g_WIN_WIDTH - 128.0f, 128.0f}, {256.0f, 256.0f}, 0.0f, false);
+
+    vec3 center;
+    vec2 dim;
+
+    if(_mode)
+    {
+        center = tovec3(g_HALFWIN);
+        center -= {0.0f, 100.0f, 0.0f};
+        dim.m_x = std::min(g_WIN_WIDTH, g_WIN_HEIGHT) - 300.0f;
+        dim.m_y = dim.m_x;
+    }
+    else if(!_mode)
+    {
+        center = {g_WIN_WIDTH - 128.0f, 128.0f, 0.0f};
+        dim = {256.0f, 256.0f};
+    }
+
+    drawRect(center, dim, 0.0f, false);
 
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
-    drawCircle({g_WIN_WIDTH - 128.0f, 128.0f}, 4.0f, false);
+    drawCircle(center, 4.0f, false);
 
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, 1.0f));
     for(unsigned int i = 0; i < _lp->size(); i++)
     {
         vec3 lpp = _lp->at(i).getPos();
 
-        float x = clamp(lpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        float y = clamp(lpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
+        float x = clamp(lpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(lpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         drawCircle({x, y}, 1.0f, false);
     }
@@ -1174,8 +1197,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     {
         vec3 mpp = _mp->at(i).getPos();
 
-        float x = clamp(mpp.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        float y = clamp(mpp.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
+        float x = clamp(mpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(mpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         drawCircle({x, y}, 1.0f, false);
     }
@@ -1185,8 +1208,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     {
         vec3 app = _ap->at(i).getPos();
 
-        float x = clamp(app.m_x / 156.0f + g_WIN_WIDTH - 128.0f,  g_WIN_WIDTH - 256.0f,  static_cast<float>(g_WIN_WIDTH));
-        float y = clamp(app.m_y / 156.0f + 128.0f,  0.0f,  256.0f);
+        float x = clamp(app.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(app.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         float radius = 1.0f;
         if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2.0f;
@@ -1205,8 +1228,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         col[3] = 1.0f;
         m_shader->setRegisteredUniform("inColour", ngl::Vec4(col[0], col[1], col[2], col[3]));
 
-        float x = clamp(epp.m_x / 156.0f + g_WIN_WIDTH - 128.0f, g_WIN_WIDTH - 256.0f, static_cast<float>(g_WIN_WIDTH));
-        float y = clamp(epp.m_y / 156.0f + 128.0f, 0.0f, 256.0f);
+        float x = clamp(epp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(epp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         drawCircle({x, y}, radius, false);
     }

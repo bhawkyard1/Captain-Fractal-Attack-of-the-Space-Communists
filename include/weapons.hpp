@@ -36,6 +36,7 @@ enum WEAPON_TYPE {
     WEAPON_TURRET_LASER,
     WEAPON_PIRATE_1, WEAPON_PIRATE_2, WEAPON_PIRATE_3, WEAPON_PIRATE_BOSS_1,
     WEAPON_COMMUNIST_1, WEAPON_COMMUNIST_2, WEAPON_COMMUNIST_CAPITAL,
+    WEAPON_ALLIANCE_1, WEAPON_ALLIANCE_2, WEAPON_ALLIANCE_3,
     WEAPON_END
 };
 
@@ -43,7 +44,7 @@ enum WEAPON_TYPE {
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Global array containing base stats of all weapons in-game. These are copied out to ships upon their construction.
 //----------------------------------------------------------------------------------------------------------------------
-static std::array<std::array<float,10>,23> g_weapons =
+static std::array<std::array<float,10>,26> g_weapons =
 {{
      {{1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.008f}},//Laser cannon	0
      {{12.0f,	5.0f,                           3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.01f}},//Shotgun			1
@@ -67,6 +68,9 @@ static std::array<std::array<float,10>,23> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       15.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 1 18
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	5.0f,       10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser 2 19
      {{15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Commie laser capital 20
+     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      12.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.5f,   0.008f}},//Alliance 1
+     {{5.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	5.0f,       10.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.5f,   0.009f}},//Alliance 2
+     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       20.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.5f,   0.002f}},//Alliance 3
      {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
 }};
 

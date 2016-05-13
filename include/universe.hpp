@@ -421,6 +421,19 @@ public:
     void playSnd(sound _sound) {m_sounds.playSnd(_sound);}
     void playMus(int _music) {m_sounds.playMusic(_music);}
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Toggles the map mode between big and small.
+    //----------------------------------------------------------------------------------------------------------------------
+    void toggleMapMode() {m_mapExpanded = !m_mapExpanded;}
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Returns diplomatic status between two factions.
+    /// \param _a Team A.
+    /// \param _b Team B.
+    //----------------------------------------------------------------------------------------------------------------------
+    bool emnityCheck(const aiTeam _a, const aiTeam _b);
+    bool friendshipCheck(const aiTeam _a, const aiTeam _b);
+    bool neutralityCheck(const aiTeam _a, const aiTeam _b);
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
@@ -584,6 +597,11 @@ private:
     /// \brief Calculates power balance.
     //----------------------------------------------------------------------------------------------------------------------
     void calcPowerBalance();
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Whether the map is in large (1) or small (0) mode.
+    //----------------------------------------------------------------------------------------------------------------------
+    bool m_mapExpanded;
 };
 
 #endif
