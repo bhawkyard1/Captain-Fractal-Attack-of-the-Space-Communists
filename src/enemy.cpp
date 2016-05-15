@@ -18,6 +18,7 @@ enemy::enemy(
     m_team = _team;
     m_confidence = randNum(5.0f, 20.0f);
     m_squadID = -1;
+    m_tPos = getPos();
 }
 
 void enemy::behvrUpdate(float _dt)
@@ -35,18 +36,18 @@ void enemy::behvrUpdate(float _dt)
         if(m_target != nullptr)
         {
             m_tPos = getPos() + (getPos() - m_target->getPos()) * 100.0f;
-            m_tVel = {0.0f, 0.0f};
+            m_tVel = {0.0f, 0.0f, 0.0f};
         }
         else
         {
             m_tPos = getPos();
             m_tPos.m_y += 10000.0f;
-            m_tVel = {0.0f, 0.0f};
+            m_tVel = {0.0f, 0.0f, 0.0f};
         }
     }
     else if(m_curGoal == GOAL_WANDER)
     {
-        m_tVel = {0.0f, 0.0f};
+        m_tVel = {0.0f, 0.0f, 0.0f};
         if(magns(getPos() - m_tPos) < 10000.0f)
         {
             //std::cout << "  SWITCHING WANDER TARGET!\n";
@@ -55,8 +56,8 @@ void enemy::behvrUpdate(float _dt)
     }
     else if(m_curGoal == GOAL_IDLE)
     {
-        m_tPos = {randNum(-30000.0f, 30000.0f), randNum(-30000.0f, 30000.0f)};
-        m_tVel = {0.0f, 0.0f};
+        m_tPos = {randNum(-30000.0f, 30000.0f), randNum(-30000.0f, 30000.0f), 0.0f};
+        m_tVel = {0.0f, 0.0f, 0.0f};
         m_curGoal = GOAL_IDLE;
     }
 }
@@ -69,11 +70,13 @@ void enemy::steering()
     vec3 p = getPos();
     vec3 v = getVel();
     vec3 uv = unit(v);
-    vec3 utv = unit(m_tPos - p);
-
+    vec3 diff = m_tPos - p;
+    vec3 utv = unit(diff);
 
     //This is the distance between the ship and its m_target position.
-    float dist = mag( p - m_tPos );
+
+    float dist = mag(diff);
+
     float radius = 0.0f;
     if(m_target != nullptr)
     {
@@ -112,7 +115,7 @@ void enemy::steering()
     if(vecMul < 0.0f) stoppingDistance *= -1;
 
     //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
-    float accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 200,-1.0f, 0.5f);
+    float accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 200, -1.0f, 0.5f);
 
     //This varies between 1 (ship facing m_target) 0 (ship parallel to m_target) and -1 (ship facing away from m_target).
     //It does this by taking the ship's angle and its m_target angle, and determining the angle between them.
@@ -133,14 +136,13 @@ void enemy::steering()
     //if( dist < 800.0f + radius ) setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
 
     //If we are angled towards the m_target...
-
     float tvMul = dotProd(m_tVel, v);
     if( ( tvMul < 0.8f or tvMul > 1.2f )
             and ( getEnergy() / getMaxEnergy() > 0.1f or m_curGoal == GOAL_CONGREGATE )
             and getCanMove()
             )
     {
-        accelerate(utv, accelMul*angleMul);
+        accelerate(utv, accelMul * angleMul);
     }
 
     if(m_curGoal == GOAL_TURRET) dist -= 200.0f;
@@ -163,5 +165,4 @@ void enemy::steering()
         if(vecMulSide < 0) dodge( dv );
         else if(vecMulSide > 0) dodge( -dv );
     }
-
 }

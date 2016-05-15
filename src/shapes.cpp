@@ -1,5 +1,4 @@
 #include "shapes.hpp"
-#include <iostream>
 
 bool lineIntersectCircle(vec2 _start, vec2 _end, vec2 _pos, float _radius)
 {
@@ -46,4 +45,17 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
     float dp = dotProdUnit(startToPoint, startToEnd);
 
     return (fabs(dp) > 0.99f and fabs(dp) < 1.01f) and pointInBox(_point, _start, _end);
+}
+
+SDL_Rect maxRect(const std::vector<SDL_Rect> _rects)
+{
+    SDL_Rect ret = {F_INF, F_INF, -F_INF, -F_INF};
+    for(auto &i : _rects)
+    {
+        if(i.x < ret.x) ret.x = i.x;
+        if(i.w > ret.w) ret.w = i.w;
+        if(i.y < ret.y) ret.y = i.y;
+        if(i.h > ret.h) ret.h = i.h;
+    }
+    return ret;
 }

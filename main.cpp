@@ -64,6 +64,7 @@ void handleUserScroll(int,player*);
 void mainMenu(universe &uni);
 void playGame(universe &uni);
 void playTutorial(universe &uni);
+void sandbox(universe &uni);
 
 int main(int argc, char* argv[])
 {
@@ -88,6 +89,11 @@ int main(int argc, char* argv[])
             gameInit();
             playGame(uni);
         }
+        else if(g_GAME_STATE == MODE_SANDBOX)
+        {
+            gameInit();
+            sandbox(uni);
+        }
     }
     return 0;
 }
@@ -103,6 +109,17 @@ void mainMenu(universe &uni)
     uni.getUI()->clear();
 
     selection mainMenuSelection = loadSelection("mainMenuSelection.txt");
+    if(g_DEV_MODE)
+    {
+        button sandboxMode(
+                    "SANDBOX",
+        {0, 255, 255, 255},
+        {255, 255, 255, 255},
+        {g_HALFWIN.m_x + 256.0f, g_HALFWIN.m_y},
+        {256.0f, 256.0f}
+                    );
+        mainMenuSelection.add(sandboxMode);
+    }
     uni.getUI()->add(mainMenuSelection);
 
     selection optionsHeader = loadSelection("optionsHeaderMenu.txt");
@@ -129,21 +146,21 @@ void mainMenu(universe &uni)
     uni.setMaxEnemyCount(20, GALACTIC_FEDERATION);
     uni.setMaxWingmanCount(10);
 
-    uni.addBuild({600.0f, 300.0f}, PLAYER_STATION);
+    uni.addBuild({600.0f, 300.0f}, PLAYER_STATION, TEAM_PLAYER);
 
     for(int i = 0; i < 360; i += 6)
     {
         vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1100.0f;
         pos += {600.0f, 300.0f};
-        uni.addBuild(pos, PLAYER_TURRET);
+        uni.addBuild(pos, PLAYER_TURRET, TEAM_PLAYER);
     }
     for(int i = 3; i < 360; i += 6)
     {
         vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1150.0f;
         pos += {600.0f, 300.0f};
-        uni.addBuild(pos, PLAYER_TURRET);
+        uni.addBuild(pos, PLAYER_TURRET, TEAM_PLAYER);
     }
 
     for(int i = 0; i < 10; ++i)
@@ -197,7 +214,6 @@ void mainMenu(universe &uni)
                             g_GAME_STATE = MODE_TUTORIAL;
                             return;
                         case 2:
-                            //std::cout << "OPTIONS MENU YO" << std::endl;
                             for(size_t i = 0; i < uni.getUI()->getElements()->size(); ++i)
                             {
                                 (*uni.getUI()->getElements())[i].toggleVisible();
@@ -205,6 +221,9 @@ void mainMenu(universe &uni)
                             break;
                         case 3:
                             g_GAME_STATE = MODE_QUIT;
+                            return;
+                        case 4:
+                            g_GAME_STATE = MODE_SANDBOX;
                             return;
                         default:
                             break;
@@ -416,7 +435,11 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
 
                 if(ret.m_button_val == 0) uni->addMiner();
                 else if(ret.m_button_val == 1) uni->addWingman();
-                else if(ret.m_button_val >= 2) uni->setMouseState( ret.m_button_val );
+                else if(ret.m_button_val == 2) uni->setMouseState( PLAYER_TURRET );
+                else if(ret.m_button_val == 3) uni->setMouseState( PLAYER_GRAVWELL );
+                else if(ret.m_button_val == 4) uni->setMouseState( PLAYER_BARRACKS );
+                else if(ret.m_button_val == 5) uni->setMouseState( PLAYER_STATION );
+                else if(ret.m_button_val == 6) uni->setMouseState( PLAYER_CAPITAL );
             }
             else if(ret.m_sel_val == 3)
             {
@@ -488,25 +511,14 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     pos -= tovec3(g_HALFWIN);
     pos /= g_ZOOM_LEVEL;
 
-    switch(uni->getMouseState())
+    int ms = uni->getMouseState();
+    if(ms > -1 and ms != PLAYER_CAPITAL)
     {
-    case 2:
-        uni->addBuild(pos, PLAYER_TURRET);
-        break;
-    case 3:
-        uni->addBuild(pos, PLAYER_GRAVWELL);
-        break;
-    case 4:
-        uni->addBuild(pos, PLAYER_BARRACKS);
-        break;
-    case 5:
-        uni->addBuild(pos, PLAYER_STATION);
-        break;
-    case 6:
+        uni->addBuild(pos, static_cast<ship_spec>(uni->getMouseState()), TEAM_PLAYER);
+    }
+    else if(ms == PLAYER_CAPITAL)
+    {
         uni->spawnShip(PLAYER_CAPITAL, TEAM_PLAYER, pos);
-        break;
-    default:
-        break;
     }
     uni->setMouseState(-1);
 }
@@ -545,7 +557,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     escMenuSelection.add(quit);
 
     switch (sym)
-    { 
+    {
     case SDLK_w:
         ply->accelerate(1);
         break;
@@ -624,6 +636,9 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         std::cout << "Timescale " << g_TIME_SCALE << std::endl;
         break;
     case SDLK_i:
+        uni->getPly()->toggleInventory();
+        break;   
+    case SDLK_u:
         uni->toggleUIVisible();
         break;
     case SDLK_e:
@@ -830,8 +845,8 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_MOVEMENT_SLOW)
         {
-           uni.getRenderer()->drawText("HOLD 'E' TO SLOW DOWN TO A STOP", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-           if(magns(uni.getPly()->getVel()) < 0.2f) tutStage = STAGE_ZOOM_OUT;
+            uni.getRenderer()->drawText("HOLD 'E' TO SLOW DOWN TO A STOP", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+            if(magns(uni.getPly()->getVel()) < 0.2f) tutStage = STAGE_ZOOM_OUT;
         }
         else if(tutStage == STAGE_ZOOM_OUT)
         {
@@ -1045,8 +1060,8 @@ void playTutorial(universe &uni)
         {
             if(timer < 5.0f)
             {
-             uni.getRenderer()->drawText("YOU HAVE COMPLETED THE TUTORIAL, WELL DONE!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
-             uni.getRenderer()->drawText("SPACE STALIN MAY HAVE FOUND HIS MATCH AT LAST.", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 100.0f}, false, 1.0f);
+                uni.getRenderer()->drawText("YOU HAVE COMPLETED THE TUTORIAL, WELL DONE!", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
+                uni.getRenderer()->drawText("SPACE STALIN MAY HAVE FOUND HIS MATCH AT LAST.", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 100.0f}, false, 1.0f);
             }
             else
             {
@@ -1078,6 +1093,130 @@ void playTutorial(universe &uni)
             }
         }
 
+        uni.swap();
+    }
+}
+
+void sandbox(universe &uni)
+{
+    g_GAME_OVER = true;
+    g_DIFFICULTY = 0;
+    uni.playMus(1);
+    uni.reload(true);
+    uni.getPly()->setHealth(-1);
+    uni.update(0.1f);
+    uni.getUI()->clear();
+
+    selection ships;
+    vec2 pos = {0.0f, 0.0f};
+    for(auto &ship : g_ship_templates)
+    {
+        button temp (ship.getIdentifier(), {0, 255, 255, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+        ships.add(temp);
+
+        if(pos.m_y < g_WIN_HEIGHT - 64.0f)
+        {
+            pos.m_y += 80.0f;
+        }
+        else
+        {
+            pos.m_y = 0.0f;
+            pos.m_x += 140.0f;
+        }
+    }
+    button temp ("CLEAR", {255, 0, 0, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+    ships.add(temp);
+    uni.getUI()->add(ships);
+
+    //Timer used to keep track of game time.
+    //The argument is the fps of the updates, higher = more detailed.
+    sim_time clock(120.0f);
+    //Keypress modifiers (shift, ctrl etc).
+    int keymod = 0;
+    while(g_GAME_STATE == MODE_SANDBOX)
+    {
+        vec3 center = {0.0f, 0.0f, 0.0f};
+        for(auto &i : *uni.getAgents())
+        {
+            center += i.getPos();
+        }
+        if(uni.getAgents()->size()) center *= 1.0f / uni.getAgents()->size();
+        uni.getPly()->setVel( center / 10.0f );
+
+        //Event handling.
+        SDL_Event incomingEvent;
+        while( SDL_PollEvent( &incomingEvent ) )
+        {
+            //Quit event.
+            switch( incomingEvent.type )
+            {
+            case SDL_QUIT:
+                g_GAME_STATE = MODE_QUIT;
+                break;
+            }
+
+            //Input events.
+            //This is different to the main game, we only want the user to be able to select from the main menu, i.e no shooting etc.
+            switch( incomingEvent.type )
+            {
+            if( uni.isPaused() and incomingEvent.type != SDL_KEYDOWN and incomingEvent.button.button != SDLK_SPACE ) break;
+            case SDL_MOUSEBUTTONDOWN:
+                switch(incomingEvent.button.button)
+                {
+                case SDL_BUTTON_LEFT:
+                    int mx = 0, my = 0;
+                    SDL_GetMouseState(&mx, &my);
+                    selectionReturn mainMenuSelected = uni.handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    if(mainMenuSelected.m_sel_val == 0)
+                    {
+                        if(mainMenuSelected.m_button_val < SHIPS_END) uni.setMouseState(mainMenuSelected.m_button_val);
+                        else uni.getAgents()->clear();
+                    }
+                    break;
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+            {
+                if(uni.getMouseState() < 0 or uni.getMouseState() > SHIPS_END) break;
+
+                int mx = 0, my = 0;
+                SDL_GetMouseState(&mx, &my);
+                aiTeam team = NONE;
+                ship_spec spec = static_cast<ship_spec>(uni.getMouseState());
+
+                if(spec >= COMMUNIST_1 and spec < FEDERATION_MKI) team = SPACE_COMMUNISTS;
+                else if(spec >= FEDERATION_MKI and spec < PIRATE_GNAT) team = GALACTIC_FEDERATION;
+                else if(spec >= PIRATE_GNAT and spec < ALLIANCE_SCOUT) team = SPOOKY_SPACE_PIRATES;
+                else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_MINER_DROID) team = ALLIANCE;
+                else if(spec == PLAYER_MINER_DROID) team = TEAM_PLAYER_MINER;
+                else if(spec > PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
+
+                uni.spawnShip(spec, team, {mx, my, 0.0f});
+                uni.setMouseState(-1);
+                break;
+            }
+            }
+        }
+
+        //Set current time (timer keeps track of time since cur time was last set).
+        clock.setCur();
+
+        //Update the game in small time-steps (dependant on the timers fps).
+        while(clock.getAcc() > clock.getFrame())
+        {
+            uni.update(clock.getDiff() * g_TIME_SCALE);
+            clock.incrAcc( -clock.getDiff() );
+        }
+
+        //Update the zoom level.
+        g_ZOOM_LEVEL += (g_TARG_ZOOM_LEVEL - g_ZOOM_LEVEL) * 0.125f;
+
+        //Draw the game.
+        float diff_clamped = clock.getDiff();
+        if(diff_clamped == 0.0f) diff_clamped = 0.01f;
+
+        uni.clear();
+        uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
         uni.swap();
     }
 }

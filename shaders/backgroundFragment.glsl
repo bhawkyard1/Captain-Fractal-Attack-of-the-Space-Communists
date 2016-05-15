@@ -11,8 +11,6 @@
 /// Revision History :
 /// This is an initial version used for the game
 //----------------------------------------------------------------------------------------------------------------------
-
-
 #define volsteps 12
 #define stepsize 0.3
 

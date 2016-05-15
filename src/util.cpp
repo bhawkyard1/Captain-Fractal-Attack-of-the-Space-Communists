@@ -40,6 +40,14 @@ bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim)
       and _point.m_y < _pos.m_y + _dim.m_y;
 }
 
+bool circleInRect(vec2 _point, float _radius, vec2 _pos, vec2 _dim)
+{
+    return _point.m_x + _radius > _pos.m_x
+        and _point.m_x - _radius < _pos.m_x + _dim.m_x
+        and _point.m_y + _radius > _pos.m_y
+        and _point.m_y - _radius < _pos.m_y + _dim.m_y;
+}
+
 bool pointInBox(vec3 _point, vec3 _start, vec3 _end)
 {
   return inRange(_point.m_x, _start.m_x, _end.m_x)

@@ -9,7 +9,7 @@
 universe::universe()
     :
       m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
-      m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(ALLIANCE_SCOUT) )
+      m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
 {
     m_sounds.sfxInit();
     m_sounds.loadSounds();
@@ -104,6 +104,7 @@ void universe::addShot(
     {
         //vec2 vec = vec(temp_angle);
         laser temp( _p + _v, _v, temp_angle, _weap, _team, _owner);
+        temp.setWVel({0.0f, 0.0f, 0.0f});
         m_shots.push_back(temp);
     }
 }
@@ -132,6 +133,7 @@ void universe::addMissile(const vec3 _p,
 void universe::update(const float _dt)
 {
     m_ui.update(m_score, getMousePos());
+
     //If m_paused, we do not update the game.
     if(m_paused) return;
 
@@ -248,55 +250,37 @@ void universe::update(const float _dt)
 #if RENDER_MODE == 0
     m_partitions.rects.clear();
 #endif
-    m_partitions.ships.clear();
-    m_partitions.lasers.clear();
-    m_partitions.rocks.clear();
-    m_partitions.rockets.clear();
-    std::vector<enemy*> init_ship;
-    std::vector<laser*> init_laser;
-    std::vector<missile*> init_missile;
-    std::vector<ship*> init_asteroid;
-    SDL_Rect init_rect = {0, 0, 0, 0};
-    int minX = I_INF, minY = I_INF, maxX = -I_INF, maxY = -I_INF;
-    for(auto &i : m_agents)
-    {
-        vec3 p = i.getPos();
-        if(p.m_x < minX) minX = p.m_x;
-        if(p.m_y < minY) minY = p.m_y;
-        if(p.m_x > maxX) maxX = p.m_x;
-        if(p.m_y > maxY) maxY = p.m_y;
-        init_ship.push_back( &i );
-    }
-    for(auto &i : m_missiles)
-    {
-        vec3 p = i.getPos();
-        if(p.m_x < minX) minX = p.m_x;
-        if(p.m_y < minY) minY = p.m_y;
-        if(p.m_x > maxX) maxX = p.m_x;
-        if(p.m_y > maxY) maxY = p.m_y;
-        init_missile.push_back( &i );
-    }
-    for(auto &i : m_asteroids)
-    {
-        vec3 p = i.getPos();
-        if(p.m_x < minX) minX = p.m_x;
-        if(p.m_y < minY) minY = p.m_y;
-        if(p.m_x > maxX) maxX = p.m_x;
-        if(p.m_y > maxY) maxY = p.m_y;
-        init_asteroid.push_back( &i );
-    }
-    for(auto &i : m_shots)
-    {
-        vec3 p = i.getPos();
-        vec3 pp = p + i.getVel();
+    m_partitions.m_ships.clear();
+    m_partitions.m_lasers.clear();
+    m_partitions.m_rocks.clear();
+    m_partitions.m_rockets.clear();
+    m_partitions.m_resources.clear();
 
-        if(std::min(p.m_x, pp.m_x) < minX) minX = p.m_x;
-        if(std::min(p.m_y, pp.m_y) < minY) minY = p.m_y;
-        if(std::max(p.m_x, pp.m_x) > maxX) maxX = p.m_x;
-        if(std::max(p.m_y, pp.m_y) > maxY) maxY = p.m_y;
-        init_laser.push_back( &i );
-    }
-    if(m_ply.getPos().m_x < minX) minX = m_ply.getPos().m_x;
+    std::vector<enemy*> init_ship;
+    for(auto &i : m_agents) init_ship.push_back(&i);
+    std::vector<laser*> init_laser;
+    for(auto &i : m_shots) init_laser.push_back(&i);
+    std::vector<missile*> init_missile;
+    for(auto &i : m_missiles) init_missile.push_back(&i);
+    std::vector<ship*> init_asteroid;
+    for(auto &i : m_asteroids) init_asteroid.push_back(&i);
+    std::vector<debris*> init_resources;
+    for(auto &i : m_resources) init_resources.push_back(&i);
+
+    std::vector<SDL_Rect> testRects = {
+        enclose(m_agents),
+        enclose(m_missiles),
+        enclose(m_asteroids),
+        enclose(m_shots),
+        enclose(m_resources),
+        {m_ply.getPos().m_x, m_ply.getPos().m_y, 0.0f, 0.0f}
+    };
+
+    SDL_Rect ir = maxRect(testRects);
+
+    std::cout << "MAX RECT DRAWN " << ir.x << ", " << ir.y << ", " << ir.w << ", " << ir.h << '\n';
+
+    /*if(m_ply.getPos().m_x < minX) minX = m_ply.getPos().m_x;
     if(m_ply.getPos().m_y < minY) minY = m_ply.getPos().m_y;
     if(m_ply.getPos().m_x > maxX) maxX = m_ply.getPos().m_x;
     if(m_ply.getPos().m_y > maxY) maxY = m_ply.getPos().m_y;
@@ -304,9 +288,9 @@ void universe::update(const float _dt)
     init_rect.x = minX;
     init_rect.y = minY;
     init_rect.w = maxX - minX;
-    init_rect.h = maxY - minY;
+    init_rect.h = maxY - minY;*/
 
-    detectCollisions(init_rect, init_ship, init_laser, init_missile, init_asteroid, 0);
+    detectCollisions(ir, init_ship, init_laser, init_missile, init_asteroid, init_resources, 0);
     checkCollisions();
 
     for(int i = m_missiles.size() - 1; i >= 0; i--)
@@ -393,6 +377,11 @@ void universe::update(const float _dt)
             m_asteroids[i].setWVel(m_vel);
             m_asteroids[i].update(_dt);
         }
+    }
+
+    for(auto &i : m_resources)
+    {
+        i.updatePos(_dt);
     }
 
     //Cull dead m_agents.
@@ -490,13 +479,6 @@ void universe::update(const float _dt)
 
             m_agents[e].setWVel(m_vel);
             m_agents[e].setVel(parent->getVel());
-
-            //m_agents[e].setAng(parent->getAng());
-
-            /*vec3 np = m_agents[e].getPos();
-            std::cout << "TYPE " << parent->getIdentifier() << std::endl;
-            std::cout << "POS " << np.m_x << ", " << np.m_y << std::endl;
-            std::cout << "POS " << parent->getPos().m_x << ", " << parent->getPos().m_y << std::endl << std::endl;*/
         }
 
         //Setting energy priorities----------------------------------------------------------------------------//
@@ -565,7 +547,7 @@ void universe::update(const float _dt)
                     minDist = nd;
                 }
             }
-        }   
+        }
 
         float nd = magns(m_ply.getPos() - m_agents[e].getPos());
 
@@ -620,6 +602,7 @@ void universe::update(const float _dt)
             m_agents[e].setTVel( m_squads[m_agents[e].getSquadID()].m_averageVel );
             m_agents[e].setGoal(GOAL_CONGREGATE);
         }
+
         //Update behaviour, steer towards m_target.
         m_agents[e].behvrUpdate(_dt);
         m_agents[e].steering();
@@ -1013,10 +996,10 @@ void universe::draw(float _dt)
     dpos -= g_HALFWIN;
     dpos /= g_ZOOM_LEVEL;
 
-    switch(m_mouse_state)
+    if(m_mouse_state != -1) m_drawer.drawAsset(dpos, 0.0f, g_ship_templates[m_mouse_state].getIdentifier(), 0.5f);
+    /*switch(m_mouse_state)
     {
     case 2:
-        m_drawer.drawAsset(dpos, 0.0f, "PLAYER_TURRET", 0.5f);
         m_drawer.drawAsset(dpos, 0.0f, "PLAYER_TURRET", 0.5f);
         break;
     case 3:
@@ -1033,7 +1016,7 @@ void universe::draw(float _dt)
         break;
     default:
         break;
-    }
+    }*/
 
     m_drawer.useShader("laser");
     for(auto &i : m_shots)
@@ -1147,6 +1130,19 @@ void universe::drawUI()
         m_drawer.statusBars(&m_ply);
         m_drawer.drawWeaponStats(&m_ply);
         m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions, m_mapExpanded);
+
+        m_drawer.clearVectors();
+        float cumulative = 0.0f;
+        int i = 0;
+        for(auto &b : m_balanceOfPower)
+        {
+            cumulative += b * 128.0f;
+            m_drawer.addRect({g_WIN_WIDTH - 256.0f + cumulative, 272.0f}, {b * 256.0f, 16.0f}, 0.0f, col255to1(m_factions[i].m_colour));
+            cumulative += b * 128.0f;
+            ++i;
+        }
+        m_drawer.useShader("plain");
+        m_drawer.drawRects(false);
     }
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
@@ -1181,19 +1177,6 @@ void universe::drawUI()
             m_drawer.drawText(k->getLabel(), "pix", kpos, false, k->getTextSizeMul(), col);
         }
     }
-
-    m_drawer.clearVectors();
-    float cumulative = 0.0f;
-    int i = 0;
-    for(auto &b : m_balanceOfPower)
-    {
-        cumulative += b * 128.0f;
-        m_drawer.addRect({g_WIN_WIDTH - 256.0f + cumulative, 272.0f}, {b * 256.0f, 16.0f}, 0.0f, col255to1(m_factions[i].m_colour));
-        cumulative += b * 128.0f;
-        ++i;
-    }
-    m_drawer.useShader("plain");
-    m_drawer.drawRects(false);
 }
 #endif
 
@@ -1203,6 +1186,7 @@ void universe::detectCollisions(
         std::vector<laser*> _lasers,
         std::vector<missile*> _rockets,
         std::vector<ship*> _rocks,
+        std::vector<debris*> _resources,
         unsigned short int _lvl
         )
 {
@@ -1211,6 +1195,7 @@ void universe::detectCollisions(
     std::vector<laser*> plasers;
     std::vector<missile*> prockets;
     std::vector<ship*> procks;
+    std::vector<debris*> presources;
 
     vec2 boxPos = {static_cast<float>(_box.x), static_cast<float>(_box.y)};
     vec2 boxDim = {static_cast<float>(_box.w), static_cast<float>(_box.h)};
@@ -1256,13 +1241,23 @@ void universe::detectCollisions(
         }
     }
 
+    for(auto &i : _resources)
+    {
+        if( circleIntersectRect(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim) )
+        {
+            presources.push_back(i);
+            count++;
+        }
+    }
+
     //Return if count is too low, or nothing can interact.
     if(count < 16 or _lvl > 8 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
     {
-        m_partitions.ships.push_back(pships);
-        m_partitions.lasers.push_back(plasers);
-        m_partitions.rockets.push_back(prockets);
-        m_partitions.rocks.push_back(procks);
+        m_partitions.m_ships.push_back(pships);
+        m_partitions.m_lasers.push_back(plasers);
+        m_partitions.m_rockets.push_back(prockets);
+        m_partitions.m_rocks.push_back(procks);
+        m_partitions.m_resources.push_back(presources);
 #if RENDER_MODE == 0
         m_partitions.rects.push_back(_box);
 #endif
@@ -1276,26 +1271,26 @@ void universe::detectCollisions(
         SDL_Rect r3 = {x, 		y + h, 	w, 		h};
         SDL_Rect r4 = {x + w, 	y + h, 	w, 		h};
 
-        detectCollisions(r1, pships, plasers, prockets, procks, _lvl + 1);
-        detectCollisions(r2, pships, plasers, prockets, procks, _lvl + 1);
-        detectCollisions(r3, pships, plasers, prockets, procks, _lvl + 1);
-        detectCollisions(r4, pships, plasers, prockets, procks, _lvl + 1);
+        detectCollisions(r1, pships, plasers, prockets, procks, presources, _lvl + 1);
+        detectCollisions(r2, pships, plasers, prockets, procks, presources, _lvl + 1);
+        detectCollisions(r3, pships, plasers, prockets, procks, presources, _lvl + 1);
+        detectCollisions(r4, pships, plasers, prockets, procks, presources, _lvl + 1);
     }
 }
 
 void universe::checkCollisions()
 {
-    for(size_t p = 0; p < m_partitions.ships.size(); ++p)
+    for(size_t p = 0; p < m_partitions.m_ships.size(); ++p)
     {
         bool done = false;
         int harm = 0;
-        for(int l = m_partitions.lasers[p].size() - 1; l >= 0; --l)
+        for(int l = m_partitions.m_lasers[p].size() - 1; l >= 0; --l)
         {
-            vec3 sp = m_partitions.lasers[p][l]->getPos();
-            vec3 sv = m_partitions.lasers[p][l]->getVel() * 5.0f;
+            vec3 sp = m_partitions.m_lasers[p][l]->getPos();
+            vec3 sv = m_partitions.m_lasers[p][l]->getVel() * 5.0f;
             vec3 spv = sp + sv * 1.5;
-            float stop = m_partitions.lasers[p][l]->getStop();
-            long int so = m_partitions.lasers[p][l]->getOwner();
+            float stop = m_partitions.m_lasers[p][l]->getStop();
+            long int so = m_partitions.m_lasers[p][l]->getOwner();
 
             vec3 ep;
             vec3 ev;
@@ -1305,79 +1300,79 @@ void universe::checkCollisions()
             vec3 d_dir;
 
             //cout << "ENEMY CHECK" << endl;
-            for(int s = m_partitions.ships[p].size() - 1; s >= 0; s--)
+            for(int s = m_partitions.m_ships[p].size() - 1; s >= 0; s--)
             {
-                if(m_partitions.lasers[p][l]->getTeam() == TEAM_PLAYER_MINER or neutralityCheck(m_partitions.lasers[p][l]->getTeam(), m_partitions.ships[p][s]->getTeam())) continue;
+                if(m_partitions.m_lasers[p][l]->getTeam() == TEAM_PLAYER_MINER or neutralityCheck(m_partitions.m_lasers[p][l]->getTeam(), m_partitions.m_ships[p][s]->getTeam())) continue;
                 harm = 0;
 
-                ep = m_partitions.ships[p][s]->getPos();
-                ev = m_partitions.ships[p][s]->getVel();
-                er = m_partitions.ships[p][s]->getRadius();
-                ei = m_partitions.ships[p][s]->getInertia();
+                ep = m_partitions.m_ships[p][s]->getPos();
+                ev = m_partitions.m_ships[p][s]->getVel();
+                er = m_partitions.m_ships[p][s]->getRadius();
+                ei = m_partitions.m_ships[p][s]->getInertia();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
                     addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
-                    harm = m_partitions.lasers[p][l]->getDmg();
+                    harm = m_partitions.m_lasers[p][l]->getDmg();
 
-                    d_dir = m_partitions.lasers[p][l]->getVel();
+                    d_dir = m_partitions.m_lasers[p][l]->getVel();
                     //Delete m_shots if they match the ones in the universe vector.
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.m_lasers[p][l]) swapnpop(&m_shots, i);
                     //Pop the partition pointer.
-                    swapnpop(&m_partitions.lasers[p], l);
+                    swapnpop(&m_partitions.m_lasers[p], l);
                     done = true;
                 }
                 if(harm > 0)
                 {
-                    m_partitions.ships[p][s]->damage(harm, d_dir * stop * ei, so);
-                    addDamagePopup(harm, m_partitions.ships[p][s]->getTeam(), ep, -m_vel + randVec3(2.0f));
+                    m_partitions.m_ships[p][s]->damage(harm, d_dir * stop * ei, so);
+                    addDamagePopup(harm, m_partitions.m_ships[p][s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
                 }
             }
             if(done) continue;
 
-            for(int r = m_partitions.rocks[p].size() - 1; r >= 0; r--)
+            for(int r = m_partitions.m_rocks[p].size() - 1; r >= 0; r--)
             {
-                //cout << "R is " << r << ") " << m_partitions.rocks[p][r] << endl;
+                //cout << "R is " << r << ") " << m_partitions.m_rocks[p][r] << endl;
                 harm = 0;
 
-                ep = m_partitions.rocks[p][r]->getPos();
-                ev = m_partitions.rocks[p][r]->getVel();
-                er = m_partitions.rocks[p][r]->getRadius();
-                ei = m_partitions.rocks[p][r]->getInertia();
+                ep = m_partitions.m_rocks[p][r]->getPos();
+                ev = m_partitions.m_rocks[p][r]->getVel();
+                er = m_partitions.m_rocks[p][r]->getRadius();
+                ei = m_partitions.m_rocks[p][r]->getInertia();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
                     addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er, "SMOKE");
-                    harm = m_partitions.lasers[p][l]->getDmg();
+                    harm = m_partitions.m_lasers[p][l]->getDmg();
 
-                    d_dir = m_partitions.lasers[p][l]->getVel();
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);//m_shots.erase(m_shots.begin() + i);
-                    swapnpop(&m_partitions.lasers[p], l);
+                    d_dir = m_partitions.m_lasers[p][l]->getVel();
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.m_lasers[p][l]) swapnpop(&m_shots, i);//m_shots.erase(m_shots.begin() + i);
+                    swapnpop(&m_partitions.m_lasers[p], l);
 
                     done = true;
                 }
                 if(harm > 0)
                 {
-                    m_partitions.rocks[p][r]->damage(harm, d_dir * stop * ei, so);
+                    m_partitions.m_rocks[p][r]->damage(harm, d_dir * stop * ei, so);
                     break;
                 }
             }
             if(done) continue;
 
             //cout << "ENEMY CHECK" << endl;
-            for(int m = m_partitions.rockets[p].size() - 1; m >= 0; m--)
+            for(int m = m_partitions.m_rockets[p].size() - 1; m >= 0; m--)
             {
-                if(m_partitions.lasers[p][l]->getTeam() == TEAM_PLAYER_MINER) continue;
+                if(m_partitions.m_lasers[p][l]->getTeam() == TEAM_PLAYER_MINER) continue;
                 harm = 0;
 
-                ep = m_partitions.rockets[p][m]->getPos();
-                ev = m_partitions.rockets[p][m]->getVel();
-                er = m_partitions.rockets[p][m]->getRadius();
-                ei = m_partitions.rockets[p][m]->getInertia();
+                ep = m_partitions.m_rockets[p][m]->getPos();
+                ev = m_partitions.m_rockets[p][m]->getVel();
+                er = m_partitions.m_rockets[p][m]->getRadius();
+                ei = m_partitions.m_rockets[p][m]->getInertia();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
@@ -1386,28 +1381,28 @@ void universe::checkCollisions()
 
                     harm = m_shots[l].getDmg();
 
-                    d_dir = m_partitions.lasers[p][l]->getVel();
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) m_shots.erase(m_shots.begin() + i);
-                    swapnpop(&m_partitions.lasers[p], l);
+                    d_dir = m_partitions.m_lasers[p][l]->getVel();
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.m_lasers[p][l]) m_shots.erase(m_shots.begin() + i);
+                    swapnpop(&m_partitions.m_lasers[p], l);
 
                     done = true;
                 }
                 if(harm > 0)
                 {
-                    m_partitions.rockets[p][m]->damage(harm, d_dir * stop * ei, so);
+                    m_partitions.m_rockets[p][m]->damage(harm, d_dir * stop * ei, so);
                     addDamagePopup(harm, TEAM_PLAYER, ep, -m_vel + randVec3(2.0f));
                     break;
                 }
             }
             if(done) continue;
 
-            if(m_partitions.lasers[p][l]->getTeam() == TEAM_PLAYER_MINER) continue;
+            if(m_partitions.m_lasers[p][l]->getTeam() == TEAM_PLAYER_MINER) continue;
 
             harm = 0;
 
             vec3 dp = sp - m_ply.getPos();
             vec3 dv = sv + m_ply.getVel();
-            if(fabs(dv.m_x) > fabs(dp.m_x) - 32 and fabs(dv.m_y) > fabs(dp.m_y) - 32 and m_partitions.lasers[p][l]->getTeam() != TEAM_PLAYER)
+            if(fabs(dv.m_x) > fabs(dp.m_x) - 32 and fabs(dv.m_y) > fabs(dp.m_y) - 32 and m_partitions.m_lasers[p][l]->getTeam() != TEAM_PLAYER)
             {
                 vec3 spv = sp + sv;
 
@@ -1417,11 +1412,11 @@ void universe::checkCollisions()
                     playSnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
                     addpfx(sp + randVec3(32.0f), m_ply.getVel(), m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
-                    harm = m_partitions.lasers[p][l]->getDmg();
+                    harm = m_partitions.m_lasers[p][l]->getDmg();
 
-                    d_dir = m_partitions.lasers[p][l]->getVel();
-                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.lasers[p][l]) swapnpop(&m_shots, i);
-                    swapnpop(&m_partitions.lasers[p], l);
+                    d_dir = m_partitions.m_lasers[p][l]->getVel();
+                    for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions.m_lasers[p][l]) swapnpop(&m_shots, i);
+                    swapnpop(&m_partitions.m_lasers[p], l);
 
                     done = true;
                 }
@@ -1434,12 +1429,12 @@ void universe::checkCollisions()
             }
 
             //Space-station healing check.
-            for(size_t i = 0; i < m_partitions.ships[p].size(); ++i)
+            for(size_t i = 0; i < m_partitions.m_ships[p].size(); ++i)
             {
-                enemy * a = m_partitions.ships[p][i];
-                for(size_t j = 0; j < m_partitions.ships[p].size(); ++j)
+                enemy * a = m_partitions.m_ships[p][i];
+                for(size_t j = 0; j < m_partitions.m_ships[p].size(); ++j)
                 {
-                    enemy * b = m_partitions.ships[p][j];
+                    enemy * b = m_partitions.m_ships[p][j];
 
                     //If a is a station, and b the two ships are on the same team...
                     if( a->getClassification() == PLAYER_STATION and friendshipCheck( a->getTeam(), b->getTeam() ) and a != b )
@@ -1458,25 +1453,25 @@ void universe::checkCollisions()
         }
 
         //It made sense at the time...
-        for(int i = 0; i < m_partitions.ships[p].size(); ++i)
+        for(int i = 0; i < m_partitions.m_ships[p].size(); ++i)
         {
-            for(int j = i; j < m_partitions.ships[p].size(); ++j)
+            for(int j = i; j < m_partitions.m_ships[p].size(); ++j)
             {
-                if(emnityCheck(m_partitions.ships[p][i]->getTeam(), m_partitions.ships[p][j]->getTeam()))
+                if(emnityCheck(m_partitions.m_ships[p][i]->getTeam(), m_partitions.m_ships[p][j]->getTeam()))
                 {
-                    resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(m_partitions.ships[p][j]));
+                    resolveCollision(reinterpret_cast<ship *>(m_partitions.m_ships[p][i]), reinterpret_cast<ship *>(m_partitions.m_ships[p][j]));
                 }
             }
-            for(int j = 0; j < m_partitions.rocks[p].size(); ++j)
+            for(int j = 0; j < m_partitions.m_rocks[p].size(); ++j)
             {
-                if(m_partitions.ships[p][i]->getTeam() != TEAM_PLAYER_MINER) resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(m_partitions.rocks[p][j]));
-                resolveCollision(reinterpret_cast<ship *>(m_partitions.rocks[p][j]), reinterpret_cast<ship *>(&m_ply));
-                for(int k = j; k < m_partitions.rocks[p].size(); ++k)
+                if(m_partitions.m_ships[p][i]->getTeam() != TEAM_PLAYER_MINER) resolveCollision(reinterpret_cast<ship *>(m_partitions.m_ships[p][i]), reinterpret_cast<ship *>(m_partitions.m_rocks[p][j]));
+                resolveCollision(reinterpret_cast<ship *>(m_partitions.m_rocks[p][j]), reinterpret_cast<ship *>(&m_ply));
+                for(int k = j; k < m_partitions.m_rocks[p].size(); ++k)
                 {
-                    resolveCollision(reinterpret_cast<ship *>(m_partitions.rocks[p][j]), reinterpret_cast<ship *>(m_partitions.rocks[p][k]));
+                    resolveCollision(reinterpret_cast<ship *>(m_partitions.m_rocks[p][j]), reinterpret_cast<ship *>(m_partitions.m_rocks[p][k]));
                 }
             }
-            if(emnityCheck(m_partitions.ships[p][i]->getTeam(), TEAM_PLAYER))resolveCollision(reinterpret_cast<ship *>(m_partitions.ships[p][i]), reinterpret_cast<ship *>(&m_ply));
+            if(emnityCheck(m_partitions.m_ships[p][i]->getTeam(), TEAM_PLAYER))resolveCollision(reinterpret_cast<ship *>(m_partitions.m_ships[p][i]), reinterpret_cast<ship *>(&m_ply));
         }
     }
 }
@@ -1506,16 +1501,9 @@ void universe::resolveCollision(ship *_a, ship *_b)
     _b->damage(0.0f);
 
     //Positional correction.
-    const float percent = 1.0f;
-    const float slop = 0.05f;
     float diff = (_a->getRadius() + _b->getRadius()) - dist;
     vec3 correction = diff * normal;
     correction.m_z = 0.0f;
-
-    /*vec3 v1 = -correction * ainvmass;
-    vec3 v2 = correction * binvmass;*/
-    /*std::cout << "Vec 1: " <<  v1.m_x << ", " << v1.m_y << ", " << v1.m_z << ": " << diff << std::endl;
-    std::cout << "Vec 2: " <<  v2.m_x << ", " << v2.m_y << ", " << v2.m_z << ": " << diff << std::endl << std::endl;*/
 
     _a->addPos( -correction * (ainvmass / cinvmass) );
     _b->addPos( correction * (binvmass / cinvmass) );
@@ -1534,8 +1522,8 @@ void universe::resolveCollision(ship *_a, ship *_b)
     float admg = fabs(force) * fmax(ainvmass, 0.05f);
     float bdmg = fabs(force) * fmax(binvmass, 0.05f);
 
-    //addDamagePopup(admg, m_partitions.ships[p][s]->getTeam(), ep, ev);
-    //addDamagePopup(bdmg, m_partitions.ships[p][s]->getTeam(), ep, ev);
+    //addDamagePopup(admg, m_partitions.m_ships[p][s]->getTeam(), ep, ev);
+    //addDamagePopup(bdmg, m_partitions.m_ships[p][s]->getTeam(), ep, ev);
 
     _a->damage(admg, _b->getVel());
     _b->damage(bdmg, _a->getVel());
@@ -1666,7 +1654,7 @@ void universe::spawnShip(
         const vec3 _p
         )
 {	
-    enemy newShip({0.0f, 0.0f}, -m_vel, _type, _t);
+    enemy newShip(_p, -m_vel, _type, _t);
 
     if( _t == TEAM_PLAYER ) m_factionCounts[TEAM_PLAYER]++;
     else if( _t == TEAM_PLAYER_MINER ) m_factionCounts[TEAM_PLAYER_MINER]++;
@@ -1674,7 +1662,7 @@ void universe::spawnShip(
     else if(_t == SPACE_COMMUNISTS )  m_factionCounts[SPACE_COMMUNISTS]++;
     else if(_t == ALLIANCE) m_factionCounts[ALLIANCE]++;
 
-    newShip.setPos(_p);
+    newShip.setWVel({0.0f, 0.0f, 0.0f});
 
     //Do not assign squad if enemy cannot move and shoot.
     if(!newShip.getCanMove() or !newShip.getCanShoot() or _t == TEAM_PLAYER_MINER)
@@ -1735,7 +1723,7 @@ void universe::spawnShip(
                     {
                         vec3 pos = {120.0f * i, 120.0f * j, 0.0f};
                         pos += base;
-                        //std::cout << "SPACE TURRET SPAWNED " << pos.m_x << ", " << pos.m_y << std::endl;
+
                         enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, COMMUNIST_TURRET, SPACE_COMMUNISTS);
 
                         shipAddParent(&m_agents.back(), &temp1, pos);
@@ -1757,7 +1745,7 @@ void universe::spawnShip(
                     {
                         vec3 pos = {164.0f * i, 80.0f * j, 0.0f};
                         pos += base;
-                        //std::cout << "SPACE TURRET SPAWNED " << pos.m_x << ", " << pos.m_y << std::endl;
+
                         enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
 
                         shipAddParent(&m_agents.back(), &temp1, pos);
@@ -1950,10 +1938,10 @@ void universe::reload(const bool _newGame)
     m_ui.reset();
     m_paused = false;
 
-    m_partitions.ships.clear();
-    m_partitions.lasers.clear();
-    m_partitions.rockets.clear();
-    m_partitions.rocks.clear();
+    m_partitions.m_ships.clear();
+    m_partitions.m_lasers.clear();
+    m_partitions.m_rockets.clear();
+    m_partitions.m_rocks.clear();
 
 #if RENDER_MODE == 0
     m_partitions.rects.clear();
@@ -1994,7 +1982,7 @@ void universe::reload(const bool _newGame)
     setScore(16);
 }
 
-void universe::addBuild(const ship_spec _type)
+void universe::addBuild(const ship_spec _type, const aiTeam _team)
 {
     vec2 pass;
 
@@ -2004,15 +1992,16 @@ void universe::addBuild(const ship_spec _type)
     else if(side == 2) pass = {randNum(-20000.0f, 20000.0f), 20000.0f};
     else if(side == 3) pass = {20000.0f, randNum(-20000.0f, 20000.0f)};
 
-    addBuild(tovec3(pass), _type);
+    addBuild(tovec3(pass), _type, _team);
 }
 
 void universe::addBuild(
         const vec3 _p,
-        const ship_spec _type
+        const ship_spec _type,
+        const aiTeam _team
         )
 {
-    enemy newShip(_p, {0.0f, 0.0f}, _type, TEAM_PLAYER);
+    enemy newShip(_p, {0.0f, 0.0f}, _type, _team);
 
     switch(_type)
     {
@@ -2182,13 +2171,11 @@ bool universe::upgradeCallback(
     if(lvl < 9)
     {
         addScore( -selectedbutton->getCost() );
-        if(_btn < 4) selectedbutton->setCost(selectedbutton->getCost() * 2);
+        if(_btn < 4 and _sel == 1) selectedbutton->setCost(selectedbutton->getCost() * 2);
     }
 
     m_ply.upgrade(_btn);
     upgradeSetLabels(_sel, _btn, -1);
-
-    if(_sel == 2) return true;
 
     return true;
 }

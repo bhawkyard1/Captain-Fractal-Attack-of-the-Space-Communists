@@ -31,9 +31,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------------------
-/// \brief Identifies the game state, whether the user is at the main menu, playing a normal game, the tutorial, or wants to quit the game
+/// \brief Identifies the game state, whether the user is at the main menu, playing a normal game, the tutorial, devmode sandbox, or wants to quit the game
 //----------------------------------------------------------------------------------------------------------------------
-enum game_mode {MODE_MENU, MODE_TUTORIAL, MODE_GAME, MODE_QUIT};
+enum game_mode {MODE_MENU, MODE_TUTORIAL, MODE_GAME, MODE_QUIT, MODE_SANDBOX};
 extern game_mode g_GAME_STATE;
 
 //----------------------------------------------------------------------------------------------------------------------

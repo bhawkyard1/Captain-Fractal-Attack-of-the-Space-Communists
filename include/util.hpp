@@ -157,6 +157,8 @@ float fastInvSqrt(float _val);
 //----------------------------------------------------------------------------------------------------------------------
 bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim);
 
+bool circleInRect(vec2 _point, float _radius, vec2 _pos, vec2 _dim);
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Given a point and two vectors representing an cuboid, returns whether the point lies inside.
 /// \param _point point to test
@@ -213,6 +215,13 @@ vec3 randVec3(vec3 min, vec3 max);
 /// \param _delim delimiting character
 //----------------------------------------------------------------------------------------------------------------------
 std::vector<std::string> split(std::string _str, char _delim);
+
+template<class t>
+void moveEntry(std::vector<t> * _src, int _i, std::vector<t> * _dst)
+{
+    _dst->push_back( (*_src)[_i] );
+    swapnpop(_src, _i);
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief To avoid shuffling all elements in a vector when removing one, we can simply swap the element to remove, and

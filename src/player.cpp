@@ -4,7 +4,7 @@ player::player(
         vec3 _p,
         float _r)
     :
-      ship(_p, ALLIANCE_SCOUT, _r)
+      ship(_p, PLAYER_SHIP, _r)
 {
     setWeap(0);
     setMissiles(3);

@@ -49,22 +49,27 @@ struct col_partition
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of ship references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<enemy*> > ships;
+    std::vector< std::vector<enemy*> > m_ships;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of laser references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<laser*> > lasers;
+    std::vector< std::vector<laser*> > m_lasers;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of missile references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<missile*> > rockets;
+    std::vector< std::vector<missile*> > m_rockets;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of asteroid references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<ship*> > rocks;
+    std::vector< std::vector<ship*> > m_rocks;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Vector of resource references.
+    //----------------------------------------------------------------------------------------------------------------------
+    std::vector< std::vector<debris*> > m_resources;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Used only for some debug views with the SDL Renderer.
@@ -167,13 +172,13 @@ public:
     /// \param _p position
     /// \param _type ship classification
     //----------------------------------------------------------------------------------------------------------------------
-    void addBuild(const vec3 _p, const ship_spec _type);
+    void addBuild(const vec3 _p, const ship_spec _type, const aiTeam _team);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Used to place static structures in random places. Could be useful for spawning enemy space stations in the future.
     /// \param _type ship classification.
     //----------------------------------------------------------------------------------------------------------------------
-    void addBuild(const ship_spec _type);
+    void addBuild(const ship_spec _type, const aiTeam _team);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the universe by a given timestep. Physics/AI and rendering is decoupled, so this
@@ -213,7 +218,7 @@ public:
     /// \param _rocks references to asteroids to be sorted
     /// \param _lvl current level of recursion
     //----------------------------------------------------------------------------------------------------------------------
-    void detectCollisions(const SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, unsigned short int _lvl);
+    void detectCollisions(const SDL_Rect _box, std::vector<enemy*> _ships, std::vector<laser*> _lasers, std::vector<missile*> _rockets, std::vector<ship*> _rocks, std::vector<debris*> _resources, unsigned short int _lvl);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A narrow phase, this checks through the partitioned entities in detail.
@@ -434,6 +439,11 @@ public:
     bool emnityCheck(const aiTeam _a, const aiTeam _b);
     bool friendshipCheck(const aiTeam _a, const aiTeam _b);
     bool neutralityCheck(const aiTeam _a, const aiTeam _b);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Gets the universe position.
+    //----------------------------------------------------------------------------------------------------------------------
+    vec3 getPos() const {return m_pos;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
@@ -602,6 +612,11 @@ private:
     /// \brief Whether the map is in large (1) or small (0) mode.
     //----------------------------------------------------------------------------------------------------------------------
     bool m_mapExpanded;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Vector of resources.
+    //----------------------------------------------------------------------------------------------------------------------
+    std::vector<debris> m_resources;
 };
 
 #endif

@@ -165,13 +165,13 @@ void loadGame(universe * uni)
 
         for(size_t i = 0; i < strings.size(); i++)
         {
-            if(strings[i] == "score") uni->setScore( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "mec") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), GALACTIC_FEDERATION );
-            else if(strings[i] == "mcc") uni->setMaxEnemyCount( stoi(strings.at(i+1), nullptr, 10), SPACE_COMMUNISTS );
-            else if(strings[i] == "mwc") uni->setMaxWingmanCount( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "mmc") uni->setMaxMinerCount( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "nm") uni->getPly()->setMissiles( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "d") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+            if(strings[i] == "score") uni->setScore( stoi(strings[i+1], nullptr, 10) );
+            else if(strings[i] == "mec") uni->setMaxEnemyCount( stoi(strings[i+1], nullptr, 10), GALACTIC_FEDERATION );
+            else if(strings[i] == "mcc") uni->setMaxEnemyCount( stoi(strings[i+1], nullptr, 10), SPACE_COMMUNISTS );
+            else if(strings[i] == "mwc") uni->setMaxWingmanCount( stoi(strings[i+1], nullptr, 10) );
+            else if(strings[i] == "mmc") uni->setMaxMinerCount( stoi(strings[i+1], nullptr, 10) );
+            else if(strings[i] == "nm") uni->getPly()->setMissiles( stoi(strings[i+1], nullptr, 10) );
+            else if(strings[i] == "d") g_DIFFICULTY = stoi(strings[i+1], nullptr, 10);
             else if(strings[i] == "u")
             {
                 for(int j = 0; j < UPGRADES_LEN; ++j)
@@ -219,12 +219,12 @@ void loadConfig()
 
         for(size_t i = 0; i < strings.size(); i++)
         {
-            if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings.at(i+1), nullptr, 10);
-            else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings.at(i+1), nullptr, 10);
-            else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings.at(i+1), nullptr, 10);
-            else if(strings[i] == "devmode") g_DEV_MODE = static_cast<bool>( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<bool>( stoi(strings.at(i+1), nullptr, 10) );
-            else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings.at(i+1), nullptr, 10);
+            if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings[i+1], nullptr, 10);
+            else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings[i+1], nullptr, 10);
+            else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings[i+1], nullptr, 10);
+            else if(strings[i] == "devmode") g_DEV_MODE = static_cast<bool>( stoi(strings[i+1], nullptr, 10) );
+            else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<bool>( stoi(strings[i+1], nullptr, 10) );
+            else if(strings[i] == "difficulty") g_DIFFICULTY = stoi(strings[i+1], nullptr, 10);
         }
     }
     config.close();
