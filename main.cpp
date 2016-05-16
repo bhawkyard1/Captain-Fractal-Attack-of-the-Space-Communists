@@ -1191,7 +1191,7 @@ void sandbox(universe &uni)
                 else if(spec == PLAYER_MINER_DROID) team = TEAM_PLAYER_MINER;
                 else if(spec > PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
 
-                uni.spawnShip(spec, team, {mx, my, 0.0f});
+                uni.spawnShip(spec, team, {static_cast<float>(mx), static_cast<float>(my), 0.0f});
                 uni.setMouseState(-1);
                 break;
             }

@@ -393,6 +393,7 @@ public:
     void setLastAttacker(long int _id) {m_lastAttacker = _id;}
 
     void toggleInventory() {m_cargo.toggleVisible();}
+    bool isInventoryVisible() {return m_cargo.isVisible();}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.

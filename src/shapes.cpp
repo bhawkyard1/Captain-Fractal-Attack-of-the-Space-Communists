@@ -49,7 +49,7 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
 
 SDL_Rect maxRect(const std::vector<SDL_Rect> _rects)
 {
-    SDL_Rect ret = {F_INF, F_INF, -F_INF, -F_INF};
+    SDL_Rect ret = {I_INF, I_INF, -I_INF, -I_INF};
     for(auto &i : _rects)
     {
         if(i.x < ret.x) ret.x = i.x;

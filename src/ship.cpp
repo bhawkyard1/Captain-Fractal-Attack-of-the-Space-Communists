@@ -793,6 +793,8 @@ void ship::update(const float _dt)
     addVel(-getVel() * 0.00001f);
 
     m_accelerating = false;
+
+    m_cargo.update(_dt);
 }
 
 void ship::setFiring(const bool _v)

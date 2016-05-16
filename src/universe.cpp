@@ -273,12 +273,12 @@ void universe::update(const float _dt)
         enclose(m_asteroids),
         enclose(m_shots),
         enclose(m_resources),
-        {m_ply.getPos().m_x, m_ply.getPos().m_y, 0.0f, 0.0f}
+        {static_cast<int>(m_ply.getPos().m_x), static_cast<int>(m_ply.getPos().m_y), 0, 0}
     };
 
     SDL_Rect ir = maxRect(testRects);
 
-    std::cout << "MAX RECT DRAWN " << ir.x << ", " << ir.y << ", " << ir.w << ", " << ir.h << '\n';
+    //std::cout << "MAX RECT DRAWN " << ir.x << ", " << ir.y << ", " << ir.w << ", " << ir.h << '\n';
 
     /*if(m_ply.getPos().m_x < minX) minX = m_ply.getPos().m_x;
     if(m_ply.getPos().m_y < minY) minY = m_ply.getPos().m_y;

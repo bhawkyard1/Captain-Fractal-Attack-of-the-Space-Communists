@@ -24,6 +24,8 @@ void inventory::addItem(debris _in)
 
 void inventory::update(const float _dt)
 {
+    if(!m_visible) return;
+
     for(auto &i : m_contents)
     {
         //Apply drag.
