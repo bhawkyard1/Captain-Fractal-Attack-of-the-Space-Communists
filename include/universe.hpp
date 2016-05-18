@@ -49,27 +49,27 @@ struct col_partition
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of ship references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<enemy*> > m_ships;
+    std::vector<enemy*> m_ships;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of laser references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<laser*> > m_lasers;
+    std::vector<laser*> m_lasers;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of missile references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<missile*> > m_rockets;
+    std::vector<missile*> m_rockets;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of asteroid references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<ship*> > m_rocks;
+    std::vector<ship*> m_rocks;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of resource references.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::vector<debris*> > m_resources;
+    std::vector<debris*> m_resources;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Used only for some debug views with the SDL Renderer.
@@ -159,13 +159,13 @@ public:
     /// \brief This function only actually incremements the max number of wingmen available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
-    void addWingman() {m_factionMaxCounts[TEAM_PLAYER]++; m_sounds.playSnd(CLUNK_SND);}
+    void addWingman() {m_maxWingmen++; m_sounds.playSnd(CLUNK_SND);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief This function only actually incremements the max number of miners available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
-    void addMiner() {m_factionMaxCounts[TEAM_PLAYER_MINER]++; m_sounds.playSnd(CLUNK_SND);}
+    void addMiner() {m_maxMiners++; m_sounds.playSnd(CLUNK_SND);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Used to place static structures into the world, although under the hood it just spawns a ship with a given classification.
@@ -270,10 +270,10 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for the score.
     //----------------------------------------------------------------------------------------------------------------------
-    void setScore(const int _s) {m_score = _s; m_ui.update(m_score, getMousePos()); m_ui.update(m_score, getMousePos());}
-    void addScore(const int _s) {m_score += _s; m_ui.update(m_score, getMousePos()); m_ui.update(m_score, getMousePos());}
-    int getScore() const  {return m_score;}
-    int * getScorePt() {return &m_score;}
+    void setScore(const int _s) {m_factions[TEAM_PLAYER].m_wealth = _s; m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos()); m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos());}
+    void addScore(const int _s) {m_factions[TEAM_PLAYER].m_wealth += _s; m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos()); m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos());}
+    int getScore() const  {return m_factions[TEAM_PLAYER].m_wealth;}
+    int * getScorePt() {return &m_factions[TEAM_PLAYER].m_wealth;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for the max enemy count.
@@ -295,8 +295,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for the max miner count.
     //----------------------------------------------------------------------------------------------------------------------
-    int getMaxMinerCount() const {return m_factionMaxCounts[TEAM_PLAYER_MINER];}
-    void setMaxMinerCount(const int m) {m_factionMaxCounts[TEAM_PLAYER_MINER] = m;}
+    int getMaxMinerCount() const {return m_maxMiners;}
+    void setMaxMinerCount(const int m) {m_maxMiners = m;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Check to see if a given faction has reached its max count.
@@ -444,6 +444,9 @@ public:
     /// \brief Gets the universe position.
     //----------------------------------------------------------------------------------------------------------------------
     vec3 getPos() const {return m_pos;}
+
+    ship * getByID(const unsigned long _i);
+    void addFrag(const unsigned long _i);
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
@@ -539,12 +542,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Stores partitions of entities, separated in a broad phase, to reduce On^2 checks.
     //----------------------------------------------------------------------------------------------------------------------
-    col_partition m_partitions;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief The player's score.
-    //----------------------------------------------------------------------------------------------------------------------
-    int m_score;
+    std::vector<col_partition> m_partitions;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The current background colour.
@@ -617,6 +615,16 @@ private:
     /// \brief Vector of resources.
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<debris> m_resources;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Ship that the context menu is bound to.
+    //----------------------------------------------------------------------------------------------------------------------
+    enemy * m_contextShip;
+
+    int m_maxMiners;
+    int m_maxWingmen;
+    int m_minerCount;
+    int m_wingmenCount;
 };
 
 #endif

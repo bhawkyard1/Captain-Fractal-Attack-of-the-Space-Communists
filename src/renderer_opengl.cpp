@@ -147,6 +147,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     loadAsset("ALLIANCE_PHOENIX",    "neutral_3");
     loadAsset("ALLIANCE_DRAGON",     "neutral_4");
     loadAsset("ALLIANCE_GUNSHIP",    "neutral_5");
+    loadAsset("ALLIANCE_TRADER",     "neutral_6");
+    loadAsset("ALLIANCE_TURRET",     "neutral_turret");
 
     loadAsset("PLAYER_SHIP",         "player");
     loadAsset("PLAYER_HUNTER",       "wingman_1");
@@ -948,24 +950,27 @@ void renderer_ngl::statusBars(player * _ply)
     drawbutton({128,40}, {256, 16}, 0.0f, col);
 
     //health
+    float width = (_ply->getHealth() / _ply->getMaxHealth()) * 256;
     col = {0.9f, 0.2f, 0.2f, 1.0f};
-    drawbutton({128,40}, {(_ply->getHealth() / _ply->getMaxHealth()) * 256, 16}, 0.0f, col);
+    drawbutton({width / 2.0f,40}, {width, 16}, 0.0f, col);
 
     //shield base
     col = {0.1f, 0.1f, 0.4f, 1.0f};
     drawbutton({128,56}, {256, 16}, 0.0f, col);
 
+    width = (_ply->getShield() / _ply->getMaxShield()) * 256;
     //shield
     col = {0.2f, 0.2f, 0.9f, 1.0f};
-    drawbutton({128,56}, {(_ply->getShield() / _ply->getMaxShield()) * 256, 16}, 0.0f, col);
+    drawbutton({width / 2.0f,56}, {width, 16}, 0.0f, col);
 
     //energy base
     col = {0.08f, 0.4f, 0.08f, 1.0f};
     drawbutton({128,72}, {256, 16}, 0.0f, col);
 
+    width = (_ply->getEnergy() / _ply->getMaxEnergy()) * 256;
     //energy
     col = {0.2f, 0.9f, 0.2f, 1.0f};
-    drawbutton({128,72}, {(_ply->getEnergy() / _ply->getMaxEnergy()) * 256, 16}, 0.0f, col);
+    drawbutton({width / 2.0f,72}, {width, 16}, 0.0f, col);
 }
 
 void renderer_ngl::drawWeaponStats(player *_ply)

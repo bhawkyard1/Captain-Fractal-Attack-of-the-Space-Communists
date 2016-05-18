@@ -1,3 +1,4 @@
+#include "common.hpp"
 #include "util.hpp"
 #include <iostream>
 
@@ -149,4 +150,11 @@ vec2 getMousePos()
   int y = 0;
   SDL_GetMouseState(&x, &y);
   return {static_cast<float>(x), static_cast<float>(y)};
+}
+
+vec2 toWorldSpace(vec2 _in)
+{
+    _in -= g_HALFWIN;
+    _in /= g_ZOOM_LEVEL;
+    return _in;
 }

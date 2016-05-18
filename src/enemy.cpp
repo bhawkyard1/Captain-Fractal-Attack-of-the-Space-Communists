@@ -26,7 +26,7 @@ void enemy::behvrUpdate(float _dt)
     if(m_target != nullptr)
     {
         float dist = mag(getPos() - m_target->getPos());
-        vec3 diff = (getPos() - m_target->getPos()) / dist;
+        vec3 diff = (m_target->getPos() - getPos()) / dist;
         m_tPos = m_target->getPos() - diff * fmin(m_target->getRadius(), dist);
         m_tVel = m_target->getVel();
     }
@@ -147,8 +147,11 @@ void enemy::steering()
 
     if(m_curGoal == GOAL_TURRET) dist -= 200.0f;
 
+    float selfRadius = getRadius();
+    if(getParent() != -1) selfRadius += 2048.0f;
+
     if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f
-            and dist < 800.0f + radius
+            and dist < 800.0f + radius + selfRadius
             and ( m_curGoal == GOAL_ATTACK or m_curGoal == GOAL_TURRET )
             and getEnergy() / getMaxEnergy() > 0.05f)
     {

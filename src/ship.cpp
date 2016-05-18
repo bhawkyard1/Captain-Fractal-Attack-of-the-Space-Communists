@@ -6,7 +6,7 @@ std::vector<tinfo> g_texture_keys = {
     {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32}, {"COMMUNIST_CAPITAL", 1024}, {"COMMUNIST_TURRET", 16},
     {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024}, {"FEDERATION_TURRET", 16},
     {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024}, {"PIRATE_TURRET", 16},
-    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64},
+    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64}, {"ALLIANCE_TRADER", 64}, {"ALLIANCE_TURRET", 16},
     {"PLAYER_MINER_DROID", 16}, {"PLAYER_CAPITAL", 1024}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
     {"PLAYER_SHIP", 32},
     {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32},
@@ -97,6 +97,7 @@ ship::ship(
         m_weapons.push_back( g_weapons[WEAPON_COMMUNIST_CAPITAL] );
         m_curWeap = 0;
         m_cargo.setDim({1024.0f, 1024.0f});
+        m_type = SHIP_TYPE_CAPITAL;
         break;
     case COMMUNIST_TURRET:
         m_identifier = "COMMUNIST_TURRET";
@@ -175,6 +176,7 @@ ship::ship(
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
         m_curWeap = 0;
         m_cargo.setDim({1200.0f, 1200.0f});
+        m_type = SHIP_TYPE_CAPITAL;
         break;
     case FEDERATION_TURRET:
         m_identifier = "FEDERATION_TURRET";
@@ -253,6 +255,7 @@ ship::ship(
         m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
         m_curWeap = 0;
         m_cargo.setDim({1500.0f, 1500.0f});
+        m_type = SHIP_TYPE_CAPITAL;
         break;
     case PIRATE_TURRET:
         m_identifier = "PIRATE_TURRET";
@@ -317,9 +320,33 @@ ship::ship(
         setMaxEnergy(250.0f,true);
         m_inertia = 0.02f;
         m_enginePower = 10.0f;
-        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_weapons.push_back( g_weapons[WEAPON_ALLIANCE_BOSS] );
         m_curWeap = 0;
         m_cargo.setDim({256.0f, 256.0f});
+        break;
+    case ALLIANCE_TRADER:
+        m_identifier = "ALLIANCE_TRADER";
+        setMaxHealth(200.0f,true);
+        setMaxShield(280.0f,true);
+        setMaxEnergy(280.0f,true);
+        m_inertia = 0.02f;
+        m_enginePower = 4.0f;
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        m_cargo.setDim({1024.0f, 1024.0f});
+        m_type = SHIP_TYPE_TRADER;
+        break;
+    case ALLIANCE_TURRET:
+        m_identifier = "ALLIANCE_TURRET";
+        setMaxHealth(100.0f,true);
+        setMaxShield(200.0f,true);
+        setMaxEnergy(300.0f,true);
+        m_inertia = 0.1f;
+        m_enginePower = 4.0f;
+        m_weapons.push_back( g_weapons[WEAPON_TURRET_LASER] );
+        m_curWeap = 0;
+        m_canMove = false;
+        m_type = SHIP_TYPE_TURRET;
         break;
     case PLAYER_SHIP:
         m_identifier = "PLAYER_SHIP";
@@ -431,6 +458,7 @@ ship::ship(
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
         m_cargo.setDim({1200.0f, 1200.0f});
+        m_type = SHIP_TYPE_CAPITAL;
         break;
     case PLAYER_TURRET:
         m_identifier = "PLAYER_TURRET";
@@ -491,6 +519,8 @@ ship::ship(
     m_classification = _type;
 
     m_radius = _radius;
+
+    m_kills = 0;
 }
 
 ship::ship(
@@ -634,6 +664,10 @@ ship::ship(
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
         break;
+    case ALLIANCE_TRADER:
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
+        m_curWeap = 0;
+        break;
     case PLAYER_SHIP:
         m_weapons.push_back( g_weapons[WEAPON_PLAYER_RED] );
         m_weapons.push_back( g_weapons[WEAPON_PLAYER_GREEN] );
@@ -667,6 +701,8 @@ ship::ship(
     default:
         break;
     }
+
+    m_kills = 0;
 }
 
 void ship::accelerate(const float _mult)
@@ -776,7 +812,6 @@ void ship::update(const float _dt)
         m_energy -= energy_loss;
     }
 
-    //if(!accelerating)
     m_energy = clamp(m_energy + 0.1f * m_generatorMul, 0.0f, m_maxEnergy);
 
     if(rand()%999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
@@ -788,7 +823,7 @@ void ship::update(const float _dt)
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
-    m_drawShot /= 4.0f;
+    m_drawShot *= 0.55f;
 
     addVel(-getVel() * 0.00001f);
 

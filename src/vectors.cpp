@@ -299,6 +299,25 @@ vec3 unit(vec3 vec)
     return {0,0,0};
 }
 
+vec2 clamp(const vec2 _in, vec2 _min, vec2 _max)
+{
+    vec2 ret;
+    ret.m_x = clamp(_in.m_x, _min.m_x, _max.m_x);
+    ret.m_y = clamp(_in.m_y, _min.m_y, _max.m_y);
+
+    return ret;
+}
+
+vec3 clamp(const vec3 _in, vec3 _min, vec3 _max)
+{
+    vec3 ret;
+    ret.m_x = clamp(_in.m_x, _min.m_x, _max.m_x);
+    ret.m_y = clamp(_in.m_y, _min.m_y, _max.m_y);
+    ret.m_z = clamp(_in.m_z, _min.m_z, _max.m_z);
+
+    return ret;
+}
+
 vec2 normal(vec2 vec)
 {
     return {-vec.m_y,vec.m_x};

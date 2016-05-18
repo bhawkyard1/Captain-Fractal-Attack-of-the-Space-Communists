@@ -152,6 +152,9 @@ float invMag(const vec3 vec);
 vec2 unit(const vec2 vec);
 vec3 unit(const vec3 vec);
 
+vec2 clamp(const vec2 _in, vec2 _min, vec2 _max);
+vec3 clamp(const vec3 _in, vec3 _min, vec3 _max);
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns the normal of a 2d vector.
 //----------------------------------------------------------------------------------------------------------------------

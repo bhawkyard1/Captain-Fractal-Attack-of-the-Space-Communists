@@ -30,7 +30,7 @@ enum ship_spec {
     COMMUNIST_1, COMMUNIST_2, COMMUNIST_CAPITAL, COMMUNIST_TURRET,
     FEDERATION_MKI, FEDERATION_MKII, FEDERATION_MKIII, FEDERATION_MKIV, FEDERATION_GUNSHIP, FEDERATION_CAPITAL, FEDERATION_TURRET,
     PIRATE_GNAT, PIRATE_CRUISER, PIRATE_WRANGLER, PIRATE_MARAUDER, PIRATE_GUNSHIP, PIRATE_CAPITAL, PIRATE_TURRET,
-    ALLIANCE_SCOUT, ALLIANCE_TRACKER, ALLIANCE_PHOENIX, ALLIANCE_DRAGON, ALLIANCE_GUNSHIP,
+    ALLIANCE_SCOUT, ALLIANCE_TRACKER, ALLIANCE_PHOENIX, ALLIANCE_DRAGON, ALLIANCE_TRADER, ALLIANCE_GUNSHIP, ALLIANCE_TURRET,
     PLAYER_MINER_DROID, PLAYER_CAPITAL, PLAYER_TURRET, PLAYER_STATION, PLAYER_GRAVWELL, PLAYER_BARRACKS,
     PLAYER_SHIP,
     PLAYER_HUNTER, PLAYER_DEFENDER, PLAYER_DESTROYER,
@@ -43,7 +43,7 @@ enum ship_spec {
 /// \brief What does the ship DO?
 //----------------------------------------------------------------------------------------------------------------------
 enum ship_type {
-    SHIP_TYPE_FIGHTER, SHIP_TYPE_TRADER, SHIP_TYPE_MINER,
+    SHIP_TYPE_FIGHTER, SHIP_TYPE_CAPITAL, SHIP_TYPE_TRADER, SHIP_TYPE_MINER,
     SHIP_TYPE_TURRET, SHIP_TYPE_STRUCTURE,
     SHIP_TYPE_NONE
 };
@@ -394,6 +394,9 @@ public:
 
     void toggleInventory() {m_cargo.toggleVisible();}
     bool isInventoryVisible() {return m_cargo.isVisible();}
+
+    void addKill() {m_kills++;}
+    unsigned long getKills() const {return m_kills;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.
@@ -585,6 +588,11 @@ private:
     /// \brief The inventory of the ship.
     //----------------------------------------------------------------------------------------------------------------------
     inventory m_cargo;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Number of defeated ships.
+    //----------------------------------------------------------------------------------------------------------------------
+    long unsigned int m_kills;
 };
 
 //----------------------------------------------------------------------------------------------------------------------

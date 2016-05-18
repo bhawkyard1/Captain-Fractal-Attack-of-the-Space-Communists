@@ -166,7 +166,6 @@ void mainMenu(universe &uni)
     for(int i = 0; i < 10; ++i)
     {
         aiTeam t = static_cast<aiTeam>(randNum(0,4));
-        if(t = TEAM_PLAYER_MINER) t = static_cast<aiTeam>(static_cast<int>(t) + randNum(1,3));
         int r = randNum(5, 10);
         uni.spawnSquad(t, 3000.0f, 8000.0f, r);
     }
@@ -443,6 +442,10 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             }
             else if(ret.m_sel_val == 3)
             {
+
+            }
+            else if(ret.m_sel_val == 4)
+            {
                 switch(ret.m_button_val)
                 {
                 case 0:
@@ -507,9 +510,7 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
-    vec3 pos = {static_cast<float>(mx), static_cast<float>(my), 0.0f};
-    pos -= tovec3(g_HALFWIN);
-    pos /= g_ZOOM_LEVEL;
+    vec3 pos = tovec3( toWorldSpace({static_cast<float>(mx), static_cast<float>(my)}) );
 
     int ms = uni->getMouseState();
     if(ms > -1 and ms != PLAYER_CAPITAL)
@@ -1188,8 +1189,7 @@ void sandbox(universe &uni)
                 else if(spec >= FEDERATION_MKI and spec < PIRATE_GNAT) team = GALACTIC_FEDERATION;
                 else if(spec >= PIRATE_GNAT and spec < ALLIANCE_SCOUT) team = SPOOKY_SPACE_PIRATES;
                 else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_MINER_DROID) team = ALLIANCE;
-                else if(spec == PLAYER_MINER_DROID) team = TEAM_PLAYER_MINER;
-                else if(spec > PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
+                else if(spec >= PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
 
                 uni.spawnShip(spec, team, {static_cast<float>(mx), static_cast<float>(my), 0.0f});
                 uni.setMouseState(-1);

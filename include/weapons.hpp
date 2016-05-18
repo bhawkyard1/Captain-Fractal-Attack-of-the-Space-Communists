@@ -36,7 +36,7 @@ enum WEAPON_TYPE {
     WEAPON_TURRET_LASER,
     WEAPON_PIRATE_1, WEAPON_PIRATE_2, WEAPON_PIRATE_3, WEAPON_PIRATE_BOSS_1,
     WEAPON_COMMUNIST_1, WEAPON_COMMUNIST_2, WEAPON_COMMUNIST_CAPITAL,
-    WEAPON_ALLIANCE_1, WEAPON_ALLIANCE_2, WEAPON_ALLIANCE_3,
+    WEAPON_ALLIANCE_1, WEAPON_ALLIANCE_2, WEAPON_ALLIANCE_3, WEAPON_ALLIANCE_BOSS,
     WEAPON_END
 };
 
@@ -44,14 +44,14 @@ enum WEAPON_TYPE {
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Global array containing base stats of all weapons in-game. These are copied out to ships upon their construction.
 //----------------------------------------------------------------------------------------------------------------------
-static std::array<std::array<float,10>,26> g_weapons =
+static std::array<std::array<float,10>,27> g_weapons =
 {{
      {{1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.008f}},//Laser cannon	0
      {{12.0f,	5.0f,                           3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.01f}},//Shotgun			1
      {{1.0f,	1.0f,                           2.0f,       30.0f,		40.0f,	75.0f,	255.0f,	1.0f,   0.05f,  0.001f}},//Blue laser		2
      {{1.0f,	1.0f,                           2000.0f,    100.0f,		255.0f,	210.0f,	0.0f,   0.0f,   0.02f,  0.01f}},//Yellow laser	3
      {{1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 10.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.8f,   0.002f}},//AI laser 1		4
-     {{3.0f,	9.0f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       10.0f,       255.0f,	20.0f,	240.0f,	0.5f,   1.0f,   0.003f}},//AI laser 2		5
+     {{3.0f,	9.0f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       10.0f,      255.0f,	20.0f,	240.0f,	0.5f,   1.0f,   0.003f}},//AI laser 2		5
      {{1.0f,	2.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       15.0f,		255.0f,	20.0f,	240.0f,	0.3f,   0.7f,   0.004f}},//AI laser 3		6
      {{1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 10.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.8f,   0.002f}},
      {{30.0f,	2.0f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       6.0f,       255.0f,	30.0f,	80.0f,	1.0f,   1.0f,   0.008f}},//Boss laser 1	7
@@ -64,13 +64,14 @@ static std::array<std::array<float,10>,26> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 1	14
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	5.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 2	15
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.004f}},//Pirate laser 3	16
-     {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}},//P gunship laser	17
+     {{3.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	12.0f,       10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.008f}},//P gunship laser	17
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       15.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.9f,   0.004f}},//Commie laser 1 18
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	5.0f,       10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.7f,   0.004f}},//Commie laser 2 19
      {{15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.5f,   0.004f}},//Commie laser capital 20
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       18.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.9f,   0.008f}},//Alliance 1
      {{5.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	3.0f,       15.0f,		0.0f,	200.0f,	255.0f, 2.0f,   0.9f,   0.009f}},//Alliance 2
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       24.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.1f,   0.002f}},//Alliance 3
+     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      50.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.1f,   0.3f}},//Alliance boss
      {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
 }};
 
@@ -89,7 +90,7 @@ inline bool isOffScreen(vec2 pos, float dist)
     return (pos.m_x < -dist or pos.m_y < -dist or pos.m_x > dist or pos.m_y > dist);
 }
 
-inline bool isOffScreen(vec3 pos, float dist)
+inline bool isOffScreen(const vec3 &pos, float dist)
 {
     return (pos.m_x < -dist or pos.m_y < -dist or pos.m_x > dist or pos.m_y > dist);
 }

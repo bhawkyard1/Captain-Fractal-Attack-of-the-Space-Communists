@@ -104,8 +104,12 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void setType(int _type) {m_type = static_cast<selectionType>(_type);}
 
+    void setPos(const vec2 _pos) {m_pos = _pos;}
     vec2 getPos() const {return m_pos;}
     vec2 getDim() const {return m_dim;}
+
+    bool inWorldSpace() const {return m_worldSpace;}
+    void setInWorldSpace(const bool _b) {m_worldSpace = _b;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Mouse state for this menu.
@@ -151,6 +155,11 @@ private:
     /// \brief Whether it is a continuous multi-choice or single click menu.
     //----------------------------------------------------------------------------------------------------------------------
     bool m_saveSelected;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Whether the menu exists in world-space or screen-space.
+    //----------------------------------------------------------------------------------------------------------------------
+    bool m_worldSpace;
 };
 
 #endif

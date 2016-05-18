@@ -9,6 +9,7 @@ selection::selection()
     m_saveSelected = false;
     m_pos = {F_INF, F_INF};
     m_dim = {-F_INF, -F_INF};
+    m_worldSpace = false;
 }
 
 selection::selection(selectionType _type)
@@ -18,6 +19,7 @@ selection::selection(selectionType _type)
     m_saveSelected = false;
     m_pos = {F_INF, F_INF};
     m_dim = {-F_INF, -F_INF};
+    m_worldSpace = false;
 }
 
 bool selection::click(vec2 _p)
