@@ -319,7 +319,7 @@ void playGame(universe &uni)
     std::cout << "LAUNCHING MAIN GAME..." << std::endl;
 
     g_GAME_OVER = false;
-    uni.playMus(1);
+    uni.playMus(0);
     uni.reload(true);
     g_ZOOM_LEVEL = 0.0f;
     g_TARG_ZOOM_LEVEL = 0.8f;
@@ -638,7 +638,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         break;
     case SDLK_i:
         uni->getPly()->toggleInventory();
-        break;   
+        break;
     case SDLK_u:
         uni->toggleUIVisible();
         break;
@@ -652,6 +652,12 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         else dir = {0.0f, 0.0f};
 
         ply->accelerate(dir, clamp(spd, 0.0f, 1.0f));
+        break;
+    }
+    case SDLK_z:
+    {
+        debris temp({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, RESOURCE_IRON);
+        uni->getPly()->addItem(temp);
         break;
     }
     default:

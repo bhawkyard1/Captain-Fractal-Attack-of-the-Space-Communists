@@ -41,6 +41,8 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point);
 //----------------------------------------------------------------------------------------------------------------------
 bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim);
 
+bool circleIntersectCircle(vec2 _pos1, float _r1, vec2 _pos2, float _r2);
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns whether a line intersects a given sphere.
 /// \param _start line start
@@ -94,19 +96,18 @@ void sphereSphereCollision(t * _a, t * _b)
 template<class t>
 SDL_Rect enclose(const std::vector<t> &_ents)
 {
-    if(_ents.size() == 0) return {I_INF, I_INF, 0, 0};
-    //std::cout << "enclose function entry\n";
+    if(_ents.size() == 0) return {0, 0, 0, 0};
+
     SDL_Rect ret = {I_INF, I_INF, -I_INF, -I_INF};
     for(auto &i : _ents)
     {
         vec2 pos = tovec2(i.getPos());
-        //std::cout << "POSITIONS: " << pos.m_x << ", " << pos.m_y << '\n';
+
         if(pos.m_x < ret.x) ret.x = pos.m_x;
         if(pos.m_x > ret.w) ret.w = pos.m_x;
         if(pos.m_y < ret.y) ret.y = pos.m_y;
         if(pos.m_y > ret.h) ret.h = pos.m_y;
     }
-    //std::cout << "yo      " << ret.x << ", " << ret.y << ", " << ret.w << ", " << ret.h << "\n\n";
     ret.w -= ret.x;
     ret.h -= ret.y;
 

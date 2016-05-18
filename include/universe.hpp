@@ -4,6 +4,7 @@
 #include <array>
 
 #include "common.hpp"
+#include "debris.hpp"
 #include "enemy.hpp"
 #include "faction.hpp"
 #include "laser.hpp"
@@ -118,6 +119,14 @@ public:
     void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, const long int _owner);
 
     //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Adds a raw resource to the universe.
+    /// \param _pos position
+    /// \param _vel velocity
+    /// \param _type type of resource
+    //----------------------------------------------------------------------------------------------------------------------
+    void addDebris(const vec3 _pos, const vec3 _vel, resourceType _type);
+
+    //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a missile to the universe.
     /// \param _p position
     /// \param _v velocity
@@ -202,7 +211,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws the user interface to the screen. Does not handle user input.
     //----------------------------------------------------------------------------------------------------------------------
-    void drawUI();
+    void drawUI(const float _dt);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the renderer.
@@ -229,7 +238,7 @@ public:
     /// \brief Adds a particle system to the universe.
     /// \param _type ship classification.
     //----------------------------------------------------------------------------------------------------------------------
-    void addpfx(const vec3 _p, const vec3 _v, const vec3 _wv, const int _no, const float _f);
+    void addpfx(const vec3 _p, const vec3 _v, const int _no, const float _f);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a particle sprite to the universe. This is a bit of a misnomer, since the opengl renderer uses billboards + glsl.

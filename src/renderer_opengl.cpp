@@ -168,6 +168,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
     loadAsset("ASTEROID_MID",        "asteroid_2");
     loadAsset("ASTEROID_LARGE",      "asteroid_3");
 
+    loadAsset("RESOURCE_IRON_ROCK",  "resource_iron_rock");
+
     loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
     loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 20);
     loadFontSpriteSheet("pix90", g_RESOURCE_LOC + "fonts/pix.TTF", 60);

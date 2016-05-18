@@ -8,18 +8,22 @@ inventory::inventory()
     m_visible = false;
 }
 
-void inventory::addItem(debris _in)
+bool inventory::addItem(debris _in)
 {
     float area = m_dim.m_x * m_dim.m_y;
     for(auto &i : m_contents) area -= sqr(i.getRadius());
 
-    if(area < sqr(_in.getRadius())) return;
+    if(area < sqr(_in.getRadius())) return false;
 
     _in.setPos(
                 tovec3(randVec2({0.0f, 0.0f}, m_dim))
-                       );
+                );
+
+    _in.setVel(tovec3(randVec2(1.0f)));
 
     m_contents.push_back(_in);
+
+    return true;
 }
 
 void inventory::update(const float _dt)
@@ -28,37 +32,48 @@ void inventory::update(const float _dt)
 
     for(auto &i : m_contents)
     {
-        //Apply drag.
-        i.setVel( i.getVel() * 0.95f );
-        i.updatePos(_dt);
-
-        vec3 pos = i.getPos();
-        float radius = i.getRadius();
-
-        //Collision with edge of inventory.
-        if(!circleInRect(tovec2(pos), radius, {0.0f, 0.0f}, m_dim))
-        {
-            //Closest point in rect to the entity
-            vec3 closest = {0.0f, 0.0f, 0.0f};
-            closest.m_x = clamp(pos.m_x, 0.0f, m_dim.m_x);
-            closest.m_y = clamp(pos.m_y, 0.0f, m_dim.m_y);
-
-            vec3 normal = closest - pos;
-            float dist = mag(normal);
-            normal /= dist;
-
-            i.setPos({closest.m_x, closest.m_y, 0.0f});
-
-            normal *= mag(i.getVel()) * 0.5f;
-
-            i.setVel(-normal);
-        }
-
         for(auto &j : m_contents)
         {
             if(&i == &j) continue;
 
             sphereSphereCollision(&i, &j);
         }
+
+        //Apply drag.
+        i.setVel( i.getVel() * 0.995f );
+        i.updatePos(_dt);
+
+        vec3 pos = i.getPos();
+        vec3 vel = i.getVel();
+        vec2 dim = m_dim / 2.0f;
+        float radius = i.getRadius();
+        float COR = 0.6f;
+
+        if(pos.m_x < -dim.m_x)
+        {
+            pos.m_x = -dim.m_x;
+            vel.m_x = -COR * vel.m_x;
+        }
+        else if(pos.m_x > dim.m_x)
+        {
+            pos.m_x = dim.m_x;
+            vel.m_x = -COR * vel.m_x;
+        }
+
+        if(pos.m_y < -dim.m_y)
+        {
+            pos.m_y = -dim.m_y;
+            vel.m_y = -COR * vel.m_y;
+        }
+        else if(pos.m_y > dim.m_y)
+        {
+            pos.m_y = dim.m_y;
+            vel.m_y = -COR * vel.m_y;
+        }
+
+        i.setPos(pos);
+        i.setVel(vel);
+
+        //}
     }
 }

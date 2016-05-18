@@ -395,8 +395,11 @@ public:
     void toggleInventory() {m_cargo.toggleVisible();}
     bool isInventoryVisible() {return m_cargo.isVisible();}
 
-    void addKill() {m_kills++;}
+    void addKill() {m_kills++; m_maxEnergy += 2.0f;}
     unsigned long getKills() const {return m_kills;}
+
+    bool addItem(debris _in) {return m_cargo.addItem(_in);}
+    inventory * getCargo() {return &m_cargo;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.

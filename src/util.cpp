@@ -41,14 +41,6 @@ bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim)
       and _point.m_y < _pos.m_y + _dim.m_y;
 }
 
-bool circleInRect(vec2 _point, float _radius, vec2 _pos, vec2 _dim)
-{
-    return _point.m_x + _radius > _pos.m_x
-        and _point.m_x - _radius < _pos.m_x + _dim.m_x
-        and _point.m_y + _radius > _pos.m_y
-        and _point.m_y - _radius < _pos.m_y + _dim.m_y;
-}
-
 bool pointInBox(vec3 _point, vec3 _start, vec3 _end)
 {
   return inRange(_point.m_x, _start.m_x, _end.m_x)
@@ -58,16 +50,18 @@ bool pointInBox(vec3 _point, vec3 _start, vec3 _end)
 
 vec2 randVec2(float _m, float _M)
 {
-  float a = randNum(0.0f, static_cast<float>(UPI));
-  vec2 v = {static_cast<float>(cos(a)), static_cast<float>(sin(a))};
-  return v * randNum(_m, _M);
+    vec2 v = {randNum(-1.0f, 1.0f), randNum(-1.0f, 1.0f)};
+    float vsum = sqr(v.m_x) + sqr(v.m_y);
+    v *= fastInvSqrt(vsum);
+    return v * randNum(_m, _M);
 }
 
 vec2 randVec2(float _f)
 {
-  float a = randNum(0.0f, static_cast<float>(UPI));
-  vec2 v = {static_cast<float>(cos(a)), static_cast<float>(sin(a))};
-  return v * randNum(0.0f, _f);
+    vec2 v = {randNum(0.0f, 1.0f), randNum(1.0f, 2.0f)};
+    float vsum = sqr(v.m_x) + sqr(v.m_y);
+    v *= fastInvSqrt(vsum) * randNum(-_f, _f);
+    return v;
 }
 
 vec2 randVec2(vec2 _min, vec2 _max)
@@ -85,7 +79,7 @@ vec3 randVec3(float m, float M)
 
 vec3 randVec3(float _f)
 {
-  vec3 v = {randNum(0.0f, 1.0f), randNum(0.0f, 1.0f), randNum(0.0f, 1.0f)};
+  vec3 v = {randNum(1.0f, 2.0f), randNum(1.0f, 2.0f), randNum(1.0f, 2.0f)};
   float vsum = sqr(v.m_x) + sqr(v.m_y) + sqr(v.m_z);
   v *= fastInvSqrt(vsum) * randNum(-_f, _f);
   return v;

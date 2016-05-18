@@ -116,6 +116,16 @@ void universe::addShot(
     }
 }
 
+void universe::addDebris(
+        const vec3 _pos,
+        const vec3 _vel,
+        resourceType _type
+        )
+{
+    debris temp (_pos, _vel, m_vel, _type);
+    m_resources.push_back(temp);
+}
+
 void universe::addMissile(
         const vec3 _p,
         const vec3 _v,
@@ -199,7 +209,7 @@ void universe::update(const float _dt)
         {
             vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
             pos += m_ply.getPos();
-            addpfx(pos, m_ply.getVel(), m_vel, rand()%50 + 20, rand()%50 + 8);
+            addpfx(pos, m_ply.getVel(), rand()%50 + 20, rand()%50 + 8);
         }
         m_ply.setMaxHealth(0, true);
         m_ply.setMaxEnergy(0, true);
@@ -271,14 +281,13 @@ void universe::update(const float _dt)
     std::vector<debris*> init_resources;
     for(auto &i : m_resources) init_resources.push_back(&i);
 
-    std::vector<SDL_Rect> testRects = {
-        enclose(m_agents),
-        enclose(m_missiles),
-        enclose(m_asteroids),
-        enclose(m_shots),
-        enclose(m_resources),
-        {static_cast<int>(m_ply.getPos().m_x), static_cast<int>(m_ply.getPos().m_y), 0, 0}
-    };
+
+    std::vector<SDL_Rect> testRects;
+    if(m_agents.size() > 0) testRects.push_back(enclose(m_agents));
+    if(m_asteroids.size() > 0) testRects.push_back(enclose(m_asteroids));
+    if(m_shots.size() > 0) testRects.push_back(enclose(m_shots));
+    if(m_resources.size() > 0) testRects.push_back(enclose(m_resources));
+    testRects.push_back( {static_cast<int>(m_ply.getPos().m_x), static_cast<int>(m_ply.getPos().m_y), 0, 0} );
 
     SDL_Rect ir = maxRect(testRects);
 
@@ -295,6 +304,13 @@ void universe::update(const float _dt)
     init_rect.h = maxY - minY;*/
 
     detectCollisions(ir, init_ship, init_laser, init_missile, init_asteroid, init_resources, 0);
+
+    for(auto &i : testRects)
+    {
+        std::cout << "CONSTITUENT RECT: " << i.x << ",      " << i.y << ",      " << i.w << ",      " << i.h << '\n';
+    }
+    std::cout << "FUCKIN REKT LADS " << ir.x << ", " << ir.y << ", " << ir.w << ", " << ir.h << '\n';
+
     checkCollisions();
 
     for(int i = m_missiles.size() - 1; i >= 0; i--)
@@ -309,7 +325,7 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_missiles[i].getPos();
-                    addpfx(pos, m_missiles[i].getVel(), m_vel, rand()%50 + 50, rand()%50 + 8);
+                    addpfx(pos, m_missiles[i].getVel(), rand()%50 + 50, rand()%50 + 8);
                 }
 
                 for(size_t j = 0; j < m_agents.size(); j++)
@@ -349,6 +365,8 @@ void universe::update(const float _dt)
     {
         m_asteroids[i].updatePos(_dt);
         vec3 p = m_asteroids[i].getPos();
+        vec3 v = m_asteroids[i].getVel();
+
         if((isOffScreen(p,60000.0f) or m_asteroids[i].getHealth() <= 0.0f))
         {
             if(m_asteroids[i].getHealth() <= 0.0f)
@@ -357,10 +375,17 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f)};
                     pos += m_asteroids[i].getPos();
-                    addpfx(pos, m_asteroids[i].getVel(), m_vel, rand()%20 + 50, rand()%30 + 2);
+                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2);
                     for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + tovec3(randVec2(1.0f)), m_asteroids[i].getRadius(), "SMOKE");
                 }
-                if(m_asteroids[i].getClassification() == ASTEROID_SMALL) addScore( 10 );
+                if(m_asteroids[i].getClassification() == ASTEROID_SMALL)
+                {
+                    for(int i = 0; i < rand() % 3 + 3; ++i)
+                    {
+                        addDebris(p, v + tovec3(randVec2(1.0f)), RESOURCE_IRON);
+                    }
+                    addScore( 10 );
+                }
                 else
                 {
                     for(int q = 0; q < 4; ++q)
@@ -383,9 +408,17 @@ void universe::update(const float _dt)
         }
     }
 
-    for(auto &i : m_resources)
+    for(int i = m_resources.size() - 1; i >= 0; --i)
     {
-        i.updatePos(_dt);
+        if((isOffScreen(m_resources[i].getPos(),60000.0f)))
+        {
+            swapnpop(&m_resources, i);
+        }
+        else
+        {
+            m_resources[i].setWVel(m_vel);
+            m_resources[i].updatePos(_dt);
+        }
     }
 
     //Cull dead m_agents.
@@ -407,8 +440,15 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_agents[i].getPos();
-                    addpfx(pos, m_agents[i].getVel(), m_vel, randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f));
+                    addpfx(pos, m_agents[i].getVel(), randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f));
                 }
+
+                //Dump inventory.
+                for(auto &d : *(m_agents[i].getCargo()->getItems()))
+                {
+                    addDebris(p, m_agents[i].getVel() + tovec3(randVec2(1.0f)), RESOURCE_IRON);
+                }
+
                 addScore( m_agents[i].getScore() );
                 addFrag( m_agents[i].getLastAttacker() );
                 if( (m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) and rand() % 8 <= g_DIFFICULTY ) m_factionMaxCounts[GALACTIC_FEDERATION] += g_DIFFICULTY + 1;
@@ -510,8 +550,14 @@ void universe::update(const float _dt)
         //Reset target.
         m_agents[e].setTarget(nullptr);
 
+        if(m_agents[e].getClassification() == PLAYER_MINER_DROID)
+        {
+            std::cout << "TYPE IS " << m_agents[e].getType() << '\n';
+        }
+
         if(m_agents[e].getType() == SHIP_TYPE_MINER) //Set miner targets
         {
+            std::cout << "MINER TARGETS SET!\n";
             //Find the closest asteroid.
             for(auto &k : m_asteroids)
             {
@@ -544,6 +590,7 @@ void universe::update(const float _dt)
         }
         else if(m_agents[e].getCanShoot()) //Default m_target acquisition
         {
+            if(m_agents[e].getType() == SHIP_TYPE_MINER) std::cout << "MINER TARGETS INCORRECTLY SET!\n";
             //Get closest enemy.
             for(auto &k : m_agents)
             {
@@ -726,7 +773,7 @@ void universe::update(const float _dt)
 
 #if RENDER_MODE == 0
 void universe::draw(float _dt)
-{	
+{
     //std::cout << 1/_dt << " fps" << std::endl;
     //std::cout << m_passiveSprites.size() << std::endl;
     if(m_paused) _dt = 0.0f;
@@ -839,13 +886,13 @@ void universe::draw(float _dt)
     m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
 
     /*if(g_DEV_MODE)
-    {
-        for(auto i = m_partitions.rects.begin(); i != m_partitions.rects.end(); ++i)
-        {
-            std::array<int, 4> col = {255, 0, 0, 255};
-            m_drawer.drawRect({static_cast<float>(i->x), static_cast<float>(i->y)}, {static_cast<float>(i->w), static_cast<float>(i->h)}, col, true);
-        }
-    }*/
+            {
+                for(auto i = m_partitions.rects.begin(); i != m_partitions.rects.end(); ++i)
+                {
+                    std::array<int, 4> col = {255, 0, 0, 255};
+                    m_drawer.drawRect({static_cast<float>(i->x), static_cast<float>(i->y)}, {static_cast<float>(i->w), static_cast<float>(i->h)}, col, true);
+                }
+            }*/
 
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
@@ -1003,6 +1050,10 @@ void universe::draw(float _dt)
     {
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
     }
+    for(auto &i : m_resources)
+    {
+        m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+    }
 
     int mx = 0, my = 0;
     SDL_GetMouseState(&mx, &my);
@@ -1110,11 +1161,11 @@ void universe::draw(float _dt)
         {
             m_drawer.drawText(i.getLabel(), "pix", tovec2(i.getPos()), true, i.getSize(), col255to1(i.getCol()));
         }
-        drawUI();
+        drawUI(_dt);
     }
 }
 
-void universe::drawUI()
+void universe::drawUI(const float _dt)
 {
     m_drawer.clearVectors();
     if(!g_GAME_OVER)
@@ -1147,7 +1198,9 @@ void universe::drawUI()
         {
             vec3 csp = m_contextShip->getPos();
             vec2 offset = {256.0f, 256.0f};
-            csp = clamp(csp, tovec3(-g_HALFWIN), tovec3(g_HALFWIN));
+            vec2 min = (-g_HALFWIN + offset) / g_ZOOM_LEVEL;
+            vec2 max = (g_HALFWIN - offset) / g_ZOOM_LEVEL;
+            csp = clamp(csp, tovec3(min), tovec3(max));
 
             float health = 128.0f * m_contextShip->getHealth() / m_contextShip->getMaxHealth();
             float shield = 128.0f * m_contextShip->getShield() /  m_contextShip->getMaxShield();
@@ -1191,6 +1244,21 @@ void universe::drawUI()
         else
         {
             infoCard->setVisible(false);
+        }
+
+        if(m_ply.getCargo()->isVisible())
+        {
+            vec2 dim = m_ply.getCargo()->getDim();
+            m_drawer.addRect({0.0f, 0.0f, 0.0f}, dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
+            m_drawer.drawRects(true);
+            m_drawer.clearVectors();
+
+            m_drawer.useShader("ship");
+            for(auto &i : *(m_ply.getCargo()->getItems()))
+            {
+                m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+            }
+            m_drawer.useShader("plain");
         }
     }
 
@@ -1300,7 +1368,7 @@ void universe::detectCollisions(
     }
 
     //Return if count is too low, or nothing can interact.
-    if(count < 16 or _lvl > 8 or _lasers.size() == 0 or ( _ships.size() == 0 and _rockets.size() == 0 and _rocks.size() == 0 ))
+    if(count < 16 or _lvl > 8)
     {
         m_partitions.push_back({
                                    pships,
@@ -1332,10 +1400,15 @@ void universe::detectCollisions(
 
 void universe::checkCollisions()
 {
+    std::cout << "NUMBER OF PARTITIONS " << m_partitions.size() << '\n';
     for(size_t p = 0; p < m_partitions.size(); ++p)
     {
+        std::cout << "  PARTITION " << p << ": \n      Lasers: " << m_partitions[p].m_lasers.size() << "\n      Ships: " << m_partitions[p].m_ships.size() << "\n      Asteroids: " << m_partitions[p].m_rocks.size() << '\n';
         bool done = false;
         int harm = 0;
+
+        //LASERS
+        //Pew pew
         for(int l = m_partitions[p].m_lasers.size() - 1; l >= 0; --l)
         {
             vec3 sp = m_partitions[p].m_lasers[l]->getPos();
@@ -1365,7 +1438,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     harm = m_partitions[p].m_lasers[l]->getDmg();
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1397,7 +1470,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er, "SMOKE");
                     harm = m_partitions[p].m_lasers[l]->getDmg();
 
@@ -1428,7 +1501,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
 
                     harm = m_shots[l].getDmg();
 
@@ -1460,7 +1533,7 @@ void universe::checkCollisions()
                 {
                     playSnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), m_vel, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
                     harm = m_partitions[p].m_lasers[l]->getDmg();
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1501,26 +1574,77 @@ void universe::checkCollisions()
             }
         }
 
+        //COLLISIONS
         //It made sense at the time...
-        for(int i = 0; i < m_partitions[p].m_ships.size(); ++i)
+        for(auto &i : m_partitions[p].m_ships)
         {
-            for(int j = i; j < m_partitions[p].m_ships.size(); ++j)
+            //Ships vs ships
+            for(auto &j : m_partitions[p].m_ships)
             {
-                if(emnityCheck(m_partitions[p].m_ships[i]->getTeam(), m_partitions[p].m_ships[j]->getTeam()))
+                if(emnityCheck(i->getTeam(), j->getTeam()) and i != j)
                 {
-                    resolveCollision(reinterpret_cast<ship *>(m_partitions[p].m_ships[i]), reinterpret_cast<ship *>(m_partitions[p].m_ships[j]));
+                    resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(j));
                 }
             }
-            for(int j = 0; j < m_partitions[p].m_rocks.size(); ++j)
+
+            //Ships vs rocks
+            for(auto &j : m_partitions[p].m_rocks)
             {
-                if(m_partitions[p].m_ships[i]->getType() != SHIP_TYPE_MINER) resolveCollision(reinterpret_cast<ship *>(m_partitions[p].m_ships[i]), reinterpret_cast<ship *>(m_partitions[p].m_rocks[j]));
-                resolveCollision(reinterpret_cast<ship *>(m_partitions[p].m_rocks[j]), reinterpret_cast<ship *>(&m_ply));
-                for(int k = j; k < m_partitions[p].m_rocks.size(); ++k)
+                if(i->getType() != SHIP_TYPE_MINER) resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(j));
+            }
+
+            //Ships vs player
+            if(emnityCheck(i->getTeam(), TEAM_PLAYER))resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
+        }
+
+        for(auto &i : m_partitions[p].m_rocks)
+        {
+            resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
+            for(auto &j : m_partitions[p].m_rocks)
+            {
+                if(i != j) resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(j));
+            }
+        }
+
+        //RESOURCE PICKUPS
+        //Get rich
+        for(int i = m_partitions[p].m_resources.size() - 1; i >= 0; --i)
+        {
+            debris * resource = m_partitions[p].m_resources[i];
+            for(int j = 0; j < m_partitions[p].m_ships.size(); ++j)
+            {
+                ship * agent = m_partitions[p].m_ships[j];
+                if(circleIntersectCircle(tovec2(resource->getPos()), resource->getRadius(), tovec2(agent->getPos()), agent->getRadius()))
                 {
-                    resolveCollision(reinterpret_cast<ship *>(m_partitions[p].m_rocks[j]), reinterpret_cast<ship *>(m_partitions[p].m_rocks[k]));
+                    if(!agent->addItem(*resource)) continue;
+
+                    for(int k = m_resources.size() - 1; k >= 0; --k) if(&m_resources[k] == resource) swapnpop(&m_resources, k);
+                    swapnpop(&m_partitions[p].m_resources, i);
+                    break;
+                }
+                else
+                {
+                    vec3 add = agent->getPos() - resource->getPos();
+                    add = add / (magns(add) * 200.0f);
+                    resource->addVel(add);
                 }
             }
-            if(emnityCheck(m_partitions[p].m_ships[i]->getTeam(), TEAM_PLAYER))resolveCollision(reinterpret_cast<ship *>(m_partitions[p].m_ships[i]), reinterpret_cast<ship *>(&m_ply));
+
+            if(circleIntersectCircle(tovec2(resource->getPos()), resource->getRadius(), tovec2(m_ply.getPos()), m_ply.getRadius()))
+            {
+                if(!m_ply.addItem(*resource)) continue;
+
+                m_sounds.playSnd(PLACE_SND);
+
+                for(int k = m_resources.size() - 1; k >= 0; --k) if(&m_resources[k] == resource) swapnpop(&m_resources, k);
+                swapnpop(&m_partitions[p].m_resources, i);
+            }
+            else
+            {
+                vec3 add = m_ply.getPos() - resource->getPos();
+                add = add / (magns(add) * 200.0f);
+                resource->addVel(add);
+            }
         }
     }
 }
@@ -1584,12 +1708,11 @@ void universe::resolveCollision(ship *_a, ship *_b)
 void universe::addpfx(
         const vec3 _p,
         const vec3 _v,
-        const vec3 _wv,
         const int _no,
         const float _f
         )
 {
-    pfx pf(_p, _v, _wv, _no, _f, "EXPLOSION");
+    pfx pf(_p, _v, m_vel, _no, _f, "EXPLOSION");
     m_particles.push_back(pf);
 }
 
@@ -1599,7 +1722,7 @@ ship * universe::closestEnemy(vec3 p, aiTeam t)
     ship * r = nullptr;
     for(size_t i = 0; i < m_agents.size(); i++)
     {
-        if(!neutralityCheck(m_agents[i].getTeam(), t)) continue;
+        if(!emnityCheck(m_agents[i].getTeam(), t)) continue;
         vec3 pe = m_agents[i].getPos();
         float dist = magns(pe-p);
 
@@ -1626,6 +1749,7 @@ void universe::addParticleSprite(
     int w = 0, h = 0;
     stardust_sprite sm (_tex, col, _dim, _dim);
     sm.setPos(_p);
+    sm.setWVel(m_vel);
     if( _tex == "SMOKE" ) sm.setVel(_v + tovec3(randVec2(1.0f)));
     else if( _tex == "EXPLOSION" ) sm.setVel(_v);
     sm.setZ(1.0f);
@@ -1633,7 +1757,7 @@ void universe::addParticleSprite(
 }
 
 void universe::spawnShip(const aiTeam _t)
-{	
+{
     int side = rand()%4;
     vec2 pass;
 
@@ -1918,6 +2042,11 @@ void universe::reload(const bool _newGame)
 
     m_contextShip = nullptr;
 
+    m_ply.getCargo()->getItems()->clear();
+
+    ship newAsteroid({0.0f, 200.0f, 0.0f}, ASTEROID_MID, m_drawer.getTextureRadius(ASTEROID_MID));
+    m_asteroids.push_back(newAsteroid);
+
     if(!_newGame)
     {
         return;
@@ -1928,6 +2057,7 @@ void universe::reload(const bool _newGame)
     {
         m_ply.setGradeArr(i, 0);
     }
+
     m_ply.setMissiles(3);
     setScore(16);
 }
@@ -2004,7 +2134,7 @@ void universe::addBuild(
 
     m_agents.push_back(newShip);
 
-    addpfx(_p, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2);
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2);
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
     m_sounds.playSnd(PLACE_SND);
     m_sounds.playSnd(CLUNK_SND);

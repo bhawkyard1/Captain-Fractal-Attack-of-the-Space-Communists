@@ -405,6 +405,7 @@ ship::ship(
         m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
         m_curWeap = 0;
         m_cargo.setDim({128.0f, 128.0f});
+        m_type = SHIP_TYPE_MINER;
         break;
     case ION_MISSILE_MKI:
         m_identifier = "ION_MISSILE_MKI";
@@ -562,8 +563,6 @@ ship::ship(
 
     m_priority = PRIORITY_NONE;
 
-
-
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
     m_shieldMul = 1.0f;
     m_generatorMul = _src.m_shieldMul;
@@ -580,6 +579,8 @@ ship::ship(
     m_lastAttacker = _src.m_lastAttacker;
 
     m_cargo = _src.m_cargo;
+
+    m_type = _src.m_type;
 
     for(size_t i = 0; i < _src.getWeaps().size(); ++i)
     {
@@ -829,7 +830,7 @@ void ship::update(const float _dt)
 
     m_accelerating = false;
 
-    m_cargo.update(_dt);
+    if(m_cargo.isVisible()) m_cargo.update(_dt);
 }
 
 void ship::setFiring(const bool _v)

@@ -28,13 +28,18 @@ bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim)
     return magns(dc) < _r;
 }
 
+bool circleIntersectCircle(vec2 _pos1, float _r1, vec2 _pos2, float _r2)
+{
+    return magns(_pos1 - _pos2) < sqr(_r1 + _r2);
+}
+
 bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius)
 {
     vec3 lineDir  = _end - _start;
     vec3 cp = closest(_start, lineDir, _pos);
     vec3 cd = cp - _pos;
 
-    return ((_radius * _radius) > magns(cd)) and pointOnLine(_start, _end, cp);
+    return (sqr(_radius) > magns(cd)) and pointOnLine(_start, _end, cp);
 }
 
 bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
@@ -53,9 +58,12 @@ SDL_Rect maxRect(const std::vector<SDL_Rect> _rects)
     for(auto &i : _rects)
     {
         if(i.x < ret.x) ret.x = i.x;
-        if(i.w > ret.w) ret.w = i.w;
+        if(i.x + i.w > ret.w) ret.w = i.w;
         if(i.y < ret.y) ret.y = i.y;
-        if(i.h > ret.h) ret.h = i.h;
+        if(i.y + i.h > ret.h) ret.h = i.h;
     }
+    ret.w -= ret.x;
+    ret.h -= ret.y;
+
     return ret;
 }

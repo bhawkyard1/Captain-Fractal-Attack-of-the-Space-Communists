@@ -66,6 +66,24 @@ tt clamp(tt _v, tt _m, tt _M)
     return _v;
 }
 
+template<typename tt>
+tt clampOutside(tt _v, tt _m, tt _M)
+{
+    if(_v > _m and _v < _M)
+    {
+        if(abs(_v - _m) < abs(_v - _M)) return _m;
+        else return _M;
+    }
+    return _v;
+}
+
+template<typename tt>
+tt getClosest(tt _v, tt _m, tt _M)
+{
+    if(abs(_v - _m) < abs(_v - _M)) return _m;
+    return _M;
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns a random number between two values.
 /// \param _low lover limit
@@ -156,8 +174,6 @@ float fastInvSqrt(float _val);
 /// \param _dim rectangle dimensions
 //----------------------------------------------------------------------------------------------------------------------
 bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim);
-
-bool circleInRect(vec2 _point, float _radius, vec2 _pos, vec2 _dim);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Given a point and two vectors representing an cuboid, returns whether the point lies inside.
