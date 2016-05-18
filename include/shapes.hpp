@@ -98,20 +98,21 @@ SDL_Rect enclose(const std::vector<t> &_ents)
 {
     if(_ents.size() == 0) return {0, 0, 0, 0};
 
-    SDL_Rect ret = {I_INF, I_INF, -I_INF, -I_INF};
+    int maxX = -I_INF;
+    int maxY = -I_INF;
+    int minX = I_INF;
+    int minY = I_INF;
     for(auto &i : _ents)
     {
         vec2 pos = tovec2(i.getPos());
 
-        if(pos.m_x < ret.x) ret.x = pos.m_x;
-        if(pos.m_x > ret.w) ret.w = pos.m_x;
-        if(pos.m_y < ret.y) ret.y = pos.m_y;
-        if(pos.m_y > ret.h) ret.h = pos.m_y;
+        if(pos.m_x < minX) minX = pos.m_x;
+        if(pos.m_x > maxX) maxX = pos.m_x;
+        if(pos.m_y < minY) minY = pos.m_y;
+        if(pos.m_y > maxY) maxY = pos.m_y;
     }
-    ret.w -= ret.x;
-    ret.h -= ret.y;
 
-    return ret;
+    return {minX, minY, maxX - minX, maxY - minY};
 }
 
 SDL_Rect maxRect(const std::vector<SDL_Rect> _rects);

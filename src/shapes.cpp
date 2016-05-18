@@ -54,16 +54,18 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
 
 SDL_Rect maxRect(const std::vector<SDL_Rect> _rects)
 {
-    SDL_Rect ret = {I_INF, I_INF, -I_INF, -I_INF};
+    int maxX = -I_INF;
+    int maxY = -I_INF;
+    int minX = I_INF;
+    int minY = I_INF;
+
     for(auto &i : _rects)
     {
-        if(i.x < ret.x) ret.x = i.x;
-        if(i.x + i.w > ret.w) ret.w = i.w;
-        if(i.y < ret.y) ret.y = i.y;
-        if(i.y + i.h > ret.h) ret.h = i.h;
+        if(i.x < minX) minX = i.x;
+        if(i.x + i.w > maxX) maxX = i.w;
+        if(i.y < minY) minY = i.y;
+        if(i.y + i.h > maxY) maxY = i.h;
     }
-    ret.w -= ret.x;
-    ret.h -= ret.y;
 
-    return ret;
+    return {minX, minY, maxX - minX, maxY - minY};
 }
