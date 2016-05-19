@@ -634,6 +634,8 @@ private:
     int m_maxWingmen;
     int m_minerCount;
     int m_wingmenCount;
+
+    debris * m_selectedItem;
 };
 
 #endif

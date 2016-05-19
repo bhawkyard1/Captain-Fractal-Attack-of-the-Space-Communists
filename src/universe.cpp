@@ -95,6 +95,7 @@ universe::universe()
     m_mapExpanded = false;
 
     m_contextShip = nullptr;
+    m_selectedItem = nullptr;
 }
 
 void universe::addShot(
@@ -1976,6 +1977,7 @@ void universe::reload(const bool _newGame)
     m_asteroids.clear();
     m_passiveSprites.clear();
     m_particles.clear();
+    m_resources.clear();
 
     m_vel = {0.0f, 0.0f};
     m_pos = {0.0f, 0.0f};
@@ -2021,11 +2023,9 @@ void universe::reload(const bool _newGame)
     m_ply.setGeneratorMul(1.0f);
 
     m_contextShip = nullptr;
+    m_selectedItem = nullptr;
 
     m_ply.getCargo()->getItems()->clear();
-
-    ship newAsteroid({0.0f, 200.0f, 0.0f}, ASTEROID_MID, m_drawer.getTextureRadius(ASTEROID_MID));
-    m_asteroids.push_back(newAsteroid);
 
     if(!_newGame)
     {
