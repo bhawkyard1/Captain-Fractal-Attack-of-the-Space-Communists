@@ -291,25 +291,7 @@ void universe::update(const float _dt)
 
     SDL_Rect ir = maxRect(testRects);
 
-    //std::cout << "MAX RECT DRAWN " << ir.x << ", " << ir.y << ", " << ir.w << ", " << ir.h << '\n';
-
-    /*if(m_ply.getPos().m_x < minX) minX = m_ply.getPos().m_x;
-    if(m_ply.getPos().m_y < minY) minY = m_ply.getPos().m_y;
-    if(m_ply.getPos().m_x > maxX) maxX = m_ply.getPos().m_x;
-    if(m_ply.getPos().m_y > maxY) maxY = m_ply.getPos().m_y;
-
-    init_rect.x = minX;
-    init_rect.y = minY;
-    init_rect.w = maxX - minX;
-    init_rect.h = maxY - minY;*/
-
     detectCollisions(ir, init_ship, init_laser, init_missile, init_asteroid, init_resources, 0);
-
-    for(auto &i : testRects)
-    {
-        std::cout << "CONSTITUENT RECT: " << i.x << ",      " << i.y << ",      " << i.w << ",      " << i.h << '\n';
-    }
-    std::cout << "FUCKIN REKT LADS " << ir.x << ", " << ir.y << ", " << ir.w << ", " << ir.h << '\n';
 
     checkCollisions();
 
@@ -1400,10 +1382,8 @@ void universe::detectCollisions(
 
 void universe::checkCollisions()
 {
-    std::cout << "NUMBER OF PARTITIONS " << m_partitions.size() << '\n';
     for(size_t p = 0; p < m_partitions.size(); ++p)
     {
-        std::cout << "  PARTITION " << p << ": \n      Lasers: " << m_partitions[p].m_lasers.size() << "\n      Ships: " << m_partitions[p].m_ships.size() << "\n      Asteroids: " << m_partitions[p].m_rocks.size() << '\n';
         bool done = false;
         int harm = 0;
 
@@ -2378,7 +2358,7 @@ selectionReturn universe::handleInput(vec2 _mouse)
                 break;
             }
         }
-        std::cout << "END FUNCTION" << m_contextShip << ", " << (m_contextShip == nullptr) << '\n';
+        //std::cout << "END FUNCTION" << m_contextShip << ", " << (m_contextShip == nullptr) << '\n';
     }
     return ret;
 }

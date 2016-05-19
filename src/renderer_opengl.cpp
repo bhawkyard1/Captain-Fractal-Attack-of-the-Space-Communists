@@ -1100,8 +1100,6 @@ void renderer_ngl::drawText(
 
     for(int i = 0; i < _text.length(); ++i)
     {
-        //std::cout << "doot " << tmp->m_sheet[_text[i]] << std::endl;
-        //glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
         glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
 
         float w = static_cast<float>(tmp->m_dim[_text[i]].first);

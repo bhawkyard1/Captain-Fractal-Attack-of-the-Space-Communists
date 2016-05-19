@@ -859,7 +859,6 @@ void ship::damage(float _d)
 
 void ship::damage(float _d, const vec3 _v)
 {
-    //std::cout << " dot " << dotProd( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
     //Shots to the rear do more damage.
     if(m_canMove)
     {
@@ -883,7 +882,6 @@ void ship::damage(float _d, const vec3 _v)
 
 void ship::damage(float _d, const vec3 _v, const long int _id)
 {
-    //std::cout << " dot " << dotProd( vec(m_angle + 90), unit(_v) ) + 1.5f << std::endl;
     //Shots to the rear do more damage.
     if(m_canMove)
     {

@@ -50,7 +50,6 @@ void enemy::behvrUpdate(float _dt)
         m_tVel = {0.0f, 0.0f, 0.0f};
         if(magns(getPos() - m_tPos) < 10000.0f)
         {
-            //std::cout << "  SWITCHING WANDER TARGET!\n";
             m_tPos += tovec3(randVec2(2000.0f));
         }
     }

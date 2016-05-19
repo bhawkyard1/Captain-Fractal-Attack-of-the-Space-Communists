@@ -51,6 +51,28 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
 
     return (fabs(dp) > 0.99f and fabs(dp) < 1.01f) and pointInBox(_point, _start, _end);
 }
+/*
+template<class t>
+SDL_Rect enclose(const std::vector<t> &_ents)
+{
+    if(_ents.size() == 0) return {0, 0, 0, 0};
+
+    int maxX = -I_INF;
+    int maxY = -I_INF;
+    int minX = I_INF;
+    int minY = I_INF;
+    for(auto &i : _ents)
+    {
+        vec2 pos = tovec2(i.getPos());
+
+        if(pos.m_x < minX) minX = pos.m_x;
+        if(pos.m_x > maxX) maxX = pos.m_x;
+        if(pos.m_y < minY) minY = pos.m_y;
+        if(pos.m_y > maxY) maxY = pos.m_y;
+    }
+
+    return {minX, minY, maxX - minX, maxY - minY};
+}*/
 
 SDL_Rect maxRect(const std::vector<SDL_Rect> _rects)
 {
@@ -62,9 +84,9 @@ SDL_Rect maxRect(const std::vector<SDL_Rect> _rects)
     for(auto &i : _rects)
     {
         if(i.x < minX) minX = i.x;
-        if(i.x + i.w > maxX) maxX = i.w;
         if(i.y < minY) minY = i.y;
-        if(i.y + i.h > maxY) maxY = i.h;
+        if(i.x + i.w > maxX) maxX = i.x + i.w;
+        if(i.y + i.h > maxY) maxY = i.y + i.h;
     }
 
     return {minX, minY, maxX - minX, maxY - minY};
