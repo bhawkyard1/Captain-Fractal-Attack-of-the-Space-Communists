@@ -1686,7 +1686,7 @@ void universe::resolveCollision(ship *_a, ship *_b)
     if(_b->getHealth() > 0.0f) _b->addVel( -binvmass * impulse );
 }
 
-void universe::addpfx(
+void universe:: addpfx(
         const vec3 _p,
         const vec3 _v,
         const int _no,

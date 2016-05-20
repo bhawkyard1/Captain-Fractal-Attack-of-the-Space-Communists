@@ -32,8 +32,8 @@ pfx::pfx(
         particle.setPos(_p);
         particle.setPPos(_p);
 
-        particle.setVel( { randNum(-_force, _force), randNum(-_force, _force) } );
-        particle.setWVel( _v + _wv );
+        particle.setVel( randVec3(_force) + _v );
+        particle.setWVel( _wv );
 
         m_particles.push_back(particle);
 
@@ -45,6 +45,11 @@ pfx::pfx(
 void pfx::update(float _dt)
 {
     bool done = true;
+
+    for(auto &i : m_particles)
+    {
+        i.setWVel( getWVel() );
+    }
 
     for(size_t i = 0; i < m_alphas.size(); ++i)
     {

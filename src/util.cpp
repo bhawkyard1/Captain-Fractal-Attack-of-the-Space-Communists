@@ -58,7 +58,7 @@ vec2 randVec2(float _m, float _M)
 
 vec2 randVec2(float _f)
 {
-    vec2 v = {randNum(0.0f, 1.0f), randNum(1.0f, 2.0f)};
+    vec2 v = {randNum(-1.0f, 1.0f), randNum(-1.0f, 1.0f)};
     float vsum = sqr(v.m_x) + sqr(v.m_y);
     v *= fastInvSqrt(vsum) * randNum(-_f, _f);
     return v;
@@ -79,7 +79,7 @@ vec3 randVec3(float m, float M)
 
 vec3 randVec3(float _f)
 {
-  vec3 v = {randNum(1.0f, 2.0f), randNum(1.0f, 2.0f), randNum(1.0f, 2.0f)};
+  vec3 v = {randNum(-1.0f, 1.0f), randNum(-1.0f, 1.0f), randNum(-1.0f, 1.0f)};
   float vsum = sqr(v.m_x) + sqr(v.m_y) + sqr(v.m_z);
   v *= fastInvSqrt(vsum) * randNum(-_f, _f);
   return v;
