@@ -1575,12 +1575,12 @@ void universe::checkCollisions()
             }
 
             //Ships vs player
-            if(emnityCheck(i->getTeam(), TEAM_PLAYER))resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
+            if(emnityCheck(i->getTeam(), TEAM_PLAYER) and !g_GAME_OVER)resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
         }
 
         for(auto &i : m_partitions[p].m_rocks)
         {
-            resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
+            if(!g_GAME_OVER) resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
             for(auto &j : m_partitions[p].m_rocks)
             {
                 if(i != j) resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(j));
@@ -1611,7 +1611,7 @@ void universe::checkCollisions()
                 }
             }
 
-            if(circleIntersectCircle(tovec2(resource->getPos()), resource->getRadius(), tovec2(m_ply.getPos()), m_ply.getRadius()))
+            if(circleIntersectCircle(tovec2(resource->getPos()), resource->getRadius(), tovec2(m_ply.getPos()), m_ply.getRadius() and !g_GAME_OVER))
             {
                 if(!m_ply.addItem(*resource)) continue;
 
