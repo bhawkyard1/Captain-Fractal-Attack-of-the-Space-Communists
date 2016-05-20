@@ -626,9 +626,9 @@ private:
     std::vector<debris> m_resources;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Ship that the context menu is bound to.
+    /// \brief Ship ID that the context menu is bound to.
     //----------------------------------------------------------------------------------------------------------------------
-    enemy * m_contextShip;
+    long m_contextShip;
 
     int m_maxMiners;
     int m_maxWingmen;

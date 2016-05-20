@@ -47,6 +47,8 @@ void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
               << i.getVel().m_x << "," << i.getVel().m_y << "|"
               << i.getAng() << "|"
               << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
+              << i.getMaxHealth() << "," << i.getMaxShield() << "," << i.getMaxEnergy() << "|"
+              << i.getKills() <<"|"
               << i.getRadius() << "|"
                  ;
     }
@@ -100,6 +102,14 @@ void readVectorEnemy(std::string str, universe * _u)
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
 
+        float maxhealth, maxshield, maxenergy;
+        stat = split(stats[6], ',');
+        maxhealth = std::stof(stat[0]);
+        maxshield = std::stof(stat[1]);
+        maxenergy = std::stof(stat[1]);
+
+        unsigned long kills = std::stoi(stats[7]);
+
         enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<aiTeam>(team));
         temp.setPos({pos.m_x,pos.m_y});
 
@@ -107,6 +117,10 @@ void readVectorEnemy(std::string str, universe * _u)
         temp.setHealth(health);
         temp.setShield(shield);
         temp.setEnergy(energy);
+        temp.setMaxHealth(maxhealth, false);
+        temp.setMaxShield(maxshield, false);
+        temp.setMaxEnergy(maxenergy, false);
+        temp.setKills(kills);
 
         _u->getAgents()->push_back(temp);
     }

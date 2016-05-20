@@ -397,6 +397,7 @@ public:
 
     void addKill() {m_kills++; m_maxEnergy += 2.0f;}
     unsigned long getKills() const {return m_kills;}
+    void setKills(unsigned long _kills) {m_kills = _kills;}
 
     bool addItem(debris _in) {return m_cargo.addItem(_in);}
     inventory * getCargo() {return &m_cargo;}

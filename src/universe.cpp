@@ -94,7 +94,7 @@ universe::universe()
 
     m_mapExpanded = false;
 
-    m_contextShip = nullptr;
+    m_contextShip = -1;
     m_selectedItem = nullptr;
 }
 
@@ -460,7 +460,7 @@ void universe::update(const float _dt)
                     addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, m_ply.getPos(), randVec3(2.0f) );
                 }
             }
-            if(m_contextShip == &m_agents[i]) m_contextShip = nullptr;
+            if(m_contextShip == m_agents[i].getUniqueID()) m_contextShip = -1;
             swapnpop(&m_agents, i);
         }
     }
@@ -1177,55 +1177,57 @@ void universe::drawUI(const float _dt)
         //DRAWING CONTEXT-SELECTED SHIP STATS
         selection * infoCard = &(*m_ui.getElements())[3];
 
-        if(m_contextShip != nullptr)
+        for(auto &i : m_agents)
         {
-            vec3 csp = m_contextShip->getPos();
-            vec2 offset = {256.0f, 256.0f};
-            vec2 min = (-g_HALFWIN + offset) / g_ZOOM_LEVEL;
-            vec2 max = (g_HALFWIN - offset) / g_ZOOM_LEVEL;
-            csp = clamp(csp, tovec3(min), tovec3(max));
-
-            float health = 128.0f * m_contextShip->getHealth() / m_contextShip->getMaxHealth();
-            float shield = 128.0f * m_contextShip->getShield() /  m_contextShip->getMaxShield();
-            float energy = 128.0f * m_contextShip->getEnergy() / m_contextShip->getMaxEnergy();
-
-            infoCard->setVisible(true);
-
-            infoCard->getAt(0)->setLabel(m_contextShip->getIdentifier());
-            infoCard->getAt(1)->setLabel("KILLS: " + std::to_string(m_contextShip->getKills()));
-            infoCard->getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(m_contextShip->getPos()) / 4.0f)));
-            for(auto &i : *(infoCard->getButtons()))
+            if(i.getUniqueID() == m_contextShip)
             {
-                vec2 pos = i.getPos();
-                pos += tovec2( csp );
-                i.setPos( pos );
+                vec3 csp = i.getPos();
+                vec2 offset = {256.0f, 256.0f};
+                vec2 min = (-g_HALFWIN + offset) / g_ZOOM_LEVEL;
+                vec2 max = (g_HALFWIN - offset) / g_ZOOM_LEVEL;
+                csp = clamp(csp, tovec3(min), tovec3(max));
+
+                float health = 128.0f * i.getHealth() / i.getMaxHealth();
+                float shield = 128.0f * i.getShield() /  i.getMaxShield();
+                float energy = 128.0f * i.getEnergy() / i.getMaxEnergy();
+
+                infoCard->setVisible(true);
+
+                infoCard->getAt(0)->setLabel(i.getIdentifier());
+                infoCard->getAt(1)->setLabel("KILLS: " + std::to_string(i.getKills()));
+                infoCard->getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(i.getPos()) / 4.0f)));
+                for(auto &i : *(infoCard->getButtons()))
+                {
+                    vec2 pos = i.getPos();
+                    pos += tovec2( csp );
+                    i.setPos( pos );
+                }
+
+                csp.m_x += 64.0f;
+                csp.m_y += 32.0f;
+
+                //Health base
+                m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.4f, 0.08f, 0.08f, 0.5f});
+                //Health
+                m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
+
+                csp.m_y += 16.0f;
+                //Shield base
+                m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.1f, 0.1f, 0.4f, 0.5f});
+                //Shield
+                m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
+
+                csp.m_y += 16.0f;
+                //Energy base
+                m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.08f, 0.4f, 0.08f, 0.5f});
+                //Energy
+                m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
+
+                m_drawer.drawRects(true);
+                m_drawer.clearVectors();
+                break;
             }
 
-            csp.m_x += 64.0f;
-            csp.m_y += 32.0f;
-
-            //Health base
-            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.4f, 0.08f, 0.08f, 0.5f});
-            //Health
-            m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
-
-            csp.m_y += 16.0f;
-            //Shield base
-            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.1f, 0.1f, 0.4f, 0.5f});
-            //Shield
-            m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
-
-            csp.m_y += 16.0f;
-            //Energy base
-            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.08f, 0.4f, 0.08f, 0.5f});
-            //Energy
-            m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
-
-            m_drawer.drawRects(true);
-            m_drawer.clearVectors();
-        }
-        else
-        {
             infoCard->setVisible(false);
         }
 
@@ -2022,7 +2024,7 @@ void universe::reload(const bool _newGame)
     m_ply.setEnginePower(5.0f);
     m_ply.setGeneratorMul(1.0f);
 
-    m_contextShip = nullptr;
+    m_contextShip = -1;
     m_selectedItem = nullptr;
 
     m_ply.getCargo()->getItems()->clear();
@@ -2349,12 +2351,12 @@ selectionReturn universe::handleInput(vec2 _mouse)
     else
     {
         _mouse = toWorldSpace(_mouse);
-        m_contextShip = nullptr;
+        m_contextShip = -1;
         for(auto &i : m_agents)
         {
             if(magns(_mouse - tovec2(i.getPos())) < sqr(i.getRadius() + 32.0f))
             {
-                m_contextShip = &i;
+                m_contextShip = i.getUniqueID();
                 break;
             }
         }
