@@ -89,4 +89,6 @@ debris inventory::handleInput(const vec2 _mouse)
         }
     }
     return nullptr;*/
+    debris a({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, RESOURCE_IRON);
+    return a;
 }
