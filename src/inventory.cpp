@@ -77,3 +77,16 @@ void inventory::update(const float _dt)
         //}
     }
 }
+
+debris inventory::handleInput(const vec2 _mouse)
+{
+    vec3 test = {_mouse.m_x, _mouse.m_y, 0.0f};
+    for(auto &i : m_contents)
+    {
+        if(magns(i.getPos() - test) < sqr(i.getRadius()))
+        {
+            return i;
+        }
+    }
+    return nullptr;
+}

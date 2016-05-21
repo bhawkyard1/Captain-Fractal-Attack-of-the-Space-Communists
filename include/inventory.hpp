@@ -20,6 +20,8 @@ public:
     bool isVisible() const {return m_visible;}
 
     std::vector<debris> * getItems() {return &m_contents;}
+
+    debris handleInput(const vec2 _mouse);
 private:
     std::vector<debris> m_contents;
     vec2 m_dim;

@@ -635,7 +635,7 @@ private:
     int m_minerCount;
     int m_wingmenCount;
 
-    debris * m_selectedItem;
+    std::unique_ptr<debris> m_selectedItem;
 };
 
 #endif

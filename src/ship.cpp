@@ -54,6 +54,7 @@ ship::ship(
 
     m_hasParent = false;
     m_parent = -1;
+    m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
     m_shieldMul = 1.0f;
@@ -575,6 +576,7 @@ ship::ship(
 
     m_hasParent = _src.hasParent();
     m_parent = _src.getParent();
+    m_parentOffset = _src.m_parentOffset;
 
     m_lastAttacker = _src.m_lastAttacker;
 

@@ -10,32 +10,33 @@ void saveGame(universe * uni)
 {
     std::ofstream save( g_RESOURCE_LOC + "../" + "save.txt" );
 
-    save 	<< "score " << uni->getScore() << std::endl
-            << "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << std::endl
-            << "mcc " << uni->getMaxEnemyCount(SPACE_COMMUNISTS) << std::endl
-            << "mwc " << uni->getMaxWingmanCount() << std::endl
-            << "mmc " << uni->getMaxMinerCount() << std::endl
-            << "nm " << uni->getPly()->getMissiles() << std::endl
+    save 	<< "score " << uni->getScore() << '\n'
+            << "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << '\n'
+            << "mcc " << uni->getMaxEnemyCount(SPACE_COMMUNISTS) << '\n'
+            << "mwc " << uni->getMaxWingmanCount() << '\n'
+            << "mmc " << uni->getMaxMinerCount() << '\n'
+            << "nm " << uni->getPly()->getMissiles() << '\n'
             << "ps " << uni->getPly()->getVel().m_x << "," << uni->getPly()->getVel().m_y << ","
             << uni->getPly()->getHealth() << ","
             << uni->getPly()->getShield() << ","
-            << uni->getPly()->getEnergy() << std::endl
-            << "d " << g_DIFFICULTY << std::endl
+            << uni->getPly()->getEnergy() << '\n'
+            << "d " << g_DIFFICULTY << '\n'
             << "u ";
 
     for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
 
-    save 	<< std::endl
+    save 	<< '\n'
+            << "uidc " << g_shipIDCounter << '\n'
             << "enemies ";
     writeVectorEnemy(save, uni->getAgents());
 
-    save << std::endl
+    save << '\n'
          << "asteroids ";
     writeVectorAsteroid(save, uni->getAsteroids());
 
     save.close();
 
-    std::cout << "SAVED" << std::endl;
+    std::cout << "SAVED" << '\n';
 }
 
 void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
@@ -43,6 +44,8 @@ void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
     for(auto &i : *_u)
     {
         _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
+              << i.getUniqueID() << "," << i.getParent() << "|"
+              << i.getParentOffset().m_x << "," << i.getParentOffset().m_y << "|"
               << i.getPos().m_x << "," << i.getPos().m_y << "|"
               << i.getVel().m_x << "," << i.getVel().m_y << "|"
               << i.getAng() << "|"
@@ -77,50 +80,63 @@ void readVectorEnemy(std::string str, universe * _u)
         std::vector<std::string> stats = split( s, '|' );
         std::vector<std::string> stat;
 
-        int id, team;
+        int type, team;
         stat = split(stats[1], ',');
-        id = std::stof(stat[0]);
+        type = std::stof(stat[0]);
         team = std::stof(stat[1]);
 
-        vec3 pos;
+        long id, parentID;
         stat = split(stats[2], ',');
+        id = std::stoi(stat[0]);
+        parentID = std::stoi(stat[1]);
+
+        vec3 parentPos;
+        stat = split(stats[3], ',');
+        parentPos.m_x = std::stof(stat[0]);
+        parentPos.m_y = std::stof(stat[1]);
+        parentPos.m_z = 0.0f;
+
+        vec3 pos;
+        stat = split(stats[4], ',');
         pos.m_x = std::stof(stat[0]);
         pos.m_y = std::stof(stat[1]);
         pos.m_z = 0.0f;
 
         vec3 vel;
-        stat = split(stats[3], ',');
+        stat = split(stats[5], ',');
         vel.m_x = std::stof(stat[0]);
         vel.m_y = std::stof(stat[1]);
         vel.m_z = 0.0f;
 
-        float ang = std::stof(stats[4]);
+        float ang = std::stof(stats[6]);
 
         float health, shield, energy;
-        stat = split(stats[5], ',');
+        stat = split(stats[7], ',');
         health = std::stof(stat[0]);
         shield = std::stof(stat[1]);
         energy = std::stof(stat[1]);
 
         float maxhealth, maxshield, maxenergy;
-        stat = split(stats[6], ',');
+        stat = split(stats[8], ',');
         maxhealth = std::stof(stat[0]);
         maxshield = std::stof(stat[1]);
-        maxenergy = std::stof(stat[1]);
+        maxenergy = std::stof(stat[2]);
 
-        unsigned long kills = std::stoi(stats[7]);
+        unsigned long kills = std::stoi(stats[9]);
 
-        enemy temp(pos , vel, static_cast<ship_spec>(id), static_cast<aiTeam>(team));
-        temp.setPos({pos.m_x,pos.m_y});
+        enemy temp(pos , vel, static_cast<ship_spec>(type), static_cast<aiTeam>(team));
+        temp.setPos(pos);
 
         temp.setAng(ang);
-        temp.setHealth(health);
-        temp.setShield(shield);
-        temp.setEnergy(energy);
         temp.setMaxHealth(maxhealth, false);
         temp.setMaxShield(maxshield, false);
         temp.setMaxEnergy(maxenergy, false);
+        temp.setHealth(health);
+        temp.setShield(shield);
+        temp.setEnergy(energy);
         temp.setKills(kills);
+        temp.setUniqueID(id);
+        temp.setParent(parentID);
 
         _u->getAgents()->push_back(temp);
     }
@@ -172,6 +188,8 @@ void loadGame(universe * uni)
     std::ifstream save(g_RESOURCE_LOC + "../" + "save.txt");
     std::string cur;
 
+    unsigned long tempIDCounter;
+
     while(getline( save, cur ))
     {
         if(cur.length() == 0) continue;
@@ -186,6 +204,7 @@ void loadGame(universe * uni)
             else if(strings[i] == "mmc") uni->setMaxMinerCount( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "nm") uni->getPly()->setMissiles( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "d") g_DIFFICULTY = stoi(strings[i+1], nullptr, 10);
+            else if(strings[i] == "iudc") tempIDCounter = stoi(strings[i+1], nullptr, 10);
             else if(strings[i] == "u")
             {
                 for(int j = 0; j < UPGRADES_LEN; ++j)
@@ -216,6 +235,8 @@ void loadGame(universe * uni)
         }
     }
     save.close();
+
+    g_shipIDCounter = tempIDCounter;
 
     std::cout << "LOADED" << std::endl;
 }

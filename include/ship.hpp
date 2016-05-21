@@ -373,18 +373,19 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     bool hasParent() const {return m_hasParent;}
     long int getParent() const {return m_parent;}
-    void setParent(long int _p) {m_parent = _p; m_hasParent = true;}
+    void setParent(long int _p) {m_parent = _p; if(_p != -1) {m_hasParent = true;}}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for parent offsets.
     //----------------------------------------------------------------------------------------------------------------------
-    vec3 getParentOffset() {return m_parentOffset;}
+    vec3 getParentOffset() const {return m_parentOffset;}
     void setParentOffset(vec3 _v) {m_parentOffset = _v;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for unique ID.
     //----------------------------------------------------------------------------------------------------------------------
     long int getUniqueID() {return m_uniqueID;}
+    void setUniqueID(const unsigned long  _id) {m_uniqueID = _id;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for last attacker.
