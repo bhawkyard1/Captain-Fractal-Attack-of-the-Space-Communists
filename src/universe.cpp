@@ -2361,14 +2361,14 @@ selectionReturn universe::handleInput(vec2 _mouse)
             }
         }
 
-        if(m_selectedItem == nullptr) m_selectedItem.reset(m_ply.getCargo()->handleInput(_mouse));
+        /*if(m_selectedItem == nullptr) m_selectedItem.reset(m_ply.getCargo()->handleInput(_mouse));
         if(m_selectedItem == nullptr)
         {
             for(auto &i: m_agents)
             {
                 if(i.getUniqueID() == m_contextShip) m_selectedItem.reset(i.getCargo()->handleInput(_mouse));
             }
-        }
+        }*/
     }
 
     return ret;
