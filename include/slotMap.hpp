@@ -19,10 +19,12 @@ public:
     {
         if(m_freelist.size() > 0)
         {
+            m_indirection[m_freeList.back().first] = m_objects.size();
             m_ids.push_back( m_freeList.pop_back() );
         }
         else
         {
+            m_indirection.push_back( m_objects.size() );
             m_ids.push_back( {m_objects.size(), 0} );
         }
         m_objects.push_back(_obj);

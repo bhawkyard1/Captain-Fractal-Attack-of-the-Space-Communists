@@ -23,6 +23,7 @@
 
 #include "sfx.hpp"
 #include "ship.hpp"
+#include "slotMap.hpp"
 #include "squad.hpp"
 #include "stardust.hpp"
 #include "stardust_sprite.hpp"
@@ -488,7 +489,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all AI controlled ships in the game.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<enemy> m_agents;
+    slotMap<enemy> m_agents;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all particle systems in the game.
