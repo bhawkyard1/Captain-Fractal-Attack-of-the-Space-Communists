@@ -68,7 +68,7 @@ struct tinfo
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief A global long unsigned int, increments on each ship creation, gives a new ID to use.
 //----------------------------------------------------------------------------------------------------------------------
-extern long unsigned int g_shipIDCounter;
+//extern long unsigned int g_shipIDCounter;
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief A global vector, containing texture identifiers and their radii.
@@ -384,8 +384,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for unique ID.
     //----------------------------------------------------------------------------------------------------------------------
-    long int getUniqueID() {return m_uniqueID;}
-    void setUniqueID(const unsigned long  _id) {m_uniqueID = _id;}
+    //long int getUniqueID() {return m_uniqueID;}
+    //void setUniqueID(const unsigned long  _id) {m_uniqueID = _id;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for last attacker.
@@ -582,7 +582,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The unique id of the ship, used for parenting because pointers and.
     //----------------------------------------------------------------------------------------------------------------------
-    long int m_uniqueID;
+    //long int m_uniqueID;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The id of the ship which last damaged this ship.

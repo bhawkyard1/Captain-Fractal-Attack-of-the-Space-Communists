@@ -3,6 +3,12 @@
 
 #include <vector>
 
+struct uniqueID
+{
+    long m_id;
+    long m_version;
+};
+
 template<class t>
 
 class slotMap
@@ -57,6 +63,11 @@ public:
         pop();
     }
 
+    size_t size() const {return m_objects.size();}
+
+    t operator [](size_t _i) const {return m_objects[_i];}
+    t & operator [](size_t _i) {return m_objects[_i];}
+
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The index of each entry is the id of the object. The contents is the index of the object. Confused? Me too.
@@ -67,12 +78,12 @@ private:
     /// \brief Means we do not have to store ids in the object, this matches movements of m_objects by index.
     /// Nested std::pair goes id, version
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::pair<long, long> > m_ids;
+    std::vector< uniqueID > m_ids;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief List of all free IDs.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< std::pair<long, long> > m_freeList;
+    std::vector< uniqueID > m_freeList;
 };
 
 #endif

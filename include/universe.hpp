@@ -253,7 +253,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the agents vector. Mostly a quick and dirty way of doing stuff in the tutorial, and for file operations.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<enemy>* getAgents() {return &m_agents;}
+    std::vector<enemy>* getAgents() {return &m_agents.m_objects;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the laser vector. Mostly used for saving and loading the game.

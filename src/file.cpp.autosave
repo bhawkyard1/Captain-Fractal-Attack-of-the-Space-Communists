@@ -39,9 +39,9 @@ void saveGame(universe * uni)
     std::cout << "SAVED" << '\n';
 }
 
-void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
+void writeVectorEnemy(std::ostream &_file, const slotMap &_u)
 {    
-    for(auto &i : *_u)
+    for(size_t i = 0; i < _u.size(); ++i)
     {
         _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
               << i.getUniqueID() << "," << i.getParent() << "|"
