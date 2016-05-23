@@ -94,7 +94,7 @@ universe::universe()
 
     m_mapExpanded = false;
 
-    m_contextShip = {-1, -1};
+    m_contextShip = {0, -1};
     m_selectedItem = nullptr;
 }
 
@@ -451,7 +451,7 @@ void universe::update(const float _dt)
             }
 
             //If current ship is context ship
-            if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {-1, -1};
+            if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {0, -1};
 
             m_agents.free(i);
         }
@@ -1825,8 +1825,8 @@ void universe::spawnShip(
             enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
             enemy temp2({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
 
-            shipAddParent(&m_agents.back(), &temp1, {200.0f, q * 200.0f - 960.0f, 0.0f});
-            shipAddParent(&m_agents.back(), &temp2, {-200.0f, q * 200.0f - 960.0f, 0.0f});
+            shipAddParent(m_agents.size() - 1, &temp1, {200.0f, q * 200.0f - 960.0f, 0.0f});
+            shipAddParent(m_agents.size() - 1, &temp2, {-200.0f, q * 200.0f - 960.0f, 0.0f});
 
             temp.push_back(temp1);
             temp.push_back(temp2);
@@ -1841,7 +1841,7 @@ void universe::spawnShip(
                 vec3 pos = {static_cast<float>(cos(rad(pang))) * p * 150.0f, static_cast<float>(sin(rad(pang))) * p * 150.0f, 0.0f};
                 enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, PIRATE_TURRET, SPOOKY_SPACE_PIRATES);
 
-                shipAddParent(&m_agents.back(), &temp1, pos);
+                shipAddParent(m_agents.size() - 1, &temp1, pos);
 
                 temp.push_back(temp1);
             }
@@ -1860,7 +1860,7 @@ void universe::spawnShip(
 
                 enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, COMMUNIST_TURRET, SPACE_COMMUNISTS);
 
-                shipAddParent(&m_agents.back(), &temp1, pos);
+                shipAddParent(m_agents.size() - 1, &temp1, pos);
 
                 temp.push_back(temp1);
             }
@@ -1879,7 +1879,7 @@ void universe::spawnShip(
 
                 enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
 
-                shipAddParent(&m_agents.back(), &temp1, pos);
+                shipAddParent(m_agents.size() - 1, &temp1, pos);
 
                 temp.push_back(temp1);
             }
@@ -1896,7 +1896,7 @@ void universe::spawnShip(
 
                 enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
 
-                shipAddParent(&m_agents.back(), &temp1, pos);
+                shipAddParent(m_agents.size() - 1, &temp1, pos);
 
                 temp.push_back(temp1);
             }
@@ -1909,7 +1909,7 @@ void universe::spawnShip(
     {
         if(s.m_team == _t and s.m_size < s.m_max_size and rand() % 100 < 90)
         {
-            addToSquad(&m_agents.back(), &s);
+            addToSquad(&m_agents.m_objects.back(), &s);
             quit = true;
         }
     }
@@ -1919,7 +1919,7 @@ void universe::spawnShip(
         //Create a new squad if no suitable one exists.
         squad tempSquad = createSquad(_t);
         tempSquad.m_id = m_squads.size();
-        addToSquad(&m_agents.back(), &tempSquad);
+        addToSquad(&m_agents.m_objects.back(), &tempSquad);
         m_squads.push_back(tempSquad);
     }
 
@@ -2016,7 +2016,7 @@ void universe::reload(const bool _newGame)
     m_ply.setEnginePower(5.0f);
     m_ply.setGeneratorMul(1.0f);
 
-    m_contextShip = -1;
+    m_contextShip = {0, -1};
     m_selectedItem = nullptr;
 
     m_ply.getCargo()->getItems()->clear();
@@ -2075,12 +2075,12 @@ void universe::addBuild(
         m_factionMaxCounts[SPACE_COMMUNISTS] += 1;
 
         //Attach to a player capital ship, if any is close enough.
-        for(auto &i : m_agents.m_objects)
+        for(size_t i = 0; i < m_agents.size(); ++i)
         {
-            if(i.getClassification() == PLAYER_CAPITAL and magns(_p - i.getPos()) < sqr(i.getRadius()))
+            if(m_agents[i].getClassification() == PLAYER_CAPITAL and magns(_p - m_agents[i].getPos()) < sqr(m_agents[i].getRadius()))
             {
-                vec3 pos = _p - i.getPos();
-                float angle = -i.getAng();
+                vec3 pos = _p - m_agents[i].getPos();
+                float angle = -m_agents[i].getAng();
                 float s = sin(rad(angle));
                 float c = cos(rad(angle));
 
@@ -2088,7 +2088,7 @@ void universe::addBuild(
                 float yn = pos.m_x * s + pos.m_y * c;
                 vec3 comb = {xn, yn, 0.0f};
 
-                shipAddParent(&i, &newShip, comb);
+                shipAddParent(i, &newShip, comb);
             }
         }
         break;
@@ -2303,9 +2303,9 @@ squad * universe::getSquadFromID(int _id)
     return nullptr;
 }
 
-void universe::shipAddParent(ship * _parent, ship * _child, vec3 _offset)
+void universe::shipAddParent(size_t _index, ship * _child, vec3 _offset)
 {
-    _child->setParent(_parent->getUniqueID());
+    _child->setParent( m_agents.getID(_index) );
     _child->setParentOffset(_offset);
 }
 
@@ -2343,12 +2343,12 @@ selectionReturn universe::handleInput(vec2 _mouse)
     else
     {
         _mouse = toWorldSpace(_mouse);
-        m_contextShip = -1;
-        for(auto &i : m_agents.m_objects)
+        m_contextShip = {0, -1};
+        for(size_t i = 0; i < m_agents.size(); ++i)
         {
-            if(magns(_mouse - tovec2(i.getPos())) < sqr(i.getRadius() + 32.0f))
+            if(magns(_mouse - tovec2(m_agents[i].getPos())) < sqr(m_agents[i].getRadius() + 32.0f))
             {
-                m_contextShip = i.getUniqueID();
+                m_contextShip = m_agents.getID(i);
                 break;
             }
         }

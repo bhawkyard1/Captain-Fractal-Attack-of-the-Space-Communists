@@ -32,7 +32,7 @@ void saveGame(universe * _uni);
 /// \param _file the file to write to
 /// \param _u a ref to the vector of enemies
 //----------------------------------------------------------------------------------------------------------------------
-void writeVectorEnemy(std::ostream &_file, std::vector<enemy> * _u);
+void writeVectorEnemy(std::ostream &_file, slotMap<enemy> * _u);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Writes essential data out to txt from the universes vector of asteroids

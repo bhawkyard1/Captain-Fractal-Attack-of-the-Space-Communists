@@ -1,6 +1,7 @@
 #ifndef SLOTMAP_HPP
 #define SLOTMAP_HPP
 
+#include <stddef.h>
 #include <vector>
 
 struct uniqueID
@@ -24,22 +25,24 @@ public:
 
     t * getByID(uniqueID _i)
     {
-        if(m_ids[m_indirection[_i.m_id]] == _i.m_version)
-            return &m_objects[m_indirection[_i.m_id]];
+        if(m_ids[ m_indirection[ _i.m_id ] ].m_version == _i.m_version)
+            return &m_objects[ m_indirection[ _i.m_id ] ];
         return nullptr;
     }
 
     void push_back(const t &_obj)
     {
-        if(m_freelist.size() > 0)
+        if(m_freeList.size() > 0)
         {
-            m_indirection[m_freeList.back().first] = m_objects.size();
-            m_ids.push_back( m_freeList.pop_back() );
+            m_indirection[ m_freeList.back().m_id ] = m_objects.size();
+            m_ids.push_back( m_freeList.back() );
+            m_freeList.pop_back();
         }
         else
         {
             m_indirection.push_back( m_objects.size() );
-            m_ids.push_back( {m_objects.size(), 0} );
+            uniqueID id = {static_cast<long>(m_objects.size()), 0};
+            m_ids.push_back( id );
         }
         m_objects.push_back(_obj);
 
@@ -51,8 +54,8 @@ public:
         m_indirection[_a] = _b;
         m_indirection[_b] = swap;
 
-        iter_swap( m_objects->begin() + _a, m_objects->begin() + _b );
-        iter_swap( m_ids->begin() + _a, m_ids->begin() + _b );
+        iter_swap( m_objects.begin() + _a, m_objects.begin() + _b );
+        iter_swap( m_ids.begin() + _a, m_ids.begin() + _b );
     }
 
     void pop()
@@ -61,7 +64,7 @@ public:
         m_objects.pop_back();
 
         //Add to freelist id and incremented version.
-        m_freelist.push_back({m_ids.back().first, ++m_ids.back().second});
+        m_freeList.push_back({m_ids.back().m_id, ++m_ids.back().m_version});
         m_ids.pop_back();
     }
 
@@ -69,6 +72,15 @@ public:
     {
         swap(_i, m_objects.size() - 1);
         pop();
+    }
+
+    t& back() const {return m_objects.back();}
+
+    void clear()
+    {
+        m_objects.clear();
+        m_ids.clear();
+        m_indirection.clear();
     }
 
     size_t size() const {return m_objects.size();}

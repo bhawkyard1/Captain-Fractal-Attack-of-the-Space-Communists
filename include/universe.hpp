@@ -253,7 +253,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the agents vector. Mostly a quick and dirty way of doing stuff in the tutorial, and for file operations.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<enemy>* getAgents() {return &m_agents.m_objects;}
+    slotMap<enemy> * getAgents() {return &m_agents;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the laser vector. Mostly used for saving and loading the game.
@@ -408,7 +408,7 @@ public:
     /// \param _child child ship
     /// \param _offset childs offset from the parent
     //----------------------------------------------------------------------------------------------------------------------
-    void shipAddParent(ship *_parent, ship *_child, vec3 _offset);
+    void shipAddParent(size_t _index, ship *_child, vec3 _offset);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a text popup to the world.

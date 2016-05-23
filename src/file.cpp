@@ -39,20 +39,21 @@ void saveGame(universe * uni)
     std::cout << "SAVED" << '\n';
 }
 
-void writeVectorEnemy(std::ostream &_file, const slotMap<enemy> &_u)
-{    
-    for(size_t i = 0; i < _u.size(); ++i)
+void writeVectorEnemy(std::ostream &_file, slotMap<enemy> * _u)
+{
+    slotMap<enemy> cpy = *_u;
+    for(size_t i = 0; i < cpy.size(); ++i)
     {
-        _file << "/|" << _u[i].getClassification() << "," << _u[i].getTeam() << "|"
-              << _u.getID(i).m_id << "," << _u.getID(i).m_version << "," << _u[i].getParent().m_id << "," << _u[i].getParent().m_version << "|"
-              << _u[i].getParentOffset().m_x << "," << _u[i].getParentOffset().m_y << "|"
-              << _u[i].getPos().m_x << "," << _u[i].getPos().m_y << "|"
-              << _u[i].getVel().m_x << "," << _u[i].getVel().m_y << "|"
-              << _u[i].getAng() << "|"
-              << _u[i].getHealth() << "," << _u[i].getShield() << "," << _u[i].getEnergy() << "|"
-              << _u[i].getMaxHealth() << "," << _u[i].getMaxShield() << "," << _u[i].getMaxEnergy() << "|"
-              << _u[i].getKills() <<"|"
-              << _u[i].getRadius() << "|"
+        _file << "/|" << cpy[i].getClassification() << "," << cpy[i].getTeam() << "|"
+              << cpy.getID(i).m_id << "," << cpy.getID(i).m_version << "," << cpy[i].getParent().m_id << "," << cpy[i].getParent().m_version << "|"
+              << cpy[i].getParentOffset().m_x << "," << cpy[i].getParentOffset().m_y << "|"
+              << cpy[i].getPos().m_x << "," << cpy[i].getPos().m_y << "|"
+              << cpy[i].getVel().m_x << "," << cpy[i].getVel().m_y << "|"
+              << cpy[i].getAng() << "|"
+              << cpy[i].getHealth() << "," << cpy[i].getShield() << "," << cpy[i].getEnergy() << "|"
+              << cpy[i].getMaxHealth() << "," << cpy[i].getMaxShield() << "," << cpy[i].getMaxEnergy() << "|"
+              << cpy[i].getKills() <<"|"
+              << cpy[i].getRadius() << "|"
                  ;
     }
 }

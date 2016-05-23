@@ -954,7 +954,7 @@ void playTutorial(universe &uni)
             else if(timer > 6.0f)
             {
                 uni.spawnSquad(SPOOKY_SPACE_PIRATES, 12000.0f, 18000.0f, 2);
-                for(auto &i : *uni.getAgents()) i.setMaxShield(10.0f, true);
+                for(auto &i : (uni.getAgents()->m_objects)) i.setMaxShield(10.0f, true);
                 tutStage = STAGE_COMBAT_2;
                 timer = 0.0f;
             }
@@ -1143,7 +1143,7 @@ void sandbox(universe &uni)
     while(g_GAME_STATE == MODE_SANDBOX)
     {
         vec3 center = {0.0f, 0.0f, 0.0f};
-        for(auto &i : *uni.getAgents())
+        for(auto &i : uni.getAgents()->m_objects)
         {
             center += i.getPos();
         }
