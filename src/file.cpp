@@ -39,20 +39,20 @@ void saveGame(universe * uni)
     std::cout << "SAVED" << '\n';
 }
 
-void writeVectorEnemy(std::ostream &_file, std::vector<enemy> *_u)
+void writeVectorEnemy(std::ostream &_file, const slotMap<enemy> &_u)
 {    
-    for(auto &i : *_u)
+    for(size_t i = 0; i < _u.size(); ++i)
     {
-        _file << "/|" << i.getClassification() << "," << i.getTeam() << "|"
-              << i.getUniqueID() << "," << i.getParent() << "|"
-              << i.getParentOffset().m_x << "," << i.getParentOffset().m_y << "|"
-              << i.getPos().m_x << "," << i.getPos().m_y << "|"
-              << i.getVel().m_x << "," << i.getVel().m_y << "|"
-              << i.getAng() << "|"
-              << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
-              << i.getMaxHealth() << "," << i.getMaxShield() << "," << i.getMaxEnergy() << "|"
-              << i.getKills() <<"|"
-              << i.getRadius() << "|"
+        _file << "/|" << _u[i].getClassification() << "," << _u[i].getTeam() << "|"
+              << _u.getID(i).m_id << "," << _u.getID(i).m_version << "," << _u[i].getParent().m_id << "," << _u[i].getParent().m_version << "|"
+              << _u[i].getParentOffset().m_x << "," << _u[i].getParentOffset().m_y << "|"
+              << _u[i].getPos().m_x << "," << _u[i].getPos().m_y << "|"
+              << _u[i].getVel().m_x << "," << _u[i].getVel().m_y << "|"
+              << _u[i].getAng() << "|"
+              << _u[i].getHealth() << "," << _u[i].getShield() << "," << _u[i].getEnergy() << "|"
+              << _u[i].getMaxHealth() << "," << _u[i].getMaxShield() << "," << _u[i].getMaxEnergy() << "|"
+              << _u[i].getKills() <<"|"
+              << _u[i].getRadius() << "|"
                  ;
     }
 }
@@ -85,10 +85,10 @@ void readVectorEnemy(std::string str, universe * _u)
         type = std::stof(stat[0]);
         team = std::stof(stat[1]);
 
-        long id, parentID;
+        uniqueID id, parentID;
         stat = split(stats[2], ',');
-        id = std::stoi(stat[0]);
-        parentID = std::stoi(stat[1]);
+        id = {std::stoi(stat[0]), std::stoi(stat[1])};
+        parentID = {std::stoi(stat[2]), std::stoi(stat[3])};
 
         vec3 parentPos;
         stat = split(stats[3], ',');
@@ -135,7 +135,9 @@ void readVectorEnemy(std::string str, universe * _u)
         temp.setShield(shield);
         temp.setEnergy(energy);
         temp.setKills(kills);
-        temp.setUniqueID(id);
+
+        //NEED TO SET UNIQUE ID
+        //temp.setUniqueID(id);
         temp.setParent(parentID);
 
         _u->getAgents()->push_back(temp);
@@ -235,8 +237,6 @@ void loadGame(universe * uni)
         }
     }
     save.close();
-
-    g_shipIDCounter = tempIDCounter;
 
     std::cout << "LOADED" << std::endl;
 }

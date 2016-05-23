@@ -9,6 +9,9 @@ struct uniqueID
     long m_version;
 };
 
+bool operator ==(const uniqueID &_lhs, const uniqueID &_rhs);
+bool operator !=(const uniqueID &_lhs, const uniqueID &_rhs);
+
 template<class t>
 
 class slotMap
@@ -19,7 +22,12 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<t> m_objects;
 
-    t * getByID(long _i) {return &m_objects[m_ids[_i]];}
+    t * getByID(uniqueID _i)
+    {
+        if(m_ids[m_indirection[_i.m_id]] == _i.m_version)
+            return &m_objects[m_indirection[_i.m_id]];
+        return nullptr;
+    }
 
     void push_back(const t &_obj)
     {
@@ -64,6 +72,8 @@ public:
     }
 
     size_t size() const {return m_objects.size();}
+
+    uniqueID getID(size_t _i) const {return m_ids[_i];}
 
     t operator [](size_t _i) const {return m_objects[_i];}
     t & operator [](size_t _i) {return m_objects[_i];}

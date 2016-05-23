@@ -8,6 +8,7 @@
 #include "base.hpp"
 #include "common.hpp"
 #include "inventory.hpp"
+#include "slotMap.hpp"
 #include "util.hpp"
 #include "weapons.hpp"
 
@@ -279,7 +280,7 @@ public:
     /// \brief Damages the ship.
     /// \param _d damage, _v knockback vector, _id attacker id
     //----------------------------------------------------------------------------------------------------------------------
-    void damage(const float _d, const vec3 _v, const long int _id);
+    void damage(const float _d, const vec3 _v, uniqueID _id);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for m_upgrades.
@@ -372,8 +373,8 @@ public:
     /// \brief Getters and setters for parents.
     //----------------------------------------------------------------------------------------------------------------------
     bool hasParent() const {return m_hasParent;}
-    long int getParent() const {return m_parent;}
-    void setParent(long int _p) {m_parent = _p; if(_p != -1) {m_hasParent = true;}}
+    uniqueID getParent() const {return m_parent;}
+    void setParent(uniqueID _p) {m_parent = _p; if(_p.m_id != -1) {m_hasParent = true;}}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for parent offsets.
@@ -390,8 +391,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for last attacker.
     //----------------------------------------------------------------------------------------------------------------------
-    long int getLastAttacker() {return m_lastAttacker;}
-    void setLastAttacker(long int _id) {m_lastAttacker = _id;}
+    uniqueID getLastAttacker() {return m_lastAttacker;}
+    void setLastAttacker(uniqueID _id) {m_lastAttacker = _id;}
 
     void toggleInventory() {m_cargo.toggleVisible();}
     bool isInventoryVisible() {return m_cargo.isVisible();}
@@ -572,7 +573,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The parent ships unique ID.
     //----------------------------------------------------------------------------------------------------------------------
-    long int m_parent;
+    uniqueID m_parent;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The offset from the parent ship.
@@ -587,7 +588,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The id of the ship which last damaged this ship.
     //----------------------------------------------------------------------------------------------------------------------
-    long int m_lastAttacker;
+    uniqueID m_lastAttacker;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The inventory of the ship.

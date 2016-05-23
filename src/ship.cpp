@@ -28,7 +28,7 @@ ship::ship(
         )
 {
     g_shipIDCounter++;
-    m_uniqueID = g_shipIDCounter;
+    //m_uniqueID = g_shipIDCounter;
 
     m_coolDown = 0.0f;
     m_shooting = false;
@@ -53,14 +53,14 @@ ship::ship(
     m_curWeap = 0;
 
     m_hasParent = false;
-    m_parent = -1;
+    m_parent = {-1, -1};
     m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
     m_shieldMul = 1.0f;
     m_generatorMul = 1.0f;
 
-    m_lastAttacker = -1;
+    m_lastAttacker = {-1, -1};
 
     m_cargo.setDim({0.0f, 0.0f});
 
@@ -531,7 +531,7 @@ ship::ship(
         )
 {
     g_shipIDCounter++;
-    m_uniqueID = g_shipIDCounter;
+    //m_uniqueID = g_shipIDCounter;
 
     m_coolDown = 0.0f;
     m_shooting = false;
@@ -882,7 +882,7 @@ void ship::damage(float _d, const vec3 _v)
     m_damageTimer = 10.0f;
 }
 
-void ship::damage(float _d, const vec3 _v, const long int _id)
+void ship::damage(float _d, const vec3 _v, uniqueID _id)
 {
     //Shots to the rear do more damage.
     if(m_canMove)

@@ -147,7 +147,7 @@ void enemy::steering()
     if(m_curGoal == GOAL_TURRET) dist -= 200.0f;
 
     float selfRadius = getRadius();
-    if(getParent() != -1) selfRadius += 2048.0f;
+    if(getParent().m_id != -1) selfRadius += 2048.0f;
 
     if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f
             and dist < 800.0f + radius + selfRadius

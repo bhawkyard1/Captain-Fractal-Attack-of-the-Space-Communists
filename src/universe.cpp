@@ -94,7 +94,7 @@ universe::universe()
 
     m_mapExpanded = false;
 
-    m_contextShip = -1;
+    m_contextShip = {-1, -1};
     m_selectedItem = nullptr;
 }
 
@@ -104,7 +104,7 @@ void universe::addShot(
         const float _angle,
         const std::array<float, WEAPS_W> _weap,
         const aiTeam _team,
-        const long int _owner
+        uniqueID _owner
         )
 {
     int temp_angle = _angle + 90;
@@ -198,7 +198,7 @@ void universe::update(const float _dt)
     {
         m_sounds.playSnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
-        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, -1 );
+        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {-1, -1} );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
         m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -444,23 +444,15 @@ void universe::update(const float _dt)
             if(m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) m_factionCounts[GALACTIC_FEDERATION]--;
             else m_factionCounts[m_agents[i].getTeam()]--;
 
-            long int la = m_agents[i].getLastAttacker();
-            if(la != -1)
+            enemy * la = m_agents.getByID(m_agents[i].getLastAttacker());
+            if(la != nullptr and la->getTeam() == TEAM_PLAYER)
             {
-                for(auto &j : m_agents.m_objects)
-                {
-                    if(j.getUniqueID() == la and j.getTeam() == TEAM_PLAYER)
-                    {
-                        addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, j.getPos(), -m_vel + randVec3(2.0f) );
-                        break;
-                    }
-                }
-                if(la == m_ply.getUniqueID())
-                {
-                    addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, m_ply.getPos(), randVec3(2.0f) );
-                }
+                addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, la->getPos(), -m_vel + randVec3(2.0f) );
             }
-            if(m_contextShip == m_agents[i].getUniqueID()) m_contextShip = -1;
+
+            //If current ship is context ship
+            if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {-1, -1};
+
             m_agents.free(i);
         }
     }
@@ -489,11 +481,8 @@ void universe::update(const float _dt)
         }
         else if(m_agents[e].hasParent())
         {
-            ship * parent = nullptr;
-            for(auto &q : m_agents.m_objects)
-            {
-                if(q.getUniqueID() == m_agents[e].getParent()) parent = &q;
-            }
+            ship * parent = m_agents.getByID( m_agents[e].getParent() );
+
             if(parent == nullptr)
             {
                 m_agents[e].setHealth(-1.0f);
@@ -634,7 +623,7 @@ void universe::update(const float _dt)
         {
             //If the agent is shooting, add lasers.
             m_agents[e].shoot();
-            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), m_agents[e].getUniqueID());
+            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), m_agents.getID(e));
             m_agents[e].setCooldown( (m_agents[e].getCurWeapStat(COOLDOWN)) );
             m_agents[e].setFiring(false);
         }
@@ -1177,74 +1166,71 @@ void universe::drawUI(const float _dt)
         //DRAWING CONTEXT-SELECTED SHIP STATS
         selection * infoCard = &(*m_ui.getElements())[3];
 
-        for(auto &i : m_agents.m_objects)
+        enemy * contextPtr = m_agents.getByID(m_contextShip);
+        if(contextPtr != nullptr)
         {
-            if(i.getUniqueID() == m_contextShip)
+            vec3 csp = contextPtr->getPos();
+            vec2 offset = {256.0f, 256.0f};
+            vec2 min = (-g_HALFWIN + offset) / g_ZOOM_LEVEL;
+            vec2 max = (g_HALFWIN - offset) / g_ZOOM_LEVEL;
+            csp = clamp(csp, tovec3(min), tovec3(max));
+
+            float health = 128.0f * contextPtr->getHealth() / contextPtr->getMaxHealth();
+            float shield = 128.0f * contextPtr->getShield() /  contextPtr->getMaxShield();
+            float energy = 128.0f * contextPtr->getEnergy() / contextPtr->getMaxEnergy();
+
+            infoCard->setVisible(true);
+
+            infoCard->getAt(0)->setLabel(contextPtr->getIdentifier());
+            infoCard->getAt(1)->setLabel("KILLS: " + std::to_string(contextPtr->getKills()));
+            infoCard->getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) / 4.0f)));
+            for(auto &i : *(infoCard->getButtons()))
             {
-                vec3 csp = i.getPos();
-                vec2 offset = {256.0f, 256.0f};
-                vec2 min = (-g_HALFWIN + offset) / g_ZOOM_LEVEL;
-                vec2 max = (g_HALFWIN - offset) / g_ZOOM_LEVEL;
-                csp = clamp(csp, tovec3(min), tovec3(max));
-
-                float health = 128.0f * i.getHealth() / i.getMaxHealth();
-                float shield = 128.0f * i.getShield() /  i.getMaxShield();
-                float energy = 128.0f * i.getEnergy() / i.getMaxEnergy();
-
-                infoCard->setVisible(true);
-
-                infoCard->getAt(0)->setLabel(i.getIdentifier());
-                infoCard->getAt(1)->setLabel("KILLS: " + std::to_string(i.getKills()));
-                infoCard->getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(i.getPos()) / 4.0f)));
-                for(auto &i : *(infoCard->getButtons()))
-                {
-                    vec2 pos = i.getPos();
-                    pos += tovec2( csp );
-                    i.setPos( pos );
-                }
-
-                csp.m_x += 64.0f;
-                csp.m_y += 32.0f;
-
-                //Health base
-                m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.4f, 0.08f, 0.08f, 0.5f});
-                //Health
-                m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
-
-                csp.m_y += 16.0f;
-                //Shield base
-                m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.1f, 0.1f, 0.4f, 0.5f});
-                //Shield
-                m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
-
-                csp.m_y += 16.0f;
-                //Energy base
-                m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.08f, 0.4f, 0.08f, 0.5f});
-                //Energy
-                m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
-
-                m_drawer.drawRects(true);
-                m_drawer.clearVectors();
-                break;
+                vec2 pos = i.getPos();
+                pos += tovec2( csp );
+                i.setPos( pos );
             }
 
-            infoCard->setVisible(false);
-        }
+            csp.m_x += 64.0f;
+            csp.m_y += 32.0f;
 
-        if(m_ply.getCargo()->isVisible())
-        {
-            vec2 dim = m_ply.getCargo()->getDim();
-            m_drawer.addRect({0.0f, 0.0f, 0.0f}, dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
+            //Health base
+            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.4f, 0.08f, 0.08f, 0.5f});
+            //Health
+            m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
+
+            csp.m_y += 16.0f;
+            //Shield base
+            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.1f, 0.1f, 0.4f, 0.5f});
+            //Shield
+            m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
+
+            csp.m_y += 16.0f;
+            //Energy base
+            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.08f, 0.4f, 0.08f, 0.5f});
+            //Energy
+            m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
+
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
-
-            m_drawer.useShader("ship");
-            for(auto &i : *(m_ply.getCargo()->getItems()))
-            {
-                m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
-            }
-            m_drawer.useShader("plain");
         }
+
+        infoCard->setVisible(false);
+    }
+
+    if(m_ply.getCargo()->isVisible())
+    {
+        vec2 dim = m_ply.getCargo()->getDim();
+        m_drawer.addRect({0.0f, 0.0f, 0.0f}, dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
+        m_drawer.drawRects(true);
+        m_drawer.clearVectors();
+
+        m_drawer.useShader("ship");
+        for(auto &i : *(m_ply.getCargo()->getItems()))
+        {
+            m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+        }
+        m_drawer.useShader("plain");
     }
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
@@ -1398,7 +1384,7 @@ void universe::checkCollisions()
             vec3 sv = m_partitions[p].m_lasers[l]->getVel() * 5.0f;
             vec3 spv = sp + sv * 1.5;
             float stop = m_partitions[p].m_lasers[l]->getStop();
-            long int so = m_partitions[p].m_lasers[l]->getOwner();
+            uniqueID so = m_partitions[p].m_lasers[l]->getOwner();
 
             vec3 ep;
             vec3 ev;
@@ -1632,11 +1618,17 @@ void universe::checkCollisions()
     }
 }
 
+void universe::resolveCollision(uniqueID _a, uniqueID _b)
+{
+    if(_a != _b) return;
+    ship * a = m_agents.getByID(_a);
+    ship * b = m_agents.getByID(_b);
+    resolveCollision(a, b);
+}
+
 void universe::resolveCollision(ship *_a, ship *_b)
 {
-    if(_a == _b or
-            _a->getParent() == _b->getUniqueID() or
-            _b->getParent() == _a->getUniqueID()) return;
+    if(_a == _b) return;
 
     float dist = magns(_a->getPos() - _b->getPos());
 
@@ -2374,7 +2366,7 @@ selectionReturn universe::handleInput(vec2 _mouse)
     return ret;
 }
 
-ship * universe::getByID(const unsigned long _i)
+/*ship * universe::getByID(const unsigned long _i)
 {
     for(auto &i : m_agents.m_objects)
     {
@@ -2382,10 +2374,10 @@ ship * universe::getByID(const unsigned long _i)
             return &i;
     }
     return nullptr;
-}
+}*/
 
-void universe::addFrag(const unsigned long _i)
+void universe::addFrag(uniqueID _i)
 {
-    ship * killer = getByID(_i);
+    ship * killer = m_agents.getByID(_i);
     if(killer != nullptr) killer->addKill();
 }
