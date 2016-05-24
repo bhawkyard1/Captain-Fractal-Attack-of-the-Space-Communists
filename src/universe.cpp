@@ -198,7 +198,7 @@ void universe::update(const float _dt)
     {
         m_sounds.playSnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
-        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {-1, -1} );
+        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1} );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
         m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -427,7 +427,7 @@ void universe::update(const float _dt)
                 }
 
                 //Dump inventory.
-                for(auto &d : *(m_agents[i].getCargo()->getItems()))
+                for(auto &d : m_agents[i].getCargo()->getItems()->m_objects)
                 {
                     addDebris(p, m_agents[i].getVel() + tovec3(randVec2(1.0f)), RESOURCE_IRON);
                 }
@@ -444,12 +444,13 @@ void universe::update(const float _dt)
             if(m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) m_factionCounts[GALACTIC_FEDERATION]--;
             else m_factionCounts[m_agents[i].getTeam()]--;
 
+            //std::cout << "p10.1\n";
             enemy * la = m_agents.getByID(m_agents[i].getLastAttacker());
             if(la != nullptr and la->getTeam() == TEAM_PLAYER)
             {
                 addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, la->getPos(), -m_vel + randVec3(2.0f) );
             }
-
+            //std::cout << "p10.2\n";
             //If current ship is context ship
             if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {0, -1};
 
@@ -1119,7 +1120,7 @@ void universe::draw(float _dt)
                 vec3 jvel = (j->getVel()) * 3;
                 col[3] = i.getAlpha(k) / 255.0f;
 
-                m_drawer.addLine(jpos, jpos + jvel, col);
+                m_drawer.addLine(jpos, jpos + jvel - m_vel * 3, col);
                 ++k;
             }
         }
@@ -1214,8 +1215,10 @@ void universe::drawUI(const float _dt)
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
         }
-
-        infoCard->setVisible(false);
+        else
+        {
+            infoCard->setVisible(false);
+        }
     }
 
     if(m_ply.getCargo()->isVisible())
@@ -1226,7 +1229,7 @@ void universe::drawUI(const float _dt)
         m_drawer.clearVectors();
 
         m_drawer.useShader("ship");
-        for(auto &i : *(m_ply.getCargo()->getItems()))
+        for(auto &i : m_ply.getCargo()->getItems()->m_objects)
         {
             m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
         }
@@ -1235,6 +1238,7 @@ void universe::drawUI(const float _dt)
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
+        std::cout << "Name : " << i->getButtons()->at(0).getLabel() << '\n';
         if(!i->isVisible()) continue;
         for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
         {

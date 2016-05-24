@@ -11,7 +11,7 @@ inventory::inventory()
 bool inventory::addItem(debris _in)
 {
     float area = m_dim.m_x * m_dim.m_y;
-    for(auto &i : m_contents) area -= sqr(i.getRadius());
+    for(auto &i : m_contents.m_objects) area -= sqr(i.getRadius());
 
     if(area < sqr(_in.getRadius())) return false;
 
@@ -30,14 +30,14 @@ void inventory::update(const float _dt)
 {
     if(!m_visible) return;
 
-    for(auto &i : m_contents)
+    for(auto &i : m_contents.m_objects)
     {
-        for(auto &j : m_contents)
+        /*for(auto &j : m_contents)
         {
             if(&i == &j) continue;
 
             sphereSphereCollision(&i, &j);
-        }
+        }*/
 
         //Apply drag.
         i.setVel( i.getVel() * 0.995f );

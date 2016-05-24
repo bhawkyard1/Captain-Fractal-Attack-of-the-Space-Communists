@@ -10,6 +10,7 @@ enemy::enemy(
 {	
     m_curGoal = GOAL_IDLE;
     setPos(_p);
+    setPPos(_p);
     setVel(_v);
     m_stopDist = randNum(200.0f,600.0f);
     if(_type == PLAYER_MINER_DROID) m_stopDist = randNum(20.0f, 60.0f);

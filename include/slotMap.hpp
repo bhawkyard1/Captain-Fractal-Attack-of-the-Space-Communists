@@ -48,14 +48,20 @@ public:
 
     }
 
+    //Swaps item at index _a with item at index _b
     void swap(size_t _a, size_t _b)
     {
-        size_t swap = m_indirection[_a];
-        m_indirection[_a] = _b;
-        m_indirection[_b] = swap;
+        //Store entry pointed to by the id of _a
+        size_t swap = m_indirection[ m_ids[_a].m_id ];
 
-        iter_swap( m_objects.begin() + _a, m_objects.begin() + _b );
-        iter_swap( m_ids.begin() + _a, m_ids.begin() + _b );
+        //Make the entry at _a's id point to _b's future index.
+        m_indirection[ m_ids[_a].m_id ] = _b;
+
+        //Make the entry at _b's id point to _a's future index.
+        m_indirection[ m_ids[_b].m_id ] = swap;
+
+        std::swap( m_objects[_a], m_objects[_b] );
+        std::swap( m_ids[_a], m_ids[_b] );
     }
 
     void pop()
@@ -64,7 +70,7 @@ public:
         m_objects.pop_back();
 
         //Add to freelist id and incremented version.
-        m_freeList.push_back({m_ids.back().m_id, ++m_ids.back().m_version});
+        m_freeList.push_back({m_ids.back().m_id, m_ids.back().m_version + 1});
         m_ids.pop_back();
     }
 

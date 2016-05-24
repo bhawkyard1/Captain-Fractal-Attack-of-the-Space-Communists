@@ -374,7 +374,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     bool hasParent() const {return m_hasParent;}
     uniqueID getParent() const {return m_parent;}
-    void setParent(uniqueID _p) {m_parent = _p; if(_p.m_id != -1) {m_hasParent = true;}}
+    void setParent(uniqueID _p);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for parent offsets.

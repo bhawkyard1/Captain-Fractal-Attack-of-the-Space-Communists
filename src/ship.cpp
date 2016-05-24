@@ -53,14 +53,14 @@ ship::ship(
     m_curWeap = 0;
 
     m_hasParent = false;
-    m_parent = {-1, -1};
+    m_parent = {0, -1};
     m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
     m_shieldMul = 1.0f;
     m_generatorMul = 1.0f;
 
-    m_lastAttacker = {-1, -1};
+    m_lastAttacker = {0, -1};
 
     m_cargo.setDim({0.0f, 0.0f});
 
@@ -1002,4 +1002,13 @@ float ship::getCurWeapStat(WEAPON_STAT _ws) const
 {
     if(m_canShoot) return m_weapons[m_curWeap][_ws];
     return 0.0f;
+}
+
+void ship::setParent(uniqueID _p)
+{
+    m_parent = _p;
+    if(_p.m_id != -1)
+        m_hasParent = true;
+    else
+        m_hasParent = false;
 }

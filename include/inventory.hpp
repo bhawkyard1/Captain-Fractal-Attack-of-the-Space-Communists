@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "debris.hpp"
+#include "slotMap.hpp"
 
 class inventory
 {
@@ -19,11 +20,11 @@ public:
     void setVisible(const bool _visible) {m_visible = _visible;}
     bool isVisible() const {return m_visible;}
 
-    std::vector<debris> * getItems() {return &m_contents;}
+    slotMap<debris> * getItems() {return &m_contents;}
 
     debris handleInput(const vec2 _mouse);
 private:
-    std::vector<debris> m_contents;
+    slotMap<debris> m_contents;
     vec2 m_dim;
     float m_mass;
     bool m_visible;
