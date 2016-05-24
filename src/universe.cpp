@@ -523,14 +523,8 @@ void universe::update(const float _dt)
         //Reset target.
         m_agents[e].setTarget(nullptr);
 
-        if(m_agents[e].getClassification() == PLAYER_MINER_DROID)
-        {
-            std::cout << "TYPE IS " << m_agents[e].getType() << '\n';
-        }
-
         if(m_agents[e].getType() == SHIP_TYPE_MINER) //Set miner targets
         {
-            std::cout << "MINER TARGETS SET!\n";
             //Find the closest asteroid.
             for(auto &k : m_asteroids)
             {
@@ -563,7 +557,6 @@ void universe::update(const float _dt)
         }
         else if(m_agents[e].getCanShoot()) //Default m_target acquisition
         {
-            if(m_agents[e].getType() == SHIP_TYPE_MINER) std::cout << "MINER TARGETS INCORRECTLY SET!\n";
             //Get closest enemy.
             for(auto &k : m_agents.m_objects)
             {
@@ -1238,7 +1231,6 @@ void universe::drawUI(const float _dt)
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
     {
-        std::cout << "Name : " << i->getButtons()->at(0).getLabel() << '\n';
         if(!i->isVisible()) continue;
         for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
         {

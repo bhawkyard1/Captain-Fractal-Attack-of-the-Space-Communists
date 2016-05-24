@@ -1,6 +1,6 @@
 res_x 1920
-res_y 1200
+res_y 1080
 graphical_detail 2
 devmode 1
-beastmode 1
+beastmode 0
 difficulty 1

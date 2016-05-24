@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 enum sound {RED_LASER_SND, GREEN_LASER_SND, BLUE_LASER_SND, EXPLOSION_SND, RICOCHET_SND, SAVE_SND, PLACE_SND, MENU_SELECT_SND, MENU_FAIL_SND, CLUNK_SND};
 
-class soundPlayer : public observer
+class soundPlayer
 {
 public:
     //----------------------------------------------------------------------------------------------------------------------
@@ -64,7 +64,6 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void loadMusic(std::string _path);
 
-    virtual void onNotify(const player &entity, event type);
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of sounds which can be played.

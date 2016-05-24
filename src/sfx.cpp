@@ -71,15 +71,6 @@ void soundPlayer::playMusic(size_t _mus)
     Mix_PlayMusic( m_music.at(_mus), -1 );
 }
 
-void soundPlayer::onNotify(const player &entity, event type)
-{
-    switch(type)
-    {
-    default:
-        break;
-    }
-}
-
 soundPlayer::~soundPlayer()
 {
     for(auto &i : m_snds)
