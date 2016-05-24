@@ -30,7 +30,6 @@ void soundPlayer::loadSound(std::string _path, int _len)
 
 void soundPlayer::loadMusic(std::string _path)
 {
-
     std::string name = _path;
     name += ".wav";
     Mix_Music * temp = Mix_LoadMUS( name.c_str() );
@@ -72,6 +71,14 @@ void soundPlayer::playMusic(size_t _mus)
     Mix_PlayMusic( m_music.at(_mus), -1 );
 }
 
+void soundPlayer::onNotify(const player &entity, event type)
+{
+    switch(type)
+    {
+    default:
+        break;
+    }
+}
 
 soundPlayer::~soundPlayer()
 {

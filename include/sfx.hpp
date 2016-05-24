@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "observer.hpp"
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \file sfx.hpp
 /// \brief This file provides functions to load and play sound effects. Could be abstracted into a 'sound-player' class.
@@ -20,7 +22,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 enum sound {RED_LASER_SND, GREEN_LASER_SND, BLUE_LASER_SND, EXPLOSION_SND, RICOCHET_SND, SAVE_SND, PLACE_SND, MENU_SELECT_SND, MENU_FAIL_SND, CLUNK_SND};
 
-class soundPlayer
+class soundPlayer : public observer
 {
 public:
     //----------------------------------------------------------------------------------------------------------------------
@@ -61,6 +63,8 @@ public:
     /// \param _path path to the file
     //----------------------------------------------------------------------------------------------------------------------
     void loadMusic(std::string _path);
+
+    virtual void onNotify(const player &entity, event type);
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of sounds which can be played.

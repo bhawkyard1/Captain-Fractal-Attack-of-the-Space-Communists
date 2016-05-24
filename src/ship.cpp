@@ -57,7 +57,7 @@ ship::ship(
     m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
-    m_shieldMul = 1.0f;
+    m_shieldMul = _radius / 32.0f;
     m_generatorMul = 1.0f;
 
     m_lastAttacker = {0, -1};
@@ -811,11 +811,11 @@ void ship::update(const float _dt)
 
     if(m_energy >= energy_loss and m_shield < m_maxShield)
     {
-        m_shield = clamp(m_shield + shield_add * m_shieldMul, 0.0f, m_maxShield);
+        m_shield = clamp(m_shield + shield_add * m_shieldMul * _dt, 0.0f, m_maxShield);
         m_energy -= energy_loss;
     }
 
-    m_energy = clamp(m_energy + 0.1f * m_generatorMul, 0.0f, m_maxEnergy);
+    m_energy = clamp(m_energy + m_generatorMul * _dt * 5.0f, 0.0f, m_maxEnergy);
 
     if(rand()%999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
@@ -826,7 +826,7 @@ void ship::update(const float _dt)
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
-    m_drawShot *= 0.55f;
+    m_drawShot *= 20.0f * _dt;
 
     addVel(-getVel() * 0.00001f);
 

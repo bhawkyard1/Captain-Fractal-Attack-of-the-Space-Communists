@@ -1117,10 +1117,10 @@ void universe::draw(float _dt)
             for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
             {
                 vec3 jpos = j->getInterpolatedPosition(_dt);
-                vec3 jvel = (j->getVel()) * 3;
+                vec3 jvel = j->getVel() * 2.0f;
                 col[3] = i.getAlpha(k) / 255.0f;
 
-                m_drawer.addLine(jpos, jpos + jvel - m_vel * 3, col);
+                m_drawer.addLine(jpos, jpos + jvel * 2.0f, col);
                 ++k;
             }
         }
