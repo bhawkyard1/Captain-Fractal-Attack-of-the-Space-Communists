@@ -146,20 +146,20 @@ void mainMenu(universe &uni)
     uni.setMaxEnemyCount(20, GALACTIC_FEDERATION);
     uni.setMaxWingmanCount(10);
 
-    uni.addBuild({600.0f, 300.0f}, PLAYER_STATION, TEAM_PLAYER);
+    uni.addBuild(vec3(600.0f, 300.0f, 0.0f), PLAYER_STATION, TEAM_PLAYER);
 
     for(int i = 0; i < 360; i += 6)
     {
         vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1100.0f;
-        pos += {600.0f, 300.0f};
+        pos += vec3(600.0f, 300.0f, 0.0f);
         uni.addBuild(pos, PLAYER_TURRET, TEAM_PLAYER);
     }
     for(int i = 3; i < 360; i += 6)
     {
         vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1150.0f;
-        pos += {600.0f, 300.0f};
+        pos += vec3(600.0f, 300.0f, 0.0f);
         uni.addBuild(pos, PLAYER_TURRET, TEAM_PLAYER);
     }
 
@@ -484,8 +484,6 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
 
 void gameInit()
 {
-    loadConfig();
-
     srand (static_cast <unsigned> (time(0)));
 
     g_GAME_OVER = false;
@@ -649,7 +647,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         vec3 dir;
 
         if(spd > 0.0f) dir = -(vel / spd);
-        else dir = {0.0f, 0.0f};
+        else dir = {0.0f, 0.0f, 0.0f};
 
         ply->accelerate(dir, clamp(spd, 0.0f, 1.0f));
         break;
@@ -896,7 +894,7 @@ void playTutorial(universe &uni)
         else if(tutStage == STAGE_ASTEROID_1 and timer > 1.0f)
         {
             ship asteroid( g_ship_templates[ASTEROID_SMALL] );
-            asteroid.setPos({0.0f, - 300.0f});
+            asteroid.setPos(vec3(0.0f - 300.0f, 0.0f, 0.0f));
             asteroid.setVel(uni.getPly()->getVel());
             asteroid.setHealth(10);
             uni.playSnd(PLACE_SND);
@@ -1032,7 +1030,7 @@ void playTutorial(universe &uni)
             }
             else if(timer > 6.0f)
             {
-                for(int i = 0; i < 6; ++i)
+                for(int i = 0; i < 2; ++i)
                 {
                     uni.spawnSquad(GALACTIC_FEDERATION, 16000.0f, 20000.0f, rand()%10 + 10);
                 }
@@ -1044,11 +1042,11 @@ void playTutorial(universe &uni)
         {
             if(timer > 120.0f)
             {
-                for(int i = 0; i < 6; ++i)
+                for(int i = 0; i < 2; ++i)
                 {
                     uni.spawnSquad(SPOOKY_SPACE_PIRATES, 16000.0f, 20000.0f, rand()%10 + 10);
                 }
-                for(int i = 0; i < 3; ++i)
+                for(int i = 0; i < 1; ++i)
                 {
                     uni.spawnSquad(TEAM_PLAYER, 30000.0f, 40000.0f, rand()%10 + 10);
                 }
@@ -1057,7 +1055,7 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_COMBAT_5)
         {
-            if(uni.getEnemyCount(GALACTIC_FEDERATION) == 0)
+            if(uni.getEnemyCount(GALACTIC_FEDERATION) == 0 and uni.getEnemyCount(SPOOKY_SPACE_PIRATES) == 0)
             {
                 tutStage = STAGE_COMPLETE;
                 timer = 0.0f;
@@ -1131,8 +1129,21 @@ void sandbox(universe &uni)
             pos.m_x += 140.0f;
         }
     }
+
     button temp ("CLEAR", {255, 0, 0, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+    if(pos.m_y < g_WIN_HEIGHT - 64.0f)
+    {
+        pos.m_y += 80.0f;
+    }
+    else
+    {
+        pos.m_y = 0.0f;
+        pos.m_x += 140.0f;
+    }
+    button exit ("MAIN MENU", {255, 0, 0, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+
     ships.add(temp);
+    ships.add(exit);
     uni.getUI()->add(ships);
 
     //Timer used to keep track of game time.
@@ -1177,7 +1188,8 @@ void sandbox(universe &uni)
                     if(mainMenuSelected.m_sel_val == 0)
                     {
                         if(mainMenuSelected.m_button_val < SHIPS_END) uni.setMouseState(mainMenuSelected.m_button_val);
-                        else uni.getAgents()->clear();
+                        else if(mainMenuSelected.m_button_val == SHIPS_END) uni.getAgents()->clear();
+                        else g_GAME_STATE = MODE_MENU;
                     }
                     break;
                 }

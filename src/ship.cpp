@@ -36,8 +36,8 @@ ship::ship(
     setPos(_p);
     setPPos(_p);
 
-    setVel({0.0f,0.0f});
-    setWVel({0.0f,0.0f});
+    setVel({0.0f, 0.0f, 0.0f});
+    setWVel({0.0f, 0.0f, 0.0f});
     m_angle = 0.0f;
     m_targetAngle = 0.0f;
 
@@ -57,7 +57,7 @@ ship::ship(
     m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
-    m_shieldMul = _radius / 32.0f;
+    m_shieldMul = _radius;
     m_generatorMul = 1.0f;
 
     m_lastAttacker = {0, -1};
@@ -539,8 +539,8 @@ ship::ship(
     setPos(_p);
     setPPos(_p);
 
-    setVel({0.0f,0.0f});
-    setWVel({0.0f,0.0f});
+    setVel({0.0f, 0.0f, 0.0f});
+    setWVel({0.0f, 0.0f, 0.0f});
     m_angle = 0.0f;
     m_targetAngle = 0.0f;
 
@@ -565,8 +565,8 @@ ship::ship(
     m_priority = PRIORITY_NONE;
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
-    m_shieldMul = 1.0f;
-    m_generatorMul = _src.m_shieldMul;
+    m_shieldMul = _src.m_shieldMul;
+    m_generatorMul = _src.m_generatorMul;
 
     m_classification = _src.getClassification();
 
@@ -725,14 +725,15 @@ void ship::accelerate(const float _mult)
 
     if(m_energy <= energyLoss) return;
     vec2 add = vec(getAng() + 90.0f) * accelMult * m_inertia * m_enginePower;
-    addVel(tovec3(add) * _mult);
+    addVel(vec3(add.m_x, add.m_y, 0.0f) * _mult);
     m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
 
     setAccelerating(true);
 }
 
-void ship::accelerate(const vec3 _dir,
+void ship::accelerate(
+               const vec3 _dir,
         const float _mult
         )
 {
@@ -774,14 +775,14 @@ void ship::dodge(const float _side)
 
     if(m_energy <= energyLoss) return;
     vec2 avec = vec(getAng());
-    addVel( tovec3( avec )* _side * accelMult * m_inertia * m_enginePower );
+    addVel( vec3(avec.m_x, avec.m_y, 0.0f) * _side * accelMult * m_inertia * m_enginePower );
     m_energy -= energyLoss * fabs(_side);
 }
 
 void ship::update(const float _dt)
 {
     float angDiff = clampRoll(m_targetAngle - m_angle, -180.0f, 180.0f);
-    float turnConst = 0.2f;
+    float turnConst = 0.1f;
 
     if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel, -180.0f, 180.0f ) );
     else if(angDiff < -0.5f)

@@ -8,8 +8,8 @@
 
 universe::universe()
     :
-      m_drawer(g_WIN_WIDTH, g_WIN_HEIGHT),
-      m_ply( {0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
+      m_drawer(),
+      m_ply( {0.0f, 0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
 {
     createFactions();
 
@@ -18,8 +18,8 @@ universe::universe()
 
     showUI = true;
     m_time_elapsed = 0.0;
-    m_pos = {0.0f, 0.0f};
-    setVel({0,0});
+    m_pos = {0.0f, 0.0f, 0.0f};
+    setVel({0.0f, 0.0f, 0.0f});
 
     m_factionCounts.assign(8, 0);
     m_factionMaxCounts.assign(8, 0);
@@ -28,12 +28,12 @@ universe::universe()
     m_factionMaxCounts[SPACE_COMMUNISTS] = 1;
     m_factionMaxCounts[ALLIANCE] = 5;
     m_maxMiners = 0;
-    m_maxMiners = 0;
+    m_maxWingmen = 0;
     m_minerCount = 0;
     m_wingmenCount = 0;
 
-    m_ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
-    m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f});
+    m_ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f,0.0f});
+    m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f,0.0f});
 
     m_tCol[0] = 255.0f;
     m_tCol[1] = 200.0f;
@@ -144,7 +144,7 @@ void universe::addMissile(
     mx -= g_HALFWIN.m_x;
     my -= g_HALFWIN.m_y;
 
-    m.setTarget(closestEnemy({ mx * g_ZOOM_LEVEL, my * g_ZOOM_LEVEL}, _team));
+    m.setTarget(closestEnemy(vec3(mx, my, 0.0f) * g_ZOOM_LEVEL, _team));
 
     m_missiles.push_back(m);
 }
@@ -217,7 +217,7 @@ void universe::update(const float _dt)
         m_ply.setMaxShield(0, true);
         playSnd(EXPLOSION_SND);
 
-        m_ply.setPos({F_INF, F_INF});
+        m_ply.setPos({F_INF, F_INF, F_INF});
         m_drawer.addShake(20.0f);
 
         m_ui.clear();
@@ -356,7 +356,7 @@ void universe::update(const float _dt)
             {
                 for(int fx = 0; fx < rand() % 5 + 1; fx++)
                 {
-                    vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f)};
+                    vec3 pos = randVec3(16.0f);
                     pos += m_asteroids[i].getPos();
                     addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2);
                     for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + tovec3(randVec2(1.0f)), m_asteroids[i].getRadius(), "SMOKE");
@@ -453,14 +453,14 @@ void universe::update(const float _dt)
             //std::cout << "p10.2\n";
             //If current ship is context ship
             if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {0, -1};
-
+            //std::cout << "p10.3\n";
             m_agents.free(i);
         }
     }
 
     //Set squad variables
     //Get the average position for each squad.
-    for(auto &s : m_squads) {s.m_centerPoint = {0.0f, 0.0f}; s.m_averageVel = {0.0f, 0.0f};}
+    for(auto &s : m_squads) {s.m_centerPoint = {0.0f, 0.0f, 0.0f}; s.m_averageVel = {0.0f, 0.0f, 0.0f};}
     for(auto &e : m_agents.m_objects)
     {
         //std::cout << e.getSquadID() << std::endl;
@@ -1149,7 +1149,14 @@ void universe::drawUI(const float _dt)
         for(auto &b : m_balanceOfPower)
         {
             cumulative += b * 128.0f;
-            m_drawer.addRect({g_WIN_WIDTH - 256.0f + cumulative, 272.0f}, {b * 256.0f, 16.0f}, 0.0f, col255to1(m_factions[i].m_colour));
+
+            m_drawer.addRect(
+            {g_WIN_WIDTH - 256.0f + cumulative, 272.0f, 0.0f},
+            {b * 256.0f, 16.0f},
+                        0.0f,
+                        col255to1(m_factions[i].m_colour)
+                        );
+
             cumulative += b * 128.0f;
             ++i;
         }
@@ -1161,6 +1168,7 @@ void universe::drawUI(const float _dt)
         selection * infoCard = &(*m_ui.getElements())[3];
 
         enemy * contextPtr = m_agents.getByID(m_contextShip);
+
         if(contextPtr != nullptr)
         {
             vec3 csp = contextPtr->getPos();
@@ -1191,19 +1199,19 @@ void universe::drawUI(const float _dt)
             //Health base
             m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.4f, 0.08f, 0.08f, 0.5f});
             //Health
-            m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
+            m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y, 0.0f}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
 
             csp.m_y += 16.0f;
             //Shield base
             m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.1f, 0.1f, 0.4f, 0.5f});
             //Shield
-            m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
+            m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y, 0.0f}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
 
             csp.m_y += 16.0f;
             //Energy base
             m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.08f, 0.4f, 0.08f, 0.5f});
             //Energy
-            m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
+            m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y, 0.0f}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
 
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
@@ -1818,8 +1826,8 @@ void universe::spawnShip(
     {
         for(int q = 0; q < 10; ++q)
         {
-            enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
-            enemy temp2({0.0f, 0.0f}, {0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
+            enemy temp1({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
+            enemy temp2({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
 
             shipAddParent(m_agents.size() - 1, &temp1, {200.0f, q * 200.0f - 960.0f, 0.0f});
             shipAddParent(m_agents.size() - 1, &temp2, {-200.0f, q * 200.0f - 960.0f, 0.0f});
@@ -1830,17 +1838,19 @@ void universe::spawnShip(
     }
     else if(_type == PIRATE_CAPITAL)
     {
-        for(int p = 1; p < 3; ++p)
+        for(int p = 1; p < 5; ++p)
         {
-            for(int pang = 0; pang < 360; pang += 60)
+            int wang = 60;
+            for(int pang = 0; pang < 360; pang += wang)
             {
                 vec3 pos = {static_cast<float>(cos(rad(pang))) * p * 150.0f, static_cast<float>(sin(rad(pang))) * p * 150.0f, 0.0f};
-                enemy temp1({0.0f, 0.0f}, {0.0f, 0.0f}, PIRATE_TURRET, SPOOKY_SPACE_PIRATES);
+                enemy temp1({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PIRATE_TURRET, SPOOKY_SPACE_PIRATES);
 
                 shipAddParent(m_agents.size() - 1, &temp1, pos);
 
                 temp.push_back(temp1);
             }
+            wang -= 15;
         }
     }
     else if(_type == COMMUNIST_CAPITAL)
@@ -1867,7 +1877,7 @@ void universe::spawnShip(
         vec3 base;
         for(int i = 0; i < 3; ++i)
         {
-            base = {-164.0f, -424.0f};
+            base = {-164.0f, -424.0f, 0.0f};
             for(int j = 0; j < 3; ++j)
             {
                 vec3 pos = {164.0f * i, 80.0f * j, 0.0f};
@@ -1883,7 +1893,7 @@ void universe::spawnShip(
 
         for(int j = 1; j < 3; ++j)
         {
-            base = {0.0f, 143.0f};
+            base = {0.0f, 143.0f, 0.0f};
             for(int i = 0; i < 360; i += 60)
             {
                 vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
@@ -1969,12 +1979,12 @@ void universe::reload(const bool _newGame)
     m_particles.clear();
     m_resources.clear();
 
-    m_vel = {0.0f, 0.0f};
-    m_pos = {0.0f, 0.0f};
+    m_vel = {0.0f, 0.0f, 0.0f};
+    m_pos = {0.0f, 0.0f, 0.0f};
     m_ply.setHealth( m_ply.getMaxHealth() );
     m_ply.setShield( m_ply.getMaxShield() );
     m_ply.setEnergy( m_ply.getMaxEnergy() );
-    m_ply.setVel({0, 0});
+    m_ply.setVel({0.0f, 0.0f, 0.0f});
 
     m_ui.clear();
     initUI();
@@ -1988,7 +1998,6 @@ void universe::reload(const bool _newGame)
 #endif
 
     m_time_elapsed = 0.0;
-    setVel({0,0});
 
     m_factionCounts.assign(8, 0);
     m_factionMaxCounts.assign(8, 0);
@@ -2001,7 +2010,7 @@ void universe::reload(const bool _newGame)
     m_factionMaxCounts[SPACE_COMMUNISTS] = 1;
     m_factionMaxCounts[ALLIANCE] = 5;
     m_maxMiners = 0;
-    m_maxMiners = 0;
+    m_maxWingmen = 0;
     m_minerCount = 0;
     m_wingmenCount = 0;
 
@@ -2051,7 +2060,7 @@ void universe::addBuild(
         const aiTeam _team
         )
 {
-    enemy newShip(_p, {0.0f, 0.0f}, _type, _team);
+    enemy newShip(_p, {0.0f, 0.0f, 0.0f}, _type, _team);
 
     switch(_type)
     {
@@ -2229,7 +2238,7 @@ void universe::loadShips()
 {
     for(int i = 0; i < static_cast<int>(SHIPS_END); ++i)
     {
-        ship insert( {0.0f, 0.0f}, static_cast<ship_spec>(i), m_drawer.getTextureRadius(static_cast<ship_spec>(i)) );
+        ship insert( {0.0f, 0.0f, 0.0f}, static_cast<ship_spec>(i), m_drawer.getTextureRadius(static_cast<ship_spec>(i)) );
         g_ship_templates.push_back(insert);
     }
     std::cout << "No of ship types: " << g_ship_templates.size() << std::endl;
@@ -2349,6 +2358,7 @@ selectionReturn universe::handleInput(vec2 _mouse)
             }
         }
 
+        std::cout << "CONTEXT SHIP: " << m_contextShip.m_id << ", " << m_contextShip.m_version << '\n';
         /*if(m_selectedItem == nullptr) m_selectedItem.reset(m_ply.getCargo()->handleInput(_mouse));
         if(m_selectedItem == nullptr)
         {

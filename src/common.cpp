@@ -10,8 +10,6 @@ std::string g_RESOURCE_LOC = "./resources/NGL/";
 #endif
 
 double g_GLOBAL_TIME = 0.0f;
-int g_WIN_POS_X = 20;
-int g_WIN_POS_Y = 20;
 int g_WIN_HEIGHT = 1080;
 int g_WIN_WIDTH = 1920;
 int g_GRAPHICAL_DETAIL = 2;

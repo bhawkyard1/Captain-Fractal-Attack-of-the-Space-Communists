@@ -41,6 +41,17 @@ struct vec2
     vec2& operator-=(float &_rhs) { m_x -= _rhs; m_y -= _rhs; return *this; }
     vec2& operator*=(const float &_rhs) { m_x *= _rhs; m_y *= _rhs; return *this; }
     vec2& operator/=(float _rhs) { m_x /= _rhs; m_y /= _rhs; return *this; }
+
+    vec2()
+    {
+        m_x = m_y = 0.0f;
+    }
+
+    vec2(const float _x, const float _y)
+    {
+        m_x = _x;
+        m_y = _y;
+    }
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -89,6 +100,18 @@ struct vec3
     vec3& operator-=(float &_rhs) { m_x -= _rhs; m_y -= _rhs; m_z -= _rhs; return *this; }
     vec3& operator*=(const float &_rhs) { m_x *= _rhs; m_y *= _rhs; m_z *= _rhs; return *this; }
     vec3& operator/=(float &_rhs) { m_x /= _rhs; m_y /= _rhs; m_z /= _rhs; return *this; }
+
+    vec3()
+    {
+        m_x = m_y = 0.0f;
+    }
+
+    vec3(const float _x, const float _y, const float _z)
+    {
+        m_x = _x;
+        m_y = _y;
+        m_z = _z;
+    }
 };
 
 //----------------------------------------------------------------------------------------------------------------------

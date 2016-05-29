@@ -71,11 +71,11 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Stores the tickrate as a const double.
     //----------------------------------------------------------------------------------------------------------------------
-#ifdef __unix__
-    const double m_tickRate = static_cast<const double>(1000000000.0f);
-#endif
 #ifdef _WIN32
     const double m_tickRate = static_cast<const double>(CLOCKS_PER_SEC * 10000);
+#endif
+#ifndef _WIN32
+    const double m_tickRate = static_cast<const double>(1000000000.0f);
 #endif
 
     //----------------------------------------------------------------------------------------------------------------------

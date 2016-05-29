@@ -71,6 +71,7 @@ void enemy::steering()
     vec3 v = getVel();
     vec3 uv = unit(v);
     vec3 diff = m_tPos - p;
+    diff.m_z = 0.0f;
     vec3 utv = unit(diff);
 
     //This is the distance between the ship and its m_target position.
@@ -119,7 +120,7 @@ void enemy::steering()
 
     //This varies between 1 (ship facing m_target) 0 (ship parallel to m_target) and -1 (ship facing away from m_target).
     //It does this by taking the ship's angle and its m_target angle, and determining the angle between them.
-    float angleMul = 1.0f;//(static_cast<float>(shortestAngle(getAng(), getTAng())) + 90.0f ) / 90.0f;
+    //float angleMul = 1.0f;//(static_cast<float>(shortestAngle(getAng(), getTAng())) + 90.0f ) / 90.0f;
 
     //We need to compare the distance to the closing speed. If the two points are converging rapidly, the ship must slow down.
     //cSpd will be subtracted from dist once per frame. Ships can accelerate at max 1au per frame.
@@ -131,7 +132,7 @@ void enemy::steering()
     //m_tPos -= unit(linePos - m_tPos) * cSpd * 3;
 
     //Angle the ship towards its m_target.
-    setTAng(clampRoll(computeAngle(tovec2(p - m_tPos)), -180.0f, 180.0f));
+    setTAng(clampRoll(computeAngle(tovec2(p - (m_tPos + m_tVel))), -180.0f, 180.0f));
     //If we are close to the target, aim towards it.
     //if( dist < 800.0f + radius ) setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
 
@@ -142,7 +143,7 @@ void enemy::steering()
             and getCanMove()
             )
     {
-        accelerate(utv, accelMul * angleMul);
+        accelerate(utv, accelMul);
     }
 
     if(m_curGoal == GOAL_TURRET) dist -= 200.0f;
@@ -150,7 +151,7 @@ void enemy::steering()
     float selfRadius = getRadius();
     if(getParent().m_id != -1) selfRadius += 2048.0f;
 
-    if(fabs(shortestAngle(getAng(),getTAng())) <= 4.0f
+    if(fabs(shortestAngle(getAng(),getTAng())) <= 2.0f
             and dist < 800.0f + radius + selfRadius
             and ( m_curGoal == GOAL_ATTACK or m_curGoal == GOAL_TURRET )
             and getEnergy() / getMaxEnergy() > 0.05f)

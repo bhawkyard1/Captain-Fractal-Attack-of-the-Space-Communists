@@ -69,8 +69,11 @@ void main()
     //vec3 from = vec3( cos(iGlobalTime), 0.0f, 0.001);
     vec3 from = vec3(unipos.xy + 20., 0.0001);
     from.xy /= 80000.0;
+
     from += vec3(12.0, 1.0, 0.0);
     from.z *= iGlobalTime;
+
+    from.z *= sin(from.x / 2048.0);
 
     //volumetric rendering
     //S and fade control brightness. High s makes everything very blue.

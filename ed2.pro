@@ -82,3 +82,5 @@ else{ # note brace must be here
 
 DISTFILES += \
     resources/menus/buyMenu.txt
+
+QMAKE_CXXFLAGS += "_ITERATOR_DEBUG_LEVEL_0"

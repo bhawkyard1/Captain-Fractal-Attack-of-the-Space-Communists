@@ -177,7 +177,7 @@ void readVectorAsteroid(std::string str, universe * _u)
         energy = std::stof(stat[1]);
 
         ship temp( g_ship_templates[id] );
-        temp.setPos({pos.m_x,pos.m_y});
+        temp.setPos({pos.m_x, pos.m_y, 0.0f});
 
         temp.setAng(ang);
         temp.setHealth(health);
@@ -255,8 +255,7 @@ void loadConfig()
 
         for(size_t i = 0; i < strings.size(); i++)
         {
-            if(strings[i] == "res_x") g_WIN_WIDTH = stoi(strings[i+1], nullptr, 10);
-            else if(strings[i] == "res_y") g_WIN_HEIGHT = stoi(strings[i+1], nullptr, 10);
+            if(strings[i] == "resolution") setResolution( strings[i+1], strings[i+2] );
             else if(strings[i] == "graphical_detail") g_GRAPHICAL_DETAIL = stoi(strings[i+1], nullptr, 10);
             else if(strings[i] == "devmode") g_DEV_MODE = static_cast<bool>( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "beastmode") g_BEAST_MODE = static_cast<bool>( stoi(strings[i+1], nullptr, 10) );
@@ -271,6 +270,20 @@ void loadConfig()
     std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;
     std::cout << "Difficulty: " << g_DIFFICULTY << std::endl;
     std::cout << "Devmode: " << g_DEV_MODE << std::endl;
+}
+
+void setResolution(std::string _width, std::string _height)
+{
+    if(_width == "NULL" or _height == "NULL")
+    {
+        g_WIN_WIDTH = -1;
+        g_WIN_HEIGHT = -1;
+    }
+    else
+    {
+        g_WIN_WIDTH = std::stoi(_width);
+        g_WIN_HEIGHT = std::stoi(_height);
+    }
 }
 
 void setConfigValue(const std::string _entry, const int _val)

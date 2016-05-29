@@ -66,6 +66,8 @@ void loadGame(universe * _uni);
 //----------------------------------------------------------------------------------------------------------------------
 void loadConfig();
 
+void setResolution(std::string _width, std::string _height);
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Sets a value in config.txt, used in the options menu
 /// \param _entry the entry to set

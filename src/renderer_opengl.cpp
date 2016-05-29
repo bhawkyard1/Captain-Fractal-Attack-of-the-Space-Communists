@@ -21,16 +21,45 @@
 #include <SDL2/SDL.h>
 #include <SDL_ttf.h>
 
-renderer_ngl::renderer_ngl(int _w, int _h)
+renderer_ngl::renderer_ngl()
 {
     init();
-    m_w = _w;
-    m_h = _h;
+
+    if(g_WIN_WIDTH > 0 and g_WIN_HEIGHT > 0)
+    {
+        m_w = g_WIN_WIDTH;
+        m_h = g_WIN_HEIGHT;
+    }
+    else
+    {
+        SDL_DisplayMode best;
+        best.w = 0;
+        best.h = 0;
+
+        for(int i = 0; i < SDL_GetNumVideoDisplays(); ++i)
+        {
+            SDL_DisplayMode temp;
+            SDL_GetCurrentDisplayMode(i, &temp);
+            if(temp.w * temp.h > best.w * best.h)
+                best = temp;
+        }
+
+        g_WIN_WIDTH = best.w;
+        g_WIN_HEIGHT = best.h;
+
+        g_HALFWIN = {g_WIN_WIDTH / 2.0f, g_WIN_HEIGHT / 2.0f};
+        g_MAX_DIM = std::max( g_WIN_WIDTH, g_WIN_HEIGHT );
+
+        m_w = g_WIN_WIDTH;
+        m_h = g_WIN_HEIGHT;
+
+        std::cout << "Screen dimensions detected: " << g_WIN_WIDTH << ", " << g_WIN_HEIGHT << '\n';
+    }
 
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
-                                g_WIN_POS_X, g_WIN_POS_Y,
-                                g_WIN_WIDTH, g_WIN_HEIGHT,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
+                                0, 0,
+                                m_w, m_h,
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS );
 
     if(!m_window)
     {
@@ -75,7 +104,7 @@ renderer_ngl::renderer_ngl(int _w, int _h)
                          ngl::Vec3(0,1,0));
 
 
-    float yOffset = g_WIN_HEIGHT * 0.015;
+    float yOffset = 0.0f;//g_WIN_HEIGHT * 0.015;
     float divz = 1 / g_ZOOM_LEVEL;
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
@@ -88,8 +117,8 @@ renderer_ngl::renderer_ngl(int _w, int _h)
 
     m_uiProject = ngl::ortho(
                 0.0f,
-                g_WIN_WIDTH,
-                g_WIN_HEIGHT - yOffset,
+                m_w,
+                m_h - yOffset,
                 -yOffset,
                 -256.0,
                 256.0
@@ -527,7 +556,7 @@ void renderer_ngl::update(const float _dt)
 
     float divz = 1 / g_ZOOM_LEVEL;
 
-    float yOffset = g_WIN_HEIGHT * 0.015;
+    float yOffset = 0.0f;//g_WIN_HEIGHT * 0.015;
 
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
@@ -949,30 +978,30 @@ void renderer_ngl::statusBars(player * _ply)
 {
     //health base
     std::array<float, 4> col = {0.4f, 0.08f, 0.08f, 1.0f};
-    drawbutton({128,40}, {256, 16}, 0.0f, col);
+    drawbutton({128.0f, 40.0f, 0.0f}, {256, 16}, 0.0f, col);
 
     //health
     float width = (_ply->getHealth() / _ply->getMaxHealth()) * 256;
     col = {0.9f, 0.2f, 0.2f, 1.0f};
-    drawbutton({width / 2.0f,40}, {width, 16}, 0.0f, col);
+    drawbutton({width / 2.0f, 40.0f, 0.0f}, {width, 16}, 0.0f, col);
 
     //shield base
     col = {0.1f, 0.1f, 0.4f, 1.0f};
-    drawbutton({128,56}, {256, 16}, 0.0f, col);
+    drawbutton({128.0f, 56.0f, 0.0f}, {256, 16}, 0.0f, col);
 
     width = (_ply->getShield() / _ply->getMaxShield()) * 256;
     //shield
     col = {0.2f, 0.2f, 0.9f, 1.0f};
-    drawbutton({width / 2.0f,56}, {width, 16}, 0.0f, col);
+    drawbutton({width / 2.0f, 56.0f, 0.0f}, {width, 16}, 0.0f, col);
 
     //energy base
     col = {0.08f, 0.4f, 0.08f, 1.0f};
-    drawbutton({128,72}, {256, 16}, 0.0f, col);
+    drawbutton({128.0f, 72.0f, 0.0f}, {256, 16}, 0.0f, col);
 
     width = (_ply->getEnergy() / _ply->getMaxEnergy()) * 256;
     //energy
     col = {0.2f, 0.9f, 0.2f, 1.0f};
-    drawbutton({width / 2.0f,72}, {width, 16}, 0.0f, col);
+    drawbutton({width / 2.0f, 72.0f, 0.0f}, {width, 16}, 0.0f, col);
 }
 
 void renderer_ngl::drawWeaponStats(player *_ply)
@@ -1109,7 +1138,7 @@ void renderer_ngl::drawText(
         h *= _mul;
         //w = 8;
 
-        drawRect({x, y}, {w, h}, 0.0f, _ws);
+        drawRect({x, y, 0.0f}, {w, h}, 0.0f, _ws);
         x += w;
     }
 }
@@ -1194,7 +1223,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         float x = clamp(lpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(lpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
-        drawCircle({x, y}, 1.0f, false);
+        drawCircle({x, y, 0.0f}, 1.0f, false);
     }
 
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 0.0f, 0.1f, 1.0f));
@@ -1205,7 +1234,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         float x = clamp(mpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(mpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
-        drawCircle({x, y}, 1.0f, false);
+        drawCircle({x, y, 0.0f}, 1.0f, false);
     }
 
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -1220,7 +1249,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2.0f;
         else if(_ap->at(i).getClassification() == ASTEROID_LARGE) radius = 3.0f;
 
-        drawCircle({x, y}, radius, false);
+        drawCircle({x, y, 0.0f}, radius, false);
     }
 
     for(unsigned int i = 0; i < _ep->size(); i++)
@@ -1236,7 +1265,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         float x = clamp(epp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(epp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
-        drawCircle({x, y}, radius, false);
+        drawCircle({x, y, 0.0f}, radius, false);
     }
 }
 

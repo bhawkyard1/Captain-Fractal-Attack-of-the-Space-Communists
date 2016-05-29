@@ -22,7 +22,7 @@ renderer::renderer(
     m_h = _h;
 
     m_window = SDL_CreateWindow("Elite: Dangerous v2.0",
-                                g_WIN_POS_X, g_WIN_POS_Y,
+                                0, 0,
                                 g_WIN_HEIGHT, g_WIN_WIDTH,
                                 SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED );
 

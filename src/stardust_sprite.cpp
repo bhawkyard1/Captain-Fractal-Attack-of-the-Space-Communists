@@ -18,8 +18,12 @@ stardust_sprite::stardust_sprite(
   m_ang = randNum(0.0f,360.0f);
   m_angVel = randNum(-0.12f, 0.12f);
 
-  setPos( {(rand() % (g_WIN_WIDTH + _w) - _w) * g_BG_DENSITY,
-           (rand() % (g_WIN_HEIGHT + _h) - _h) * g_BG_DENSITY} );
+  vec3 min = vec3(-_w, -_h, 0.0f);
+  min -= tovec3(g_HALFWIN);
+  vec3 max = vec3(_w, _h, 0.0f);
+  max += tovec3(g_HALFWIN);
+
+  setPos( randVec3(min, max) * g_BG_DENSITY );
 }
 
 stardust_sprite::stardust_sprite(
