@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "camera.hpp"
 #include "common.hpp"
 #include "enemy.hpp"
 #include "faction.hpp"
@@ -67,7 +68,7 @@ public:
   /// \brief Updates the renderer, mostly for screen shaking
   /// \param _dt time difference since last call
   //----------------------------------------------------------------------------------------------------------------------
-  void update(const float _dt);
+  void update(float _dt, vec3 _focusPos);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Sets the shader for the renderer to use
@@ -349,6 +350,7 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   void disableDepthSorting();
 
+  uniqueID getFocus() {return m_focus;}
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The window the game will be drawn in
@@ -489,6 +491,10 @@ private:
   /// \brief The current camera shake
   //----------------------------------------------------------------------------------------------------------------------
   vec2 m_cameraShakeOffset;
+
+  camera m_camera;
+
+  uniqueID m_focus;
 };
 
 #endif

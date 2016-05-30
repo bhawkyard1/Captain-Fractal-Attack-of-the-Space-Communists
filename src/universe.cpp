@@ -84,7 +84,9 @@ universe::universe()
     m_paused = false;
     m_mouse_state = -1;
 
+    std::cout << "P1\n";
     loadShips();
+    std::cout << "P2\n";
     m_escMenuShown = false;
 
     if(g_BEAST_MODE) m_enemySpawnRate = 8;
@@ -158,7 +160,10 @@ void universe::update(const float _dt)
 
     calcPowerBalance();
 
-    m_drawer.update(_dt);
+    vec3 focus = vec3();
+    if(m_drawer.getFocus().m_id == -1) focus = m_ply.getPos();
+    else focus = m_agents.getByID(m_drawer.getFocus())->getPos();
+    m_drawer.update(_dt, focus);
 
     m_pos += m_vel * g_PIXEL_UNIT_CONVERSION * _dt;
     m_time_elapsed += _dt;
@@ -931,7 +936,8 @@ void universe::drawUI()
 #elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
-    m_drawer.update(_dt);
+    /*vec3 focusPos = vec3();
+    m_drawer.update(_dt, focusPos);*/
 
     m_drawer.drawBackground(m_time_elapsed, tovec2(m_pos), tovec2(m_vel), m_cCol);
 

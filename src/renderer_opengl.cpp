@@ -5,6 +5,7 @@
 #include <utility>
 #include <fstream>
 
+#include "camera.hpp"
 #include "common.hpp"
 
 #if RENDER_MODE == 1
@@ -22,7 +23,11 @@
 #include <SDL_ttf.h>
 
 renderer_ngl::renderer_ngl()
+    :
+      m_camera()
 {
+    m_focus = {-1, -1};
+
     init();
 
     if(g_WIN_WIDTH > 0 and g_WIN_HEIGHT > 0)
@@ -538,11 +543,11 @@ void renderer_ngl::createShaderProgram(const std::string _name, const std::strin
     m_shader->linkProgramObject(_name);
 }
 
-void renderer_ngl::update(const float _dt)
+void renderer_ngl::update(float _dt, vec3 _focusPos)
 {
     clearVectors();
 
-    m_cameraShake = clamp(m_cameraShake - _dt * 5.0f, 0.0f, 20.0f);
+    /*m_cameraShake = clamp(m_cameraShake - _dt * 5.0f, 0.0f, 20.0f);
 
     //m_cameraShake = 15.0f;
 
@@ -552,17 +557,21 @@ void renderer_ngl::update(const float _dt)
     }
     m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * clamp(_dt * 5.0f, 0.0f, 1.0f);
 
-    g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;
+    g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;*/
+
+    m_camera.setTPos(_focusPos);
+    m_camera.update(_dt);
+    vec3 offset = m_camera.getCamPos();
 
     float divz = 1 / g_ZOOM_LEVEL;
 
     float yOffset = 0.0f;//g_WIN_HEIGHT * 0.015;
 
     m_project = ngl::ortho(
-                -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
-                g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
-                (g_HALFWIN.m_y - yOffset) * divz + m_cameraShakeOffset.m_y,
-                (-g_HALFWIN.m_y - yOffset) * divz + m_cameraShakeOffset.m_y,
+                -g_HALFWIN.m_x * divz + offset.m_x,
+                g_HALFWIN.m_x * divz + offset.m_x,
+                (g_HALFWIN.m_y - yOffset) * divz + offset.m_y,
+                (-g_HALFWIN.m_y - yOffset) * divz + offset.m_y,
                 -2048.0,
                 2048.0
                 );
@@ -970,8 +979,9 @@ void renderer_ngl::errorExit(const std::string &_msg)
 
 void renderer_ngl::addShake(float _s)
 {
-    m_cameraShake += _s;
-    m_cameraShakeTargetOffset = randVec2(m_cameraShake);
+    //m_cameraShake += _s;
+    m_camera.addShake(_s);
+    //m_cameraShakeTargetOffset = randVec2(m_cameraShake);
 }
 
 void renderer_ngl::statusBars(player * _ply)
