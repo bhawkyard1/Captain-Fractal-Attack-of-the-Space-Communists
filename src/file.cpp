@@ -91,11 +91,11 @@ void readVectorEnemy(std::string str, universe * _u)
         id = {std::stoi(stat[0]), std::stoi(stat[1])};
         parentID = {std::stoi(stat[2]), std::stoi(stat[3])};
 
-        vec3 parentPos;
+        vec3 parentOffset;
         stat = split(stats[3], ',');
-        parentPos.m_x = std::stof(stat[0]);
-        parentPos.m_y = std::stof(stat[1]);
-        parentPos.m_z = 0.0f;
+        parentOffset.m_x = std::stof(stat[0]);
+        parentOffset.m_y = std::stof(stat[1]);
+        parentOffset.m_z = 0.0f;
 
         vec3 pos;
         stat = split(stats[4], ',');
@@ -140,6 +140,7 @@ void readVectorEnemy(std::string str, universe * _u)
         //NEED TO SET UNIQUE ID
         //temp.setUniqueID(id);
         temp.setParent(parentID);
+        temp.setParentOffset(parentOffset);
 
         _u->getAgents()->push_back(temp);
     }

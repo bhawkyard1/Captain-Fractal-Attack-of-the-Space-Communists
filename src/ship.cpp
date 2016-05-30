@@ -1008,7 +1008,7 @@ float ship::getCurWeapStat(WEAPON_STAT _ws) const
 void ship::setParent(uniqueID _p)
 {
     m_parent = _p;
-    if(_p.m_id != -1)
+    if(_p.m_version != -1)
         m_hasParent = true;
     else
         m_hasParent = false;
