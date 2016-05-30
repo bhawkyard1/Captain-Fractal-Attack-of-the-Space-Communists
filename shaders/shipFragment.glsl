@@ -25,7 +25,18 @@ void main()
     vec3 shootingLightPos = vec3(0.0, 0.02, -1.2);
 
     fragColour = texture( diffuse, UV );
-    fragColour += dot(normal, shootingLightPos) * vec4(shootingLightCol.rgb * shootingLightCol.a, shootingLightCol.a);
-    fragColour.rgb *= dot(normal, ambientLightPos) * 0.6 + 0.1;
+
+    //Ambient diffuse
+    fragColour.rgb *= dot(normal, ambientLightPos) * 0.3;
+
+    //Shooting diffuse
+    fragColour += dot(normal, shootingLightPos) * vec4(shootingLightCol.rgb * shootingLightCol.a, shootingLightCol.a) * 0.2;
+
+    //Ambient Spec
+    fragColour += pow( vec4(0.3) * dot(normal, reflect(-ambientLightPos, normal)), vec4(10.0));
+
+    //Shooting Spec
+    fragColour += pow( shootingLightCol * dot(normal, reflect(-shootingLightPos, normal)), vec4(1.0)) * shootingLightCol.a;
+
     fragColour.a *= alpha;
 }

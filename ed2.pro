@@ -55,6 +55,7 @@ win32: {
     DEFINES += _USE_MATH_DEFINES
     LIBS += -LC:/NGL/lib/ -lNGL
     DEFINES += NO_DLL
+    QMAKE_CXXFLAGS += "_ITERATOR_DEBUG_LEVEL_0"
 }
 
 OTHER_FILES += readme.md \
@@ -65,6 +66,13 @@ CONFIG += console
 
 unix {
     QMAKE_CXXFLAGS += $$system(sdl2-config --cflags)
+
+    QMAKE_CXXFLAGS -= -O
+    QMAKE_CXXFLAGS -= -O1
+    QMAKE_CXXFLAGS -= -O2
+
+    QMAKE_CXXFLAGS *= -O3
+
     LIBS += $$system(sdl2-config --libs)
     LIBS += -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
@@ -82,5 +90,3 @@ else{ # note brace must be here
 
 DISTFILES += \
     resources/menus/buyMenu.txt
-
-QMAKE_CXXFLAGS += "_ITERATOR_DEBUG_LEVEL_0"

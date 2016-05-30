@@ -827,7 +827,7 @@ void ship::update(const float _dt)
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
-    m_drawShot *= 20.0f * _dt;
+    m_drawShot *= clamp(20.0f * _dt, 0.0f, 0.9f);
 
     addVel(-getVel() * 0.00001f);
 
