@@ -57,8 +57,8 @@ void main()
     colour.a *= beam*grid;
     colour *= 2.0;
     colour.a += stencil * beam;
-    colour.a = max(0.0, min(1.0, colour.a));
-    colour.a += 0.3;
+    //colour.a = max(0.0, min(1.0, colour.a));
+    //colour.a += 0.3;
 
 
     // high constrast and vinj
