@@ -68,7 +68,7 @@ public:
   /// \brief Updates the renderer, mostly for screen shaking
   /// \param _dt time difference since last call
   //----------------------------------------------------------------------------------------------------------------------
-  void update(float _dt, vec3 _focusPos);
+  void update(float _dt, base *_focus);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Sets the shader for the renderer to use

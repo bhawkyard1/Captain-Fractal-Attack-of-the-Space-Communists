@@ -198,9 +198,7 @@ void mainMenu(universe &uni)
                 switch(incomingEvent.button.button)
                 {
                 case SDL_BUTTON_LEFT:
-                    int mx = 0, my = 0;
-                    SDL_GetMouseState(&mx, &my);
-                    selectionReturn mainMenuSelected = uni.handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    selectionReturn mainMenuSelected = uni.handleInput( getMousePos() );
                     std::cout << "CLICK : " << mainMenuSelected.m_sel_val << ", " << mainMenuSelected.m_button_val << std::endl;
                     if(mainMenuSelected.m_sel_val == 0)
                     {
@@ -400,8 +398,6 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
         }
         else if(btn == SDL_BUTTON_RIGHT and ply->getMissiles() > 0)
         {
-            int x = 0, y = 0;
-            SDL_GetMouseState(&x,&y);
             if(ply->getMissiles() > 0)
             {
                 uni->addMissile(ply->getPos(), ply->getVel(), ply->getAng(), TEAM_PLAYER);
@@ -413,9 +409,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
     {
         if(btn == SDL_BUTTON_LEFT)
         {
-            int x = 0, y = 0;
-            SDL_GetMouseState(&x,&y);
-            selectionReturn ret = uni->handleInput({static_cast<float>(x), static_cast<float>(y)});
+            selectionReturn ret = uni->handleInput( getMousePos() );
             if(ret.m_sel_val == 0)
             {
                 ply->setEnergyPriority(ret.m_button_val);
@@ -502,13 +496,11 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     {
 
     }
-    int mx = 0, my = 0;
-    SDL_GetMouseState(&mx, &my);
 
-    selectionReturn ret = uni->getUI()->handleInput({static_cast<float>(mx), static_cast<float>(my)});
+    selectionReturn ret = uni->getUI()->handleInput( getMousePos() );
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
-    vec3 pos = tovec3( toWorldSpace({static_cast<float>(mx), static_cast<float>(my)}) );
+    vec3 pos = tovec3( toWorldSpace( getMousePos() ) );
 
     int ms = uni->getMouseState();
     if(ms > -1 and ms != PLAYER_CAPITAL)
@@ -1197,9 +1189,6 @@ void sandbox(universe &uni)
             case SDL_MOUSEBUTTONUP:
             {
                 if(uni.getMouseState() < 0 or uni.getMouseState() > SHIPS_END) break;
-
-                int mx = 0, my = 0;
-                SDL_GetMouseState(&mx, &my);
                 aiTeam team = NONE;
                 ship_spec spec = static_cast<ship_spec>(uni.getMouseState());
 
@@ -1209,7 +1198,7 @@ void sandbox(universe &uni)
                 else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_MINER_DROID) team = ALLIANCE;
                 else if(spec >= PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
 
-                uni.spawnShip(spec, team, {static_cast<float>(mx), static_cast<float>(my), 0.0f});
+                uni.spawnShip(spec, team, tovec3( getMousePos() ));
                 uni.setMouseState(-1);
                 break;
             }

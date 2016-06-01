@@ -141,12 +141,7 @@ void universe::addMissile(
     m.setWVel(m_vel);
     m.setAng(_angle);
 
-    int mx = 0, my = 0;
-    SDL_GetMouseState(&mx,&my);
-    mx -= g_HALFWIN.m_x;
-    my -= g_HALFWIN.m_y;
-
-    m.setTarget(closestEnemy(vec3(mx, my, 0.0f) * g_ZOOM_LEVEL, _team));
+    m.setTarget(closestEnemy(tovec3( toScreenSpace( getMousePos() ) ) * g_ZOOM_LEVEL, _team));
 
     m_missiles.push_back(m);
 }
@@ -160,9 +155,9 @@ void universe::update(const float _dt)
 
     calcPowerBalance();
 
-    vec3 focus = vec3();
-    if(m_drawer.getFocus().m_id == -1) focus = m_ply.getPos();
-    else focus = m_agents.getByID(m_drawer.getFocus())->getPos();
+    base * focus = nullptr;
+    if(m_drawer.getFocus().m_id == -1) focus = &m_ply;
+    else focus = m_agents.getByID( m_drawer.getFocus() );
     m_drawer.update(_dt, focus);
 
     m_pos += m_vel * g_PIXEL_UNIT_CONVERSION * _dt;
@@ -468,13 +463,20 @@ void universe::update(const float _dt)
     for(auto &s : m_squads) {s.m_centerPoint = {0.0f, 0.0f, 0.0f}; s.m_averageVel = {0.0f, 0.0f, 0.0f};}
     for(auto &e : m_agents.m_objects)
     {
-        //std::cout << e.getSquadID() << std::endl;
-        if(e.getSquadID() >= 0) {m_squads[e.getSquadID()].m_centerPoint += e.getPos(); m_squads[e.getSquadID()].m_averageVel += e.getVel();}
+        if(e.getSquadID() >= 0)
+        {
+            m_squads[e.getSquadID()].m_centerPoint += e.getPos();
+            m_squads[e.getSquadID()].m_averageVel += e.getVel();
+        }
     }
     for(auto &s : m_squads)
     {
         float size = static_cast<float>(s.m_size);
-        if(s.m_size > 0) {s.m_centerPoint /= size; s.m_averageVel /= size;}
+        if(s.m_size > 0)
+        {
+            s.m_centerPoint /= size;
+            s.m_averageVel /= size;
+        }
     }
 
     //Update live m_agents.
@@ -516,6 +518,8 @@ void universe::update(const float _dt)
         else if(m_agents[e].getHealth() < m_agents[e].getMaxHealth() * 0.75f) m_agents[e].setEnergyPriority(1);
         else m_agents[e].setEnergyPriority(0);
         //-----------------------------------------------------------------------------------------------------//
+
+        //Updating ship systems----------------------------------------------------------------------------//
         m_agents[e].update(_dt);
 
         vec3 p = m_agents[e].getPos();
@@ -602,7 +606,7 @@ void universe::update(const float _dt)
         //If the agent can move, is friendly to the player, and close by, and not in combat.
         if(m_agents[e].getCanMove() and friendshipCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > fd * fd ) and !m_agents[e].inCombat())
         {
-            m_agents[e].setTarget( (player*)&m_ply );
+            m_agents[e].setTarget( &m_ply );
             m_agents[e].setGoal( GOAL_CONGREGATE );
         }
         else if( m_agents[e].getTarget() == nullptr )
@@ -1027,12 +1031,7 @@ void universe::draw(float _dt)
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
     }
 
-    int mx = 0, my = 0;
-    SDL_GetMouseState(&mx, &my);
-
-    vec2 dpos = {static_cast<float>(mx), static_cast<float>(my)};
-    dpos -= g_HALFWIN;
-    dpos /= g_ZOOM_LEVEL;
+    vec2 dpos = toWorldSpace( getMousePos() );
 
     if(m_mouse_state != -1) m_drawer.drawAsset(dpos, 0.0f, g_ship_templates[m_mouse_state].getIdentifier(), 0.5f);
 

@@ -543,7 +543,7 @@ void renderer_ngl::createShaderProgram(const std::string _name, const std::strin
     m_shader->linkProgramObject(_name);
 }
 
-void renderer_ngl::update(float _dt, vec3 _focusPos)
+void renderer_ngl::update(float _dt, base * _focus)
 {
     clearVectors();
 
@@ -559,8 +559,9 @@ void renderer_ngl::update(float _dt, vec3 _focusPos)
 
     g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;*/
 
-    m_camera.setTPos(_focusPos);
+    //m_camera.setVel(_focus->getVel());
     m_camera.update(_dt);
+    m_camera.updatePos(_dt);
     vec3 offset = m_camera.getCamPos();
 
     float divz = 1 / g_ZOOM_LEVEL;
@@ -972,7 +973,7 @@ void renderer_ngl::loadTransformToShader()
 
 void renderer_ngl::errorExit(const std::string &_msg)
 {
-    std::cerr << &_msg << " " << SDL_GetError() << std::endl;
+    std::cerr << &_msg << " " << SDL_GetError() << '\n';
     SDL_Quit();
     exit(EXIT_FAILURE);
 }

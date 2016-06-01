@@ -298,5 +298,6 @@ vec2 getMousePos();
 /// \brief Converts a given vec2 from screen to world space.
 //----------------------------------------------------------------------------------------------------------------------
 vec2 toWorldSpace(vec2 _in);
+vec2 toScreenSpace(vec2 _in);
 
 #endif

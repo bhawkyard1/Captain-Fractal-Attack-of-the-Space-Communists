@@ -35,22 +35,33 @@ bool circleIntersectCircle(vec2 _pos1, float _r1, vec2 _pos2, float _r2)
 
 bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius)
 {
-    vec3 lineDir  = _end - _start;
+    vec3 lineDir = _end - _start;
     vec3 cp = closest(_start, lineDir, _pos);
     vec3 cd = cp - _pos;
 
     return (sqr(_radius) > magns(cd)) and pointOnLine(_start, _end, cp);
 }
 
-bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
+/*bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
 {
     //Do cross product of start->end vs start->point, then check dx, dy are smaller for start->point.
     vec3 startToPoint = _point - _start;
     vec3 startToEnd = _end - _start;
     float dp = dotProdUnit(startToPoint, startToEnd);
 
-    return (fabs(dp) > 0.99f and fabs(dp) < 1.01f) and pointInBox(_point, _start, _end);
+    return pointInBox(_point, _start, _end) and (fabs(dp) > 0.99f and fabs(dp) < 1.01f);
+}*/
+
+bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
+{
+    //Do cross product of start->end vs start->point, then check dx, dy are smaller for start->point.
+    vec3 startToPoint = unit(_point - _start);
+    vec3 startToEnd = unit(_end - _start);
+    float dp = dotProd(startToPoint, startToEnd);
+
+    return dp > 0.99f and dp < 1.01f;
 }
+
 /*
 template<class t>
 SDL_Rect enclose(const std::vector<t> &_ents)
