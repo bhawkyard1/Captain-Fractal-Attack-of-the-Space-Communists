@@ -31,6 +31,9 @@
 #define I_MAX std::numeric_limits<int>::max()
 #define I_INF std::numeric_limits<int>::max()
 
+#define ST_MAX std::numeric_limits<size_t>::max()
+#define ST_INF std::numeric_limits<size_t>::max()
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief A value used for all calculations involving pi. NGL has its own, but this game can run without NGL.
 //----------------------------------------------------------------------------------------------------------------------
@@ -297,7 +300,7 @@ vec2 getMousePos();
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Converts a given vec2 from screen to world space.
 //----------------------------------------------------------------------------------------------------------------------
-vec2 toWorldSpace(vec2 _in);
-vec2 toScreenSpace(vec2 _in);
+vec2 toWorldSpace(vec2 _in, vec2 _camPos);
+vec2 toScreenSpace(vec2 _in, vec2 _camPos);
 
 #endif

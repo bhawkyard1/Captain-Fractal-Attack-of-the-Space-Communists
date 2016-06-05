@@ -32,13 +32,26 @@ enum ship_spec {
     FEDERATION_MKI, FEDERATION_MKII, FEDERATION_MKIII, FEDERATION_MKIV, FEDERATION_GUNSHIP, FEDERATION_CAPITAL, FEDERATION_TURRET,
     PIRATE_GNAT, PIRATE_CRUISER, PIRATE_WRANGLER, PIRATE_MARAUDER, PIRATE_GUNSHIP, PIRATE_CAPITAL, PIRATE_TURRET,
     ALLIANCE_SCOUT, ALLIANCE_TRACKER, ALLIANCE_PHOENIX, ALLIANCE_DRAGON, ALLIANCE_TRADER, ALLIANCE_GUNSHIP, ALLIANCE_TURRET,
-    PLAYER_MINER_DROID, PLAYER_CAPITAL, PLAYER_TURRET, PLAYER_STATION, PLAYER_GRAVWELL, PLAYER_BARRACKS,
+    PLAYER_MINER_DROID, PLAYER_HUNTER, PLAYER_DEFENDER, PLAYER_DESTROYER, PLAYER_CAPITAL, PLAYER_TURRET,
+    PLAYER_STATION, PLAYER_GRAVWELL, PLAYER_BARRACKS,
     PLAYER_SHIP,
-    PLAYER_HUNTER, PLAYER_DEFENDER, PLAYER_DESTROYER,
     ION_MISSILE_MKI,
     ASTEROID_SMALL, ASTEROID_MID, ASTEROID_LARGE,
     SHIPS_END
 };
+
+ship_spec operator+(const ship_spec &_lhs, const ship_spec &_rhs);
+
+ship_spec operator+(const ship_spec &_lhs, const int &_rhs);
+ship_spec operator+(const int &_lhs, const ship_spec &_rhs);
+
+ship_spec operator+(const ship_spec &_lhs, const size_t &_rhs);
+ship_spec operator+(const size_t &_lhs, const ship_spec &_rhs);
+
+ship_spec& operator++(ship_spec &_lhs);
+
+//bool operator<(const ship_spec &_lhs, const ship_spec &_rhs);
+
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief What does the ship DO?
@@ -403,6 +416,11 @@ public:
 
     bool addItem(debris _in) {return m_cargo.addItem(_in);}
     inventory * getCargo() {return &m_cargo;}
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Calculate the cost for an AI faction to buy.
+    //----------------------------------------------------------------------------------------------------------------------
+    float calcAICost();
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.
@@ -605,5 +623,7 @@ private:
 /// \brief A global vector of ships, which we will copy from, rather than constructing from scratch.
 //----------------------------------------------------------------------------------------------------------------------
 extern std::vector<ship> g_ship_templates;
+
+float calcAICost(const ship_spec _spec);
 
 #endif

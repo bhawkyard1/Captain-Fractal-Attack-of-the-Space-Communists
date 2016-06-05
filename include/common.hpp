@@ -20,6 +20,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 #define RENDER_MODE 1
 
+#define NUMBER_OF_FACTIONS 8
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \file common.hpp
 /// \brief Keeps track of the global variables used in the game.
@@ -74,6 +76,8 @@ extern int g_DIFFICULTY;
 /// \brief Half of the window size, as a vec2
 //----------------------------------------------------------------------------------------------------------------------
 extern vec2 g_HALFWIN;
+
+extern vec2 g_VIEWPOS;
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The maximum dimension of the window, used in some places to cull objects which are too far away, in the SDL version

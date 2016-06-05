@@ -166,6 +166,15 @@ public:
     void spawnSquad(const aiTeam _t, const float _min, const float _max, const int _i);
 
     //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Spawns a series of ships.
+    /// \param _t team of the ships
+    /// \param _min minumum distance from origin
+    /// \param _max maximum distance from origin
+    /// \param _ships ships to spawn
+    //----------------------------------------------------------------------------------------------------------------------
+    void spawnSquad(const aiTeam _t, const float _min, const float _max, const std::vector<size_t> _ships, const ship_spec _minSpec);
+
+    //----------------------------------------------------------------------------------------------------------------------
     /// \brief This function only actually incremements the max number of wingmen available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
@@ -280,10 +289,10 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for the score.
     //----------------------------------------------------------------------------------------------------------------------
-    void setScore(const int _s) {m_factions[TEAM_PLAYER].m_wealth = _s; m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos()); m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos());}
-    void addScore(const int _s) {m_factions[TEAM_PLAYER].m_wealth += _s; m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos()); m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos());}
-    int getScore() const  {return m_factions[TEAM_PLAYER].m_wealth;}
-    int * getScorePt() {return &m_factions[TEAM_PLAYER].m_wealth;}
+    void setScore(const float _s) {m_factions[TEAM_PLAYER].setWealth(_s); m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());}
+    void addScore(const float _s) {m_factions[TEAM_PLAYER].addWealth(_s); m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());}
+    float getScore() const  {return m_factions[TEAM_PLAYER].getWealth();}
+    float * getScorePt() {return m_factions[TEAM_PLAYER].getWealthPt();}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for the max enemy count.
@@ -457,6 +466,9 @@ public:
 
     //ship * getByID(const unsigned long _i);
     void addFrag(uniqueID _i);
+
+    vec3 getCameraPosition() {return m_drawer.getCamera()->getPos();}
+    void setCameraPosition(const vec3 _pos) {m_drawer.getCamera()->setPos(_pos);}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.

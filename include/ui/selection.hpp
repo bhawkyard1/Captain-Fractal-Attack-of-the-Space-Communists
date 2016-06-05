@@ -70,7 +70,7 @@ public:
     /// \param _s current score.
     /// \param _mouse current mouse position.
     //----------------------------------------------------------------------------------------------------------------------
-    void update(int _s, const vec2 _mouse);
+    void update(float _s, const vec2 _mouse);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Removes all buttons.

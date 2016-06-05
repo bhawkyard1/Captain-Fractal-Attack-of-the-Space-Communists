@@ -7,9 +7,8 @@ std::vector<tinfo> g_texture_keys = {
     {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024}, {"FEDERATION_TURRET", 16},
     {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024}, {"PIRATE_TURRET", 16},
     {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64}, {"ALLIANCE_TRADER", 64}, {"ALLIANCE_TURRET", 16},
-    {"PLAYER_MINER_DROID", 16}, {"PLAYER_CAPITAL", 1024}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
+    {"PLAYER_MINER_DROID", 16}, {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32}, {"PLAYER_CAPITAL", 1024}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
     {"PLAYER_SHIP", 32},
-    {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32},
     {"ION_MISSILE_MKI", 16},
     {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
     {"SHIPS_END", 0}
@@ -512,6 +511,7 @@ ship::ship(
         m_type = SHIP_TYPE_STRUCTURE;
         break;
     case SHIPS_END:
+        m_identifier = "ERROR";
         m_type = SHIP_TYPE_NONE;
         break;
     }
@@ -1012,4 +1012,51 @@ void ship::setParent(uniqueID _p)
         m_hasParent = true;
     else
         m_hasParent = false;
+}
+
+float ship::calcAICost()
+{
+    return (m_maxHealth + m_maxShield + m_maxEnergy) * 0.001f;
+}
+
+float calcAICost(const ship_spec _spec)
+{
+    return g_ship_templates[_spec].calcAICost();
+}
+
+ship_spec operator+(const ship_spec &_lhs, const ship_spec &_rhs)
+{
+    return static_cast<ship_spec>( static_cast<int>(_lhs) + static_cast<int>(_rhs) );
+}
+
+ship_spec operator+(const ship_spec &_lhs, const int &_rhs)
+{
+    return static_cast<ship_spec>( static_cast<int>(_lhs) + _rhs );
+}
+
+ship_spec operator+(const int &_lhs, const ship_spec &_rhs)
+{
+    return static_cast<ship_spec>( _lhs + static_cast<int>(_rhs) );
+}
+
+ship_spec operator+(const ship_spec &_lhs, const size_t &_rhs)
+{
+    return static_cast<ship_spec>( static_cast<size_t>(_lhs) + _rhs );
+}
+
+ship_spec operator+(const size_t &_lhs, const ship_spec &_rhs)
+{
+    return static_cast<ship_spec>( _lhs + static_cast<size_t>(_rhs) );
+}
+
+/*
+bool operator<(const ship_spec &_lhs, const ship_spec &_rhs)
+{
+    return static_cast<int>(_lhs) < static_cast<int>(_rhs);
+}*/
+
+ship_spec& operator++(ship_spec &_lhs)
+{
+    int temp = _lhs;
+    return _lhs = static_cast<ship_spec>( ++temp );
 }

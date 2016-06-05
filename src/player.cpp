@@ -10,15 +10,15 @@ player::player(
     setMissiles(3);
 }
 
-void player::ctrlUpdate()
+void player::ctrlUpdate(vec2 _camPos)
 {
     if(g_GAME_OVER) return;
 
-    vec3 v = getVel();
+    /*vec3 v = getVel();
     setPos( v );
-    setPPos( v );
+    setPPos( v );*/
 
-    vec2 p = toScreenSpace( tovec2( getPos() ) );
+    vec2 p = toScreenSpace( tovec2( getPos() ), _camPos );
 
-    setTAng(deg(-ang(p - getMousePos() )));
+    setTAng( deg( -ang(p - getMousePos() ) ) );
 }

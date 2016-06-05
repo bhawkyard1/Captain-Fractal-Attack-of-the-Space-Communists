@@ -500,7 +500,7 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     selectionReturn ret = uni->getUI()->handleInput( getMousePos() );
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
-    vec3 pos = tovec3( toWorldSpace( getMousePos() ) );
+    vec3 pos = tovec3( toWorldSpace( getMousePos(), tovec2( uni->getCameraPosition() ) ) );
 
     int ms = uni->getMouseState();
     if(ms > -1 and ms != PLAYER_CAPITAL)
@@ -1198,7 +1198,7 @@ void sandbox(universe &uni)
                 else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_MINER_DROID) team = ALLIANCE;
                 else if(spec >= PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
 
-                uni.spawnShip(spec, team, tovec3( getMousePos() ));
+                uni.spawnShip(spec, team, tovec3( getMousePos() ) + uni.getCameraPosition());
                 uni.setMouseState(-1);
                 break;
             }

@@ -559,9 +559,10 @@ void renderer_ngl::update(float _dt, base * _focus)
 
     g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;*/
 
-    //m_camera.setVel(_focus->getVel());
+    m_camera.setVel(_focus->getVel());
+    m_camera.setTPos( _focus->getPos() );
     m_camera.update(_dt);
-    m_camera.updatePos(_dt);
+    //m_camera.updatePos(_dt);
     vec3 offset = m_camera.getCamPos();
 
     float divz = 1 / g_ZOOM_LEVEL;
@@ -937,7 +938,6 @@ void renderer_ngl::drawSmoke(const float _dt)
 {
     m_shader->use("smoke");
     m_shader->setRegisteredUniform("iGlobalTime", _dt);
-
     drawRects(true);
 }
 
@@ -1229,7 +1229,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, 1.0f));
     for(unsigned int i = 0; i < _lp->size(); i++)
     {
-        vec3 lpp = _lp->at(i).getPos();
+        vec3 lpp = _lp->at(i).getPos() - m_camera.getPos();
 
         float x = clamp(lpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(lpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
@@ -1240,7 +1240,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 0.0f, 0.1f, 1.0f));
     for(unsigned int i = 0; i < _mp->size(); i++)
     {
-        vec3 mpp = _mp->at(i).getPos();
+        vec3 mpp = _mp->at(i).getPos() - m_camera.getPos();
 
         float x = clamp(mpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(mpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
@@ -1251,7 +1251,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
     for(unsigned int i = 0; i < _ap->size(); i++)
     {
-        vec3 app = _ap->at(i).getPos();
+        vec3 app = _ap->at(i).getPos() - m_camera.getPos();
 
         float x = clamp(app.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(app.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
@@ -1265,11 +1265,11 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
 
     for(unsigned int i = 0; i < _ep->size(); i++)
     {
-        vec3 epp = _ep->at(i).getPos();
+        vec3 epp = _ep->at(i).getPos() - m_camera.getPos();
         float radius = clamp( _ep->at(i).getRadius() / 16.0f,  1.0f,  5.0f );
 
         std::array<float, 4> col;
-        col = col255to1(_fp->at(_ep->at(i).getTeam()).m_colour);
+        col = col255to1(_fp->at(_ep->at(i).getTeam()).getColour());
         col[3] = 1.0f;
         m_shader->setRegisteredUniform("inColour", ngl::Vec4(col[0], col[1], col[2], col[3]));
 

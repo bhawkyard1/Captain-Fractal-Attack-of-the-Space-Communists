@@ -18,7 +18,8 @@ camera::camera()
 void camera::update(float _dt)
 {
     vec3 diff = m_tPos - getPos();
-    addPos( diff / 20.0f );
+    //addPos( diff / 5.0f );
+    setPos(m_tPos);
 
     m_cameraShake = clamp(m_cameraShake - _dt * 5.0f, 0.0f, 20.0f);
 

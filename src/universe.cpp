@@ -114,7 +114,6 @@ void universe::addShot(
     {
         //vec2 vec = vec(temp_angle);
         laser temp( _p + _v, _v, temp_angle, _weap, _team, _owner);
-        temp.setWVel({0.0f, 0.0f, 0.0f});
         m_shots.push_back(temp);
     }
 }
@@ -138,17 +137,16 @@ void universe::addMissile(
 {
     missile m(_p, m_drawer.getTextureRadius(ION_MISSILE_MKI));
     m.setVel(_v + tovec3(vec(_angle + 90)) * 5);
-    m.setWVel(m_vel);
     m.setAng(_angle);
 
-    m.setTarget(closestEnemy(tovec3( toScreenSpace( getMousePos() ) ) * g_ZOOM_LEVEL, _team));
+    m.setTarget(closestEnemy(tovec3( toScreenSpace( getMousePos(), tovec2( getCameraPosition() ) ) ) * g_ZOOM_LEVEL, _team));
 
     m_missiles.push_back(m);
 }
 
 void universe::update(const float _dt)
 {
-    m_ui.update(m_factions[TEAM_PLAYER].m_wealth, getMousePos());
+    m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
 
     //If m_paused, we do not update the game.
     if(m_paused) return;
@@ -156,11 +154,20 @@ void universe::update(const float _dt)
     calcPowerBalance();
 
     base * focus = nullptr;
-    if(m_drawer.getFocus().m_id == -1) focus = &m_ply;
-    else focus = m_agents.getByID( m_drawer.getFocus() );
+    if(m_drawer.getFocus().m_id == -1)
+    {
+        focus = &m_ply;
+        m_vel = -m_ply.getVel();
+    }
+    else
+    {
+        focus = m_agents.getByID( m_drawer.getFocus() );
+        m_vel = -focus->getVel();
+    }
     m_drawer.update(_dt, focus);
 
     m_pos += m_vel * g_PIXEL_UNIT_CONVERSION * _dt;
+
     m_time_elapsed += _dt;
     //Interpolate towards desired background colour.
     m_cCol[0] += clamp(m_tCol[0] - m_cCol[0], -0.01f, 0.01f);
@@ -185,11 +192,10 @@ void universe::update(const float _dt)
 
     if(!g_GAME_OVER)
     {
-        m_ply.ctrlUpdate();
+        m_ply.ctrlUpdate( tovec2( getCameraPosition() ) );
         m_ply.update(_dt);
+        m_ply.updatePos(_dt);
     }
-
-    m_vel = -m_ply.getVel();
 
     //If player health is below 25%, emit smoke.
     if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getRadius(), "SMOKE");
@@ -228,7 +234,6 @@ void universe::update(const float _dt)
 #if RENDER_MODE == 0
     for(auto &i : m_dots)
     {
-        i.setWVel(m_vel);
         i.updatePos(_dt);
         if(isOffScreen(i.getPos(), clamp(g_MAX_DIM * g_BG_DENSITY / g_ZOOM_LEVEL, g_MAX_DIM, F_INF)))
         {
@@ -238,7 +243,6 @@ void universe::update(const float _dt)
 
     for(auto &i : m_sparkles)
     {
-        i.setWVel(m_vel);
         i.updateSprite(_dt);
 
         std::string temp = i.getIdentifier();
@@ -261,7 +265,6 @@ void universe::update(const float _dt)
         }
         else
         {
-            m_shots[i].setWVel(m_vel);
             m_shots[i].update(_dt);
         }
     }
@@ -338,7 +341,6 @@ void universe::update(const float _dt)
         else
         {
             if(m_missiles[i].getTarget() == nullptr) m_missiles[i].setTarget(closestEnemy(m_missiles[i].getPos(), m_missiles[i].getTeam()));
-            m_missiles[i].setWVel(m_vel);
             m_missiles[i].update(_dt);
             m_missiles[i].steering();
         }
@@ -386,7 +388,6 @@ void universe::update(const float _dt)
         }
         else
         {
-            m_asteroids[i].setWVel(m_vel);
             m_asteroids[i].update(_dt);
         }
     }
@@ -399,7 +400,6 @@ void universe::update(const float _dt)
         }
         else
         {
-            m_resources[i].setWVel(m_vel);
             m_resources[i].updatePos(_dt);
         }
     }
@@ -409,7 +409,7 @@ void universe::update(const float _dt)
     {
         vec3 p = m_agents[i].getPos();
 
-        bool isOffscreen = isOffScreen(p, 80000.0f);
+        bool isOffscreen = isOffScreen(p - getCameraPosition(), 120000.0f);
         bool isDead = m_agents[i].getHealth() <= 0.0f;
         bool isPlayerOwned = friendshipCheck(m_agents[i].getTeam(), TEAM_PLAYER);
         bool isSmall = m_agents[i].getType() == SHIP_TYPE_FIGHTER;
@@ -444,17 +444,19 @@ void universe::update(const float _dt)
             if(m_agents[i].getTeam() == GALACTIC_FEDERATION or m_agents[i].getTeam() == SPOOKY_SPACE_PIRATES) m_factionCounts[GALACTIC_FEDERATION]--;
             else m_factionCounts[m_agents[i].getTeam()]--;
 
-            //std::cout << "p10.1\n";
             enemy * la = m_agents.getByID(m_agents[i].getLastAttacker());
             if(la != nullptr and la->getTeam() == TEAM_PLAYER)
             {
                 addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, la->getPos(), -m_vel + randVec3(2.0f) );
             }
-            //std::cout << "p10.2\n";
             //If current ship is context ship
             if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {0, -1};
-            //std::cout << "p10.3\n";
+            m_factions[ m_agents[i].getTeam() ].unitDestroyed(m_agents[i].getClassification());
             m_agents.free(i);
+        }
+        else if(isOffscreen)
+        {
+            m_factions[ m_agents[i].getTeam() ].unitWithdrawn(m_agents[i].getClassification());
         }
     }
 
@@ -485,7 +487,6 @@ void universe::update(const float _dt)
         if(!m_agents[e].hasParent())
         {
             m_agents[e].updatePos(_dt);
-            m_agents[e].setWVel(m_vel);
         }
         else if(m_agents[e].hasParent())
         {
@@ -509,7 +510,6 @@ void universe::update(const float _dt)
             m_agents[e].setPos( parent->getPos() + comb );
             m_agents[e].setPPos( m_agents[e].getPos() );
 
-            m_agents[e].setWVel(m_vel);
             m_agents[e].setVel(parent->getVel());
         }
 
@@ -648,7 +648,6 @@ void universe::update(const float _dt)
     //Ship spawning functions.
     for(int i = m_particles.size() - 1; i >= 0; i--)
     {
-        m_particles[i].setWVel(m_vel);
         m_particles[i].update(_dt);
         if(m_particles[i].done()) swapnpop(&m_particles, i);
 
@@ -658,7 +657,6 @@ void universe::update(const float _dt)
     {
         float alph = m_passiveSprites[i].getCol(3);
 
-        m_passiveSprites[i].setWVel(m_vel);
         m_passiveSprites[i].updateSprite(_dt);
 
         int w = 32;
@@ -692,12 +690,24 @@ void universe::update(const float _dt)
     }
     if(rand() % 256 == 0 and m_minerCount < m_maxMiners)
     {
-        spawnShip(PLAYER_MINER_DROID, TEAM_PLAYER, tovec3(randVec2(10000.0f, 20000.0f)));
+        spawnShip(PLAYER_MINER_DROID, TEAM_PLAYER, tovec3(randVec2(10000.0f, 20000.0f)) + getCameraPosition());
     }
 
     if(g_DIFFICULTY == 0) return;
 
-    if(rand() % m_enemySpawnRate <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
+    for(auto &i : m_factions)
+    {
+        if(i.getTeam() == TEAM_PLAYER)
+            continue;
+
+        std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
+        i.update(_dt, m_agents.size());
+
+        spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed(), i.getShittiestShip());
+        i.clearDeployed();
+    }
+
+    /*if(rand() % m_enemySpawnRate <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
     {
         int reps = clamp(rand() % (g_DIFFICULTY * 5) + 1, 1, clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,80) - m_factionCounts[GALACTIC_FEDERATION]);
         aiTeam pteam;
@@ -720,7 +730,7 @@ void universe::update(const float _dt)
         aiTeam pteam;
         pteam = ALLIANCE;
         spawnSquad(pteam, 10000.0f, 20000.0f, reps);
-    }
+    }*/
 
     if(rand() % 1500 == 0 and m_asteroids.size() < 10)
     {
@@ -742,8 +752,8 @@ void universe::update(const float _dt)
         m_asteroids.push_back(a);
     }
 
-    if(rand() == 0) m_factionMaxCounts[GALACTIC_FEDERATION] = clamp(m_factionMaxCounts[GALACTIC_FEDERATION] - 1, 0, I_MAX);
-    if(rand() == 0) m_factionMaxCounts[SPACE_COMMUNISTS] = clamp(m_factionMaxCounts[SPACE_COMMUNISTS] - 1, 0, I_MAX);
+    //if(rand() == 0) m_factionMaxCounts[GALACTIC_FEDERATION] = clamp(m_factionMaxCounts[GALACTIC_FEDERATION] - 1, 0, I_MAX);
+    //if(rand() == 0) m_factionMaxCounts[SPACE_COMMUNISTS] = clamp(m_factionMaxCounts[SPACE_COMMUNISTS] - 1, 0, I_MAX);
 }
 
 #if RENDER_MODE == 0
@@ -1031,7 +1041,7 @@ void universe::draw(float _dt)
         m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
     }
 
-    vec2 dpos = toWorldSpace( getMousePos() );
+    vec2 dpos = toWorldSpace( getMousePos(), tovec2( getCameraPosition() ) );
 
     if(m_mouse_state != -1) m_drawer.drawAsset(dpos, 0.0f, g_ship_templates[m_mouse_state].getIdentifier(), 0.5f);
 
@@ -1039,7 +1049,7 @@ void universe::draw(float _dt)
     for(auto &i : m_shots)
     {
         vec3 ipos = i.getInterpolatedPosition(_dt);
-        vec3 ivel = (i.getVel() + i.getWVel()) * 8.0f;
+        vec3 ivel = (i.getVel() + m_vel) * 8.0f;
         std::array<float, 4> icol = i.getCol();
 
         icol = col255to1(icol);
@@ -1069,7 +1079,7 @@ void universe::draw(float _dt)
     if(m_ply.getCurWeapCol()[3] > 0.05f and !g_GAME_OVER)
     {
         float dim = m_ply.getCurWeapStat(DAMAGE) * 4.0f;
-        m_drawer.addRect(m_ply.getPos() + tovec3(front(rad(m_ply.getAng()))) * m_ply.getRadius(),
+        m_drawer.addRect(m_ply.getInterpolatedPosition(_dt) + tovec3(front(rad(m_ply.getAng()))) * m_ply.getRadius(),
         {dim, dim},
                          0.0f,
                          m_ply.getCurWeapCol());
@@ -1078,8 +1088,9 @@ void universe::draw(float _dt)
     {
         if(i.getCurWeapCol()[3] > 0.05f)
         {
-            float dim = i.getCurWeapStat(DAMAGE) * 4.0f;m_drawer.addRect(
-                        i.getPos() + tovec3(front(rad(i.getAng()))) * i.getRadius(),
+            float dim = i.getCurWeapStat(DAMAGE) * 4.0f;
+            m_drawer.addRect(
+                        i.getInterpolatedPosition(_dt) + tovec3(front(rad(i.getAng()))) * i.getRadius(),
             {dim, dim},
                         0.0f,
                         i.getCurWeapCol());
@@ -1093,7 +1104,7 @@ void universe::draw(float _dt)
     {
         std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
         col = col255to1(col);
-        vec3 ipos = i.getPos();
+        vec3 ipos = i.getInterpolatedPosition(_dt);
         float idim = i.getForce() * 20.0f;
 
         if(col[3] > 0.05f)
@@ -1141,7 +1152,7 @@ void universe::drawUI(const float _dt)
     m_drawer.clearVectors();
     if(!g_GAME_OVER)
     {
-        m_drawer.drawText("SCORE: " + std::to_string( m_factions[TEAM_PLAYER].m_wealth ),"pix",{280, 56}, false, 1.0f);
+        m_drawer.drawText("SCORE: " + std::to_string( m_factions[TEAM_PLAYER].getWealth() ),"pix",{280, 56}, false, 1.0f);
         m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{280, 80}, false, 1.0f);
 
         m_drawer.statusBars(&m_ply);
@@ -1159,7 +1170,7 @@ void universe::drawUI(const float _dt)
             {g_WIN_WIDTH - 256.0f + cumulative, 272.0f, 0.0f},
             {b * 256.0f, 16.0f},
                         0.0f,
-                        col255to1(m_factions[i].m_colour)
+                        col255to1(m_factions[i].getColour())
                         );
 
             cumulative += b * 128.0f;
@@ -1177,10 +1188,11 @@ void universe::drawUI(const float _dt)
         if(contextPtr != nullptr)
         {
             vec3 csp = contextPtr->getPos();
+            std::cout << csp.m_x << ", " << csp.m_y << '\n';
             vec2 offset = {256.0f, 256.0f};
             vec2 min = (-g_HALFWIN + offset) / g_ZOOM_LEVEL;
             vec2 max = (g_HALFWIN - offset) / g_ZOOM_LEVEL;
-            csp = clamp(csp, tovec3(min), tovec3(max));
+            csp = clamp(csp, tovec3(min) + getCameraPosition(), tovec3(max) + getCameraPosition());
 
             float health = 128.0f * contextPtr->getHealth() / contextPtr->getMaxHealth();
             float shield = 128.0f * contextPtr->getShield() /  contextPtr->getMaxShield();
@@ -1733,7 +1745,6 @@ void universe::addParticleSprite(
     int w = 0, h = 0;
     stardust_sprite sm (_tex, col, _dim, _dim);
     sm.setPos(_p);
-    sm.setWVel(m_vel);
     if( _tex == "SMOKE" ) sm.setVel(_v + tovec3(randVec2(1.0f)));
     else if( _tex == "EXPLOSION" ) sm.setVel(_v);
     sm.setZ(1.0f);
@@ -1750,7 +1761,7 @@ void universe::spawnShip(const aiTeam _t)
     else if(side == 2) pass = {randNum(-20000.0f, 20000.0f), 20000.0f};
     else if(side == 3) pass = {20000.0f, randNum(-20000.0f, 20000.0f)};
 
-    spawnShip(getRandomShipType(_t), _t, tovec3(pass));
+    spawnShip(getRandomShipType(_t), _t, tovec3(pass) + getCameraPosition());
 }
 
 ship_spec universe::getRandomShipType(const aiTeam _t)
@@ -1817,8 +1828,6 @@ void universe::spawnShip(
     else if( _t == SPOOKY_SPACE_PIRATES or _t == GALACTIC_FEDERATION) m_factionCounts[GALACTIC_FEDERATION]++;
     else if(_t == SPACE_COMMUNISTS )  m_factionCounts[SPACE_COMMUNISTS]++;
     else if(_t == ALLIANCE) m_factionCounts[ALLIANCE]++;
-
-    newShip.setWVel({0.0f, 0.0f, 0.0f});
 
     m_agents.push_back(newShip);
 
@@ -1946,7 +1955,25 @@ void universe::spawnSquad(
     vec3 p = tovec3(randVec2(_min, _max));
     for(int i = 0; i < _i; ++i)
     {
-        spawnShip(getRandomShipType(_t), _t, p + tovec3(randVec2(512.0f)));
+        spawnShip(getRandomShipType(_t), _t, p + tovec3(randVec2(512.0f)) + getCameraPosition());
+    }
+}
+
+void universe::spawnSquad(
+        const aiTeam _t,
+        const float _min,
+        const float _max,
+        const std::vector<size_t> _ships,
+        const ship_spec _minSpec
+        )
+{
+    vec3 p = tovec3(randVec2(_min, _max));
+    for(auto &i : _ships)
+    {
+        for(size_t j = 0; j < i; ++j)
+        {
+            spawnShip(_minSpec + i, _t, p + tovec3(randVec2(512.0f)) + getCameraPosition());
+        }
     }
 }
 
@@ -1955,7 +1982,7 @@ bool universe::emnityCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].m_relations[_b] == DIPLOMACY_ENEMY and m_factions[_b].m_relations[_a] == DIPLOMACY_ENEMY;
+    return m_factions[_a].getRelations(_b) == DIPLOMACY_ENEMY and m_factions[_b].getRelations(_a) == DIPLOMACY_ENEMY;
 }
 
 bool universe::friendshipCheck(
@@ -1963,7 +1990,7 @@ bool universe::friendshipCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].m_relations[_b] == DIPLOMACY_FRIEND and m_factions[_b].m_relations[_a] == DIPLOMACY_FRIEND;
+    return m_factions[_a].getRelations(_b) == DIPLOMACY_FRIEND and m_factions[_b].getRelations(_a) == DIPLOMACY_FRIEND;
 }
 
 bool universe::neutralityCheck(
@@ -1971,7 +1998,7 @@ bool universe::neutralityCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].m_relations[_b] >= DIPLOMACY_NEUTRAL and m_factions[_b].m_relations[_a] >= DIPLOMACY_NEUTRAL;
+    return m_factions[_a].getRelations(_b) >= DIPLOMACY_NEUTRAL and m_factions[_b].getRelations(_a) >= DIPLOMACY_NEUTRAL;
 }
 
 void universe::reload(const bool _newGame)
@@ -1983,6 +2010,13 @@ void universe::reload(const bool _newGame)
     m_passiveSprites.clear();
     m_particles.clear();
     m_resources.clear();
+
+    m_factions.clear();
+    createFactions();
+
+    m_ply.setPos(vec3());
+    setCameraPosition(vec3());
+    m_pos = vec3();
 
     m_vel = {0.0f, 0.0f, 0.0f};
     m_pos = {0.0f, 0.0f, 0.0f};
@@ -2032,9 +2066,7 @@ void universe::reload(const bool _newGame)
     m_ply.getCargo()->getItems()->clear();
 
     if(!_newGame)
-    {
         return;
-    }
 
     m_sounds.playSnd(SAVE_SND);
     for(int i = 0; i < UPGRADES_LEN; ++i)
@@ -2168,7 +2200,7 @@ bool universe::upgradeCallback(
 
     selectedbutton->set(false);
 
-    if(selectedbutton->getCost() > m_factions[TEAM_PLAYER].m_wealth or lvl > 9)
+    if(selectedbutton->getCost() > m_factions[TEAM_PLAYER].getWealth() or lvl > 9)
     {
         m_sounds.playSnd(MENU_FAIL_SND);
         return false;
@@ -2241,7 +2273,7 @@ void universe::upgradeSetLabels(
 //This function loads all the ships in the game into a vector that we can copy from later.
 void universe::loadShips()
 {
-    for(int i = 0; i < static_cast<int>(SHIPS_END); ++i)
+    for(int i = 0; i <= SHIPS_END; ++i)
     {
         ship insert( {0.0f, 0.0f, 0.0f}, static_cast<ship_spec>(i), m_drawer.getTextureRadius(static_cast<ship_spec>(i)) );
         g_ship_templates.push_back(insert);
@@ -2251,53 +2283,37 @@ void universe::loadShips()
 
 void universe::createFactions()
 {
-    faction player;
-    player.m_team = TEAM_PLAYER;
-    player.m_colour = {0, 255, 0, 255};
-    player.m_relations = {DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY};
-    player.m_wealth = 16;
+    faction player("Player Team", {0, 255, 0, 255}, TEAM_PLAYER, PLAYER_HUNTER, PLAYER_CAPITAL, false );
+    player.setRelations( {DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY} );
+    player.setWealth( 16.0f );
     m_factions.push_back(player);
 
-    faction galactic_fed;
-    galactic_fed.m_team = GALACTIC_FEDERATION;
-    galactic_fed.m_colour = {165, 14, 226, 255};
-    galactic_fed.m_relations = {DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY};
-    galactic_fed.m_wealth = 36000;
+    faction galactic_fed("Galactic Federation", {165, 14, 226, 255}, GALACTIC_FEDERATION, FEDERATION_MKI, FEDERATION_CAPITAL, true );
+    galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    galactic_fed.setWealth( 36000.0f );
     m_factions.push_back(galactic_fed);
 
-    faction spooky_pirates;
-    spooky_pirates.m_team = SPOOKY_SPACE_PIRATES;
-    spooky_pirates.m_colour = {240, 211, 10, 255};
-    spooky_pirates.m_relations = {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY};
-    spooky_pirates.m_wealth = 5000;
+    faction spooky_pirates("Spooky Space Pirates", {240, 211, 10, 255}, SPOOKY_SPACE_PIRATES, PIRATE_GNAT, PIRATE_CAPITAL, true );
+    spooky_pirates.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    spooky_pirates.setWealth( 5000.0f );
     m_factions.push_back(spooky_pirates);
 
-    faction space_communists;
-    space_communists.m_team = SPACE_COMMUNISTS;
-    space_communists.m_colour = {255, 0, 0, 255};
-    space_communists.m_relations = {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY};
-    space_communists.m_wealth = 20000;
+    faction space_communists("Space Communists", {255, 0, 0, 255}, SPACE_COMMUNISTS, COMMUNIST_1, COMMUNIST_CAPITAL, true );
+    space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    space_communists.setWealth( 20000.0f );
     m_factions.push_back(space_communists);
 
-    faction alliance;
-    alliance.m_team = ALLIANCE;
-    alliance.m_colour = {0, 255, 255, 255};
-    alliance.m_relations = {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY};
-    alliance.m_wealth = 30000;
+    faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, ALLIANCE_SCOUT, ALLIANCE_GUNSHIP, true );
+    alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    alliance.setWealth( 30000 );
     m_factions.push_back(alliance);
 
-    faction neutral;
-    neutral.m_team = NEUTRAL;
-    neutral.m_colour = {200, 200, 200, 255};
-    neutral.m_relations = {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL};
-    neutral.m_wealth = 0;
+    faction neutral("Neutral", {200, 200, 200, 255}, NEUTRAL, SHIPS_END, SHIPS_END, false );
+    neutral.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL} );
     m_factions.push_back(neutral);
 
-    faction none;
-    none.m_team = NONE;
-    none.m_colour = {0, 0, 0, 255};
-    none.m_relations = {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY};
-    none.m_wealth = 0;
+    faction none("Unaffiliated", {0, 0, 0, 255}, NONE, SHIPS_END, SHIPS_END, false );
+    none.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     m_factions.push_back(none);
 }
 
@@ -2352,7 +2368,7 @@ selectionReturn universe::handleInput(vec2 _mouse)
     if(ret.m_sel_val > -1) m_sounds.playSnd(MENU_SELECT_SND);
     else
     {
-        _mouse = toWorldSpace(_mouse);
+        _mouse = toWorldSpace(_mouse, tovec2( getCameraPosition() ));
         m_contextShip = {0, -1};
         for(size_t i = 0; i < m_agents.size(); ++i)
         {

@@ -15,6 +15,7 @@ int g_WIN_WIDTH = 1920;
 int g_GRAPHICAL_DETAIL = 2;
 int g_DIFFICULTY = 1;
 vec2 g_HALFWIN;
+vec2 g_VIEWPOS;
 float g_MAX_DIM = 1920.0f;
 bool g_DEV_MODE = false;
 bool g_BEAST_MODE = false;

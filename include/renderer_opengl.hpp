@@ -351,6 +351,8 @@ public:
   void disableDepthSorting();
 
   uniqueID getFocus() {return m_focus;}
+
+  camera * getCamera() {return &m_camera;}
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The window the game will be drawn in

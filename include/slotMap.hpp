@@ -28,7 +28,6 @@ public:
         //Something wrong here. m_indirection not keeping up with m_ids.
         if(_i.m_id < m_indirection.size() and m_indirection[ _i.m_id ].m_version == _i.m_version)
             return &m_objects[ m_indirection[ _i.m_id ].m_id ];
-        //std::cout << "ERROR! " << _i.m_id << ", " << _i.m_version << " versus " << _i.m_id << ", " << m_indirection[ _i.m_id ].m_version << '\n';
         return nullptr;
     }
 
@@ -53,7 +52,6 @@ public:
         }
 
         m_objects.push_back(_obj);
-        //std::cout << "ALLOC (FREELIST: " << m_freeList.size()  << " INDIRECTION: " << m_indirection.size() << ")\n";
     }
 
     //Swaps item at index _a with item at index _b
@@ -87,8 +85,6 @@ public:
         m_ids.pop_back();
         //Destroy object.
         m_objects.pop_back();
-
-        //std::cout << "DEALLOC (FREELIST SIZE " << m_freeList.size() << ")\n";
     }
 
     void free(size_t _i)

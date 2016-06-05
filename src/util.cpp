@@ -146,15 +146,17 @@ vec2 getMousePos()
     return {static_cast<float>(x), static_cast<float>(y)};
 }
 
-vec2 toWorldSpace(vec2 _in)
+vec2 toWorldSpace(vec2 _in, vec2 _camPos)
 {
     _in -= g_HALFWIN;
     _in /= g_ZOOM_LEVEL;
+    _in += _camPos;
     return _in;
 }
 
-vec2 toScreenSpace(vec2 _in)
+vec2 toScreenSpace(vec2 _in, vec2 _camPos)
 {
     _in += g_HALFWIN;
+    _in -= _camPos;
     return _in;
 }

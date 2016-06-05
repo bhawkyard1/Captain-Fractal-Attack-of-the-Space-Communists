@@ -85,7 +85,7 @@ inline float getCooldown(int weap)
     return g_weapons[weap][COOLDOWN];
 }
 
-inline bool isOffScreen(vec2 pos, float dist)
+inline bool isOffScreen(const vec2 &pos, float dist)
 {
     return (pos.m_x < -dist or pos.m_y < -dist or pos.m_x > dist or pos.m_y > dist);
 }

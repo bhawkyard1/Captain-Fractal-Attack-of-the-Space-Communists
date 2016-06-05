@@ -56,7 +56,7 @@ void selection::reset()
     for(auto &i : m_buttons) i.reset();
 }
 
-void selection::update(const int _s, const vec2 _mouse)
+void selection::update(const float _s, const vec2 _mouse)
 {
     if(m_type = SELECTION_ROLLOUT)
     {

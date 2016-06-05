@@ -37,9 +37,10 @@ bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius)
 {
     vec3 lineDir = _end - _start;
     vec3 cp = closest(_start, lineDir, _pos);
-    vec3 cd = cp - _pos;
+    vec3 clamped = clamp(cp, _start, _end);
+    vec3 cd = clamped - _pos;
 
-    return (sqr(_radius) > magns(cd)) and pointOnLine(_start, _end, cp);
+    return (sqr(_radius) > magns(cd));
 }
 
 /*bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
@@ -55,11 +56,17 @@ bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius)
 bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
 {
     //Do cross product of start->end vs start->point, then check dx, dy are smaller for start->point.
-    vec3 startToPoint = unit(_point - _start);
+    vec3 startToPoint = _point - _start;
+    float startToPointLen = mag(startToPoint);
+    startToPoint /= startToPointLen;
+
     vec3 startToEnd = unit(_end - _start);
+    float startToEndLen = mag(startToEnd);
+    startToEnd /= startToEndLen;
+
     float dp = dotProd(startToPoint, startToEnd);
 
-    return dp > 0.99f and dp < 1.01f;
+    return dp > 0.9f and dp < 1.1f and startToPointLen < startToEndLen;
 }
 
 /*
