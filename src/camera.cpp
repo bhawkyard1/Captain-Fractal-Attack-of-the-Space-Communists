@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include "common.hpp"
 #include "util.hpp"
 
 camera::camera()
@@ -30,6 +29,4 @@ void camera::update(float _dt)
         m_cameraShakeTargetOffset = randVec2(m_cameraShake);
     }
     m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * clamp(_dt * 5.0f, 0.0f, 1.0f);
-
-    g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;
 }
