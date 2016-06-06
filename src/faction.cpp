@@ -24,25 +24,20 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 
     m_reserves.assign( _high + 1 - _low, 0 );
     m_deploy.assign( _high + 1 - _low, 0 );
+    m_active.assign( _high + 1 - _low, 0 );
 
     m_aggression = randNum(0.0f, 1.0f);
 
     m_economy = randNum(0.00001f, 0.0001f);
 
-    m_active = 0;
-
     m_organised = _organised;
 }
 
-faction::~faction()
-{
-    m_reserves.clear();
-    m_deploy.clear();
-}
-
-void faction::update(const float _dt, const size_t _totalShips)
+void faction::update(const float _dt, size_t _totalShips)
 {
     if(!m_organised) return;
+
+    _totalShips += 2;
 
     m_oldWealth = m_wealth;
 
@@ -50,7 +45,7 @@ void faction::update(const float _dt, const size_t _totalShips)
     if(m_wealth > 0.0f) m_wealth += m_wealth * _dt * m_economy;
     else if(!(rand() & 2048)) m_wealth += m_economy;
 
-    float targetShips = _totalShips * m_aggression + 1;
+    float targetShips = _totalShips * m_aggression;
 
     //As aggression gets lower, a faction must be wealthier to spawn reserves.
     float wealthDT = (m_wealth - m_oldWealth) * _dt;
@@ -58,42 +53,47 @@ void faction::update(const float _dt, const size_t _totalShips)
     //If the faction is too poor / not aggressive enough / already has enough ships, invest money.
     if( (rand() % 256) or wealthDT < -(m_oldWealth / 1000.0f) * m_aggression )
     {
-        m_economy *= 1 + _dt * 0.00001f;
         std::cout << "  investing\n";
+        m_economy *= 1 + _dt * 0.00001f;
     }
     //If the faction is wealthy enough, purchase ships.
-    else
+    else if(m_wealth > 0.0f)
     {
+        std::cout << "buying\n";
         addReserve();
-        std::cout << "  buying\n";
     }
 
     size_t numReserves = 0;
     for(auto &i : m_reserves) numReserves += i;
-    std::cout << "  reserves : " << numReserves << " active : " << m_active << '\n';
+    //std::cout << "  reserves : " << numReserves << " active : " << sumVec( m_active ) << '\n';
 
     //Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
-    if(m_active < targetShips and !(rand() % 2048))
+    if(sumVec( m_active ) < targetShips and !(rand() % 2048))
     {
-        deploy(randNum(1, static_cast<int>(_totalShips * m_aggression)));
-        std::cout << "  deploying\n";
+        //std::cout << "  deploying " << static_cast<int>(_totalShips * m_aggression) << std::endl;
+        deploy( randNum( 1, static_cast<int>(_totalShips * m_aggression) ) );
     }
 
+    //debug("upkeep");
     float upkeep = 0.0f;
     for(auto i = m_bounds.first; i <= m_bounds.second; ++i)
     {
-        upkeep += _dt * m_reserves[i - m_bounds.first] * calcAICost(i) / 10.0f;
+        std::cout << m_reserves[i - m_bounds.first] << " ";
+        upkeep += _dt * m_reserves[i - m_bounds.first] * calcAICost(i) / 20.0f;
     }
+    std::cout << '\n';
     m_wealth -= upkeep;
+    //debug("upkeep end");
 
     //Look at dt in wealth. If it is negative, below 1% of wealth multiplied by aggression and rand() hit, remove a ship.
     if(wealthDT < -(m_wealth / 1000.0f) * m_aggression and rand() % 128)
     {
+        std::cout << "culling\n";
         for(auto &i : m_reserves)
         {
             if(i > 0)
             {
-                i -= 1;
+                --i;
                 break;
             }
         }
@@ -101,6 +101,7 @@ void faction::update(const float _dt, const size_t _totalShips)
 
     m_aggression *= 0.999999f;
     if(!rand()) m_aggression = randNum(0.0f, 1.0f);
+    //debug("update end");
 }
 
 void faction::addReserve()
@@ -108,55 +109,70 @@ void faction::addReserve()
     float seed = randNum(0.0f, 1.0f);
 
     //Cubic distribution from 0 to 1.
-    float func = pow(seed, 5);
+    float func = pow(seed, 3);
 
     //Clamp values so the faction can only purchase ships it can afford.
     int max = -1;
-    float cost = 0.0f;
+
+    std::vector<float> cost;
     for(ship_spec i = m_bounds.first; i <= m_bounds.second; ++i)
     {
         if(calcAICost(i) < m_wealth)
         {
             max++;
-            cost = calcAICost(i);
+            cost.push_back( calcAICost(i) );
         }
+        else
+            break;
     }
 
     if(max == -1) return;
 
     int range = max - static_cast<int>(m_bounds.first);
 
-    int offset = clamp( static_cast<int>(round( range * func )), 0, max );
+    int offset = clamp( static_cast<int>(floor( range * func )), 0, max );
 
     m_reserves[ offset ]++;
-    m_wealth -= cost;
+    m_wealth -= cost[ offset ];
 }
 
 void faction::deploy(size_t _num)
 {
+    //debug( "    DEPLOY" );
     for(size_t i = 0; i < m_reserves.size(); ++i)
     {
         float x = static_cast<float>(i) / static_cast<float>(m_reserves.size());
         float func = sqr( x - 1.0f );
-        func = clamp( func * _num, 0.0f, static_cast<float>(m_reserves[i]) );
+        func = clamp( func * _num, 0.0f, static_cast<float>( m_reserves[i]) );
+        size_t pop = std::min(static_cast<size_t>(round(func)), m_reserves[i]);
 
-        size_t pop = clamp( static_cast<size_t>(round(func)), static_cast<size_t>(0), static_cast<size_t>(m_reserves[i]) );
         m_reserves[i] -= pop;
         m_deploy[i] += pop;
     }
-    m_active += _num;
 }
 
 void faction::unitDestroyed(const ship_spec _spec)
 {
-    addActive(-1);
+    addActive(_spec, -1);
     m_aggression += calcAICost(_spec) * 0.1f;
 }
 
 void faction::unitWithdrawn(const ship_spec _spec)
 {
-    addActive(-1);
+    addActive(_spec, -1);
     m_reserves[_spec - m_bounds.first]++;
 }
+
+void faction::addAggression(const float _mult)
+{
+    m_aggression *= 1.0f + 0.01f * _mult;
+}
+
+void faction::addActive(const ship_spec _i, const int _v)
+{
+    int index = _i - m_bounds.first;
+    if(m_active[index] > 0) m_active[index]--;
+}
+
 
 #endif

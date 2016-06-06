@@ -25,8 +25,7 @@ struct faction
 {
 public:
     faction(std::string _name, std::array<float, 4> _col, aiTeam _team, ship_spec _low, ship_spec _high, bool _organised);
-    ~faction();
-    void update(const float _dt, const size_t _totalShips);
+    void update(const float _dt, size_t _totalShips);
 
     void addReserve();
     void deploy(size_t _num);
@@ -34,8 +33,8 @@ public:
     std::vector<size_t> getReserves() const {return m_reserves;}
     void setReserves(const std::vector<size_t> &_reserves) {m_reserves = _reserves;}
 
-    int getActive() const {return m_active;}
-    void setActive(const int _active) {m_active = _active;}
+    std::vector<size_t> getActive() const {return m_active;}
+    void setActive(const std::vector<size_t> _active) {m_active = _active;}
 
     std::array<diplomaticStatus, 8> getRelations() const {return m_relations;}
     diplomaticStatus getRelations(const aiTeam _t) const {return m_relations[_t];}
@@ -60,10 +59,12 @@ public:
 
     std::string getIdentifier() const {return m_identifier;}
 
-    void addActive(const int _i) {m_active = clamp(m_active + _i, 0, I_INF);}
+    void addActive(const ship_spec _i, const int _v);
 
     void unitDestroyed(const ship_spec _spec);
     void unitWithdrawn(const ship_spec _spec);
+
+    void addAggression(const float _mult);
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
@@ -101,9 +102,9 @@ private:
     std::vector<size_t> m_deploy;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Number of ships this faction has in the field
+    /// \brief Ships this faction has in the field
     //----------------------------------------------------------------------------------------------------------------------
-    int m_active;
+    std::vector<size_t> m_active;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Aggression, makes a faction spawn ships more regularly

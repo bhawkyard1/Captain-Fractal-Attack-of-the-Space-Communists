@@ -11,7 +11,7 @@ std::vector<tinfo> g_texture_keys = {
     {"PLAYER_SHIP", 32},
     {"ION_MISSILE_MKI", 16},
     {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
-    {"SHIPS_END", 0}
+    {"SHIPS_END", 1}
 };
 
 long unsigned int g_shipIDCounter = 0;

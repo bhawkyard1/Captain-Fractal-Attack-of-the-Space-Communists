@@ -160,3 +160,8 @@ vec2 toScreenSpace(vec2 _in, vec2 _camPos)
     _in -= _camPos;
     return _in;
 }
+
+void debug(const std::string _msg)
+{
+    if(PRINT_DEBUG_MESSAGES) std::cout << _msg << std::endl;
+}

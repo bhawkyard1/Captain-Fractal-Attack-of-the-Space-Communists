@@ -39,6 +39,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 #define UPI 3.14159265359
 
+#define PRINT_DEBUG_MESSAGES 0
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \file util.hpp
 /// \brief A small file containing lots of useful values and functions, used across the project.
@@ -95,6 +97,7 @@ tt getClosest(tt _v, tt _m, tt _M)
 template<class t>
 t randNum(t _low, t _high)
 {
+    if(_low == _high) return _low;
     return static_cast <t> (rand()) / static_cast <t> (RAND_MAX/(_high-_low))+_low;
 }
 
@@ -302,5 +305,18 @@ vec2 getMousePos();
 //----------------------------------------------------------------------------------------------------------------------
 vec2 toWorldSpace(vec2 _in, vec2 _camPos);
 vec2 toScreenSpace(vec2 _in, vec2 _camPos);
+
+template<class t>
+t sumVec(const std::vector<t> _vec)
+{
+    t ret = 0;
+    for(auto &i : _vec)
+    {
+        ret += i;
+    }
+    return ret;
+}
+
+void debug(const std::string _msg);
 
 #endif

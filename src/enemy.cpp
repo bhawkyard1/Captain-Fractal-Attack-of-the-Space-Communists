@@ -157,6 +157,33 @@ void enemy::steering()
             and getEnergy() / getMaxEnergy() > 0.05f)
     {
         setFiring(true);
+
+        //Combat moves
+        if(getType() == SHIP_TYPE_FIGHTER)
+        {
+            //Dodge
+            if(!(rand()%64) and
+                    m_target != nullptr and
+                    dotProd(vec(getAng()), vec(m_target->getAng())) < -0.8f
+                    )
+            {
+                dodge(randNum(10.0f, 20.0f) * randNum(-1,1));
+            }
+
+            //Charge
+            if(!(rand()%128))
+            {
+                accelerate(
+                            unit(m_tPos - getPos()),
+                            randNum(15.0f, 25.0f)
+                            );
+            }
+        }
+    }
+
+    if(!(rand()%32) and inCombat() and getType() == SHIP_TYPE_FIGHTER)
+    {
+        dodge(randNum(2.0f, 3.0f) * randNum(-1,1));
     }
 
     //This variable represents the ships' direction versus its ideal direction.
