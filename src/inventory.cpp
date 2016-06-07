@@ -78,17 +78,17 @@ void inventory::update(const float _dt)
     }
 }
 
-debris inventory::handleInput(const vec2 _mouse)
+void inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
 {
-    /*vec3 test = {_mouse.m_x, _mouse.m_y, 0.0f};
-    for(auto &i : m_contents)
+    vec3 test = {_mouse.m_x, _mouse.m_y, 0.0f};
+    for(size_t i = 0; i < m_contents.m_objects.size(); ++i)
     {
-        if(magns(i.getPos() - test) < sqr(i.getRadius()))
+        if(magns(m_contents.m_objects[i].getPos() - test) < sqr(m_contents.m_objects[i].getRadius()))
         {
-            return i;
+            _fill->push_back(m_contents.m_objects[i]);
+            m_contents.free(i);
+            return;
         }
     }
-    return nullptr;*/
-    debris a({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, RESOURCE_IRON);
-    return a;
+    _fill = nullptr;
 }

@@ -22,7 +22,7 @@ public:
 
     slotMap<debris> * getItems() {return &m_contents;}
 
-    debris handleInput(const vec2 _mouse);
+    void handleInput(const vec2 _mouse, std::vector<debris> * _fill);
 private:
     slotMap<debris> m_contents;
     vec2 m_dim;

@@ -95,7 +95,6 @@ universe::universe()
     m_mapExpanded = false;
 
     m_contextShip = {0, -1};
-    m_selectedItem = nullptr;
 }
 
 void universe::addShot(
@@ -414,11 +413,14 @@ void universe::update(const float _dt)
         bool isPlayerOwned = friendshipCheck(m_agents[i].getTeam(), TEAM_PLAYER);
         bool isSmall = m_agents[i].getType() == SHIP_TYPE_FIGHTER;
 
+        debug("     calc");
+
         //Offscreen elimination, health-based elimination
         if( isDead or ( isOffscreen and (!isPlayerOwned or isSmall) ) )
         {
             if(isDead)
-            {
+           {
+                debug("     dead");
                 enemy * lastAttacker = m_agents.getByID( m_agents[i].getLastAttacker() );
                 for(int p = 0; p < rand() % 5 + 1; p++)
                 {
@@ -427,6 +429,7 @@ void universe::update(const float _dt)
                     addpfx(pos, m_agents[i].getVel(), randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f));
                 }
 
+                debug("     dump");
                 //Dump inventory.
                 for(auto &d : m_agents[i].getCargo()->getItems()->m_objects)
                 {
@@ -439,6 +442,8 @@ void universe::update(const float _dt)
                 else if( m_agents[i].getTeam() == SPACE_COMMUNISTS and rand() % 6 <= g_DIFFICULTY ) m_factionMaxCounts[SPACE_COMMUNISTS] += g_DIFFICULTY + 1;
                 else if( m_agents[i].getTeam() == ALLIANCE and rand() % 10 <= g_DIFFICULTY ) m_factionMaxCounts[ALLIANCE] += g_DIFFICULTY + 1;
 
+                debug("     factions");
+
                 playSnd(EXPLOSION_SND);
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
 
@@ -447,11 +452,13 @@ void universe::update(const float _dt)
                     addPopup( getRandomEntry(&g_fragRemarks), POPUP_NEUTRAL, 4.0f, lastAttacker->getPos(), -m_vel + randVec3(2.0f) );
                     m_factions[m_agents[i].getTeam()].addAggression(1.0f);
                 }
+                debug("     doot");
                 //If current ship is context ship
                 m_factions[ m_agents[i].getTeam() ].unitDestroyed(m_agents[i].getClassification());
             }
             else if(isOffscreen)
             {
+                debug("     os");
                 m_factions[ m_agents[i].getTeam() ].unitWithdrawn(m_agents[i].getClassification());
             }
 
@@ -459,7 +466,7 @@ void universe::update(const float _dt)
             m_agents.free(i);
         }
     }
-
+    debug("squads");
     //Set squad variables
     //Get the average position for each squad.
     for(auto &s : m_squads) {s.m_centerPoint = {0.0f, 0.0f, 0.0f}; s.m_averageVel = {0.0f, 0.0f, 0.0f};}
@@ -480,7 +487,7 @@ void universe::update(const float _dt)
             s.m_averageVel /= size;
         }
     }
-
+    debug("updates");
     //Update live m_agents.
     for(size_t e = 0; e < m_agents.size(); ++e)
     {
@@ -1251,14 +1258,14 @@ void universe::drawUI(const float _dt)
     if(m_ply.getCargo()->isVisible())
     {
         vec2 dim = m_ply.getCargo()->getDim();
-        m_drawer.addRect({0.0f, 0.0f, 0.0f}, dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
+        m_drawer.addRect(m_ply.getInterpolatedPosition(_dt), dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
         m_drawer.drawRects(true);
         m_drawer.clearVectors();
 
         m_drawer.useShader("ship");
         for(auto &i : m_ply.getCargo()->getItems()->m_objects)
         {
-            m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+            m_drawer.drawShip(m_ply.getPos() + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
         }
         m_drawer.useShader("plain");
     }
@@ -2080,7 +2087,6 @@ void universe::reload(const bool _newGame)
     m_ply.setGeneratorMul(1.0f);
 
     m_contextShip = {0, -1};
-    m_selectedItem = nullptr;
 
     m_ply.getCargo()->getItems()->clear();
 
@@ -2401,14 +2407,8 @@ selectionReturn universe::handleInput(vec2 _mouse)
         }
 
         std::cout << "CONTEXT SHIP: " << m_contextShip.m_id << ", " << m_contextShip.m_version << '\n';
-        /*if(m_selectedItem == nullptr) m_selectedItem.reset(m_ply.getCargo()->handleInput(_mouse));
-        if(m_selectedItem == nullptr)
-        {
-            for(auto &i: m_agents.m_objects)
-            {
-                if(i.getUniqueID() == m_contextShip) m_selectedItem.reset(i.getCargo()->handleInput(_mouse));
-            }
-        }*/
+        if(m_selectedItems.size() == 0) m_ply.getCargo()->handleInput(_mouse, &m_selectedItems);
+        if(m_selectedItems.size() == 0) m_agents.getByID(m_contextShip)->getCargo()->handleInput(_mouse, &m_selectedItems);
     }
 
     return ret;

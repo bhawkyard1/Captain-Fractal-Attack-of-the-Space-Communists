@@ -649,7 +649,8 @@ private:
     int m_minerCount;
     int m_wingmenCount;
 
-    std::unique_ptr<debris> m_selectedItem;
+    bool m_selectedItemOwner;
+    std::vector<debris> m_selectedItems;
 };
 
 #endif

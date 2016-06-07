@@ -156,8 +156,12 @@ void faction::deploy(size_t _num)
 
 void faction::unitDestroyed(const ship_spec _spec)
 {
+    std::cout << "SPEC " << _spec << '\n';
+    debug("unit destroyed call");
     addActive(_spec, -1);
+    debug("add active done");
     m_aggression += calcAICost(_spec) * 0.1f;
+    debug("calc aggression done");
 }
 
 void faction::unitWithdrawn(const ship_spec _spec)
@@ -174,7 +178,8 @@ void faction::addAggression(const float _mult)
 void faction::addActive(const ship_spec _i, const int _v)
 {
     int index = _i - m_bounds.first;
-    if(m_active.at(index) > 0) m_active.at(index)--;
+    std::cout << index << " of " << m_active.size() << '\n';
+    if( index >= 0 and index <= getDeployableRange() and m_active.at(index) > 0 ) m_active.at(index) -= _v;
 }
 
 

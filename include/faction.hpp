@@ -65,6 +65,8 @@ public:
     void unitWithdrawn(const ship_spec _spec);
 
     void addAggression(const float _mult);
+
+    size_t getDeployableRange() {return m_bounds.second - m_bounds.first;}
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
