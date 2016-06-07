@@ -78,8 +78,9 @@ void faction::update(const float _dt, size_t _totalShips)
     float upkeep = 0.0f;
     for(auto i = m_bounds.first; i <= m_bounds.second; ++i)
     {
-        std::cout << m_reserves[i - m_bounds.first] << " ";
-        upkeep += _dt * m_reserves[i - m_bounds.first] * calcAICost(i) / 20.0f;
+        std::cout << m_reserves.at(i - m_bounds.first) << " ";
+        upkeep += _dt * m_reserves.at(i - m_bounds.first) * calcAICost(i) / 20.0f;
+        upkeep += _dt * m_active.at(i - m_bounds.first) * calcAICost(i) / 20.0f;
     }
     std::cout << '\n';
     m_wealth -= upkeep;
@@ -108,8 +109,8 @@ void faction::addReserve()
 {
     float seed = randNum(0.0f, 1.0f);
 
-    //Cubic distribution from 0 to 1.
-    float func = pow(seed, 3);
+    //Distribution from 0 to 1.
+    float func = pow( seed, 10 );
 
     //Clamp values so the faction can only purchase ships it can afford.
     int max = -1;
@@ -125,15 +126,17 @@ void faction::addReserve()
         else
             break;
     }
+    std::cout << "max calculated " << max << " vs min " << m_bounds.first << '\n';
 
     if(max == -1) return;
 
-    int range = max - static_cast<int>(m_bounds.first);
+    int range = max + static_cast<int>(m_bounds.first);
 
-    int offset = clamp( static_cast<int>(floor( range * func )), 0, max );
+    std::cout << "ADDING RESERVE: " << range << " * " << func << " = " << range * func << '\n';
+    int offset = clamp( static_cast<int>(round( range * func )), 0, max );
 
-    m_reserves[ offset ]++;
-    m_wealth -= cost[ offset ];
+    m_reserves.at(offset)++;
+    m_wealth -= cost.at(offset);
 }
 
 void faction::deploy(size_t _num)
@@ -142,12 +145,12 @@ void faction::deploy(size_t _num)
     for(size_t i = 0; i < m_reserves.size(); ++i)
     {
         float x = static_cast<float>(i) / static_cast<float>(m_reserves.size());
-        float func = sqr( x - 1.0f );
-        func = clamp( func * _num, 0.0f, static_cast<float>( m_reserves[i]) );
-        size_t pop = std::min(static_cast<size_t>(round(func)), m_reserves[i]);
+        float func = pow( x - 1, 4 );
+        func = clamp( func * _num, 0.0f, static_cast<float>( m_reserves.at(i)) );
+        size_t pop = std::min(static_cast<size_t>(randNum(static_cast<int>(0), static_cast<int>(round(func)))), m_reserves.at(i));
 
-        m_reserves[i] -= pop;
-        m_deploy[i] += pop;
+        m_reserves.at(i) -= pop;
+        m_deploy.at(i) += pop;
     }
 }
 
@@ -171,7 +174,7 @@ void faction::addAggression(const float _mult)
 void faction::addActive(const ship_spec _i, const int _v)
 {
     int index = _i - m_bounds.first;
-    if(m_active[index] > 0) m_active[index]--;
+    if(m_active.at(index) > 0) m_active.at(index)--;
 }
 
 

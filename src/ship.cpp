@@ -90,7 +90,7 @@ ship::ship(
     case COMMUNIST_CAPITAL:
         m_identifier = "COMMUNIST_CAPITAL";
         setMaxHealth(4000.0f,true);
-        setMaxShield(1500.0f,true);
+        setMaxShield(2500.0f,true);
         setMaxEnergy(1000.0f,true);
         m_inertia = 0.00025f;
         m_enginePower = 5.0f;
@@ -169,7 +169,7 @@ ship::ship(
     case FEDERATION_CAPITAL:
         m_identifier = "FEDERATION_CAPITAL";
         setMaxHealth(5000.0f,true);
-        setMaxShield(800.0f,true);
+        setMaxShield(1200.0f,true);
         setMaxEnergy(1000.0f,true);
         m_inertia = 0.00025f;
         m_enginePower = 5.0f;
@@ -248,7 +248,7 @@ ship::ship(
     case PIRATE_CAPITAL:
         m_identifier = "PIRATE_CAPITAL";
         setMaxHealth(5500.0f,true);
-        setMaxShield(400.0f,true);
+        setMaxShield(1200.0f,true);
         setMaxEnergy(1000.0f,true);
         m_inertia = 0.00025f;
         m_enginePower = 5.0f;
@@ -488,8 +488,8 @@ ship::ship(
         break;
     case PLAYER_GRAVWELL:
         m_identifier = "PLAYER_GRAVWELL";
-        setMaxHealth(5000.0f,true);
-        setMaxShield(5000.0f,true);
+        setMaxHealth(700.0f,true);
+        setMaxShield(2000.0f,true);
         setMaxEnergy(50000.0f,true);
         m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
@@ -500,8 +500,8 @@ ship::ship(
         break;
     case PLAYER_BARRACKS:
         m_identifier = "PLAYER_BARRACKS";
-        setMaxHealth(8000.0f,true);
-        setMaxShield(8000.0f,true);
+        setMaxHealth(2000.0f,true);
+        setMaxShield(4000.0f,true);
         setMaxEnergy(80000.0f,true);
         m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
@@ -1016,7 +1016,7 @@ void ship::setParent(uniqueID _p)
 
 float ship::calcAICost()
 {
-    return (m_maxHealth + m_maxShield + m_maxEnergy) * 0.001f;
+    return (m_maxHealth + m_maxShield + m_maxEnergy) * 0.01f;
 }
 
 float calcAICost(const ship_spec _spec)

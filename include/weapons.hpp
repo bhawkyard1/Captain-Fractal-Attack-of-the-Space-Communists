@@ -68,9 +68,9 @@ static std::array<std::array<float,10>,27> g_weapons =
      {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       15.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.9f,   0.004f}},//Commie laser 1 18
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	5.0f,       10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.7f,   0.004f}},//Commie laser 2 19
      {{15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.5f,   0.004f}},//Commie laser capital 20
-     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       18.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.9f,   0.008f}},//Alliance 1
-     {{5.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       15.0f,		0.0f,	200.0f,	255.0f, 2.0f,   0.9f,   0.009f}},//Alliance 2
-     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	1.0f,       24.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.15f,   0.002f}},//Alliance 3
+     {{1.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       15.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.9f,   0.008f}},//Alliance 1
+     {{5.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       12.0f,		0.0f,	200.0f,	255.0f, 2.0f,   0.9f,   0.009f}},//Alliance 2
+     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	1.0f,       18.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.15f,   0.002f}},//Alliance 3
      {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      50.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.1f,   0.3f}},//Alliance boss
      {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
 }};

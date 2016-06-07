@@ -171,7 +171,10 @@ void enemy::steering()
             }
 
             //Charge
-            if(!(rand()%128))
+            if(!(rand()%128) and
+                    m_target != nullptr and
+                    m_target->getType() == SHIP_TYPE_FIGHTER
+                    )
             {
                 accelerate(
                             unit(m_tPos - getPos()),
@@ -179,11 +182,6 @@ void enemy::steering()
                             );
             }
         }
-    }
-
-    if(!(rand()%32) and inCombat() and getType() == SHIP_TYPE_FIGHTER)
-    {
-        dodge(randNum(2.0f, 3.0f) * randNum(-1,1));
     }
 
     //This variable represents the ships' direction versus its ideal direction.
