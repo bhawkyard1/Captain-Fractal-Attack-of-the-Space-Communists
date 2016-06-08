@@ -51,7 +51,7 @@ void faction::update(const float _dt, size_t _totalShips)
     float wealthDT = (m_wealth - m_oldWealth) * _dt;
 
     //If the faction is too poor / not aggressive enough / already has enough ships, invest money.
-    if( (rand() % 256) or wealthDT < -(m_oldWealth / 1000.0f) * m_aggression )
+    if( (rand() % 2048) or wealthDT < -(m_oldWealth / 1000.0f) * m_aggression )
     {
         std::cout << "  investing\n";
         m_economy *= 1 + _dt * 0.00001f;
@@ -110,7 +110,7 @@ void faction::addReserve()
     float seed = randNum(0.0f, 1.0f);
 
     //Distribution from 0 to 1.
-    float func = pow( seed, 10 );
+    float func = pow( seed, 14 );
 
     //Clamp values so the faction can only purchase ships it can afford.
     int max = -1;
@@ -144,10 +144,7 @@ void faction::deploy(size_t _num)
     //debug( "    DEPLOY" );
     for(size_t i = 0; i < m_reserves.size(); ++i)
     {
-        float x = static_cast<float>(i) / static_cast<float>(m_reserves.size());
-        float func = pow( x - 1, 4 );
-        func = clamp( func * _num, 0.0f, static_cast<float>( m_reserves.at(i)) );
-        size_t pop = std::min(static_cast<size_t>(randNum(static_cast<int>(0), static_cast<int>(round(func)))), m_reserves.at(i));
+        size_t pop = std::min(static_cast<size_t>(randNum(static_cast<int>(0), static_cast<int>(m_reserves[i] * m_aggression))), m_reserves.at(i));
 
         m_reserves.at(i) -= pop;
         m_deploy.at(i) += pop;

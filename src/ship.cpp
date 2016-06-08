@@ -14,8 +14,6 @@ std::vector<tinfo> g_texture_keys = {
     {"SHIPS_END", 1}
 };
 
-long unsigned int g_shipIDCounter = 0;
-
 std::vector<ship> g_ship_templates;
 
 std::string getTextureKey(ship_spec _s) {return g_texture_keys[_s].m_name;}
@@ -26,8 +24,6 @@ ship::ship(
         float _radius
         )
 {
-    g_shipIDCounter++;
-    //m_uniqueID = g_shipIDCounter;
 
     m_coolDown = 0.0f;
     m_shooting = false;
@@ -418,7 +414,6 @@ ship::ship(
         setMaxHealth(200.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_angVel = randNum(-1.0f, 1.0f);
         m_inertia = 0.1f;
         m_enginePower = 0.0f;
         m_canMove = true;
@@ -430,7 +425,6 @@ ship::ship(
         setMaxHealth(1000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_angVel = randNum(-1.0f, 1.0f);
         m_inertia = 0.025f;
         m_enginePower = 0.0f;
         m_canMove = true;
@@ -442,7 +436,6 @@ ship::ship(
         setMaxHealth(2000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_angVel = randNum(-1.0f, 1.0f);
         m_inertia = 0.0025f;
         m_enginePower = 0.0f;
         m_canMove = true;
@@ -478,7 +471,6 @@ ship::ship(
         setMaxHealth(10000.0f,true);
         setMaxShield(10000.0f,true);
         setMaxEnergy(100000.0f,true);
-        m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -491,7 +483,6 @@ ship::ship(
         setMaxHealth(700.0f,true);
         setMaxShield(2000.0f,true);
         setMaxEnergy(50000.0f,true);
-        m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -503,7 +494,6 @@ ship::ship(
         setMaxHealth(2000.0f,true);
         setMaxShield(4000.0f,true);
         setMaxEnergy(80000.0f,true);
-        m_angVel = randNum(-0.1f, 0.1f);
         m_inertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
@@ -514,6 +504,15 @@ ship::ship(
         m_identifier = "ERROR";
         m_type = SHIP_TYPE_NONE;
         break;
+    }
+
+    if(m_type == SHIP_TYPE_NONE)
+    {
+        m_angVel = randNum(-1.0f, 1.0f);
+    }
+    else if(m_type == SHIP_TYPE_STRUCTURE)
+    {
+        m_angVel = randNum(-0.1f, 0.1f);
     }
 
     m_priority = PRIORITY_NONE;
@@ -530,9 +529,6 @@ ship::ship(
         const vec3 _p
         )
 {
-    g_shipIDCounter++;
-    //m_uniqueID = g_shipIDCounter;
-
     m_coolDown = 0.0f;
     m_shooting = false;
 
