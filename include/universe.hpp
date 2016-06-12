@@ -279,6 +279,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<ship>* getAsteroids() {return &m_asteroids;}
 
+    std::vector<faction>* getFactions() {return &m_factions;}
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets the closest enemy to a given point in space, mostly used for missile tracking.
     /// \param _p position
@@ -295,32 +297,18 @@ public:
     float * getScorePt() {return m_factions[TEAM_PLAYER].getWealthPt();}
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter and setter for the max enemy count.
-    //----------------------------------------------------------------------------------------------------------------------
-    int getMaxEnemyCount(aiTeam _t) const {return m_factionMaxCounts[_t];}
-    void setMaxEnemyCount(const int m, const aiTeam _t) {m_factionMaxCounts[_t] = m;}
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter for the enemy count.
-    //----------------------------------------------------------------------------------------------------------------------
-    int getEnemyCount(aiTeam _t) const {return m_factionCounts[_t];}
-
-    //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for the max wingman count.
     //----------------------------------------------------------------------------------------------------------------------
-    int getMaxWingmanCount() const {return m_factionMaxCounts[TEAM_PLAYER];}
-    void setMaxWingmanCount(const int m) {m_factionMaxCounts[TEAM_PLAYER] = m;}
+    int getMaxWingmanCount() const {return m_maxWingmen;}
+    void setMaxWingmanCount(const int _m) {m_maxMiners = _m;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for the max miner count.
     //----------------------------------------------------------------------------------------------------------------------
     int getMaxMinerCount() const {return m_maxMiners;}
-    void setMaxMinerCount(const int m) {m_maxMiners = m;}
+    void setMaxMinerCount(const int _m) {m_maxMiners = _m;}
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Check to see if a given faction has reached its max count.
-    //----------------------------------------------------------------------------------------------------------------------
-    bool atMaxCount(aiTeam _t) const {return m_factionCounts[_t] < m_factionMaxCounts[_t];}
+    size_t getFactionCount(aiTeam _f) {return m_factions[_f].getNumActive();}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Resets the universe, and clears containers. Used to start a new game.
@@ -350,6 +338,8 @@ public:
     /// \brief Getter and setter for the UI.
     //----------------------------------------------------------------------------------------------------------------------
     selectionReturn handleInput(vec2 _mouse);
+    void mouseUp();
+    void processInput(selectionReturn _sel, int _keymod);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A function to tell whether we are allowed to upgrade (compares cost vs score etc).
@@ -533,16 +523,6 @@ private:
     /// \brief Container for all factions.
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<faction> m_factions;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Stores the number of enemies spawned of each faction.
-    //----------------------------------------------------------------------------------------------------------------------
-    std::vector<int> m_factionCounts;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief The maximum number of permitted spawned ships per faction. Rises as the player fights them.
-    //----------------------------------------------------------------------------------------------------------------------
-    std::vector<int> m_factionMaxCounts;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The player.

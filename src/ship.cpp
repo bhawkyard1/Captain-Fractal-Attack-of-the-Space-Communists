@@ -3,11 +3,17 @@
 #include "vectors.hpp"
 
 std::vector<tinfo> g_texture_keys = {
-    {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32}, {"COMMUNIST_CAPITAL", 1024}, {"COMMUNIST_TURRET", 16},
-    {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024}, {"FEDERATION_TURRET", 16},
-    {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024}, {"PIRATE_TURRET", 16},
-    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64}, {"ALLIANCE_TRADER", 64}, {"ALLIANCE_TURRET", 16},
-    {"PLAYER_MINER_DROID", 16}, {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32}, {"PLAYER_CAPITAL", 1024}, {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
+    {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32}, {"COMMUNIST_CAPITAL", 1024},
+    {"COMMUNIST_TURRET", 16},
+    {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024},
+    {"FEDERATION_TURRET", 16},
+    {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024},
+    {"PIRATE_TURRET", 16},
+    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64}, {"ALLIANCE_TURRET", 16},
+    {"ALLIANCE_TRADER", 64},
+    {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32}, {"PLAYER_CAPITAL", 1024},
+    {"PLAYER_MINER_DROID", 16},
+    {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
     {"PLAYER_SHIP", 32},
     {"ION_MISSILE_MKI", 16},
     {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
@@ -68,27 +74,29 @@ ship::ship(
         setMaxHealth(20.0f,true);
         setMaxShield(10.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
+        m_cargo.setDim({32.0f, 32.0f});
         break;
     case COMMUNIST_2:
         m_identifier = "COMMUNIST_2";
         setMaxHealth(40.0f,true);
         setMaxShield(30.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.09f;
+        m_initInertia = 0.09f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
+        m_cargo.setDim({32.0f, 32.0f});
         break;
     case COMMUNIST_CAPITAL:
         m_identifier = "COMMUNIST_CAPITAL";
         setMaxHealth(4000.0f,true);
         setMaxShield(2500.0f,true);
         setMaxEnergy(1000.0f,true);
-        m_inertia = 0.00025f;
+        m_initInertia = 0.00025f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[WEAPON_COMMUNIST_CAPITAL] );
         m_curWeap = 0;
@@ -100,19 +108,20 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
         m_curWeap = 0;
         m_canMove = false;
         m_type = SHIP_TYPE_TURRET;
+        m_cargo.setDim({64.0f, 64.0f});
         break;
     case FEDERATION_MKI:
         m_identifier = "FEDERATION_MKI";
         setMaxHealth(30.0f,true);
         setMaxShield(20.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
@@ -123,7 +132,7 @@ ship::ship(
         setMaxHealth(50.0f,true);
         setMaxShield(50.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.09f;
+        m_initInertia = 0.09f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
@@ -134,7 +143,7 @@ ship::ship(
         setMaxHealth(90.0f,true);
         setMaxShield(60.0f,true);
         setMaxEnergy(150.0f,true);
-        m_inertia = 0.08f;
+        m_initInertia = 0.08f;
         m_enginePower = 6.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
@@ -145,7 +154,7 @@ ship::ship(
         setMaxHealth(120.0f,true);
         setMaxShield(80.0f,true);
         setMaxEnergy(200.0f,true);
-        m_inertia = 0.15f;
+        m_initInertia = 0.15f;
         m_enginePower = 7.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_FED_1] );
         m_curWeap = 0;
@@ -156,7 +165,7 @@ ship::ship(
         setMaxHealth(500.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(500.0f,true);
-        m_inertia = 0.02f;
+        m_initInertia = 0.02f;
         m_enginePower = 8.0f;
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
         m_curWeap = 0;
@@ -167,7 +176,7 @@ ship::ship(
         setMaxHealth(5000.0f,true);
         setMaxShield(1200.0f,true);
         setMaxEnergy(1000.0f,true);
-        m_inertia = 0.00025f;
+        m_initInertia = 0.00025f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_FED_BOSS_1] );
         m_curWeap = 0;
@@ -179,11 +188,12 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[WEAPON_FED_3] );
         m_curWeap = 0;
         m_canMove = false;
+        m_cargo.setDim({64.0f, 64.0f});
         m_type = SHIP_TYPE_TURRET;
         break;
     case PIRATE_GNAT:
@@ -191,7 +201,7 @@ ship::ship(
         setMaxHealth(30.0f,true);
         setMaxShield(20.0f,true);
         setMaxEnergy(90.0f,true);
-        m_inertia = 0.15f;
+        m_initInertia = 0.15f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
@@ -202,7 +212,7 @@ ship::ship(
         setMaxHealth(50.0f,true);
         setMaxShield(50.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
@@ -213,7 +223,7 @@ ship::ship(
         setMaxHealth(90.0f,true);
         setMaxShield(60.0f, true);
         setMaxEnergy(120.0f,true);
-        m_inertia = 0.05f;
+        m_initInertia = 0.05f;
         m_enginePower = 6.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
@@ -224,7 +234,7 @@ ship::ship(
         setMaxHealth(120.0f,true);
         setMaxShield(60.0f,true);
         setMaxEnergy(120.0f,true);
-        m_inertia = 0.15f;
+        m_initInertia = 0.15f;
         m_enginePower = 7.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_PIRATE_1] );
         m_curWeap = 0;
@@ -235,7 +245,7 @@ ship::ship(
         setMaxHealth(200.0f,true);
         setMaxShield(120.0f,true);
         setMaxEnergy(150.0f,true);
-        m_inertia = 0.05f;
+        m_initInertia = 0.05f;
         m_enginePower = 8.0f;
         m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
         m_curWeap = 0;
@@ -246,7 +256,7 @@ ship::ship(
         setMaxHealth(5500.0f,true);
         setMaxShield(1200.0f,true);
         setMaxEnergy(1000.0f,true);
-        m_inertia = 0.00025f;
+        m_initInertia = 0.00025f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[WEAPON_PIRATE_BOSS_1] );
         m_curWeap = 0;
@@ -258,11 +268,12 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[WEAPON_PIRATE_1] );
         m_curWeap = 0;
         m_canMove = false;
+        m_cargo.setDim({64.0f, 64.0f});
         m_type = SHIP_TYPE_TURRET;
         break;
     case ALLIANCE_SCOUT:
@@ -270,7 +281,7 @@ ship::ship(
         setMaxHealth(30.0f,true);
         setMaxShield(50.0f,true);
         setMaxEnergy(120.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 3.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
@@ -281,7 +292,7 @@ ship::ship(
         setMaxHealth(60.0f,true);
         setMaxShield(90.0f,true);
         setMaxEnergy(125.0f,true);
-        m_inertia = 0.09f;
+        m_initInertia = 0.09f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
@@ -292,7 +303,7 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(120.0f,true);
         setMaxEnergy(150.0f,true);
-        m_inertia = 0.07f;
+        m_initInertia = 0.07f;
         m_enginePower = 7.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
@@ -303,7 +314,7 @@ ship::ship(
         setMaxHealth(130.0f,true);
         setMaxShield(160.0f,true);
         setMaxEnergy(200.0f,true);
-        m_inertia = 0.05f;
+        m_initInertia = 0.05f;
         m_enginePower = 8.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
@@ -314,7 +325,7 @@ ship::ship(
         setMaxHealth(200.0f,true);
         setMaxShield(250.0f,true);
         setMaxEnergy(250.0f,true);
-        m_inertia = 0.02f;
+        m_initInertia = 0.02f;
         m_enginePower = 10.0f;
         m_weapons.push_back( g_weapons[WEAPON_ALLIANCE_BOSS] );
         m_curWeap = 0;
@@ -325,7 +336,7 @@ ship::ship(
         setMaxHealth(200.0f,true);
         setMaxShield(280.0f,true);
         setMaxEnergy(280.0f,true);
-        m_inertia = 0.02f;
+        m_initInertia = 0.02f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
@@ -337,11 +348,12 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[WEAPON_TURRET_LASER] );
         m_curWeap = 0;
         m_canMove = false;
+        m_cargo.setDim({64.0f, 64.0f});
         m_type = SHIP_TYPE_TURRET;
         break;
     case PLAYER_SHIP:
@@ -349,7 +361,7 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(100.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.07f;
+        m_initInertia = 0.07f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[WEAPON_PLAYER_RED] );
         m_weapons.push_back( g_weapons[WEAPON_PLAYER_GREEN] );
@@ -362,7 +374,7 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(100.0f,true);
         setMaxEnergy(100.0f,true);
-        m_inertia = 0.2f;
+        m_initInertia = 0.2f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
@@ -373,7 +385,7 @@ ship::ship(
         setMaxHealth(125.0f,true);
         setMaxShield(125.0f,true);
         setMaxEnergy(125.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 8.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
@@ -384,7 +396,7 @@ ship::ship(
         setMaxHealth(150.0f,true);
         setMaxShield(150.0f,true);
         setMaxEnergy(150.0f,true);
-        m_inertia = 0.07f;
+        m_initInertia = 0.07f;
         m_enginePower = 10.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
@@ -395,7 +407,7 @@ ship::ship(
         setMaxHealth(10.0f,true);
         setMaxShield(20.0f,true);
         setMaxEnergy(200.0f,true);
-        m_inertia = 0.2f;
+        m_initInertia = 0.2f;
         m_enginePower = 4.0f;
         m_generatorMul = 5.0f;
         m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
@@ -405,7 +417,7 @@ ship::ship(
         break;
     case ION_MISSILE_MKI:
         m_identifier = "ION_MISSILE_MKI";
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 6.0f;
         m_canShoot = false;
         break;
@@ -414,7 +426,7 @@ ship::ship(
         setMaxHealth(200.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 0.0f;
         m_canMove = true;
         m_canShoot = false;
@@ -425,7 +437,7 @@ ship::ship(
         setMaxHealth(1000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_inertia = 0.025f;
+        m_initInertia = 0.025f;
         m_enginePower = 0.0f;
         m_canMove = true;
         m_canShoot = false;
@@ -436,7 +448,7 @@ ship::ship(
         setMaxHealth(2000.0f,true);
         setMaxShield(0.0f,true);
         setMaxEnergy(0.0f,true);
-        m_inertia = 0.0025f;
+        m_initInertia = 0.0025f;
         m_enginePower = 0.0f;
         m_canMove = true;
         m_canShoot = false;
@@ -447,7 +459,7 @@ ship::ship(
         setMaxHealth(4000.0f,true);
         setMaxShield(4000.0f,true);
         setMaxEnergy(1000.0f,true);
-        m_inertia = 0.00025f;
+        m_initInertia = 0.00025f;
         m_enginePower = 5.0f;
         m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_WINGMAN_1] );
         m_curWeap = 0;
@@ -459,11 +471,12 @@ ship::ship(
         setMaxHealth(100.0f,true);
         setMaxShield(200.0f,true);
         setMaxEnergy(300.0f,true);
-        m_inertia = 0.1f;
+        m_initInertia = 0.1f;
         m_enginePower = 4.0f;
         m_weapons.push_back( g_weapons[WEAPON_TURRET_LASER] );
         m_curWeap = 0;
         m_canMove = false;
+        m_cargo.setDim({64.0f, 64.0f});
         m_type = SHIP_TYPE_TURRET;
         break;
     case PLAYER_STATION:
@@ -471,7 +484,7 @@ ship::ship(
         setMaxHealth(10000.0f,true);
         setMaxShield(10000.0f,true);
         setMaxEnergy(100000.0f,true);
-        m_inertia = 0.0f;
+        m_initInertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
         m_canShoot = false;
@@ -483,22 +496,24 @@ ship::ship(
         setMaxHealth(700.0f,true);
         setMaxShield(2000.0f,true);
         setMaxEnergy(50000.0f,true);
-        m_inertia = 0.0f;
+        m_initInertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
         m_canShoot = false;
         m_type = SHIP_TYPE_STRUCTURE;
+        m_cargo.setDim({512.0f, 512.0f});
         break;
     case PLAYER_BARRACKS:
         m_identifier = "PLAYER_BARRACKS";
         setMaxHealth(2000.0f,true);
         setMaxShield(4000.0f,true);
         setMaxEnergy(80000.0f,true);
-        m_inertia = 0.0f;
+        m_initInertia = 0.0f;
         m_enginePower = 0.0f;
         m_canMove = false;
         m_canShoot = false;
         m_type = SHIP_TYPE_STRUCTURE;
+        m_cargo.setDim({1024.0f, 1024.0f});
         break;
     case SHIPS_END:
         m_identifier = "ERROR";
@@ -552,7 +567,7 @@ ship::ship(
     setMaxShield( _src.getMaxShield(), true );
     setMaxEnergy( _src.getMaxEnergy(), true );
 
-    m_inertia = _src.getInertia();
+    m_initInertia = _src.m_initInertia;
     m_enginePower = _src.getEnginePower();
     m_angVel = _src.getAngVel();
 
@@ -706,17 +721,17 @@ ship::ship(
 
 void ship::accelerate(const float _mult)
 {
-    float energyLoss = 0.6f, accelMult = 1.0f;
+    float energyLoss = 0.6f * _mult, accelMult = 1.0f;
 
     if(m_priority == PRIORITY_ENGINES)
     {
-        energyLoss = 1.2f;
-        accelMult = 2.0f;
+        energyLoss *= 1.2f;
+        accelMult *= 2.0f;
     }
     else if(m_priority == PRIORITY_GUNS)
     {
-        energyLoss = 0.6f;
-        accelMult = 0.8f;
+        energyLoss *= 0.6f;
+        accelMult *= 0.8f;
     }
 
     if(m_energy <= energyLoss) return;
@@ -777,6 +792,8 @@ void ship::dodge(const float _side)
 
 void ship::update(const float _dt)
 {
+    m_inertia = 1.0f / (1.0f / m_initInertia + 1.0f / m_cargo.getInvMass());
+
     float angDiff = clampRoll(m_targetAngle - m_angle, -180.0f, 180.0f);
     float turnConst = 0.1f;
 

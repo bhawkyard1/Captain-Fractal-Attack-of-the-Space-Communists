@@ -17,11 +17,17 @@ selectionReturn userInterface::handleInput(vec2 _pos)
 
     for(size_t i = 0; i < m_elements.size(); ++i)
     {
+        //if(m_elements[i].inWorldSpace()) std::cout << "CLICK AT " << _pos.m_x << ", " << _pos.m_y << " world space\n";
         if(!m_elements[i].isVisible()) continue;
         for(size_t j = 0; j < m_elements[i].getButtons()->size(); ++j)
         {
             b = m_elements[i].getAt(j);
-            if(pointInRect(_pos, b->getPos(), b->getDim()))
+
+            vec2 tempPos = _pos;
+            if(m_elements[i].inWorldSpace())
+                tempPos = toWorldSpace(_pos);
+
+            if(pointInRect(tempPos, b->getPos(), b->getDim()))
             {
                 b->set(true);
                 r.m_sel_val = i;

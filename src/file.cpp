@@ -11,8 +11,8 @@ void saveGame(universe * uni)
     std::ofstream save( g_RESOURCE_LOC + "../" + "save.txt" );
 
     save 	<< "score " << uni->getScore() << '\n'
-            << "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << '\n'
-            << "mcc " << uni->getMaxEnemyCount(SPACE_COMMUNISTS) << '\n'
+               //<< "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << '\n'
+               //<< "mcc " << uni->getMaxEnemyCount(SPACE_COMMUNISTS) << '\n'
             << "mwc " << uni->getMaxWingmanCount() << '\n'
             << "mmc " << uni->getMaxMinerCount() << '\n'
             << "nm " << uni->getPly()->getMissiles() << '\n'
@@ -26,13 +26,17 @@ void saveGame(universe * uni)
     for(int i = 0; i < UPGRADES_LEN; ++i) save << uni->getPly()->getUpgrade(i) << " ";
 
     save 	<< '\n'
-            //<< "uidc " << g_shipIDCounter << '\n'
+               //<< "uidc " << g_shipIDCounter << '\n'
             << "enemies ";
     writeVectorEnemy(save, uni->getAgents());
 
     save << '\n'
          << "asteroids ";
     writeVectorAsteroid(save, uni->getAsteroids());
+
+    save << '\n'
+         << "factions ";
+    writeVectorFaction(save, uni->getFactions());
 
     save.close();
 
@@ -71,9 +75,50 @@ void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_u)
     }
 }
 
-void readVectorEnemy(std::string str, universe * _u)
+void writeVectorFaction(std::ostream &_file, std::vector<faction> *_f)
 {
-    std::vector<std::string> vecs = split( str, '/' );
+    for(auto &i : *_f)
+    {
+        std::string name = i.getIdentifier();
+        for(size_t i = 0; i < name.length(); ++i)
+        {
+            if(name[i] == ' ') name[i] = '_';
+        }
+        _file << "/|" << name << "|"
+              << i.getTeam() << "|"
+              << i.getCol(0) << "," << i.getCol(1) << "," << i.getCol(2) << "," << i.getCol(2) << "|";
+        for(auto &r : i.getRelations())
+        {
+            _file << r << ",";
+        }
+        _file << "|"
+              << i.getWealth() << "," << i.getOldWealth() << "," << i.getEconomicalStrength() << "|"
+              << i.getAggression() << "|"
+              << i.getFighters().first << "," << i.getFighters().second << "|"
+              << i.getUtilities().first << "," << i.getUtilities().second << "|"
+              << i.getStructures().first << "," << i.getStructures().second << "|"
+              << i.isOrganised() << "|";
+        for(auto &r : i.getActive())
+        {
+            _file << r << ",";
+        }
+        _file << "|";
+        for(auto &r : i.getDeployed())
+        {
+            _file << r << ",";
+        }
+        _file << "|";
+        for(auto &r : i.getReserves())
+        {
+            _file << r << ",";
+        }
+        _file << "|";
+    }
+}
+
+void readVectorEnemy(std::string _str, universe * _u)
+{
+    std::vector<std::string> vecs = split( _str, '/' );
 
     for(size_t i = 1; i < vecs.size(); ++i)
     {
@@ -146,9 +191,9 @@ void readVectorEnemy(std::string str, universe * _u)
     }
 }
 
-void readVectorAsteroid(std::string str, universe * _u)
+void readVectorAsteroid(std::string _str, universe * _u)
 {
-    std::vector<std::string> vecs = split( str, '/' );
+    std::vector<std::string> vecs = split( _str, '/' );
 
     for(size_t i = 1; i < vecs.size(); ++i)
     {
@@ -187,6 +232,88 @@ void readVectorAsteroid(std::string str, universe * _u)
     }
 }
 
+void readVectorFaction(std::string _str, universe *_u)
+{
+    std::vector<std::string> vecs = split( _str, '/' );
+
+    for(size_t i = 1; i < vecs.size(); ++i)
+    {
+        std::string s = vecs[i];
+        std::vector<std::string> stats = split( s, '|' );
+        std::vector<std::string> stat;
+
+        std::string name = stats[1];
+        for(size_t i = 0; i < name.length(); ++i)
+        {
+            if(name[i] == '_') name[i] = ' ';
+        }
+        aiTeam team = static_cast<aiTeam>(std::stoi(stats[2]));
+
+        stat = split(stats[3], ',');
+        std::array<float, 4> colour = {
+            std::stof(stat[0]),
+            std::stof(stat[1]),
+            std::stof(stat[2]),
+            std::stof(stat[3])
+        };
+
+        std::vector<diplomaticStatus> relations;
+        stat = split(stats[4], ',');
+        for(auto &i : stat)
+            relations.push_back( static_cast<diplomaticStatus>(std::stoi(i)) );
+
+
+        stat = split(stats[5], ',');
+        float wealth = std::stof(stat[0]);
+        float oldWealth = std::stof(stat[1]);
+        float economy = std::stof(stat[2]);
+
+        float aggression = std::stof(stats[6]);
+
+        stat = split(stats[7], ',');
+        shipBounds fighters = {
+            static_cast<ship_spec>(std::stoi(stat[0])),
+            static_cast<ship_spec>(std::stoi(stat[1]))
+        };
+
+        stat = split(stats[8], ',');
+        shipBounds utilities = {
+            static_cast<ship_spec>(std::stoi(stat[0])),
+            static_cast<ship_spec>(std::stoi(stat[1]))
+        };
+
+        stat = split(stats[9], ',');
+        shipBounds structures = {
+            static_cast<ship_spec>(std::stoi(stat[0])),
+            static_cast<ship_spec>(std::stoi(stat[1]))
+        };
+
+        bool organised = static_cast<bool>(std::stoi(stats[10]));
+
+        std::vector<size_t> active;
+        std::vector<size_t> deployed;
+        std::vector<size_t> reserves;
+        stat = split(stats[11], ',');
+        for(auto &i : stat)
+            active.push_back(std::stoul(i));
+        stat = split(stats[12], ',');
+        for(auto &i : stat)
+            deployed.push_back(std::stoul(i));
+        stat = split(stats[13], ',');
+        for(auto &i : stat)
+            reserves.push_back(std::stoul(i));
+
+        faction f(name, colour, team, fighters, utilities, structures, organised);
+        f.setRelations(relations);
+        f.setWealth(wealth);
+        f.setOldWealth(oldWealth);
+        f.setEconomicalStrength(economy);
+        f.setAggression(aggression);
+
+        _u->getFactions()->push_back(f);
+    }
+}
+
 void loadGame(universe * uni)
 {
     std::ifstream save(g_RESOURCE_LOC + "../" + "save.txt");
@@ -202,8 +329,6 @@ void loadGame(universe * uni)
         for(size_t i = 0; i < strings.size(); i++)
         {
             if(strings[i] == "score") uni->setScore( stoi(strings[i+1], nullptr, 10) );
-            else if(strings[i] == "mec") uni->setMaxEnemyCount( stoi(strings[i+1], nullptr, 10), GALACTIC_FEDERATION );
-            else if(strings[i] == "mcc") uni->setMaxEnemyCount( stoi(strings[i+1], nullptr, 10), SPACE_COMMUNISTS );
             else if(strings[i] == "mwc") uni->setMaxWingmanCount( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "mmc") uni->setMaxMinerCount( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "nm") uni->getPly()->setMissiles( stoi(strings[i+1], nullptr, 10) );
@@ -236,6 +361,7 @@ void loadGame(universe * uni)
             }
             else if(strings[i] == "enemies") { if(strings.size() > 1) readVectorEnemy(strings.at(i + 1), uni); }
             else if(strings[i] == "asteroids") { if(strings.size() > 1) readVectorAsteroid(strings.at(i + 1), uni); }
+            else if(strings[i] == "factions") { if(strings.size() > 1) readVectorFaction(strings.at(i + 1), uni); }
         }
     }
     save.close();

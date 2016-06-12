@@ -13,11 +13,14 @@ debris::debris(const vec3 _pos, const vec3 _vel, const vec3 _wvel, const resourc
 
     m_radius = 16.0f;
 
+    m_invMass = 1.0f;
+
     switch(_type)
     {
     case RESOURCE_IRON:
         m_identifier = "RESOURCE_IRON_ROCK";
         m_baseValue = 3;
+        m_invMass = 0.5f;
         break;
     case RESOURCE_SILVER:
         break;

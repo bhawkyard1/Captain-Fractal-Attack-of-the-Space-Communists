@@ -143,7 +143,6 @@ void mainMenu(universe &uni)
 
     vec3 scrollVel = tovec3(randVec2(0.5f, 2.0f));
     uni.setVel(scrollVel);
-    uni.setMaxEnemyCount(20, GALACTIC_FEDERATION);
     uni.setMaxWingmanCount(10);
 
     uni.addBuild(vec3(600.0f, 300.0f, 0.0f), PLAYER_STATION, TEAM_PLAYER);
@@ -410,7 +409,9 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
         if(btn == SDL_BUTTON_LEFT)
         {
             selectionReturn ret = uni->handleInput( getMousePos() );
-            if(ret.m_sel_val == 0)
+            uni->processInput(ret, *keymod);
+
+            /*if(ret.m_sel_val == 0)
             {
                 ply->setEnergyPriority(ret.m_button_val);
                 uni->getUI()->setDark(ret.m_sel_val, true);
@@ -436,7 +437,16 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
             }
             else if(ret.m_sel_val == 3)
             {
-
+                //Trade menu
+                switch(ret.m_button_val)
+                {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                default:
+                    break;
+                }
             }
             else if(ret.m_sel_val == 4)
             {
@@ -470,7 +480,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
                     break;
 
                 }
-            }
+            }*/
         }
         return;
     }
@@ -500,7 +510,7 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
     selectionReturn ret = uni->getUI()->handleInput( getMousePos() );
     if(ret.m_sel_val > 0) uni->setMouseState(-1);
 
-    vec3 pos = tovec3( toWorldSpace( getMousePos(), tovec2( uni->getCameraPosition() ) ) );
+    vec3 pos = tovec3( toWorldSpace( getMousePos() ) );
 
     int ms = uni->getMouseState();
     if(ms > -1 and ms != PLAYER_CAPITAL)
@@ -512,6 +522,7 @@ void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
         uni->spawnShip(PLAYER_CAPITAL, TEAM_PLAYER, pos);
     }
     uni->setMouseState(-1);
+    uni->mouseUp();
 }
 
 void handleUserScroll(int y, player * ply)
@@ -644,6 +655,8 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         ply->accelerate(dir, clamp(spd, 0.0f, 1.0f));
         break;
     }
+    case SDLK_q:
+        ply->accelerate(25.0f);
     case SDLK_z:
     {
         debris temp({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, RESOURCE_IRON);
@@ -1047,7 +1060,7 @@ void playTutorial(universe &uni)
         }
         else if(tutStage == STAGE_COMBAT_5)
         {
-            if(uni.getEnemyCount(GALACTIC_FEDERATION) == 0 and uni.getEnemyCount(SPOOKY_SPACE_PIRATES) == 0)
+            if(uni.getFactionCount(GALACTIC_FEDERATION) == 0 and uni.getFactionCount(SPOOKY_SPACE_PIRATES) == 0)
             {
                 tutStage = STAGE_COMPLETE;
                 timer = 0.0f;

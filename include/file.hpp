@@ -41,6 +41,8 @@ void writeVectorEnemy(std::ostream &_file, slotMap<enemy> * _u);
 //----------------------------------------------------------------------------------------------------------------------
 void writeVectorAsteroid(std::ostream &_file, std::vector<ship> * _u);
 
+void writeVectorFaction(std::ostream &_file, std::vector<faction> *_f);
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Reads a string and creates enemies
 /// \param _str the string
@@ -54,6 +56,8 @@ void readVectorEnemy(std::string _str, universe * _u);
 /// \param _u a ref to the asteroids
 //----------------------------------------------------------------------------------------------------------------------
 void readVectorAsteroid(std::string _str, universe * _u);
+
+void readVectorFaction(std::string _str, universe * _u);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Loads the game stored in save.txt

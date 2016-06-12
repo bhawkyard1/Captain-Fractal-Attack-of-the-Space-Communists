@@ -4,7 +4,7 @@
 void base::updatePos(const float _dt)
 {
     m_prevPos = m_pos;
-    m_pos += m_vel * g_PIXEL_UNIT_CONVERSION * _dt;
+    m_pos += (m_vel + m_wvel) * g_PIXEL_UNIT_CONVERSION * _dt;
 }
 
 vec3 base::getInterpolatedPosition(const float _dt)

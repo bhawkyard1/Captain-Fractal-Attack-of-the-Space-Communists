@@ -28,12 +28,18 @@
 /// \brief Represents ship types.
 //----------------------------------------------------------------------------------------------------------------------
 enum ship_spec {
-    COMMUNIST_1, COMMUNIST_2, COMMUNIST_CAPITAL, COMMUNIST_TURRET,
-    FEDERATION_MKI, FEDERATION_MKII, FEDERATION_MKIII, FEDERATION_MKIV, FEDERATION_GUNSHIP, FEDERATION_CAPITAL, FEDERATION_TURRET,
-    PIRATE_GNAT, PIRATE_CRUISER, PIRATE_WRANGLER, PIRATE_MARAUDER, PIRATE_GUNSHIP, PIRATE_CAPITAL, PIRATE_TURRET,
-    ALLIANCE_SCOUT, ALLIANCE_TRACKER, ALLIANCE_PHOENIX, ALLIANCE_DRAGON, ALLIANCE_TRADER, ALLIANCE_GUNSHIP, ALLIANCE_TURRET,
-    PLAYER_MINER_DROID, PLAYER_HUNTER, PLAYER_DEFENDER, PLAYER_DESTROYER, PLAYER_CAPITAL, PLAYER_TURRET,
-    PLAYER_STATION, PLAYER_GRAVWELL, PLAYER_BARRACKS,
+    COMMUNIST_1, COMMUNIST_2, COMMUNIST_CAPITAL,
+    COMMUNIST_TURRET,
+    FEDERATION_MKI, FEDERATION_MKII, FEDERATION_MKIII, FEDERATION_MKIV, FEDERATION_GUNSHIP, FEDERATION_CAPITAL,
+    FEDERATION_TURRET,
+    PIRATE_GNAT, PIRATE_CRUISER, PIRATE_WRANGLER, PIRATE_MARAUDER, PIRATE_GUNSHIP, PIRATE_CAPITAL,
+    PIRATE_TURRET,
+    ALLIANCE_SCOUT, ALLIANCE_TRACKER, ALLIANCE_PHOENIX, ALLIANCE_DRAGON, ALLIANCE_GUNSHIP,
+    ALLIANCE_TRADER,
+    ALLIANCE_TURRET,
+    PLAYER_HUNTER, PLAYER_DEFENDER, PLAYER_DESTROYER, PLAYER_CAPITAL,
+    PLAYER_MINER_DROID,
+    PLAYER_TURRET, PLAYER_STATION, PLAYER_GRAVWELL, PLAYER_BARRACKS,
     PLAYER_SHIP,
     ION_MISSILE_MKI,
     ASTEROID_SMALL, ASTEROID_MID, ASTEROID_LARGE,
@@ -402,6 +408,7 @@ public:
     void setLastAttacker(uniqueID _id) {m_lastAttacker = _id;}
 
     void toggleInventory() {m_cargo.toggleVisible();}
+    void showInventory(const bool _v) {m_cargo.setVisible(_v);}
     bool isInventoryVisible() {return m_cargo.isVisible();}
 
     void addKill() {m_kills++; m_maxEnergy += 2.0f;}
@@ -440,6 +447,7 @@ private:
     /// \brief Inertia, slows down the ship when turning and moving.
     //----------------------------------------------------------------------------------------------------------------------
     float m_inertia;
+    float m_initInertia;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A multiplier used to compute movement and turning speed.

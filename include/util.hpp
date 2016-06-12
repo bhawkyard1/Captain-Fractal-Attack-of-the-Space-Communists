@@ -39,7 +39,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 #define UPI 3.14159265359
 
-#define PRINT_DEBUG_MESSAGES 1
+#define PRINT_DEBUG_MESSAGES 0
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file util.hpp
@@ -303,8 +303,8 @@ vec2 getMousePos();
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Converts a given vec2 from screen to world space.
 //----------------------------------------------------------------------------------------------------------------------
-vec2 toWorldSpace(vec2 _in, vec2 _camPos);
-vec2 toScreenSpace(vec2 _in, vec2 _camPos);
+vec2 toWorldSpace(vec2 _in);
+vec2 toScreenSpace(vec2 _in);
 
 template<class t>
 t sumVec(const std::vector<t> _vec)
