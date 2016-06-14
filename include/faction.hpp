@@ -19,7 +19,7 @@
 /// \brief Barebones implementation of factions, currently only contains colour.
 //----------------------------------------------------------------------------------------------------------------------
 
-enum diplomaticStatus {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_FRIEND};
+enum diplomaticStatus {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_FRIEND, DIPLOMACY_SELF};
 
 typedef std::pair<ship_spec, ship_spec> shipBounds;
 

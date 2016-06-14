@@ -138,6 +138,7 @@ void universe::addMissile(
 void universe::update(const float _dt)
 {
     debug("updates start");
+
     m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
 
     //If m_paused, we do not update the game.
@@ -552,7 +553,8 @@ void universe::update(const float _dt)
                 }
             }
         }
-        else if(m_agents[e].getClassification() == PLAYER_GRAVWELL) //Gravwell attraction
+        else if(m_agents[e].getClassification() == PLAYER_GRAVWELL or
+                m_agents[e].getClassification() == ALLIANCE_GRAVWELL) //Gravwell attraction
         {
             //Attract m_asteroids based on distancm_agents[e].
             for(auto &k : m_asteroids)
@@ -565,10 +567,11 @@ void universe::update(const float _dt)
                 else k.addVel( -k.getVel() * 0.0125f );
             }
         }
-        else if(m_agents[e].getClassification() == PLAYER_BARRACKS)
+        else if(m_agents[e].getClassification() == PLAYER_BARRACKS or
+                m_agents[e].getClassification() == ALLIANCE_BARRACKS)
         {
             //Spawn wingman.
-            if(rand() % 2048 == 0 and m_wingmenCount < 20) spawnShip(getRandomShipType(TEAM_PLAYER), TEAM_PLAYER, p);
+            if(rand() % 2048 == 0 and m_wingmenCount < 20) spawnShip(getRandomShipType(m_agents[e].getTeam()), m_agents[e].getTeam(), p);
         }
         else if(m_agents[e].getCanShoot()) //Default m_target acquisition
         {
@@ -610,7 +613,7 @@ void universe::update(const float _dt)
         if(m_agents[e].getTarget() != nullptr and m_agents[e].getType() != SHIP_TYPE_MINER) fd /= 10.0f;
 
         //If the agent can move, is friendly to the player, and close by, and not in combat.
-        if(m_agents[e].getCanMove() and friendshipCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > fd * fd ) and !m_agents[e].inCombat())
+        if(m_agents[e].getCanMove() and sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > fd * fd ) and !m_agents[e].inCombat())
         {
             m_agents[e].setTarget( &m_ply );
             m_agents[e].setGoal( GOAL_CONGREGATE );
@@ -2026,6 +2029,61 @@ void universe::spawnSquad(
     }
 }
 
+void universe::spawnBase(
+        const aiTeam _t,
+        const vec3 _center,
+        int _lvl,
+        float _ang
+        )
+{
+    std::vector<enemy> ships;
+    std::vector<enemy> active;
+    std::vector<ship_spec> structures;
+    int start;
+
+    if(_t == ALLIANCE)
+    {
+        structures = {ALLIANCE_STATION, ALLIANCE_BARRACKS, ALLIANCE_GRAVWELL, ALLIANCE_TURRET};
+        start = clamp(static_cast<int>(structures.size()) - 2 - _lvl, 0, static_cast<int>(structures.size() - 1));
+    }
+    else
+        return;
+
+    ships.push_back( enemy(_center, vec3(), structures[start], _t) );
+    std::cout << "FIRST: " << structures[start] << "\n";
+    /*std::cout << start << " done\n";
+    m_agents.push_back( enemy(vec3(), vec3(), ALLIANCE_STATION, TEAM_PLAYER) );
+    return;*/
+
+    float deg = _ang;
+    for(int i = start + 1; i < structures.size(); ++i)
+    {
+        std::cout << i << '\n';
+        for(auto &j : ships)
+        {
+            std::cout << "  j\n";
+            for(float k = 0.0f; k < 360.0f; k += deg)
+            {
+                std::cout << "     " << k << '\n';
+                enemy temp (j.getPos() + tovec3(vec(k)) * j.getRadius() * 1.5f, vec3(), structures[i], _t);
+                active.push_back( temp );
+            }
+        }
+
+        for(auto &u : ships)
+            m_agents.push_back( u );
+        ships.clear();
+        for(auto &u : active)
+            ships.push_back( u );
+        active.clear();
+
+        deg /= 2.0f;
+    }
+
+    for(auto &i : ships)
+        m_agents.push_back( i );
+}
+
 bool universe::emnityCheck(
         aiTeam _a,
         aiTeam _b
@@ -2048,6 +2106,14 @@ bool universe::neutralityCheck(
         )
 {
     return m_factions[_a].getRelations(_b) >= DIPLOMACY_NEUTRAL and m_factions[_b].getRelations(_a) >= DIPLOMACY_NEUTRAL;
+}
+
+bool universe::sameTeam(
+        aiTeam _a,
+        aiTeam _b
+        )
+{
+    return m_factions[_a].getRelations(_b) >= DIPLOMACY_SELF and m_factions[_b].getRelations(_a) >= DIPLOMACY_SELF;
 }
 
 void universe::reload(const bool _newGame)
@@ -2303,27 +2369,27 @@ void universe::loadShips()
 void universe::createFactions()
 {
     faction player("Player Team", {0, 255, 0, 255}, TEAM_PLAYER, {PLAYER_HUNTER, PLAYER_CAPITAL}, {PLAYER_MINER_DROID, PLAYER_MINER_DROID}, {PLAYER_TURRET, PLAYER_BARRACKS}, false );
-    player.setRelations( {DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY} );
+    player.setRelations( {DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY} );
     player.setWealth( 16.0f );
     m_factions.push_back(player);
 
     faction galactic_fed("Galactic Federation", {165, 14, 226, 255}, GALACTIC_FEDERATION, {FEDERATION_MKI, FEDERATION_CAPITAL}, {SHIPS_END, SHIPS_END}, {FEDERATION_TURRET, FEDERATION_TURRET}, true );
-    galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     galactic_fed.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(galactic_fed);
 
     faction spooky_pirates("Spooky Space Pirates", {240, 211, 10, 255}, SPOOKY_SPACE_PIRATES, {PIRATE_GNAT, PIRATE_CAPITAL}, {SHIPS_END, SHIPS_END}, {PIRATE_TURRET, PIRATE_TURRET}, true );
-    spooky_pirates.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    spooky_pirates.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     spooky_pirates.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(spooky_pirates);
 
     faction space_communists("Space Communists", {255, 0, 0, 255}, SPACE_COMMUNISTS, {COMMUNIST_1, COMMUNIST_CAPITAL}, {SHIPS_END, SHIPS_END}, {COMMUNIST_TURRET, COMMUNIST_TURRET}, true );
-    space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     space_communists.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(space_communists);
 
     faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_TURRET}, true );
-    alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_FRIEND, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     alliance.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(alliance);
 

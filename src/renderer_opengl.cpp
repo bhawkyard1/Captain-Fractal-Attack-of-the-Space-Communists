@@ -182,7 +182,10 @@ renderer_ngl::renderer_ngl()
     loadAsset("ALLIANCE_DRAGON",     "neutral_4");
     loadAsset("ALLIANCE_GUNSHIP",    "neutral_5");
     loadAsset("ALLIANCE_TRADER",     "neutral_6");
-    loadAsset("ALLIANCE_TURRET",     "neutral_turret");
+    loadAsset("ALLIANCE_TURRET",     "neutral_turret_1");
+    loadAsset("ALLIANCE_STATION",    "neutral_station_1");
+    loadAsset("ALLIANCE_BARRACKS",   "neutral_barracks_1");
+    loadAsset("ALLIANCE_GRAVWELL",   "neutral_gravwell_1");
 
     loadAsset("PLAYER_SHIP",         "player");
     loadAsset("PLAYER_HUNTER",       "wingman_1");

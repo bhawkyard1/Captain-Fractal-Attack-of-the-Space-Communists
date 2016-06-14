@@ -165,6 +165,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void spawnSquad(const aiTeam _t, const float _min, const float _max, const int _i);
 
+    void spawnBase(const aiTeam _t, const vec3 _center, int _lvl, float _ang);
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Spawns a series of ships.
     /// \param _t team of the ships
@@ -448,6 +450,7 @@ public:
     bool emnityCheck(const aiTeam _a, const aiTeam _b);
     bool friendshipCheck(const aiTeam _a, const aiTeam _b);
     bool neutralityCheck(const aiTeam _a, const aiTeam _b);
+    bool sameTeam(const aiTeam _a, const aiTeam _b);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets the universe position.

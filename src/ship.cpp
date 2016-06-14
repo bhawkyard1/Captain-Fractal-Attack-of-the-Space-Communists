@@ -9,8 +9,9 @@ std::vector<tinfo> g_texture_keys = {
     {"FEDERATION_TURRET", 16},
     {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024},
     {"PIRATE_TURRET", 16},
-    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64}, {"ALLIANCE_TURRET", 16},
+    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64},
     {"ALLIANCE_TRADER", 64},
+    {"ALLIANCE_TURRET", 16}, {"ALLIANCE_STATION", 2048}, {"ALLIANCE_BARRACKS", 1024}, {"ALLIANCE_GRAVWELL", 128},
     {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32}, {"PLAYER_CAPITAL", 1024},
     {"PLAYER_MINER_DROID", 16},
     {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
@@ -350,7 +351,7 @@ ship::ship(
         setMaxEnergy(300.0f,true);
         m_initInertia = 0.1f;
         m_enginePower = 4.0f;
-        m_weapons.push_back( g_weapons[WEAPON_TURRET_LASER] );
+        m_weapons.push_back( g_weapons[rand() % 3 + WEAPON_ALLIANCE_1] );
         m_curWeap = 0;
         m_canMove = false;
         m_cargo.setDim({64.0f, 64.0f});
@@ -514,6 +515,42 @@ ship::ship(
         m_canShoot = false;
         m_type = SHIP_TYPE_STRUCTURE;
         m_cargo.setDim({1024.0f, 1024.0f});
+        break;
+    case ALLIANCE_STATION:
+        m_identifier = "ALLIANCE_STATION";
+        setMaxHealth(12000.0f,true);
+        setMaxShield(9000.0f,true);
+        setMaxEnergy(100000.0f,true);
+        m_initInertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
+        m_cargo.setDim({16000.0f, 16000.0f});
+        m_type = SHIP_TYPE_STRUCTURE;
+        break;
+    case ALLIANCE_BARRACKS:
+        m_identifier = "ALLIANCE_BARRACKS";
+        setMaxHealth(3000.0f,true);
+        setMaxShield(4000.0f,true);
+        setMaxEnergy(80000.0f,true);
+        m_initInertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
+        m_type = SHIP_TYPE_STRUCTURE;
+        m_cargo.setDim({1024.0f, 1024.0f});
+        break;
+    case ALLIANCE_GRAVWELL:
+        m_identifier = "ALLIANCE_GRAVWELL";
+        setMaxHealth(700.0f,true);
+        setMaxShield(2000.0f,true);
+        setMaxEnergy(50000.0f,true);
+        m_initInertia = 0.0f;
+        m_enginePower = 0.0f;
+        m_canMove = false;
+        m_canShoot = false;
+        m_type = SHIP_TYPE_STRUCTURE;
+        m_cargo.setDim({512.0f, 512.0f});
         break;
     case SHIPS_END:
         m_identifier = "ERROR";

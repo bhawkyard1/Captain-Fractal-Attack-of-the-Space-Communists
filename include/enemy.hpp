@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The goals that a ship can have
 //----------------------------------------------------------------------------------------------------------------------
-enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER};
+enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER, GOAL_TRADE};
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The teams that a ship can be on
