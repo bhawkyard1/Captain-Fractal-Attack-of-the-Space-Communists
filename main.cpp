@@ -324,7 +324,7 @@ void playGame(universe &uni)
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
 
-    uni.spawnBase(ALLIANCE, vec3(2000.0f, 2000.0f, 0.0f), 2, 180.0f);
+    //uni.spawnBase(ALLIANCE, vec3(2000.0f, 2000.0f, 0.0f), 2, 180.0f);
 
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;

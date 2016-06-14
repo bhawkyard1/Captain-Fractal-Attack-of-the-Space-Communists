@@ -191,7 +191,7 @@ void universe::update(const float _dt)
     }
 
     //If player health is below 25%, emit smoke.
-    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getRadius(), "SMOKE");
+    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getRadius() * 2.0f, "SMOKE");
 
     if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
     {
@@ -209,7 +209,7 @@ void universe::update(const float _dt)
         {
             vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
             pos += m_ply.getPos();
-            addpfx(pos, m_ply.getVel(), rand()%50 + 20, rand()%50 + 8);
+            addpfx(pos, m_ply.getVel(), rand()%50 + 20, rand()%50 + 8, {255, 200, 20, 255});
         }
         m_ply.setMaxHealth(0, true);
         m_ply.setMaxEnergy(0, true);
@@ -305,7 +305,7 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_missiles[i].getPos();
-                    addpfx(pos, m_missiles[i].getVel(), rand()%50 + 50, rand()%50 + 8);
+                    addpfx(pos, m_missiles[i].getVel(), rand()%50 + 50, rand()%50 + 8, {255, 200, 20, 255});
                 }
 
                 for(size_t j = 0; j < m_agents.size(); j++)
@@ -355,8 +355,8 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = randVec3(16.0f);
                     pos += m_asteroids[i].getPos();
-                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2);
-                    for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + tovec3(randVec2(1.0f)), m_asteroids[i].getRadius(), "SMOKE");
+                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2, {20, 20, 20, 255});
+                    for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + tovec3(randVec2(1.0f)), m_asteroids[i].getRadius() * 2.0f, "SMOKE");
                 }
                 if(m_asteroids[i].getClassification() == ASTEROID_SMALL)
                 {
@@ -430,7 +430,7 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_agents[i].getPos();
-                    addpfx(pos, m_agents[i].getVel(), randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f));
+                    addpfx(pos, m_agents[i].getVel(), randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f), col1to255(m_agents[i].getCurWeapCol()));
                 }
 
                 //Dump inventory.
@@ -533,7 +533,7 @@ void universe::update(const float _dt)
         vec3 p = m_agents[e].getPos();
 
         //If the agent is damaged, add smoke.
-        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius(), "SMOKE");
+        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius() * 2.0f, "SMOKE");
 
         float minDist = F_MAX;
         //Reset target.
@@ -974,6 +974,12 @@ void universe::draw(float _dt)
 
     m_drawer.drawBackground(m_time_elapsed, tovec2(m_pos), tovec2(m_vel), m_cCol);
 
+    /*m_drawer.addRect(vec3(0.0f, 0.0f, -512.0f), vec2(512.0f, 512.0f), 0.0f, {0.0f, 0.3f, 2.0f, m_time_elapsed});
+    m_drawer.packExtraData({m_time_elapsed, 1.0f, 1.0f, 15.0f});
+    m_drawer.useShader("explosion");
+    m_drawer.drawExplosions();
+    m_drawer.clearVectors();*/
+
     for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
         if(i->getIdentifier() != "SMOKE") continue;
@@ -1109,6 +1115,7 @@ void universe::draw(float _dt)
         {dim, dim},
                          0.0f,
                          m_ply.getCurWeapCol());
+        //m_drawer.packExtraData();
     }
     for(auto &i : m_agents.m_objects)
     {
@@ -1122,13 +1129,13 @@ void universe::draw(float _dt)
                         i.getCurWeapCol());
         }
     }
-    m_drawer.useShader("explosion");
-    m_drawer.drawRects(true);
-
+    m_drawer.useShader("sparks");
+    m_drawer.drawExplosions( );
     m_drawer.clearVectors();
+
     for(auto &i : m_particles)
     {
-        std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
+        std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), 255.0f};
         col = col255to1(col);
         vec3 ipos = i.getInterpolatedPosition(_dt);
         float idim = i.getForce() * 20.0f;
@@ -1136,17 +1143,18 @@ void universe::draw(float _dt)
         if(col[3] > 0.05f)
         {
             m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
+            m_drawer.packExtraData( i.getShaderData() );
         }
     }
     m_drawer.useShader("explosion");
-    m_drawer.drawRects(true);
+    m_drawer.drawExplosions( );
+    m_drawer.clearVectors( );
 
     if(g_GRAPHICAL_DETAIL > 1)
     {
-        m_drawer.clearVectors();
         for(auto &i : m_particles)
         {
-            std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getAlpha()};
+            std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), 1.0f};
             col = col255to1(col);
             int k = 0;
             for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
@@ -1236,6 +1244,15 @@ void universe::drawUI(const float _dt)
                 vec2 pos = i.getPos();
                 pos += tovec2( csp );
                 i.setPos( pos );
+            }
+
+            if(neutralityCheck(contextPtr->getTeam(), TEAM_PLAYER))
+            {
+                infoCard->getAt(3)->setDark(false);
+            }
+            else
+            {
+                infoCard->getAt(3)->setDark(true);
             }
 
             csp.m_x += 64.0f;
@@ -1474,7 +1491,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {255, 200, 20, 255});
                     harm = m_partitions[p].m_lasers[l]->getDmg();
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1506,8 +1523,8 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
-                    for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er, "SMOKE");
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {20, 20, 20, 255});
+                    for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er * 2.0f, "SMOKE");
                     harm = m_partitions[p].m_lasers[l]->getDmg();
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1537,7 +1554,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {255, 200, 20, 255});
 
                     harm = m_shots[l].getDmg();
 
@@ -1569,7 +1586,7 @@ void universe::checkCollisions()
                 {
                     playSnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), randNum(3.0f, 8.0f), randNum(3.0f, 8.0f));
+                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {255, 200, 20, 255});
                     harm = m_partitions[p].m_lasers[l]->getDmg();
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1629,11 +1646,8 @@ void universe::checkCollisions()
                 if(i->getType() != SHIP_TYPE_MINER) resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(j));
             }
 
-            //std::cout << "A: " << m_ply.getPos().m_x << ", " << m_ply.getPos().m_y << '\n';
-            //std::cout << "invmassmul: " << (i->getInertia() * i->getCanMove()) << " Class: " << i->getClassification() << " Team: " << i->getTeam() << '\n';
             //Ships vs player
             if(emnityCheck(i->getTeam(), TEAM_PLAYER) and !g_GAME_OVER) resolveCollision(reinterpret_cast<ship *>(i), reinterpret_cast<ship *>(&m_ply));
-            // std::cout << "B: " << m_ply.getPos().m_x << ", " << m_ply.getPos().m_y << '\n';
         }
 
         for(auto &i : m_partitions[p].m_rocks)
@@ -1702,9 +1716,9 @@ void universe::resolveCollision(ship *_a, ship *_b)
 
     float dist = magns(_a->getPos() - _b->getPos());
 
-    if(dist > sqr(_a->getRadius() + _b->getRadius())) return;
+    if(dist > sqr(_a->getRadius()) + sqr(_b->getRadius())) return;
 
-    dist = mag(_b->getPos() - _a->getPos());
+    dist = sqrt(dist);
     vec3 normal = (_b->getPos() - _a->getPos()) / dist;
     normal.m_z = 0.0f;
 
@@ -1713,16 +1727,16 @@ void universe::resolveCollision(ship *_a, ship *_b)
     float binvmass = _b->getInertia() * _b->getCanMove();
     float cinvmass = ainvmass + binvmass;
 
+    //Static objects do not collide.
     if(cinvmass == 0.0f) return;
 
     _a->damage(0.0f);
     _b->damage(0.0f);
 
     //Positional correction.
-    float diff = (_a->getRadius() + _b->getRadius()) - dist;
+    float diff = _a->getRadius() + _b->getRadius() - dist;
     vec3 correction = diff * normal;
     correction.m_z = 0.0f;
-    //std::cout << correction.m_x << ", " << correction.m_y << '\n';
 
     _a->addPos( -correction * (ainvmass / cinvmass) );
     _b->addPos( correction * (binvmass / cinvmass) );
@@ -1751,14 +1765,15 @@ void universe::resolveCollision(ship *_a, ship *_b)
     if(_b->getHealth() > 0.0f) _b->addVel( -binvmass * impulse );
 }
 
-void universe:: addpfx(
+void universe::addpfx(
         const vec3 _p,
         const vec3 _v,
         const int _no,
-        const float _f
+        const float _f,
+        const std::array<float, 4> _col
         )
 {
-    pfx pf(_p, _v, m_vel, _no, _f, "EXPLOSION");
+    pfx pf(_p, _v, m_vel, _no, _f, "EXPLOSION", _col);
     m_particles.push_back(pf);
 }
 
@@ -2056,6 +2071,7 @@ void universe::spawnBase(
     return;*/
 
     float deg = _ang;
+    float distMul = 1.5f;
     for(int i = start + 1; i < structures.size(); ++i)
     {
         std::cout << i << '\n';
@@ -2065,7 +2081,7 @@ void universe::spawnBase(
             for(float k = 0.0f; k < 360.0f; k += deg)
             {
                 std::cout << "     " << k << '\n';
-                enemy temp (j.getPos() + tovec3(vec(k)) * j.getRadius() * 1.5f, vec3(), structures[i], _t);
+                enemy temp (j.getPos() + tovec3(vec(k)) * j.getRadius() * distMul, vec3(), structures[i], _t);
                 active.push_back( temp );
             }
         }
@@ -2077,6 +2093,7 @@ void universe::spawnBase(
             ships.push_back( u );
         active.clear();
 
+        //distMul /= 2.0f;
         deg /= 2.0f;
     }
 
@@ -2235,7 +2252,7 @@ void universe::addBuild(
 
     m_agents.push_back(newShip);
 
-    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2);
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2, {20, 20, 20, 255});
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
     m_sounds.playSnd(PLACE_SND);
     m_sounds.playSnd(CLUNK_SND);
@@ -2457,7 +2474,7 @@ selectionReturn universe::handleInput(vec2 _mouse)
         m_contextShip = {0, -1};
         for(size_t i = 0; i < m_agents.size(); ++i)
         {
-            if(magns(_mouse - tovec2(m_agents[i].getPos())) < sqr(m_agents[i].getRadius() + 32.0f))
+            if(magns(_mouse - tovec2(m_agents[i].getPos())) < sqr(m_agents[i].getRadius() + 16.0f))
             {
                 m_contextShip = m_agents.getID(i);
                 break;

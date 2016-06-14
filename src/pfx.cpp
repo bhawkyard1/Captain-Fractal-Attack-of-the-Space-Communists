@@ -9,10 +9,15 @@ pfx::pfx(
         const vec3 _wv,
         const size_t _no,
         const float _force,
-        const std::string _identifier
-         )
+        const std::string _identifier,
+        const std::array<float, 4> _col
+        )
 {
-    m_glowA = clamp(255.0f * (_force * _force) / 100.0f, 0.0f, 255.0f);
+    m_elapsed = 0.0f;
+    m_seed_position = static_cast<float>(rand());
+    m_seed_explosion = static_cast<float>(rand());
+
+    m_expiry = 15.0f / _force;
 
     m_active = true;
 
@@ -20,9 +25,7 @@ pfx::pfx(
     setVel(_v);
     setWVel(_wv);
 
-    m_col[0] = randNum(0.0f, 150.0f) + 105.0f;
-    m_col[1] = randNum(0.0f, 150.0f) + 105.0f;
-    m_col[2] = randNum(0.0f, 150.0f) + 105.0f;
+    m_col = _col;
 
     m_identifier = _identifier;
 
@@ -56,15 +59,17 @@ void pfx::update(float _dt)
         m_particles[i].setWVel( getWVel() );
         m_particles[i].updatePos( _dt );
 
-        if(m_alphas[i] > 0)
+        if(m_alphas[i] > 0.0f)
         {
             m_alphas[i] -= 1;
             done = false;
         }
     }
 
+    if(m_elapsed < m_expiry) done = false;
+
     if(done) m_active = false;
-    m_glowA = clamp(m_glowA - 16.0f, 0.0f, 255.0f);
+    m_elapsed += _dt;
 
     updatePos(_dt);
 }

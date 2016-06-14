@@ -131,6 +131,7 @@ public:
   /// \param _cCol colour of the universe
   //----------------------------------------------------------------------------------------------------------------------
   void addRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
+  void packExtraData(const std::array<float, 4> _data) {for(int i = 0; i < 6; ++i) m_genericData.push_back(_data);}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Takes the vert attribute vectors, treats them as rectangles, and draw them.
@@ -238,14 +239,7 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   void drawLines(float _width);
 
-  //----------------------------------------------------------------------------------------------------------------------
-  /// \brief Draws an explosion
-  /// \param _pos position
-  /// \param _d dimensions
-  /// \param _col colour tint
-  //----------------------------------------------------------------------------------------------------------------------
-  void drawExplosion(const vec3 _pos, const float _d, const std::array<float, 4> _col);
-  void drawExplosion(const vec3 _pos, const vec2 _d, const std::array<float, 4> _col);
+  void drawExplosions();
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Draws jet flames
@@ -454,6 +448,8 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   GLuint m_colourBuffer;
 
+  GLuint m_genericBuffer;
+
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief A vector containing positional data, can be loaded up then passed off to one of the member VBOs
   //----------------------------------------------------------------------------------------------------------------------
@@ -463,6 +459,8 @@ private:
   /// \brief A vector containing colour data, can be loaded up then passed off to one of the member VBOs
   //----------------------------------------------------------------------------------------------------------------------
   std::vector<std::array<float, 4>> m_colours;
+
+  std::vector<std::array<float, 4>> m_genericData;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief A vector containing UV data, can be loaded up then passed off to one of the member VBOs

@@ -138,6 +138,16 @@ std::array<float, 4> col255to1(const std::array<int, 4> _col)
     return {_col[0] / 255.0f, _col[1] / 255.0f, _col[2] / 255.0f, _col[3] / 255.0f};
 }
 
+std::array<float, 4> col1to255(const std::array<float, 4> _col)
+{
+    return {_col[0] * 255.0f, _col[1] * 255.0f, _col[2] * 255.0f, _col[3] * 255.0f};
+}
+
+std::array<float, 4> col1to255(const std::array<int, 4> _col)
+{
+    return {_col[0] * 255.0f, _col[1] * 255.0f, _col[2] * 255.0f, _col[3] * 255.0f};
+}
+
 vec2 getMousePos()
 {
     int x = 0;

@@ -31,7 +31,7 @@ public:
     /// \param _force velocity multiplier of children
     /// \param _identifier type of effect, such as "SMOKE", "EXPLOSION" etc
     //----------------------------------------------------------------------------------------------------------------------
-    pfx(const vec3 _p, const vec3 _v, const vec3 _wv, const size_t _no, const float _force, const std::string _identifier);
+    pfx(const vec3 _p, const vec3 _v, const vec3 _wv, const size_t _no, const float _force, const std::string _identifier, const std::array<float, 4> _col);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the system
@@ -47,14 +47,11 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Colour getters
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<float, 3> getCol() const {return m_col;}
+    std::array<float, 4> getCol() const {return m_col;}
     float getCol(int i) const {return m_col[i];}
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Alpha getters
-    //----------------------------------------------------------------------------------------------------------------------
-    float getAlpha() const {return m_glowA;}
-    float getAlpha(const int index) const {return m_alphas[index];}
+    float getAlpha(const int _i) {return m_alphas[_i];}
+    std::array<float, 4> getShaderData() const {return {m_elapsed, m_seed_position, m_seed_explosion, m_force};}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Identifier getter
@@ -82,9 +79,12 @@ private:
     std::vector<int> m_alphas;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief The alpha of the systems central sprite
+    /// \brief Data for the explosion shader
     //----------------------------------------------------------------------------------------------------------------------
-    float m_glowA;
+    float m_elapsed;
+    float m_seed_position;
+    float m_seed_explosion;
+    float m_expiry;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The string id of the particle system
@@ -94,7 +94,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The colour tint of the particle system
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<float, 3> m_col;
+    std::array<float, 4> m_col;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Is the particle system active?

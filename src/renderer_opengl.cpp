@@ -141,7 +141,9 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("laser", "laserVertex", "laserFragment");
-    createShaderProgram("explosion", "explosionVertex", "explosionFragment");
+    //createShaderProgram("explosion", "explosionVertex", "explosionFragment");
+    createShaderProgram("sparks", "explosionVertex", "explosionFragment");
+    createShaderProgram("explosion", "explosionVertex", "explosion2");
     createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("smoke", "explosionVertex", "smokeFragment");
     createShaderProgram("shield", "MVPUVNVert", "shieldFragment");
@@ -217,6 +219,7 @@ renderer_ngl::renderer_ngl()
     glGenBuffers(1, &m_vertBuffer);
     glGenBuffers(1, &m_UVBuffer);
     glGenBuffers(1, &m_colourBuffer);
+    glGenBuffers(1, &m_genericBuffer);
 
     m_vao = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, 1.0f, 0.0f)});
 
@@ -918,23 +921,24 @@ void renderer_ngl::drawLine(
     glLineWidth(1.0f);
 }*/
 
-void renderer_ngl::drawExplosion(const vec3 _pos, const vec2 _d, const std::array<float, 4> _col)
+void renderer_ngl::drawExplosions()
 {
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+    useShader("explosion");
 
-    glBindVertexArray(m_spriteVAO);
-    m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
-    m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y));
+    glBindVertexArray(m_vao);
 
-    loadMatricesToShader();
-    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
-    glBindVertexArray(0);
-    m_transform.reset();
-}
+    glBindBuffer(GL_ARRAY_BUFFER, m_genericBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec4) * m_genericData.size(),
+                 &m_genericData[0][0],
+            GL_STATIC_DRAW
+            );
 
-void renderer_ngl::drawExplosion(const vec3 _pos, const float _d, const std::array<float, 4> _col)
-{
-    drawExplosion(_pos, {_d, _d}, _col);
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, m_genericBuffer);
+    glVertexAttribPointer( 3, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    drawRects(true);
 }
 
 void renderer_ngl::drawSmoke(const float _dt)
@@ -1288,6 +1292,7 @@ void renderer_ngl::clearVectors()
     m_verts.clear();
     m_colours.clear();
     m_UVs.clear();
+    m_genericData.clear();
 }
 
 #endif

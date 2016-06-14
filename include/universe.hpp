@@ -250,7 +250,7 @@ public:
     /// \brief Adds a particle system to the universe.
     /// \param _type ship classification.
     //----------------------------------------------------------------------------------------------------------------------
-    void addpfx(const vec3 _p, const vec3 _v, const int _no, const float _f);
+    void addpfx(const vec3 _p, const vec3 _v, const int _no, const float _f, const std::array<float, 4> _col);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a particle sprite to the universe. This is a bit of a misnomer, since the opengl renderer uses billboards + glsl.

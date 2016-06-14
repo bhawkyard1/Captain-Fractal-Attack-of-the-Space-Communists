@@ -288,12 +288,14 @@ vec2 right(float _ang);
 /// \param _col colour to convert
 //----------------------------------------------------------------------------------------------------------------------
 std::array<float, 4> col255to1(std::array<float, 4> _col);
+std::array<float, 4> col255to1(std::array<int, 4> _col);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Given a colour whose components range from 0-1, convert it to 0-255.
 /// \param _col colour to convert
 //----------------------------------------------------------------------------------------------------------------------
-std::array<float, 4> col255to1(std::array<int, 4> _col);
+std::array<float, 4> col1to255(std::array<float, 4> _col);
+std::array<float, 4> col1to255(std::array<int, 4> _col);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Gets the mouse position as a vec2.

@@ -49,6 +49,7 @@ void enemy::behvrUpdate(float _dt)
     else if(m_curGoal == GOAL_WANDER)
     {
         m_tVel = {0.0f, 0.0f, 0.0f};
+        m_tPos += getWVel();
         if(magns(getPos() - m_tPos) < 10000.0f)
         {
             m_tPos += tovec3(randVec2(2000.0f));
