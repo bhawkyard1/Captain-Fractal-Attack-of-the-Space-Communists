@@ -17,7 +17,7 @@ pfx::pfx(
     m_seed_position = static_cast<float>(rand());
     m_seed_explosion = static_cast<float>(rand());
 
-    m_expiry = 15.0f / _force;
+    m_expiry = 60.0f / _force;
 
     m_active = true;
 

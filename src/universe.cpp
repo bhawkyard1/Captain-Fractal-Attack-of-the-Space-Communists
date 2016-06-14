@@ -426,12 +426,10 @@ void universe::update(const float _dt)
             if(isDead)
             {
                 enemy * lastAttacker = m_agents.getByID( m_agents[i].getLastAttacker() );
-                for(int p = 0; p < rand() % 5 + 1; p++)
-                {
-                    vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
-                    pos += m_agents[i].getPos();
-                    addpfx(pos, m_agents[i].getVel(), randNum(5, 7), m_agents[i].getMaxHealth() / randNum(2.0f, 4.0f), col1to255(m_agents[i].getCurWeapCol()));
-                }
+
+                vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
+                pos += m_agents[i].getPos();
+                addpfx(pos, m_agents[i].getVel(), randNum(5, 7), m_agents[i].getMaxHealth() * randNum(0.5f, 0.8f), col1to255(m_agents[i].getCurWeapCol()));
 
                 //Dump inventory.
                 for(auto &d : m_agents[i].getCargo()->getItems()->m_objects)
@@ -441,7 +439,6 @@ void universe::update(const float _dt)
 
                 addScore( m_agents[i].getScore() );
                 addFrag( m_agents[i].getLastAttacker() );
-
 
                 playSnd(EXPLOSION_SND);
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
@@ -1469,11 +1466,14 @@ void universe::checkCollisions()
             vec3 spv = sp + sv * 1.5;
             float stop = m_partitions[p].m_lasers[l]->getStop();
             uniqueID so = m_partitions[p].m_lasers[l]->getOwner();
+            float sd = m_partitions[p].m_lasers[l]->getDmg();
 
             vec3 ep;
             vec3 ev;
             float er;
             float ei;
+
+            std::array<float, 4> sc = m_partitions[p].m_lasers[l]->getCol();
 
             vec3 d_dir;
 
@@ -1491,8 +1491,8 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {255, 200, 20, 255});
-                    harm = m_partitions[p].m_lasers[l]->getDmg();
+                    addpfx(ep + randVec3(er), ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
+                    harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
                     //Delete m_shots if they match the ones in the universe vector.
@@ -1523,9 +1523,9 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {20, 20, 20, 255});
+                    addpfx(ep + randVec3(er), ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {20, 20, 20, 255});
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er * 2.0f, "SMOKE");
-                    harm = m_partitions[p].m_lasers[l]->getDmg();
+                    harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
                     for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions[p].m_lasers[l]) swapnpop(&m_shots, i);//m_shots.erase(m_shots.begin() + i);
@@ -1554,9 +1554,9 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {255, 200, 20, 255});
+                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), sd * randNum(1.0f, 3.0f), {255, 200, 20, 255});
 
-                    harm = m_shots[l].getDmg();
+                    harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
                     for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions[p].m_lasers[l]) m_shots.erase(m_shots.begin() + i);
@@ -1586,8 +1586,8 @@ void universe::checkCollisions()
                 {
                     playSnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), randNum(3.0f, 8.0f), randNum(3.0f, 8.0f), {255, 200, 20, 255});
-                    harm = m_partitions[p].m_lasers[l]->getDmg();
+                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
+                    harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
                     for(int i = m_shots.size() - 1; i >= 0; --i) if(&m_shots[i] == m_partitions[p].m_lasers[l]) swapnpop(&m_shots, i);
@@ -2252,7 +2252,7 @@ void universe::addBuild(
 
     m_agents.push_back(newShip);
 
-    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, rand()%30 + 2, {20, 20, 20, 255});
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {20, 20, 20, 255});
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
     m_sounds.playSnd(PLACE_SND);
     m_sounds.playSnd(CLUNK_SND);

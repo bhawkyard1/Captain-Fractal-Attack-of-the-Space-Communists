@@ -25,8 +25,8 @@ out vec4 fragColour;
 float expRadius = 1.75;
                         // keep this constant for a whole explosion, but when differing from explosion to the next one, you get non-identical looking ones
 float downscale = 1.25;				// how much smaller (than expRadius) one explosion ball should be. bigger value = smaller. 1.0 = no scale down.
-const int steps = 24;				// iterations when marching through cloud noise. default = 64. 40 might still suffice. When putting higher, explosion becomes too dense, so make colBottom and colTop more transparent.
-float grain = 1.5;					// increase for more detailed explosions, but then you should also increase iterations (and decrease step, which is done automatically)
+int steps = int(clamp(4 / speed, 24, 64));				// iterations when marching through cloud noise. default = 64. 40 might still suffice. When putting higher, explosion becomes too dense, so make colBottom and colTop more transparent.
+float grain = 2.5;					// increase for more detailed explosions, but then you should also increase iterations (and decrease step, which is done automatically)
 //float speed = 0.5;					// total animation speed (time stretch). nice = 0.5, default = 0.4
 float ballness = 0.5;				// lower values makes explosion look more like a cloud. higher values more like a ball.
 float growth = 2.2;					// initial growth to explosion ball. lower values makes explosion grow faster
