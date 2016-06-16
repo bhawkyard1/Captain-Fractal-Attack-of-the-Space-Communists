@@ -34,5 +34,5 @@ void main()
     iGlobalTime = inSeed.x;
     variation_seed = inSeed.y;
     explosion_seed = inSeed.z;
-    speed = clamp(12.0 / inSeed.w, 0.3, 0.9);
+    speed = clamp(12.0 / inSeed.w, 0.4, 0.8);
 }

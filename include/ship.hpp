@@ -415,6 +415,10 @@ public:
     unsigned long getKills() const {return m_kills;}
     void setKills(unsigned long _kills) {m_kills = _kills;}
 
+    void addXP(const float _xp);
+    float getXP() const {return m_experience;}
+    void setXP(const float _xp) {m_experience = _xp;}
+
     bool addItem(debris _in) {return m_cargo.addItem(_in);}
     inventory * getCargo() {return &m_cargo;}
 
@@ -614,6 +618,11 @@ private:
     /// \brief Number of defeated ships.
     //----------------------------------------------------------------------------------------------------------------------
     long unsigned int m_kills;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief XP.
+    //----------------------------------------------------------------------------------------------------------------------
+    float m_experience;
 };
 
 //----------------------------------------------------------------------------------------------------------------------

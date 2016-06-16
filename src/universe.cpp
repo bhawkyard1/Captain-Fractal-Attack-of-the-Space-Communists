@@ -95,12 +95,15 @@ void universe::addShot(
         const vec3 _p,
         const vec3 _v,
         const float _angle,
-        const std::array<float, WEAPS_W> _weap,
+        std::array<float, WEAPS_W> _weap,
         const aiTeam _team,
-        uniqueID _owner
+        uniqueID _owner,
+        const float _xpModifier
         )
 {
     int temp_angle = _angle + 90;
+    float dmgMul = 1.0f + (_xpModifier / 64.0f);
+    _weap[DAMAGE] *= dmgMul;
     for(int i = 0; i < _weap[0]; ++i)
     {
         //vec2 vec = vec(temp_angle);
@@ -197,7 +200,7 @@ void universe::update(const float _dt)
     {
         m_sounds.playSnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
-        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1} );
+        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1}, m_ply.getXP() );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
         m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -355,7 +358,7 @@ void universe::update(const float _dt)
                 {
                     vec3 pos = randVec3(16.0f);
                     pos += m_asteroids[i].getPos();
-                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2, {20, 20, 20, 255});
+                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2, {2, 2, 2, 0});
                     for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + tovec3(randVec2(1.0f)), m_asteroids[i].getRadius() * 2.0f, "SMOKE");
                 }
                 if(m_asteroids[i].getClassification() == ASTEROID_SMALL)
@@ -439,6 +442,7 @@ void universe::update(const float _dt)
 
                 addScore( m_agents[i].getScore() );
                 addFrag( m_agents[i].getLastAttacker() );
+                if(lastAttacker != nullptr) lastAttacker->addXP( calcAICost(m_agents[i].getClassification()) );
 
                 playSnd(EXPLOSION_SND);
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
@@ -632,7 +636,7 @@ void universe::update(const float _dt)
         {
             //If the agent is shooting, add lasers.
             m_agents[e].shoot();
-            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), m_agents.getID(e));
+            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), m_agents.getID(e), m_agents[e].getXP());
             m_agents[e].setCooldown( (m_agents[e].getCurWeapStat(COOLDOWN)) );
             m_agents[e].setFiring(false);
         }
@@ -1274,6 +1278,12 @@ void universe::drawUI(const float _dt)
 
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
+
+            csp.m_y += 24.0f;
+            m_drawer.addRect(csp, {128.0f, 24.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
+            m_drawer.drawXP( contextPtr->getXP() / 32.0f );
+            m_drawer.drawRects(true);
+            m_drawer.clearVectors();
         }
         else
         {
@@ -1282,6 +1292,7 @@ void universe::drawUI(const float _dt)
 
         if(contextPtr != nullptr and contextPtr->getCargo()->isVisible())
         {
+            m_drawer.useShader("plain");
             vec2 dim = contextPtr->getCargo()->getDim();
             std::cout << "drawing cargo!!" << dim.m_x << ", " << dim.m_y << '\n';
             m_drawer.addRect(contextPtr->getInterpolatedPosition(_dt), dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
@@ -1503,6 +1514,8 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
+                    enemy * lastAttacker = m_agents.getByID(so);
+                    if(lastAttacker != nullptr) lastAttacker->addXP( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.005f );
                     m_partitions[p].m_ships[s]->damage(harm, d_dir * stop * ei, so);
                     addDamagePopup(harm, m_partitions[p].m_ships[s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
@@ -1523,7 +1536,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
                 {
-                    addpfx(ep + randVec3(er), ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {20, 20, 20, 255});
+                    addpfx(ep + randVec3(er), ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {2, 2, 2, 0});
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er * 2.0f, "SMOKE");
                     harm = sd;
 
@@ -2252,7 +2265,7 @@ void universe::addBuild(
 
     m_agents.push_back(newShip);
 
-    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {20, 20, 20, 255});
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {2, 2, 2, 0});
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
     m_sounds.playSnd(PLACE_SND);
     m_sounds.playSnd(CLUNK_SND);
@@ -2269,10 +2282,10 @@ void universe::initUI()
     info_menu.setVisible(false);
     info_menu.setInWorldSpace(true);
     button name("", {0,0,0,0}, {255,255,255,255}, {-32.0f, 0.0f}, {128.0f,32.0f});
-    button kills("KILLS: ", {0,0,0,0}, {255,255,255,255}, {-32.0f, 80.0f}, {128.0f,32.0f});
-    button distance("DISTANCE: ", {0,0,0,0}, {255,255,255,255}, {-32.0f, 96.0f}, {128.0f,32.0f});
-    button trade("TRADE", {100,100,100,255}, {255,255,255,255}, {0.0f, 128.0f}, {64.0f,32.0f});
-    button close("CLOSE", {255,10,20,255}, {255,255,255,255}, {64.0f, 128.0f}, {64.0f,32.0f});
+    button kills("KILLS: ", {0,0,0,0}, {255,255,255,255}, {-32.0f, 96.0f}, {128.0f,32.0f});
+    button distance("DISTANCE: ", {0,0,0,0}, {255,255,255,255}, {-32.0f, 112.0f}, {128.0f,32.0f});
+    button trade("TRADE", {100,100,100,255}, {255,255,255,255}, {0.0f, 144.0f}, {64.0f,32.0f});
+    button close("CLOSE", {255,10,20,255}, {255,255,255,255}, {64.0f, 144.0f}, {64.0f,32.0f});
     info_menu.add(name);
     info_menu.add(kills);
     info_menu.add(distance);

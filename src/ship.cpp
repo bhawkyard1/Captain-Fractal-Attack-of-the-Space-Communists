@@ -72,8 +72,8 @@ ship::ship(
     {
     case COMMUNIST_1:
         m_identifier = "COMMUNIST_1";
-        setMaxHealth(20.0f,true);
-        setMaxShield(10.0f,true);
+        setMaxHealth(30.0f,true);
+        setMaxShield(20.0f,true);
         setMaxEnergy(100.0f,true);
         m_initInertia = 0.1f;
         m_enginePower = 4.0f;
@@ -83,8 +83,8 @@ ship::ship(
         break;
     case COMMUNIST_2:
         m_identifier = "COMMUNIST_2";
-        setMaxHealth(40.0f,true);
-        setMaxShield(30.0f,true);
+        setMaxHealth(50.0f,true);
+        setMaxShield(40.0f,true);
         setMaxEnergy(100.0f,true);
         m_initInertia = 0.09f;
         m_enginePower = 5.0f;
@@ -290,8 +290,8 @@ ship::ship(
         break;
     case ALLIANCE_TRACKER:
         m_identifier = "ALLIANCE_TRACKER";
-        setMaxHealth(60.0f,true);
-        setMaxShield(90.0f,true);
+        setMaxHealth(50.0f,true);
+        setMaxShield(80.0f,true);
         setMaxEnergy(125.0f,true);
         m_initInertia = 0.09f;
         m_enginePower = 5.0f;
@@ -301,8 +301,8 @@ ship::ship(
         break;
     case ALLIANCE_PHOENIX:
         m_identifier = "ALLIANCE_PHOENIX";
-        setMaxHealth(100.0f,true);
-        setMaxShield(120.0f,true);
+        setMaxHealth(90.0f,true);
+        setMaxShield(110.0f,true);
         setMaxEnergy(150.0f,true);
         m_initInertia = 0.07f;
         m_enginePower = 7.0f;
@@ -312,8 +312,8 @@ ship::ship(
         break;
     case ALLIANCE_DRAGON:
         m_identifier = "ALLIANCE_DRAGON";
-        setMaxHealth(130.0f,true);
-        setMaxShield(160.0f,true);
+        setMaxHealth(120.0f,true);
+        setMaxShield(130.0f,true);
         setMaxEnergy(200.0f,true);
         m_initInertia = 0.05f;
         m_enginePower = 8.0f;
@@ -574,6 +574,7 @@ ship::ship(
     m_radius = _radius;
 
     m_kills = 0;
+    m_experience = 0.0f;
 }
 
 ship::ship(
@@ -754,6 +755,7 @@ ship::ship(
     }
 
     m_kills = 0;
+    m_experience = 0.0f;
 }
 
 void ship::accelerate(const float _mult)
@@ -1064,9 +1066,15 @@ void ship::setParent(uniqueID _p)
         m_hasParent = false;
 }
 
+void ship::addXP(const float _xp)
+{
+    float div = 1.0f + (m_experience / 32.0f);
+    m_experience += _xp / div;
+}
+
 float ship::calcAICost()
 {
-    return (m_maxHealth + m_maxShield + m_maxEnergy) * 0.01f;
+    return (m_maxHealth + m_maxShield) * 0.025f;
 }
 
 float calcAICost(const ship_spec _spec)

@@ -117,7 +117,7 @@ public:
     /// \param _weap array of data such as damage
     /// \param _team source of the shot
     //----------------------------------------------------------------------------------------------------------------------
-    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, uniqueID _owner);
+    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, uniqueID _owner, const float _xpModifier);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a raw resource to the universe.

@@ -139,6 +139,7 @@ renderer_ngl::renderer_ngl()
 
     createShaderProgram("background", "backgroundVertex", "backgroundFragment");
     createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
+    createShaderProgram("xp", "MVPUVVert", "XPFragment");
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("laser", "laserVertex", "laserFragment");
     //createShaderProgram("explosion", "explosionVertex", "explosionFragment");
@@ -846,6 +847,14 @@ void renderer_ngl::drawRects(const bool _ws)
     glDrawArraysEXT(GL_TRIANGLES, 0, m_verts.size());
 
     glBindVertexArray(0);
+}
+
+void renderer_ngl::drawXP(const float _xp)
+{
+    m_shader->use("xp");
+    m_shader->setRegisteredUniform("xp", _xp);
+
+    drawRects(true);
 }
 
 void renderer_ngl::drawCircle(const vec3 _p, const float _d, const bool _ws)
