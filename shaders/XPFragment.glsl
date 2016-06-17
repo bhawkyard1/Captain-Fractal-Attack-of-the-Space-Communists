@@ -28,7 +28,7 @@ void main()
     suv.x *= repetitions;
     vec2 ruv = fract(suv);
 
-    if(circle(ruv, vec2(0.5, 0.5), 0.9 / repetitions))
+    if(circle(ruv, vec2(0.5, 0.5), 1.0 / repetitions))
     {
         if(UV.x < xp) fragColour = activeColour;
         else fragColour = inactiveColour;

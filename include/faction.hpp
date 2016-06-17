@@ -27,7 +27,9 @@ struct faction
 {
 public:
     faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shipBounds _fighters, shipBounds _utility, shipBounds _structures, bool _organised);
-    void update(const float _dt, size_t _totalShips);
+    void updateEconomy(const float _dt, size_t _totalShips);
+    void updateDeployment();
+    void updateTactics();
 
     void addReserve();
     void deploy(size_t _num);
@@ -84,6 +86,9 @@ public:
     shipBounds getStructures() const {return m_structures;}
 
     bool isOrganised() const {return m_organised;}
+
+    void addSquad(const squad _s) {m_squads.push_back(_s);}
+    squad * getSquad(uniqueID _id) {m_squads.getByID(_id);}
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
@@ -138,6 +143,8 @@ private:
     std::pair<ship_spec, ship_spec> m_utilityShips;
 
     std::string m_identifier;
+
+    slotMap<squad> m_squads;
 };
 
 #endif

@@ -61,6 +61,11 @@ void enemy::behvrUpdate(float _dt)
         m_tVel = {0.0f, 0.0f, 0.0f};
         m_curGoal = GOAL_IDLE;
     }
+    else if(m_curGoal == GOAL_RETREAT)
+    {
+        m_tPos = getPos() * F_MAX;
+        m_tVel = {0.0f, 0.0f, 0.0f};
+    }
 }
 
 void enemy::steering()

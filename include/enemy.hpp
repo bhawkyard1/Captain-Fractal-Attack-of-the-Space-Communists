@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The goals that a ship can have
 //----------------------------------------------------------------------------------------------------------------------
-enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER, GOAL_TRADE};
+enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER, GOAL_TRADE, GOAL_RETREAT};
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The teams that a ship can be on
@@ -124,7 +124,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The id of this agents' squad
   //----------------------------------------------------------------------------------------------------------------------
-  int m_squadID;
+  uniqueID m_squadID;
 };
 
 #endif

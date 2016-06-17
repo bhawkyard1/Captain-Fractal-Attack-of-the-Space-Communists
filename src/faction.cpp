@@ -43,7 +43,6 @@ void faction::update(const float _dt, size_t _totalShips)
 
     m_oldWealth = m_wealth;
 
-    //std::cout << "  " << m_aggression << '\n';
     if(m_wealth > 0.0f) m_wealth += m_wealth * _dt * m_economy;
     else if(!(rand() & 128)) m_wealth += m_economy * _dt;
 
@@ -52,27 +51,27 @@ void faction::update(const float _dt, size_t _totalShips)
     //As aggression gets lower, a faction must be wealthier to spawn reserves.
     float wealthDT = (m_wealth - m_oldWealth) * _dt;
 
-    //std::cout << "aggression " << m_aggression << '\n';
+    std::cout << "aggression " << m_aggression << '\n';
     //If the faction is too poor / not aggressive enough / already has enough ships, invest money.
     if( (rand() % 512) or wealthDT < -m_oldWealth / (10000.0f * m_aggression) )
     {
-        //std::cout << "  investing\n";
+        std::cout << "  investing\n";
         m_economy *= 1 + _dt * 0.000025f;
     }
     //If the faction is wealthy enough, purchase ships.
     else if(m_wealth > 0.0f)
     {
-        //std::cout << "buying\n";
+        std::cout << "buying\n";
         addReserve();
     }
 
     size_t numReserves = 0;
     for(auto &i : m_reserves) numReserves += i;
-    //std::cout << "  reserves : " << numReserves << " active : " << sumVec( m_active ) << '\n';
+    std::cout << "  reserves : " << numReserves << " active : " << sumVec( m_active ) << '\n';
 
     //Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
     int prob = 512 / m_aggression / g_DIFFICULTY;
-    if(!(rand() % prob) and sumVec( m_active ) < targetShips and sumVec( m_reserves ) > (targetShips - sumVec( m_active )) / 4)
+    if(!(rand() % prob) and sumVec( m_active ) < targetShips and sumVec( m_reserves ) > (targetShips - sumVec( m_active )) / 2)
     {
         int num = static_cast<int>(_totalShips * m_aggression);
         deploy( randNum( num / 2, num ) );

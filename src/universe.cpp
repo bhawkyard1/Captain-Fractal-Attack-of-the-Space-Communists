@@ -102,7 +102,7 @@ void universe::addShot(
         )
 {
     int temp_angle = _angle + 90;
-    float dmgMul = 1.0f + (_xpModifier / 64.0f);
+    float dmgMul = 1.0f + (_xpModifier / 48.0f);
     _weap[DAMAGE] *= dmgMul;
     for(int i = 0; i < _weap[0]; ++i)
     {
@@ -442,7 +442,7 @@ void universe::update(const float _dt)
 
                 addScore( m_agents[i].getScore() );
                 addFrag( m_agents[i].getLastAttacker() );
-                if(lastAttacker != nullptr) lastAttacker->addXP( calcAICost(m_agents[i].getClassification()) );
+                if(lastAttacker != nullptr) lastAttacker->addXP( clamp(calcAICost(m_agents[i].getClassification()), 0.0f, 2.0f) );
 
                 playSnd(EXPLOSION_SND);
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
@@ -534,7 +534,7 @@ void universe::update(const float _dt)
         vec3 p = m_agents[e].getPos();
 
         //If the agent is damaged, add smoke.
-        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius() * 2.0f, "SMOKE");
+        if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius() * 4.0f, "SMOKE");
 
         float minDist = F_MAX;
         //Reset target.
@@ -621,8 +621,15 @@ void universe::update(const float _dt)
         }
         else if( m_agents[e].getTarget() == nullptr )
         {
-            //If the agent has no m_target, it becomes idle.
-            m_agents[e].setGoal( GOAL_WANDER );
+            if(m_agents[e].getTeam() == TEAM_PLAYER)
+            {
+                //If the agent has no m_target, it becomes idle.
+                m_agents[e].setGoal( GOAL_WANDER );
+            }
+            else
+            {
+                m_agents[e].setGoal(GOAL_RETREAT);
+            }
         }
 
         if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
@@ -719,7 +726,7 @@ void universe::update(const float _dt)
         if(i.getTeam() == TEAM_PLAYER)
             continue;
 
-        //std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
+        std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
         i.update(_dt, m_agents.size());
 
         spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed(), i.getShittiestShip());
@@ -1281,7 +1288,7 @@ void universe::drawUI(const float _dt)
 
             csp.m_y += 24.0f;
             m_drawer.addRect(csp, {128.0f, 24.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
-            m_drawer.drawXP( contextPtr->getXP() / 32.0f );
+            m_drawer.drawXP( contextPtr->getXP() / 48.0f );
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
         }
@@ -2005,7 +2012,7 @@ void universe::spawnShip(
         if(
                 s.m_team == _t and
                 s.m_size < s.m_max_size and
-                magns(m_agents.m_objects.back().getPos() - s.m_centerPoint) < sqr(s.m_regroupDist) and
+                /*magns(m_agents.m_objects.back().getPos() - s.m_centerPoint) < sqr(s.m_regroupDist) and*/
                 rand() % 100 < 95)
         {
             addToSquad(&m_agents.m_objects.back(), &s);
@@ -2127,7 +2134,7 @@ bool universe::friendshipCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].getRelations(_b) == DIPLOMACY_FRIEND and m_factions[_b].getRelations(_a) == DIPLOMACY_FRIEND;
+    return m_factions[_a].getRelations(_b) >= DIPLOMACY_FRIEND and m_factions[_b].getRelations(_a) >= DIPLOMACY_FRIEND;
 }
 
 bool universe::neutralityCheck(
@@ -2404,7 +2411,7 @@ void universe::createFactions()
     m_factions.push_back(player);
 
     faction galactic_fed("Galactic Federation", {165, 14, 226, 255}, GALACTIC_FEDERATION, {FEDERATION_MKI, FEDERATION_CAPITAL}, {SHIPS_END, SHIPS_END}, {FEDERATION_TURRET, FEDERATION_TURRET}, true );
-    galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     galactic_fed.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(galactic_fed);
 
@@ -2414,7 +2421,7 @@ void universe::createFactions()
     m_factions.push_back(spooky_pirates);
 
     faction space_communists("Space Communists", {255, 0, 0, 255}, SPACE_COMMUNISTS, {COMMUNIST_1, COMMUNIST_CAPITAL}, {SHIPS_END, SHIPS_END}, {COMMUNIST_TURRET, COMMUNIST_TURRET}, true );
-    space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
+    space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     space_communists.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(space_communists);
 
@@ -2470,7 +2477,7 @@ void universe::calcPowerBalance()
     m_balanceOfPower.assign(m_factions.size(), 0.0f);
     for(auto &i : m_agents.m_objects)
     {
-        m_balanceOfPower[i.getTeam()] += i.getHealth() + i.getShield();
+        if(i.getCanShoot()) m_balanceOfPower[i.getTeam()] += i.getHealth() + i.getShield();
     }
     float total = 0.0f;
     for(auto &i : m_balanceOfPower) total += i;
