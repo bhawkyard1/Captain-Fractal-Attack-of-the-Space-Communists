@@ -18,7 +18,7 @@ enemy::enemy(
     m_curGoal = GOAL_IDLE;
     m_team = _team;
     m_confidence = randNum(5.0f, 20.0f);
-    m_squadID = -1;
+    m_squadID = {0, -1};
     m_tPos = getPos();
 }
 

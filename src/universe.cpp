@@ -414,7 +414,7 @@ void universe::update(const float _dt)
     }
 
     debug("mid");
-    //Cull dead m_agents.
+    //Cull dead m_agents. Important, this is the ONLY place agents are destroyed.
     for(int i = m_agents.size() - 1; i >= 0; i--)
     {
         vec3 p = m_agents[i].getPos();
@@ -465,22 +465,23 @@ void universe::update(const float _dt)
             }
 
             if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {0, -1};
+            removeFromSquad(&m_agents[i], m_agents[i].getSquadID());
             m_agents.free(i);
         }
     }
     debug("squads");
     //Set squad variables
-    //Get the average position for each squad.
-    for(auto &s : m_squads) {s.m_centerPoint = {0.0f, 0.0f, 0.0f}; s.m_averageVel = {0.0f, 0.0f, 0.0f};}
+    for(auto &f : m_factions) f.resetSquads();
     for(auto &e : m_agents.m_objects)
     {
-        if(e.getSquadID() >= 0)
+        squad * sq = getSquadFromID(e.getTeam(), e.getSquadID());
+        if(sq != nullptr)
         {
-            m_squads[e.getSquadID()].m_centerPoint += e.getPos();
-            m_squads[e.getSquadID()].m_averageVel += e.getVel();
+            sq->m_averagePos += e.getPos() / sq->m_size;
+            sq->m_averageVel += e.getVel() / sq->m_size;
         }
     }
-    for(auto &s : m_squads)
+    /*for(auto &s : m_squads)
     {
         float size = static_cast<float>(s.m_size);
         if(s.m_size > 0)
@@ -488,7 +489,8 @@ void universe::update(const float _dt)
             s.m_centerPoint /= size;
             s.m_averageVel /= size;
         }
-    }
+    }*/
+
     debug("updates");
     //Update live m_agents.
     for(size_t e = 0; e < m_agents.size(); ++e)
@@ -635,7 +637,7 @@ void universe::update(const float _dt)
         if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
         {
             //If the enemy can move and is scared, runs away.
-            removeFromSquad(&m_agents[e], getSquadFromID(m_agents[e].getSquadID()));
+            removeFromSquad(&m_agents[e], m_agents[e].getSquadID());
             m_agents[e].setGoal(GOAL_FLEE);
         }
 
@@ -648,16 +650,21 @@ void universe::update(const float _dt)
             m_agents[e].setFiring(false);
         }
 
-        //If too far from group center, congregate at center.
-        vec3 squadPos = m_squads[m_agents[e].getSquadID()].m_centerPoint;
-        //std::cout << "squadPos : " << squadPos.m_x << " ," << squadPos.m_y << '\n';
-        vec3 squadVel = m_squads[m_agents[e].getSquadID()].m_averageVel;
-        if(m_agents[e].getSquadID() >= 0 and !m_agents[e].inCombat() and magns(p - squadPos) > sqr(m_squads[m_agents[e].getSquadID()].m_regroupDist) )
+        squad * sq = getSquadFromID(m_agents[e].getTeam(), m_agents[e].getSquadID());
+
+        if(sq != nullptr)
         {
-            m_agents[e].setTarget(nullptr);
-            m_agents[e].setTPos( squadPos );
-            m_agents[e].setTVel( squadVel );
-            m_agents[e].setGoal(GOAL_CONGREGATE);
+            //If too far from group center, congregate at center.
+            vec3 squadPos = sq->m_targetPos;
+            //std::cout << "squadPos : " << squadPos.m_x << " ," << squadPos.m_y << '\n';
+            vec3 squadVel = sq->m_averageVel;
+            if(!m_agents[e].inCombat() and magns(p - squadPos) > sqr(sq->m_regroupDist) )
+            {
+                m_agents[e].setTarget(nullptr);
+                m_agents[e].setTPos( squadPos );
+                m_agents[e].setTVel( squadVel );
+                m_agents[e].setGoal(GOAL_CONGREGATE);
+            }
         }
 
         //std::cout << "GOAL: " << m_agents[e].getGoal() << '\n';
@@ -727,7 +734,9 @@ void universe::update(const float _dt)
             continue;
 
         std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
-        i.update(_dt, m_agents.size());
+        i.updateEconomy(_dt, m_factions);
+        i.updateDeployment(_dt, m_factions);
+        i.updateTactics(_dt, m_factions);
 
         spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed(), i.getShittiestShip());
         i.clearDeployed();
@@ -2007,7 +2016,7 @@ void universe::spawnShip(
 
     bool quit = false;
     //Assign squad if enemy can move and shoot.
-    for(auto &s : m_squads)
+    for(auto &s : m_factions[_t].getSquads())
     {
         if(
                 s.m_team == _t and
@@ -2015,7 +2024,7 @@ void universe::spawnShip(
                 /*magns(m_agents.m_objects.back().getPos() - s.m_centerPoint) < sqr(s.m_regroupDist) and*/
                 rand() % 100 < 95)
         {
-            addToSquad(&m_agents.m_objects.back(), &s);
+            addToSquad(&m_agents.m_objects.back(), m_factions[_t].getBackSquad());
             quit = true;
         }
     }
@@ -2024,12 +2033,47 @@ void universe::spawnShip(
     {
         //Create a new squad if no suitable one exists.
         squad tempSquad = createSquad(_t);
-        tempSquad.m_id = m_squads.size();
-        addToSquad(&m_agents.m_objects.back(), &tempSquad);
-        m_squads.push_back(tempSquad);
+        //tempSquad.m_id = m_squads.size();
+        //addToSquad(&m_agents.m_objects.back(), &tempSquad);
+        //m_squads.push_back(tempSquad);
+        tempSquad.m_targetPos = _p;
+
+        m_factions[_t].addSquad(tempSquad);
+
+        addToSquad(&m_agents.m_objects.back(), m_factions[_t].getBackSquad());
     }
 
     for(auto &q : temp) m_agents.push_back(q);
+}
+
+void universe::addToSquad(
+        enemy *_e,
+        uniqueID _s
+        )
+{
+    _e->setSquadID(_s);
+
+    squad * sq = m_factions[_e->getTeam()].getSquad(_s);
+    if(sq != nullptr)
+    {
+        sq->m_size++;
+        sq->m_strength += calcAICost(_e->getClassification());
+    }
+}
+
+void universe::removeFromSquad(
+        enemy *_e,
+        uniqueID _s
+        )
+{
+    _e->setSquadID({0, -1});
+
+    squad * sq = m_factions[_e->getTeam()].getSquad(_s);
+    if(sq != nullptr)
+    {
+        sq->m_size--;
+        sq->m_strength -= calcAICost(_e->getClassification());
+    }
 }
 
 void universe::spawnSquad(
@@ -2439,16 +2483,9 @@ void universe::createFactions()
     m_factions.push_back(none);
 }
 
-squad * universe::getSquadFromID(int _id)
+squad * universe::getSquadFromID(aiTeam _t, uniqueID _id)
 {
-    for(auto &s : m_squads)
-    {
-        if(s.m_id == _id)
-        {
-            return &s;
-        }
-    }
-    return nullptr;
+    return m_factions[_t].getSquad(_id);
 }
 
 void universe::shipAddParent(size_t _index, ship * _child, vec3 _offset)

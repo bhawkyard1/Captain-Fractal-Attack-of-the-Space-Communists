@@ -31,8 +31,9 @@ public:
         return nullptr;
     }
 
-    void push_back(const t &_obj)
+    uniqueID push_back(const t &_obj)
     {
+        uniqueID ret;
         //If there are free spaces...
         if(m_freeList.size() > 0)
         {
@@ -42,6 +43,8 @@ public:
             m_indirection[ freeid ].m_id = m_objects.size();
             m_ids.push_back( {freeid, ver} );
             m_freeList.pop_back();
+
+            ret = {freeid, ver};
         }
         //Create a new object, a new id and a new entry in the indirection list.
         else
@@ -49,9 +52,13 @@ public:
             uniqueID id = {static_cast<long>(m_objects.size()), 0};
             m_indirection.push_back( id );
             m_ids.push_back( id );
+
+            ret = id;
         }
 
         m_objects.push_back(_obj);
+
+        return ret;
     }
 
     //Swaps item at index _a with item at index _b
@@ -94,6 +101,8 @@ public:
     }
 
     t& back() const {return m_objects.back();}
+    t& back() {return m_objects.back();}
+    uniqueID backID() {return m_ids.back();}
 
     void clear()
     {

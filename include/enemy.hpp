@@ -77,8 +77,8 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter and setter for squad id
   //----------------------------------------------------------------------------------------------------------------------
-  int getSquadID() const {return m_squadID;}
-  void setSquadID(int _id) {m_squadID = _id;}
+  uniqueID getSquadID() const {return m_squadID;}
+  void setSquadID(uniqueID _id) {m_squadID = _id;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter and setter for the target position

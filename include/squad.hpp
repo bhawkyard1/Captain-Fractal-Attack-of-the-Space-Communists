@@ -50,7 +50,8 @@ struct squad
     /// \brief Typically set to the average position of the members, this acts as the squad center. Could
     /// conceivably be set to leader position to alter behaviour.
     //----------------------------------------------------------------------------------------------------------------------
-    vec3 m_centerPoint;
+    vec3 m_targetPos;
+    vec3 m_averagePos;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The average velocity of the members. Useful for Craig-Reynolds-eque alignment.
@@ -65,6 +66,7 @@ struct squad
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Perceived strength of the squad, affects morale.
     //----------------------------------------------------------------------------------------------------------------------
+    float m_confidence;
     float m_strength;
 };
 

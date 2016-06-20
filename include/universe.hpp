@@ -360,16 +360,16 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a given enemy to a given squad.
     /// \param _e enemy to add
-    /// \param _s squad to add to
+    /// \param _s id of squad to add to
     //----------------------------------------------------------------------------------------------------------------------
-    void addToSquad(enemy * _e, squad * _s) {_e->setSquadID(_s->m_id); _s->m_size++;}
+    void addToSquad(enemy * _e, uniqueID _s);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Removes a given enemy from a given squad. Requires you know which squad it is in.
     /// \param _e enemy to remove
     /// \param _s squad to remove from
     //----------------------------------------------------------------------------------------------------------------------
-    void removeFromSquad(enemy * _e, squad * _s) {_e->setSquadID(-1); if(_s != nullptr) _s->m_size--;}
+    void removeFromSquad(enemy * _e, uniqueID _s);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Creates the factions and stores them in m_factions.
@@ -379,7 +379,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Given a squad ID, returns the associated squad.
     //----------------------------------------------------------------------------------------------------------------------
-    squad * getSquadFromID(int _id);
+    squad * getSquadFromID(aiTeam _t, uniqueID _id);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns the renderer. Mostly used to hack text into the tutorial.

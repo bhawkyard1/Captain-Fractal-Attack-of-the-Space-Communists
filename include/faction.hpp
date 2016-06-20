@@ -27,9 +27,9 @@ struct faction
 {
 public:
     faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shipBounds _fighters, shipBounds _utility, shipBounds _structures, bool _organised);
-    void updateEconomy(const float _dt, size_t _totalShips);
-    void updateDeployment();
-    void updateTactics();
+    void updateEconomy(const float _dt, const std::vector<faction> &_rivals);
+    void updateDeployment(const float _dt, const std::vector<faction> &_rivals);
+    void updateTactics(const float _dt, const std::vector<faction> &_rivals);
 
     void addReserve();
     void deploy(size_t _num);
@@ -87,8 +87,12 @@ public:
 
     bool isOrganised() const {return m_organised;}
 
-    void addSquad(const squad _s) {m_squads.push_back(_s);}
-    squad * getSquad(uniqueID _id) {m_squads.getByID(_id);}
+    uniqueID addSquad(const squad _s) {return m_squads.push_back(_s);}
+    squad * getSquad(uniqueID _id) {return m_squads.getByID(_id);}
+    uniqueID getBackSquad() {return m_squads.backID();}
+    const std::vector<squad> & getSquads() const {return m_squads.m_objects;}
+
+    void resetSquads();
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
@@ -146,5 +150,15 @@ private:
 
     slotMap<squad> m_squads;
 };
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Returns diplomatic status between two factions.
+/// \param _a Team A.
+/// \param _b Team B.
+//----------------------------------------------------------------------------------------------------------------------
+bool emnityCheck(const aiTeam _a, const aiTeam _b);
+bool friendshipCheck(const aiTeam _a, const aiTeam _b);
+bool neutralityCheck(const aiTeam _a, const aiTeam _b);
+bool sameTeam(const aiTeam _a, const aiTeam _b);
 
 #endif
