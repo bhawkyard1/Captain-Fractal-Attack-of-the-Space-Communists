@@ -647,14 +647,7 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         break;
     case SDLK_e:
     {
-        vec3 vel = ply->getVel();
-        float spd = mag(vel);
-        vec3 dir;
-
-        if(spd > 0.0f) dir = -(vel / spd);
-        else dir = {0.0f, 0.0f, 0.0f};
-
-        ply->accelerate(dir, clamp(spd, 0.0f, 1.0f));
+        ply->decelerate();
         break;
     }
     case SDLK_q:

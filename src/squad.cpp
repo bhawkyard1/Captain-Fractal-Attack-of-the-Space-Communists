@@ -12,7 +12,7 @@ squad createSquad(aiTeam _t)
     r.m_max_size = rand() % 20 + 40;
     r.m_squadGoal = GOAL_CONGREGATE;
 
-    r.m_targetPos = vec3();
+    r.m_targetPos = tovec3( randVec2(1000.0f, 100000.0f) );
     r.m_averagePos = vec3();
     r.m_averageVel = vec3();
 

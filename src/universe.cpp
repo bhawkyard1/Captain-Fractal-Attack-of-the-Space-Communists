@@ -107,7 +107,7 @@ void universe::addShot(
     for(int i = 0; i < _weap[0]; ++i)
     {
         //vec2 vec = vec(temp_angle);
-        laser temp( _p + _v, _v, temp_angle, _weap, _team, _owner);
+        laser temp( _p, _v, temp_angle, _weap, _team, _owner);
         m_shots.push_back(temp);
     }
 }
@@ -421,11 +421,12 @@ void universe::update(const float _dt)
 
         bool isOffscreen = isOffScreen(p - getCameraPosition(), 120000.0f);
         bool isDead = m_agents[i].getHealth() <= 0.0f;
-        bool isPlayerOwned = friendshipCheck(m_agents[i].getTeam(), TEAM_PLAYER);
+        bool isPlayerOwned = sameTeam(m_agents[i].getTeam(), TEAM_PLAYER);
         bool isSmall = m_agents[i].getType() == SHIP_TYPE_FIGHTER;
         //Offscreen elimination, health-based elimination
         if( isDead or ( isOffscreen and (!isPlayerOwned or isSmall) ) )
         {
+            std::cout << "CULLING AGENT " << isDead << ", " << isOffscreen << ", " << isPlayerOwned << ", " << isSmall << '\n';
             if(isDead)
             {
                 enemy * lastAttacker = m_agents.getByID( m_agents[i].getLastAttacker() );
@@ -470,8 +471,9 @@ void universe::update(const float _dt)
         }
     }
     debug("squads");
-    //Set squad variables
+    //Reset squad variables
     for(auto &f : m_factions) f.resetSquads();
+    //Set acerate positions and velocities.
     for(auto &e : m_agents.m_objects)
     {
         squad * sq = getSquadFromID(e.getTeam(), e.getSquadID());
@@ -479,6 +481,15 @@ void universe::update(const float _dt)
         {
             sq->m_averagePos += e.getPos() / sq->m_size;
             sq->m_averageVel += e.getVel() / sq->m_size;
+        }
+    }
+    //Set average distance.
+    for(auto &e : m_agents.m_objects)
+    {
+        squad * sq = getSquadFromID(e.getTeam(), e.getSquadID());
+        if(sq != nullptr)
+        {
+            sq->m_averageDistance += magns(e.getPos() - sq->m_targetPos) / sq->m_size;
         }
     }
     /*for(auto &s : m_squads)
@@ -530,9 +541,6 @@ void universe::update(const float _dt)
         else m_agents[e].setEnergyPriority(0);
         //-----------------------------------------------------------------------------------------------------//
 
-        //Updating ship systems----------------------------------------------------------------------------//
-        m_agents[e].update(_dt);
-
         vec3 p = m_agents[e].getPos();
 
         //If the agent is damaged, add smoke.
@@ -541,6 +549,7 @@ void universe::update(const float _dt)
         float minDist = F_MAX;
         //Reset target.
         m_agents[e].setTarget(nullptr);
+        m_agents[e].setGoal(GOAL_IDLE);
 
         if(m_agents[e].getType() == SHIP_TYPE_MINER) //Set miner targets
         {
@@ -555,15 +564,30 @@ void universe::update(const float _dt)
                     minDist = nd;
                 }
             }
+            //Find the closest debris.
+            for(auto &d : m_resources)
+            {
+                float nd = magns(p - d.getPos());
+                if(nd < minDist)
+                {
+                    m_agents[e].setTarget(nullptr);
+                    m_agents[e].setTPos( d.getPos() );
+                    m_agents[e].setTVel(vec3());
+                    m_agents[e].setGoal(GOAL_GOTO);
+                    minDist = nd;
+                }
+            }
         }
-        else if(m_agents[e].getClassification() == PLAYER_GRAVWELL or
-                m_agents[e].getClassification() == ALLIANCE_GRAVWELL) //Gravwell attraction
+        else if(
+                m_agents[e].getClassification() == PLAYER_GRAVWELL or
+                m_agents[e].getClassification() == ALLIANCE_GRAVWELL
+                ) //Gravwell attraction
         {
             //Attract m_asteroids based on distancm_agents[e].
             for(auto &k : m_asteroids)
             {
                 vec3 incr = p - k.getPos();
-                float dist = fabs( magns( incr ) );
+                float dist = magns( incr );
                 dist /= sqr( 32.0f );
 
                 if(dist > 10000.0f) k.addVel( incr / std::max(dist, 0.01f) );
@@ -623,15 +647,8 @@ void universe::update(const float _dt)
         }
         else if( m_agents[e].getTarget() == nullptr )
         {
-            if(m_agents[e].getTeam() == TEAM_PLAYER)
-            {
-                //If the agent has no m_target, it becomes idle.
-                m_agents[e].setGoal( GOAL_WANDER );
-            }
-            else
-            {
-                m_agents[e].setGoal(GOAL_RETREAT);
-            }
+            //If the agent has no m_target, it becomes idle.
+            m_agents[e].setGoal( GOAL_WANDER );
         }
 
         if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
@@ -646,11 +663,11 @@ void universe::update(const float _dt)
             //If the agent is shooting, add lasers.
             m_agents[e].shoot();
             addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), m_agents.getID(e), m_agents[e].getXP());
-            m_agents[e].setCooldown( (m_agents[e].getCurWeapStat(COOLDOWN)) );
+            m_agents[e].setCooldown( ( m_agents[e].getCurWeapStat( COOLDOWN ) ) );
             m_agents[e].setFiring(false);
         }
 
-        squad * sq = getSquadFromID(m_agents[e].getTeam(), m_agents[e].getSquadID());
+        squad * sq = getSquadFromID( m_agents[e].getTeam(), m_agents[e].getSquadID() );
 
         if(sq != nullptr)
         {
@@ -660,15 +677,15 @@ void universe::update(const float _dt)
             vec3 squadVel = sq->m_averageVel;
             if(!m_agents[e].inCombat() and magns(p - squadPos) > sqr(sq->m_regroupDist) )
             {
-                m_agents[e].setTarget(nullptr);
+                m_agents[e].setTarget( nullptr );
                 m_agents[e].setTPos( squadPos );
                 m_agents[e].setTVel( squadVel );
-                m_agents[e].setGoal(GOAL_CONGREGATE);
+                m_agents[e].setGoal( GOAL_CONGREGATE );
             }
         }
 
-        //std::cout << "GOAL: " << m_agents[e].getGoal() << '\n';
-        //Update behaviour, steer towards m_target.
+        //Updating--------------------------------------------------------------------------------//
+        m_agents[e].update(_dt);
         m_agents[e].setWVel(m_vel);
         m_agents[e].behvrUpdate(_dt);
         m_agents[e].steering();
@@ -730,13 +747,12 @@ void universe::update(const float _dt)
     debug("factions");
     for(auto &i : m_factions)
     {
-        if(i.getTeam() == TEAM_PLAYER)
-            continue;
-
         std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
-        i.updateEconomy(_dt, m_factions);
+        i.setWVel(m_vel);
+
+        i.updateEconomy(_dt);
         i.updateDeployment(_dt, m_factions);
-        i.updateTactics(_dt, m_factions);
+        i.updateTactics(_dt, m_factions, m_agents.m_objects);
 
         spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed(), i.getShittiestShip());
         i.clearDeployed();
@@ -1300,6 +1316,22 @@ void universe::drawUI(const float _dt)
             m_drawer.drawXP( contextPtr->getXP() / 48.0f );
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
+
+            if(g_DEV_MODE)
+            {
+                m_drawer.useShader("plain");
+                m_drawer.addLine(contextPtr->getPos(), contextPtr->getTPos(), {1.0f, 1.0f, 1.0f, 1.0f});
+
+                squad * sq = getSquadFromID( contextPtr->getTeam(), contextPtr->getSquadID() );
+                if(sq != nullptr)
+                {
+                    m_drawer.addLine(contextPtr->getPos(), sq->m_averagePos, {1.0f, 0.0f, 0.0f, 1.0f});
+                    m_drawer.addLine(sq->m_averagePos, sq->m_targetPos, {0.0f, 0.0f, 1.0f, 1.0f});
+                }
+
+                m_drawer.drawLines(2.0f);
+                m_drawer.clearVectors();
+            }
         }
         else
         {
@@ -1532,7 +1564,7 @@ void universe::checkCollisions()
                 {
                     enemy * lastAttacker = m_agents.getByID(so);
                     if(lastAttacker != nullptr) lastAttacker->addXP( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.005f );
-                    m_partitions[p].m_ships[s]->damage(harm, d_dir * stop * ei, so);
+                    m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
                     addDamagePopup(harm, m_partitions[p].m_ships[s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
                 }
@@ -1564,7 +1596,7 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_partitions[p].m_rocks[r]->damage(harm, d_dir * stop * ei, so);
+                    m_partitions[p].m_rocks[r]->damage(harm, d_dir * stop, so);
                     break;
                 }
             }
@@ -1595,7 +1627,7 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_partitions[p].m_rockets[m]->damage(harm, d_dir * stop * ei, so);
+                    m_partitions[p].m_rockets[m]->damage(harm, d_dir * stop, so);
                     addDamagePopup(harm, TEAM_PLAYER, ep, -m_vel + randVec3(2.0f));
                     break;
                 }
@@ -1626,7 +1658,7 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_ply.damage(harm, d_dir * stop * m_ply.getInertia(), so);
+                    m_ply.damage(harm, d_dir * stop, so);
                     //std::cout << "ADDING VEL (" << sv.m_x << "," << sv.m_y << " - " << ev.m_x << "," << ev.m_y << ") * " << stop << " = (" << ( (sv - ev) * stop ).m_x << ", " << ( (sv - ev) * stop ).m_y << ")" << std::endl;
                     setVel(-m_ply.getVel());
                 }
@@ -1644,14 +1676,14 @@ void universe::checkCollisions()
                     if( a->getClassification() == PLAYER_STATION and friendshipCheck( a->getTeam(), b->getTeam() ) and a != b )
                     {
                         float dist = magns( b->getPos() - a->getPos() );
-                        if(dist < 160000.0f) b->incrHealth(0.01f);
+                        if(dist < sqr(a->getRadius())) b->incrHealth(0.01f);
                     }
                 }
 
                 if( a->getClassification() == PLAYER_STATION and friendshipCheck( a->getTeam(), TEAM_PLAYER ) )
                 {
                     float dist = magns( m_ply.getPos() - a->getPos() );
-                    if(dist < 160000.0f) m_ply.incrHealth(0.01f);
+                    if(dist < sqr(a->getRadius())) m_ply.incrHealth(0.01f);
                 }
             }
         }
@@ -2514,7 +2546,7 @@ void universe::calcPowerBalance()
     m_balanceOfPower.assign(m_factions.size(), 0.0f);
     for(auto &i : m_agents.m_objects)
     {
-        if(i.getCanShoot()) m_balanceOfPower[i.getTeam()] += i.getHealth() + i.getShield();
+        m_balanceOfPower[i.getTeam()] += calcAIPower(i.getClassification());
     }
     float total = 0.0f;
     for(auto &i : m_balanceOfPower) total += i;

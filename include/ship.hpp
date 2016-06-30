@@ -142,6 +142,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void accelerate(const vec3 _dir, const float _mult);
 
+    void decelerate();
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Setter for m_accelerating.
     /// \param _b input
@@ -631,5 +633,6 @@ private:
 extern std::vector<ship> g_ship_templates;
 
 float calcAICost(const ship_spec _spec);
+float calcAIPower(const ship_spec _spec);
 
 #endif

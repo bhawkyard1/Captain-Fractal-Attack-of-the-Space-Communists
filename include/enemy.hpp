@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The goals that a ship can have
 //----------------------------------------------------------------------------------------------------------------------
-enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER, GOAL_TRADE, GOAL_RETREAT};
+enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER, GOAL_TRADE, GOAL_RETREAT, GOAL_GOTO};
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief The teams that a ship can be on
@@ -84,6 +84,7 @@ public:
   /// \brief Getter and setter for the target position
   //----------------------------------------------------------------------------------------------------------------------
   void setTPos(vec3 _tPos) {m_tPos = _tPos;}
+  vec3 getTPos() const {return m_tPos;}
   void setTVel(vec3 _tVel) {m_tVel = _tVel;}
 private:
   //----------------------------------------------------------------------------------------------------------------------

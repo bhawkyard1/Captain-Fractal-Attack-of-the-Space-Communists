@@ -760,7 +760,7 @@ ship::ship(
 
 void ship::accelerate(const float _mult)
 {
-    float energyLoss = 0.6f * _mult, accelMult = 1.0f;
+    float energyLoss = 0.6f * _mult, accelMult = 1.0f * _mult;
 
     if(m_priority == PRIORITY_ENGINES)
     {
@@ -775,7 +775,7 @@ void ship::accelerate(const float _mult)
 
     if(m_energy <= energyLoss) return;
     vec2 add = vec(getAng() + 90.0f) * accelMult * m_inertia * m_enginePower;
-    addVel(vec3(add.m_x, add.m_y, 0.0f) * _mult);
+    addVel(vec3(add.m_x, add.m_y, 0.0f));
     m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
 
@@ -802,6 +802,39 @@ void ship::accelerate(
 
     if(m_energy <= energyLoss) return;
     addVel(_dir * _mult * m_inertia * m_enginePower);
+    m_energy -= energyLoss;
+    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
+
+    setAccelerating(true);
+}
+
+void ship::decelerate()
+{
+    float energyLoss = 0.6f, accelMult = 1.0f;
+
+    if(m_priority == PRIORITY_ENGINES)
+    {
+        energyLoss = 1.2f;
+        accelMult = 2.0f;
+    }
+    else if(m_priority == PRIORITY_GUNS)
+    {
+        energyLoss = 0.6f;
+        accelMult = 0.8f;
+    }
+
+    if(m_energy <= energyLoss) return;
+
+    vec3 vel = getVel();
+    float spd = mag(getVel());
+
+    if(spd == 0.0f) return;
+
+    vec3 add = -vel / spd;
+    float clamped = clamp(accelMult * m_inertia * m_enginePower, 0.0f, spd);
+    add *= clamped;
+
+    addVel(add);
     m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
 
@@ -1080,6 +1113,12 @@ float ship::calcAICost()
 float calcAICost(const ship_spec _spec)
 {
     return g_ship_templates[_spec].calcAICost();
+}
+
+float calcAIPower(const ship_spec _spec)
+{
+    if(g_ship_templates[_spec].getCanMove()) return g_ship_templates[_spec].calcAICost();
+    return 0.0f;
 }
 
 ship_spec operator+(const ship_spec &_lhs, const ship_spec &_rhs)

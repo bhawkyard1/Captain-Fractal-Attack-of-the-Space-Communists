@@ -27,9 +27,9 @@ struct faction
 {
 public:
     faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shipBounds _fighters, shipBounds _utility, shipBounds _structures, bool _organised);
-    void updateEconomy(const float _dt, const std::vector<faction> &_rivals);
+    void updateEconomy(const float _dt);
     void updateDeployment(const float _dt, const std::vector<faction> &_rivals);
-    void updateTactics(const float _dt, const std::vector<faction> &_rivals);
+    void updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships);
 
     void addReserve();
     void deploy(size_t _num);
@@ -93,6 +93,9 @@ public:
     const std::vector<squad> & getSquads() const {return m_squads.m_objects;}
 
     void resetSquads();
+
+    void setWVel(const vec3 _wvel) {m_wvel = _wvel;}
+    vec3 getWVel() const {return m_wvel;}
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
@@ -149,6 +152,8 @@ private:
     std::string m_identifier;
 
     slotMap<squad> m_squads;
+
+    vec3 m_wvel;
 };
 
 //----------------------------------------------------------------------------------------------------------------------

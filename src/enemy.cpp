@@ -63,7 +63,7 @@ void enemy::behvrUpdate(float _dt)
     }
     else if(m_curGoal == GOAL_RETREAT)
     {
-        m_tPos = getPos() * F_MAX;
+        m_tPos = getPos() * 2;
         m_tVel = {0.0f, 0.0f, 0.0f};
     }
 }
@@ -90,18 +90,13 @@ void enemy::steering()
         radius = m_target->getRadius();
     }
 
-    /*vec2 goPos = m_tPos;
-    if(m_curGoal = GOAL_ATTACK)
-    {
-        goPos += (vec(m_target->getAng()) * 100);
-    }*/
-
+    //Reverse if too close.
     if(dist < getRadius() and getCanMove()) accelerate(-1.0f);
 
     //This is the closing speed. Add player and ship vectors, find magnitude.
     //Initially I didn't know whether the vectors were converging or diverging.
     //I solved it by multiplying by the dot of the ship and m_target vectors.
-    float cSpd = mag( v - m_tVel ) * dotProd(utv, uv);
+    float cSpd = mag( v - m_tVel );// * dotProd(utv, uv);
 
     //Whereas angleMul is all about the ships angle in relation to its m_target angle, this is about its vector in relation to its m_target angle.
     //ie where the ship is going vs where is should be going.
@@ -122,8 +117,13 @@ void enemy::steering()
     if(vecMul < 0.0f) stoppingDistance *= -1;
 
     //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
-    float accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 200, -1.0f, 0.5f);
+    float accelMul;
 
+    if(m_curGoal != GOAL_GOTO) accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 50.0f, -1.0f, 0.5f);
+    else accelMul = clamp( (dist - stoppingDistance - radius ) / 50.0f, -1.0f, 0.5f);
+
+    //std::cout << "diff " << diff.m_x << ", " << diff.m_y << ", " << diff.m_z << ", mag " << dist << '\n';
+    //std::cout << this << " accelMul " << accelMul << "\n\n";
     //This varies between 1 (ship facing m_target) 0 (ship parallel to m_target) and -1 (ship facing away from m_target).
     //It does this by taking the ship's angle and its m_target angle, and determining the angle between them.
     //float angleMul = 1.0f;//(static_cast<float>(shortestAngle(getAng(), getTAng())) + 90.0f ) / 90.0f;
@@ -139,13 +139,20 @@ void enemy::steering()
 
     //Angle the ship towards its m_target.
     setTAng(clampRoll(computeAngle(tovec2(p - (m_tPos + m_tVel))), -180.0f, 180.0f));
-    //If we are close to the target, aim towards it.
-    //if( dist < 800.0f + radius ) setTAng(clampRoll(computeAngle(p - m_tPos), -180.0f, 180.0f));
+
+    //The proportion of the ships total energy it still has.
+    float energyProportion = getEnergy() / getMaxEnergy();
+    //Whether the ship is going towards or away from the target.
+    float towardsOrAway = dotProd(utv, uv);
+    //When travelling towards target, can use energy until 25% is left. When travelling away, can use until 10% left.
+    bool canAccel =
+            (towardsOrAway <= 0.0f and energyProportion > 0.1f) or
+            (towardsOrAway > 0.0f and energyProportion > 0.25f);
 
     //If we are angled towards the m_target...
     float tvMul = dotProd(m_tVel, v);
-    if( ( tvMul < 0.8f or tvMul > 1.2f )
-            and ( getEnergy() / getMaxEnergy() > 0.1f or m_curGoal == GOAL_CONGREGATE )
+    if( ( tvMul < 0.8f or tvMul > 1.2f or dist > radius )
+            and ( canAccel /*or m_curGoal == GOAL_CONGREGATE*/ )
             and getCanMove()
             )
     {

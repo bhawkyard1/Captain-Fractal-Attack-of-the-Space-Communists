@@ -260,7 +260,7 @@ float mag(vec2 vec)
 
 float mag(vec3 vec)
 {
-    return sqrt(vec.m_x*vec.m_x + vec.m_y*vec.m_y + vec.m_z*vec.m_z);
+    return sqrt(vec.m_x * vec.m_x + vec.m_y * vec.m_y + vec.m_z * vec.m_z);
 }
 
 float magns(vec2 vec)
