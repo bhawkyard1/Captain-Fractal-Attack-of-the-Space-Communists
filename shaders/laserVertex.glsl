@@ -15,13 +15,11 @@ layout (location = 1) in vec4 inColour;
 layout (location = 2) in vec2 inUV;
 
 out vec4 vertColour;
-out vec2 UV;
 
 uniform mat4 MVP;
 
 void main()
 {
     vertColour = inColour;
-    UV = inUV;
     gl_Position = MVP * inPosition;
 }

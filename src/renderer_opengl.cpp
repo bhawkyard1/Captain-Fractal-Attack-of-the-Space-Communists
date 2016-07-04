@@ -151,6 +151,8 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
+    createShaderProgramVGF("laser", "laserVertex", "lineToRect", "laserFragment");
+
     m_shader->use("laser");
     m_shader->setRegisteredUniform("resolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
 
@@ -545,6 +547,28 @@ void renderer_ngl::createShaderProgram(const std::string _name, const std::strin
     m_shader->compileShader(_frag);
 
     m_shader->attachShaderToProgram(_name, _vert);
+    m_shader->attachShaderToProgram(_name, _frag);
+
+    m_shader->linkProgramObject(_name);
+}
+
+void renderer_ngl::createShaderProgramVGF(const std::string _name, const std::string _vert, const std::string _geo, const std::string _frag)
+{
+    m_shader->createShaderProgram(_name);
+    m_shader->attachShader(_vert, ngl::ShaderType::VERTEX);
+    m_shader->attachShader(_geo, ngl::ShaderType::GEOMETRY);
+    m_shader->attachShader(_frag, ngl::ShaderType::FRAGMENT);
+
+    m_shader->loadShaderSource(_vert, "shaders/" + _vert + ".glsl");
+    m_shader->loadShaderSource(_geo, "shaders/" + _geo + ".glsl");
+    m_shader->loadShaderSource(_frag, "shaders/" + _frag + ".glsl");
+
+    m_shader->compileShader(_vert);
+    m_shader->compileShader(_geo);
+    m_shader->compileShader(_frag);
+
+    m_shader->attachShaderToProgram(_name, _vert);
+    m_shader->attachShaderToProgram(_name, _geo);
     m_shader->attachShaderToProgram(_name, _frag);
 
     m_shader->linkProgramObject(_name);

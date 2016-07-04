@@ -40,8 +40,6 @@ void faction::updateEconomy(const float _dt)
 {
     if(!m_organised) return;
 
-    //_totalShips += 2;
-
     m_oldWealth = m_wealth;
 
     if(m_wealth > 0.0f) m_wealth += m_wealth * _dt * m_economy;
@@ -50,25 +48,22 @@ void faction::updateEconomy(const float _dt)
     //As aggression gets lower, a faction must be wealthier to spawn reserves.
     float wealthDT = (m_wealth - m_oldWealth) * _dt;
 
-    std::cout << "aggression " << m_aggression << '\n';
+    //std::cout << "aggression " << m_aggression << '\n';
     //If the faction is too poor / not aggressive enough / already has enough ships, invest money.
     if( (rand() % 128) or wealthDT < -m_oldWealth / (10000.0f * m_aggression) )
     {
-        //std::cout << "  investing\n";
         m_economy *= 1 + _dt * 0.000025f;
     }
     //If the faction is wealthy enough, purchase ships.
     else if(m_wealth > 0.0f)
     {
-        //std::cout << "buying\n";
         addReserve();
     }
 
     size_t numReserves = 0;
     for(auto &i : m_reserves) numReserves += i;
-    std::cout << "  reserves : " << numReserves << " active : " << sumVec( m_active ) << '\n';
+    //std::cout << "  reserves : " << numReserves << " active : " << sumVec( m_active ) << '\n';
 
-    //debug("upkeep");
     float upkeep = 0.0f;
     for(auto i = m_combatShips.first; i <= m_combatShips.second; ++i)
     {
@@ -76,7 +71,6 @@ void faction::updateEconomy(const float _dt)
         upkeep += _dt * m_active.at(i - m_combatShips.first) * calcAICost(i) / 256.0f;
     }
     m_wealth -= upkeep;
-    //debug("upkeep end");
 
     //Look at dt in wealth. If it is negative, below 1% of wealth multiplied by aggression and rand() hit, remove a ship.
     if(wealthDT < -m_wealth / (10000.0f * m_aggression) and rand() % 128)
@@ -93,7 +87,6 @@ void faction::updateEconomy(const float _dt)
 
     m_aggression *= 0.999999f;
     if(!rand()) m_aggression = randNum(0.0f, 1.0f);
-    //debug("update end");
 }
 
 //Do we need to field more units? Where?
@@ -128,7 +121,7 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
     for(size_t r = 0; r < m_reserves.size(); ++r) reservesPower += calcAIPower(getShittiestShip() + r) * m_reserves[r];
 
     float targetPower = powerBalance[0] * (m_aggression + 0.25f);
-    std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << '\n';
+    //std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << '\n';
 
     //Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
     int prob = 512 / m_aggression / g_DIFFICULTY;
@@ -171,9 +164,6 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 
         bool done = false;
         float bestDistance = F_INF;
-        //vec3 tPos = vec3();
-
-        //std::cout << "DOING SQUAD MATH\n";
 
         //Don't do shit if everything is too spread out.
         if(s.m_averageDistance > sqr(s.m_regroupDist))

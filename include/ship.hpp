@@ -252,7 +252,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void setHealth(const float _h) {m_health = _h;}
     float getHealth() const {return m_health;}
-    void incrHealth(const float _v) {m_health += _v;}
+    void incrHealth(const float _v) {m_health = clamp(m_health + _v, 0.0f, m_maxHealth);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for m_health.

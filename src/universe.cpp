@@ -426,7 +426,6 @@ void universe::update(const float _dt)
         //Offscreen elimination, health-based elimination
         if( isDead or ( isOffscreen and (!isPlayerOwned or isSmall) ) )
         {
-            std::cout << "CULLING AGENT " << isDead << ", " << isOffscreen << ", " << isPlayerOwned << ", " << isSmall << '\n';
             if(isDead)
             {
                 enemy * lastAttacker = m_agents.getByID( m_agents[i].getLastAttacker() );
@@ -747,7 +746,7 @@ void universe::update(const float _dt)
     debug("factions");
     for(auto &i : m_factions)
     {
-        std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
+        //std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
         i.setWVel(m_vel);
 
         i.updateEconomy(_dt);
@@ -1530,7 +1529,6 @@ void universe::checkCollisions()
             vec3 ep;
             vec3 ev;
             float er;
-            float ei;
 
             std::array<float, 4> sc = m_partitions[p].m_lasers[l]->getCol();
 
@@ -1545,7 +1543,6 @@ void universe::checkCollisions()
                 ep = m_partitions[p].m_ships[s]->getPos();
                 ev = m_partitions[p].m_ships[s]->getVel();
                 er = m_partitions[p].m_ships[s]->getRadius();
-                ei = m_partitions[p].m_ships[s]->getInertia();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
@@ -1579,7 +1576,6 @@ void universe::checkCollisions()
                 ep = m_partitions[p].m_rocks[r]->getPos();
                 ev = m_partitions[p].m_rocks[r]->getVel();
                 er = m_partitions[p].m_rocks[r]->getRadius();
-                ei = m_partitions[p].m_rocks[r]->getInertia();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
@@ -1610,7 +1606,6 @@ void universe::checkCollisions()
                 ep = m_partitions[p].m_rockets[m]->getPos();
                 ev = m_partitions[p].m_rockets[m]->getVel();
                 er = m_partitions[p].m_rockets[m]->getRadius();
-                ei = m_partitions[p].m_rockets[m]->getInertia();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er))
