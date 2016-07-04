@@ -194,7 +194,7 @@ void universe::update(const float _dt)
     }
 
     //If player health is below 25%, emit smoke.
-    if(m_ply.getHealth() < m_ply.getMaxHealth() / 4.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getRadius() * 2.0f, "SMOKE");
+    if(m_ply.getHealth() < m_ply.getMaxHealth() / 2.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getRadius() * 2.0f, "SMOKE");
 
     if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
     {
@@ -1119,9 +1119,9 @@ void universe::draw(float _dt)
         icol = col255to1(icol);
         icol[3] *= clamp(i.getPower() / 25.0f, 0.0f, 1.0f);
 
-        m_drawer.addLine(ipos, ipos + ivel, icol);
+        m_drawer.addLine(ipos, ipos + ivel, 5.0f + i.getStop() * 40.0f, icol);
     }
-    m_drawer.drawLasers();
+    m_drawer.drawLasers(m_time_elapsed);
 
     m_drawer.clearVectors();
 
@@ -1195,7 +1195,7 @@ void universe::draw(float _dt)
                 vec3 jvel = j->getVel() * 2.0f;
                 col[3] = i.getAlpha(k) / 255.0f;
 
-                m_drawer.addLine(jpos, jpos + jvel + m_vel, col);
+                m_drawer.addLine(jpos, jpos + jvel + m_vel, 1.0f, col);
                 ++k;
             }
         }
@@ -1319,13 +1319,13 @@ void universe::drawUI(const float _dt)
             if(g_DEV_MODE)
             {
                 m_drawer.useShader("plain");
-                m_drawer.addLine(contextPtr->getPos(), contextPtr->getTPos(), {1.0f, 1.0f, 1.0f, 1.0f});
+                m_drawer.addLine(contextPtr->getPos(), contextPtr->getTPos(), 1.0f, {1.0f, 1.0f, 1.0f, 1.0f});
 
                 squad * sq = getSquadFromID( contextPtr->getTeam(), contextPtr->getSquadID() );
                 if(sq != nullptr)
                 {
-                    m_drawer.addLine(contextPtr->getPos(), sq->m_averagePos, {1.0f, 0.0f, 0.0f, 1.0f});
-                    m_drawer.addLine(sq->m_averagePos, sq->m_targetPos, {0.0f, 0.0f, 1.0f, 1.0f});
+                    m_drawer.addLine(contextPtr->getPos(), sq->m_averagePos, 1.0f, {1.0f, 0.0f, 0.0f, 1.0f});
+                    m_drawer.addLine(sq->m_averagePos, sq->m_targetPos, 1.0f, {0.0f, 0.0f, 1.0f, 1.0f});
                 }
 
                 m_drawer.drawLines(2.0f);

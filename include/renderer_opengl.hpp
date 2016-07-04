@@ -234,7 +234,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them with a laser shader
     //----------------------------------------------------------------------------------------------------------------------
-    void drawLasers();
+    void drawLasers(const float _globalTime);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them
@@ -283,7 +283,7 @@ public:
     /// \param _end end of the line
     /// \param _lCol colour of the line
     //----------------------------------------------------------------------------------------------------------------------
-    void addLine(const vec3 _start, const vec3 _end, const std::array<float, 4> _lCol);
+    void addLine(const vec3 _start, const vec3 _end, const float _width, const std::array<float, 4> _lCol);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets the radius of a ship

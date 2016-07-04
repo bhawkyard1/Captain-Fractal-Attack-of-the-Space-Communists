@@ -1069,7 +1069,7 @@ int ship::getScore() const
 void ship::setCooldown(const float _f)
 {
     m_coolDown = _f;
-    addVelS(tovec3(-vec(m_angle + 90.0f) * getCurWeapStat(STOPPING_POWER) * 5.0f));
+    addVelS(tovec3(-vec(m_angle + 90.0f) * getCurWeapStat(STOPPING_POWER)));
 }
 
 std::array<float, 4> ship::getCurWeapCol() const

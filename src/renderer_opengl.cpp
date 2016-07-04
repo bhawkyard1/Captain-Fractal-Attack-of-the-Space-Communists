@@ -151,7 +151,7 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
-    createShaderProgramVGF("laser", "laserVertex", "lineToRect", "laserFragment");
+    createShaderProgramVGF("laser", "laserVertex", "lineToRectGeo", "laserFragment");
 
     m_shader->use("laser");
     m_shader->setRegisteredUniform("resolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
@@ -351,23 +351,24 @@ void renderer_ngl::drawShip(const vec3 _p, const float _ang, const std::string _
     drawAsset(_p, _ang, _asset);
 }
 
-void renderer_ngl::addLine(const vec3 _start, const vec3 _end, const std::array<float, 4> _lCol)
+void renderer_ngl::addLine(const vec3 _start, const vec3 _end, const float _width, const std::array<float, 4> _lCol)
 {
     m_verts.push_back({_start.m_x, _start.m_y, _start.m_z});
     m_verts.push_back({_end.m_x, _end.m_y, _end.m_z});
 
+    m_UVs.push_back({_width, 0.0f});
     m_UVs.push_back({0.0f, 0.0f});
-    m_UVs.push_back({1.0f, 1.0f});
 
     m_colours.push_back(_lCol);
     m_colours.push_back(_lCol);
 }
 
-void renderer_ngl::drawLasers()
+void renderer_ngl::drawLasers(const float _globalTime)
 {
-    m_shader->setRegisteredUniform("zoom", g_ZOOM_LEVEL);
-    m_shader->setRegisteredUniform("halfwin", ngl::Vec2(g_HALFWIN.m_x, g_HALFWIN.m_y));
-    m_shader->setRegisteredUniform("shake", ngl::Vec2(m_cameraShakeOffset.m_x, m_cameraShakeOffset.m_y));
+    m_shader->use("laser");
+    m_shader->setRegisteredUniform("iGlobalTime", _globalTime);
+    //m_shader->setRegisteredUniform("halfwin", ngl::Vec2(g_HALFWIN.m_x, g_HALFWIN.m_y));
+    //m_shader->setRegisteredUniform("shake", ngl::Vec2(m_cameraShakeOffset.m_x, m_cameraShakeOffset.m_y));
 
     drawLines(5.0f);
 }
@@ -401,7 +402,7 @@ void renderer_ngl::drawLines(const float _width)
     glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
     glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
-
+    //IN THIS CASE, UV CONTROLS THE LINE WIDTH, WITH UV[0].x BEING THE WIDTH
     glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
     glBufferData(GL_ARRAY_BUFFER,
                  sizeof(ngl::Vec2) * m_UVs.size(),

@@ -12,14 +12,14 @@
 
 layout (location = 0) in vec4 inPosition;
 layout (location = 1) in vec4 inColour;
-layout (location = 2) in vec2 inUV;
+layout (location = 2) in vec2 inScale;
 
-out vec4 vertColour;
-
-uniform mat4 MVP;
+out vec4 geoColour;
+out vec2 geoScale;
 
 void main()
 {
-    vertColour = inColour;
-    gl_Position = MVP * inPosition;
+    geoColour = inColour;
+    geoScale = inScale;
+    gl_Position = inPosition;
 }
