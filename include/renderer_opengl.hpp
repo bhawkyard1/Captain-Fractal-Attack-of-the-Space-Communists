@@ -236,6 +236,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void drawLasers(const float _globalTime);
 
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them
     /// \param _width width of the lines

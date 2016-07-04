@@ -263,6 +263,7 @@ void universe::update(const float _dt)
         {
             m_shots[i].setWVel(m_vel);
             m_shots[i].update(_dt);
+            if(!(rand() % 32)) addpfx(m_shots[i].getPos(), m_shots[i].getVel(), randNum(1.0f, 2.0f), 1.0f, m_shots[i].getCol());
         }
     }
 
@@ -1195,11 +1196,11 @@ void universe::draw(float _dt)
                 vec3 jvel = j->getVel() * 2.0f;
                 col[3] = i.getAlpha(k) / 255.0f;
 
-                m_drawer.addLine(jpos, jpos + jvel + m_vel, 1.0f, col);
+                m_drawer.addLine(jpos, jpos + (jvel + m_vel) * 1.0f, 4.0f * col[3], col);
                 ++k;
             }
         }
-        m_drawer.useShader("plain");
+        m_drawer.useShader("sparks");
         m_drawer.drawLines(1.0f);
     }
 

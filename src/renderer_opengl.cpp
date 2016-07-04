@@ -143,7 +143,6 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("laser", "laserVertex", "laserFragment");
     //createShaderProgram("explosion", "explosionVertex", "explosionFragment");
-    createShaderProgram("sparks", "explosionVertex", "explosionFragment");
     createShaderProgram("explosion", "explosionVertex", "explosion2");
     createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("smoke", "explosionVertex", "smokeFragment");
@@ -151,6 +150,7 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
+    createShaderProgramVGF("sparks", "laserVertex", "lineToRectGeo", "sparksFragment");
     createShaderProgramVGF("laser", "laserVertex", "lineToRectGeo", "laserFragment");
 
     m_shader->use("laser");
