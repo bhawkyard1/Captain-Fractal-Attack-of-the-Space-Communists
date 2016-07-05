@@ -143,15 +143,23 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("laser", "laserVertex", "laserFragment");
     //createShaderProgram("explosion", "explosionVertex", "explosionFragment");
+<<<<<<< HEAD
     //createShaderProgram("explosion", "explosionVertex", "explosion2");
+=======
+    createShaderProgram("sparks", "explosionVertex", "explosionFragment");
+    createShaderProgram("explosion", "explosionVertex", "explosion2");
+>>>>>>> parent of 4448285... Sparks look a bit better now too
     createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("smoke", "explosionVertex", "smokeFragment");
     createShaderProgram("shield", "MVPUVNVert", "shieldFragment");
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
+<<<<<<< HEAD
     createShaderProgramVGF("explosion", "explosionVertex", "pointToRectGeo", "explosion2");
     createShaderProgramVGF("sparks", "laserVertex", "lineToRectGeo", "sparksFragment");
+=======
+>>>>>>> parent of 4448285... Sparks look a bit better now too
     createShaderProgramVGF("laser", "laserVertex", "lineToRectGeo", "laserFragment");
 
     m_shader->use("laser");

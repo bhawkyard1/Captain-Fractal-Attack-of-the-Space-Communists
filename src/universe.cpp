@@ -263,8 +263,11 @@ void universe::update(const float _dt)
         {
             m_shots[i].setWVel(m_vel);
             m_shots[i].update(_dt);
+<<<<<<< HEAD
             vec3 pos = randVec3OnLine(m_shots[i].getPos(), m_shots[i].getPos() + m_shots[i].getVel());
             if(!(rand() % 32)) addpfx(pos, m_shots[i].getVel(), randNum(1.0f, 2.0f), 1.0f, m_shots[i].getCol());
+=======
+>>>>>>> parent of 4448285... Sparks look a bit better now too
         }
     }
 
@@ -1197,11 +1200,11 @@ void universe::draw(float _dt)
                 vec3 jvel = j->getVel() * 2.0f;
                 col[3] = i.getAlpha(k) / 255.0f;
 
-                m_drawer.addLine(jpos, jpos + (jvel + m_vel) * 1.0f, 4.0f * col[3], col);
+                m_drawer.addLine(jpos, jpos + jvel + m_vel, 1.0f, col);
                 ++k;
             }
         }
-        m_drawer.useShader("sparks");
+        m_drawer.useShader("plain");
         m_drawer.drawLines(1.0f);
     }
 

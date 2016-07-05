@@ -26,7 +26,7 @@ float expRadius = 1.75;
                         // keep this constant for a whole explosion, but when differing from explosion to the next one, you get non-identical looking ones
 float downscale = 1.25;				// how much smaller (than expRadius) one explosion ball should be. bigger value = smaller. 1.0 = no scale down.
 int steps = int(clamp(4 / speed, 24, 64));				// iterations when marching through cloud noise. default = 64. 40 might still suffice. When putting higher, explosion becomes too dense, so make colBottom and colTop more transparent.
-float grain = 1.5;					// increase for more detailed explosions, but then you should also increase iterations (and decrease step, which is done automatically)
+float grain = 2.5;					// increase for more detailed explosions, but then you should also increase iterations (and decrease step, which is done automatically)
 //float speed = 0.5;					// total animation speed (time stretch). nice = 0.5, default = 0.4
 float ballness = 0.5;				// lower values makes explosion look more like a cloud. higher values more like a ball.
 float growth = 2.2;					// initial growth to explosion ball. lower values makes explosion grow faster
@@ -37,7 +37,7 @@ vec2 brightness = vec2(2.0, 3.2);	// x = constant offset, y = time-dependent fac
 vec2 brightrad = vec2(1.3, 2.0);	// adds some variation to the radius of the brightness falloff. x = constant offset, y = density-dependent factor
 vec4 colTop = vec4(0.2, 0.2, 0.2, 0.2);
 float colour_low = 0.65;				// the lower the value, the more black spots appear in the explosion. the higher, the more even the explosion looks like.
-float contrast = 1.8;				// final colour contrast. higher values make ligher contrast. default = 1.0
+float contrast = 1.0;				// final colour contrast. higher values make ligher contrast. default = 1.0
 float rolling_init_damp = 0.2;		// rolling animation initial damping. 0.0 = no damping. nice = 0.2, default = 0.15
 float rolling_speed = 2.0;			// rolling animation speed (static over time). default = 1.0
 const int mult_explosions = MAX_MULT_EXPLOSIONS;	// how many explosion balls to draw

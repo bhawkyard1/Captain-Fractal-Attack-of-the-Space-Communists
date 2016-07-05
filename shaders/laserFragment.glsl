@@ -120,7 +120,7 @@ void main()
 
     float dist = distance(vec2(0.5, 0.5), UV);
 
-    vec3 p3 = vec3(UV_edit, iGlobalTime);
+    vec3 p3 = vec3(UV_edit, iGlobalTime * 0.4);
 
     float intensity = noise(vec3(p3 * 4.0 + 12.0));
 
@@ -141,5 +141,4 @@ void main()
 
     fragColour.rgb = mix(vec3(1.0, 1.0, 1.0), vertColour.rgb, dist);
     fragColour.a = mix(alpha, 0.0, dist * 2.0);
-    fragColour.a *= vertColour.a;
 }
