@@ -263,11 +263,7 @@ void universe::update(const float _dt)
         {
             m_shots[i].setWVel(m_vel);
             m_shots[i].update(_dt);
-<<<<<<< HEAD
-            vec3 pos = randVec3OnLine(m_shots[i].getPos(), m_shots[i].getPos() + m_shots[i].getVel());
-            if(!(rand() % 32)) addpfx(pos, m_shots[i].getVel(), randNum(1.0f, 2.0f), 1.0f, m_shots[i].getCol());
-=======
->>>>>>> parent of 4448285... Sparks look a bit better now too
+            if(!(rand() % 32)) addpfx(m_shots[i].getPos(), m_shots[i].getVel(), randNum(1.0f, 2.0f), 1.0f, m_shots[i].getCol());
         }
     }
 
@@ -1167,7 +1163,7 @@ void universe::draw(float _dt)
         }
     }
     m_drawer.useShader("sparks");
-    //m_drawer.drawExplosions( );
+    m_drawer.drawExplosions( );
     m_drawer.clearVectors();
 
     for(auto &i : m_particles)
@@ -1179,12 +1175,12 @@ void universe::draw(float _dt)
 
         if(col[3] > 0.05f)
         {
-            m_drawer.addGeoRect(ipos, {idim, idim}, 0.0f, col);
+            m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
             m_drawer.packExtraData( i.getShaderData() );
         }
     }
     m_drawer.useShader("explosion");
-    //m_drawer.drawExplosions( );
+    m_drawer.drawExplosions( );
     m_drawer.clearVectors( );
 
     if(g_GRAPHICAL_DETAIL > 1)
@@ -1200,11 +1196,11 @@ void universe::draw(float _dt)
                 vec3 jvel = j->getVel() * 2.0f;
                 col[3] = i.getAlpha(k) / 255.0f;
 
-                m_drawer.addLine(jpos, jpos + jvel + m_vel, 1.0f, col);
+                m_drawer.addLine(jpos, jpos + (jvel + m_vel) * 1.0f, 4.0f * col[3], col);
                 ++k;
             }
         }
-        m_drawer.useShader("plain");
+        m_drawer.useShader("sparks");
         m_drawer.drawLines(1.0f);
     }
 
@@ -2528,7 +2524,7 @@ void universe::shipAddParent(size_t _index, ship * _child, vec3 _offset)
 
 void universe::addPopup(std::string _label, popup_type _type, float _smul, vec3 _pos, vec3 _vel)
 {
-    popup temp (_label, _pos, _vel + randVec3(2.0f), _smul, g_popupCols[_type]);
+    popup temp (_label, _pos, randVec3(2.0f), _smul, g_popupCols[_type]);
     m_popups.push_back(temp);
 }
 
