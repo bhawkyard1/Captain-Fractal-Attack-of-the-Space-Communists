@@ -143,13 +143,14 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("laser", "laserVertex", "laserFragment");
     //createShaderProgram("explosion", "explosionVertex", "explosionFragment");
-    createShaderProgram("explosion", "explosionVertex", "explosion2");
+    //createShaderProgram("explosion", "explosionVertex", "explosion2");
     createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("smoke", "explosionVertex", "smokeFragment");
     createShaderProgram("shield", "MVPUVNVert", "shieldFragment");
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
 
+    createShaderProgramVGF("explosion", "explosionVertex", "pointToRectGeo", "explosion2");
     createShaderProgramVGF("sparks", "laserVertex", "lineToRectGeo", "sparksFragment");
     createShaderProgramVGF("laser", "laserVertex", "lineToRectGeo", "laserFragment");
 
@@ -223,6 +224,8 @@ renderer_ngl::renderer_ngl()
     glGenBuffers(1, &m_UVBuffer);
     glGenBuffers(1, &m_colourBuffer);
     glGenBuffers(1, &m_genericBuffer);
+    glGenBuffers(1, &m_scaleBuffer);
+    glGenBuffers(1, &m_angleBuffer);
 
     m_vao = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f), ngl::Vec3(0.0f, 1.0f, 0.0f)});
 
@@ -807,6 +810,14 @@ void renderer_ngl::addRect(const vec3 _p, const vec2 _d, const float _ang, const
     }
 }
 
+void renderer_ngl::addGeoRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col)
+{
+    m_verts.push_back( _p );
+    m_scales.push_back( vec3(_d.m_x, _d.m_y, 0.0f) );
+    m_colours.push_back( _col );
+    m_angles.push_back( _ang );
+}
+
 void renderer_ngl::drawRect(const vec3 _p, const vec2 _d, const float _ang, const bool _ws)
 {
     glBindVertexArray(m_unit_square_vao);
@@ -870,6 +881,63 @@ void renderer_ngl::drawRects(const bool _ws)
     else loadTransformToShader();
 
     glDrawArraysEXT(GL_TRIANGLES, 0, m_verts.size());
+
+    glBindVertexArray(0);
+}
+
+void renderer_ngl::drawGeoRects(const bool _ws)
+{
+    glBindVertexArray(m_vao);
+    //
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(vec3) * m_verts.size(),
+                 &m_verts[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    //
+    glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec4) * m_colours.size(),
+                 &m_colours[0][0],
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
+    glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+    //
+    glBindBuffer(GL_ARRAY_BUFFER, m_scaleBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(vec3) * m_scales.size(),
+                 &m_scales[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, m_scaleBuffer);
+    glVertexAttribPointer( 2, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    //
+    glBindBuffer(GL_ARRAY_BUFFER, m_angleBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(float) * m_angles.size(),
+                 &m_angles[0],
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, m_angleBuffer);
+    glVertexAttribPointer( 3, 1, GL_FLOAT, GL_FALSE, 0, 0 );
+    //
+
+    if(_ws) loadMatricesToShader();
+    else loadTransformToShader();
+
+    glDrawArraysEXT(GL_POINTS, 0, m_verts.size());
 
     glBindVertexArray(0);
 }
@@ -970,9 +1038,9 @@ void renderer_ngl::drawExplosions()
 
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, m_genericBuffer);
-    glVertexAttribPointer( 3, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+    glVertexAttribPointer( 4, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
-    drawRects(true);
+    drawGeoRects(true);
 }
 
 void renderer_ngl::drawSmoke(const float _dt)
@@ -1327,6 +1395,9 @@ void renderer_ngl::clearVectors()
     m_colours.clear();
     m_UVs.clear();
     m_genericData.clear();
+
+    m_angles.clear();
+    m_scales.clear();
 }
 
 #endif

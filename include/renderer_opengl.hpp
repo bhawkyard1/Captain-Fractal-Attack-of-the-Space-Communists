@@ -132,6 +132,7 @@ public:
     /// \param _cCol colour of the universe
     //----------------------------------------------------------------------------------------------------------------------
     void addRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
+    void addGeoRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
     void packExtraData(const std::array<float, 4> _data) {for(int i = 0; i < 6; ++i) m_genericData.push_back(_data);}
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -139,6 +140,12 @@ public:
     /// \param _ws place the rectangles in the world (true), or on the screen (false)
     //----------------------------------------------------------------------------------------------------------------------
     void drawRects(const bool _ws);
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Draws stored rectangles, but using a user-supplied geometry shader, rather than transforming on the CPU.
+    /// \param _ws place the rectangles in the world (true), or on the screen (false)
+    //----------------------------------------------------------------------------------------------------------------------
+    void drawGeoRects(const bool _ws);
 
     void drawXP(const float _xp);
 
@@ -452,7 +459,16 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     GLuint m_colourBuffer;
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief A generic VBO, to be used for generic data
+    //----------------------------------------------------------------------------------------------------------------------
     GLuint m_genericBuffer;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Buffers for transformation data.
+    //----------------------------------------------------------------------------------------------------------------------
+    GLuint m_scaleBuffer;
+    GLuint m_angleBuffer;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A vector containing positional data, can be loaded up then passed off to one of the member VBOs
@@ -465,6 +481,9 @@ private:
     std::vector<std::array<float, 4>> m_colours;
 
     std::vector<std::array<float, 4>> m_genericData;
+
+    std::vector<float> m_angles;
+    std::vector<vec3> m_scales;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A vector containing UV data, can be loaded up then passed off to one of the member VBOs

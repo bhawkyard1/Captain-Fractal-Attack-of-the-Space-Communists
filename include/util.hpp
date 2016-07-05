@@ -215,6 +215,8 @@ vec2 randVec2(vec2 _min, vec2 _max);
 //----------------------------------------------------------------------------------------------------------------------
 vec3 randVec3(float m, float M);
 
+vec3 randVec3OnLine(vec3 _start, vec3 _end);
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns a point inside the sphere with a radius f.
 /// \param _point point to test

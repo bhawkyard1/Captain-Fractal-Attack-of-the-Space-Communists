@@ -12,27 +12,34 @@
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec4 inColour;
-layout(location = 2) in vec2 inUV;
-layout(location = 3) in vec4 inSeed;
+layout(location = 2) in vec3 inScale;
+layout(location = 3) in float inAngle;
+layout(location = 4) in vec4 inSeed;
 
 out vec4 vertCol;
-out vec2 UV;
+out vec2 geoScale;
+out float geoAngle;
+out vec4 seed;
 
-out float iGlobalTime;
-out float variation_seed;
-out float explosion_seed;
-out float speed;
-
-uniform mat4 MVP;
+//uniform mat4 MVP;
 
 void main()
 {
-    gl_Position = MVP * vec4(inPosition.xyz, 1.0);
+    /*gl_Position = vec4(inPosition.xyz, 1.0);
     vertCol = inColour;
-    UV = inUV;
 
-    iGlobalTime = inSeed.x;
-    variation_seed = inSeed.y;
-    explosion_seed = inSeed.z;
-    speed = clamp(12.0 / inSeed.w, 0.4, 0.8);
+    geoScale = inScale.xy;
+    geoScale = vec2(20.0, 20.0f);
+    geoAngle = 0.0f;
+
+    seed = inSeed;*/
+
+    gl_Position = vec4(inPosition.xyz, 1.0);
+    vertCol = inColour;
+
+    geoScale = inScale.xy;
+    geoScale = vec2(20.0, 20.0f);
+    geoAngle = 0.0f;
+
+    seed = inSeed;
 }

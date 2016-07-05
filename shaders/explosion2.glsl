@@ -410,6 +410,9 @@ void setup()
 
 void main()
 {
+    fragColour = vec4(UV.x, UV.y, 1.0, 0.5);
+    return;
+
     float t = getTime();
 
     // some global initialization.
