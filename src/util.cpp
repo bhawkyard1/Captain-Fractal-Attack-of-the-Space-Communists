@@ -85,6 +85,11 @@ vec3 randVec3(float _f)
     return v;
 }
 
+vec3 randVec3OnLine(vec3 _min, vec3 _max)
+{
+    return _min + (_max - _min) * randNum(0.0f, 1.0f);
+}
+
 vec3 randVec3(vec3 min, vec3 max)
 {
     return {randNum(min.m_x, max.m_x), randNum(min.m_y, max.m_y), randNum(min.m_z, max.m_z)};

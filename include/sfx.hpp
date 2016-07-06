@@ -20,11 +20,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Enums for all available sounds.
 //----------------------------------------------------------------------------------------------------------------------
-enum sound {RED_LASER_SND, GREEN_LASER_SND, BLUE_LASER_SND, EXPLOSION_SND, RICOCHET_SND, SAVE_SND, PLACE_SND, MENU_SELECT_SND, MENU_FAIL_SND, CLUNK_SND};
+enum sound {RED_LASER_SND, GREEN_LASER_SND, BLUE_LASER_SND, EXPLOSION_SND, RICOCHET_SND, SAVE_SND, PLACE_SND, MENU_SELECT_SND, MENU_FAIL_SND, CLUNK_SND, RADIO_CHATTER_SND};
 
 class soundPlayer
 {
 public:
+    soundPlayer();
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Initialises SDL mixer.
     //----------------------------------------------------------------------------------------------------------------------
@@ -39,6 +40,8 @@ public:
     /// \brief Loads all sound effects.
     //----------------------------------------------------------------------------------------------------------------------
     void playSnd(sound _snd);
+    void playSnd(sound _snd, vec3 _pos, float _vol);
+    void playUISnd(sound _snd);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Plays music.
@@ -65,6 +68,9 @@ public:
     void loadMusic(std::string _path);
 
 private:
+    int m_channels;
+    int m_curChannel;
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of sounds which can be played.
     //----------------------------------------------------------------------------------------------------------------------

@@ -198,7 +198,7 @@ void universe::update(const float _dt)
 
     if(m_ply.isFiring() and m_ply.getCooldown() <= 0.0f and m_ply.getEnergy() > m_ply.getCurWeapStat( ENERGY_COST ))
     {
-        m_sounds.playSnd( static_cast<sound>(m_ply.getCurWeap()) );
+        m_sounds.playUISnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
         addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1}, m_ply.getXP() );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
@@ -217,7 +217,7 @@ void universe::update(const float _dt)
         m_ply.setMaxHealth(0, true);
         m_ply.setMaxEnergy(0, true);
         m_ply.setMaxShield(0, true);
-        playSnd(EXPLOSION_SND);
+        playUISnd(EXPLOSION_SND);
 
         m_ply.setPos({F_INF, F_INF, F_INF});
         m_drawer.addShake(20.0f);
@@ -263,7 +263,8 @@ void universe::update(const float _dt)
         {
             m_shots[i].setWVel(m_vel);
             m_shots[i].update(_dt);
-            if(!(rand() % 32)) addpfx(m_shots[i].getPos(), m_shots[i].getVel(), randNum(1.0f, 2.0f), 1.0f, m_shots[i].getCol());
+            vec3 pos = randVec3OnLine(m_shots[i].getPos(), m_shots[i].getPos() + m_shots[i].getVel());
+            if(!(rand() % 32)) addpfx(pos, m_shots[i].getVel(), randNum(1.0f, 2.0f), 1.0f, m_shots[i].getCol());
         }
     }
 
@@ -380,7 +381,7 @@ void universe::update(const float _dt)
                         m_asteroids.push_back(a);
                     }
                 }
-                playSnd(EXPLOSION_SND);
+                playSnd(EXPLOSION_SND, m_asteroids[i].getPos(), 1.0f);
                 m_drawer.addShake(12000.0f / (1.0f + mag(m_asteroids[i].getPos() - m_ply.getPos())));
             }
             swapnpop(&m_asteroids, i);
@@ -443,9 +444,9 @@ void universe::update(const float _dt)
 
                 addScore( m_agents[i].getScore() );
                 addFrag( m_agents[i].getLastAttacker() );
-                if(lastAttacker != nullptr) lastAttacker->addXP( clamp(calcAICost(m_agents[i].getClassification()), 0.0f, 2.0f) );
+                if(lastAttacker != nullptr) lastAttacker->addXP( clamp(calcAICost(m_agents[i].getClassification()), 0.0f, 5.0f) );
 
-                playSnd(EXPLOSION_SND);
+                playSnd(EXPLOSION_SND, m_agents[i].getPos(), 1.0f);
                 m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[i].getPos() - m_ply.getPos())));
 
                 if(lastAttacker != nullptr and lastAttacker->getTeam() == TEAM_PLAYER)
@@ -506,6 +507,8 @@ void universe::update(const float _dt)
     //Update live m_agents.
     for(size_t e = 0; e < m_agents.size(); ++e)
     {
+        if(!rand()) playUISnd(RADIO_CHATTER_SND);
+
         if(!m_agents[e].hasParent())
         {
             m_agents[e].updatePos(_dt);
@@ -621,6 +624,7 @@ void universe::update(const float _dt)
 
         float nd = magns(m_ply.getPos() - m_agents[e].getPos());
 
+
         if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and nd < minDist and !g_GAME_OVER )
         {
             //If the given agent is hostile, and the players distance is the closest ship.
@@ -629,29 +633,20 @@ void universe::update(const float _dt)
             minDist = nd;
         }
 
-        //Setting the follow distances of the different units.
-        float fd = 0.0f;
-        if(m_agents[e].getTeam() == TEAM_PLAYER)
-        {
-            if(m_agents[e].getType() != SHIP_TYPE_MINER) fd = 15000.0f;
-            else fd = 20000.0f;
-        }
-
-        if(m_agents[e].getTarget() != nullptr and m_agents[e].getType() != SHIP_TYPE_MINER) fd /= 10.0f;
-
         //If the agent can move, is friendly to the player, and close by, and not in combat.
-        if(m_agents[e].getCanMove() and sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > fd * fd ) and !m_agents[e].inCombat())
+        if(m_agents[e].getType() == SHIP_TYPE_MINER and sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > 150000.0f ) and !m_agents[e].inCombat())
         {
             m_agents[e].setTarget( &m_ply );
             m_agents[e].setGoal( GOAL_CONGREGATE );
         }
-        else if( m_agents[e].getTarget() == nullptr )
+
+        if( m_agents[e].getTarget() == nullptr )
         {
             //If the agent has no m_target, it becomes idle.
             m_agents[e].setGoal( GOAL_WANDER );
         }
 
-        if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
+        if(!sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
         {
             //If the enemy can move and is scared, runs away.
             removeFromSquad(&m_agents[e], m_agents[e].getSquadID());
@@ -1047,9 +1042,11 @@ void universe::draw(float _dt)
 
     for(auto &i : m_agents.m_objects)
     {
+        debug("         " + i.getIdentifier());
         float stat = (i.getAlphaStats()[0] * i.getEnginePower() * i.getRadius()) / 1000.0f;
         std::array<float, 4> col = i.getCurWeapCol();
         col[3] = 1.0f;
+        debug("             p1");
         if(stat > 0.05f)
         {
             m_drawer.drawFlames(
@@ -1561,7 +1558,7 @@ void universe::checkCollisions()
                 if(harm > 0)
                 {
                     enemy * lastAttacker = m_agents.getByID(so);
-                    if(lastAttacker != nullptr) lastAttacker->addXP( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.005f );
+                    if(lastAttacker != nullptr) lastAttacker->addXP( clamp( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.05f, 0.0f, 0.5f) );
                     m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
                     addDamagePopup(harm, m_partitions[p].m_ships[s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
@@ -1634,14 +1631,14 @@ void universe::checkCollisions()
 
             vec3 dp = sp - m_ply.getPos();
             vec3 dv = sv + m_ply.getVel();
-            if(fabs(dv.m_x) > fabs(dp.m_x) - 32 and fabs(dv.m_y) > fabs(dp.m_y) - 32 and m_partitions[p].m_lasers[l]->getTeam() != TEAM_PLAYER)
+            if(fabs(dv.m_x) > fabs(dp.m_x) - 32 and fabs(dv.m_y) > fabs(dp.m_y) - 32 and emnityCheck(m_partitions[p].m_lasers[l]->getTeam(), TEAM_PLAYER))
             {
                 vec3 spv = sp + sv;
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(dp), m_ply.getRadius()))
                 if(lineIntersectSphere(sp, spv, dp, m_ply.getRadius()))
                 {
-                    playSnd(RICOCHET_SND);
+                    playUISnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
                     addpfx(sp + randVec3(32.0f), m_ply.getVel(), sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
                     harm = sd;
@@ -1744,7 +1741,7 @@ void universe::checkCollisions()
             {
                 if(!m_ply.addItem(*resource)) continue;
 
-                m_sounds.playSnd(PLACE_SND);
+                m_sounds.playUISnd(PLACE_SND);
 
                 for(int k = m_resources.size() - 1; k >= 0; --k) if(&m_resources[k] == resource) swapnpop(&m_resources, k);
                 swapnpop(&m_partitions[p].m_resources, i);
@@ -2288,7 +2285,7 @@ void universe::reload(const bool _newGame)
 
     createFactions();
 
-    m_sounds.playSnd(SAVE_SND);
+    m_sounds.playUISnd(SAVE_SND);
     for(int i = 0; i < UPGRADES_LEN; ++i)
     {
         m_ply.setGradeArr(i, 0);
@@ -2346,8 +2343,8 @@ void universe::addBuild(
 
     addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {2, 2, 2, 0});
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
-    m_sounds.playSnd(PLACE_SND);
-    m_sounds.playSnd(CLUNK_SND);
+    m_sounds.playSnd(PLACE_SND, _p, 1.0f);
+    m_sounds.playSnd(CLUNK_SND, _p, 1.0f);
 }
 
 void universe::initUI()
@@ -2396,7 +2393,7 @@ bool universe::upgradeCallback(
 
     if(selectedbutton->getCost() > m_factions[TEAM_PLAYER].getWealth() or lvl > 9)
     {
-        m_sounds.playSnd(MENU_FAIL_SND);
+        m_sounds.playUISnd(MENU_FAIL_SND);
         return false;
     }
 
@@ -2552,7 +2549,7 @@ void universe::calcPowerBalance()
 selectionReturn universe::handleInput(vec2 _mouse)
 {
     selectionReturn ret = m_ui.handleInput(_mouse);
-    if(ret.m_sel_val > -1) m_sounds.playSnd(MENU_SELECT_SND);
+    if(ret.m_sel_val > -1) m_sounds.playUISnd(MENU_SELECT_SND);
     else
     {
         _mouse = toWorldSpace(_mouse );

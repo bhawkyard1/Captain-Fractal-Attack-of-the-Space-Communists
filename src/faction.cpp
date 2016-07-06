@@ -139,18 +139,20 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
 //How should active squads behave?
 void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships)
 {
-    bool b = m_team == ALLIANCE;
+    bool b = (m_team == ALLIANCE);
 
     std::vector<squad> enemySquads;
     for(size_t f = 0; f < _rivals.size(); ++f)
     {
         if(&_rivals[f] == this) continue;
-        aiTeam curTeam = static_cast<aiTeam>(f);
+        aiTeam curTeam = _rivals[f].getTeam();
         if(_rivals[f].getRelations(m_team) < DIPLOMACY_NEUTRAL and getRelations(curTeam) < DIPLOMACY_NEUTRAL)
         {
+            //if(b) std::cout << "ADDING SQUADS FROM TEAM " << _rivals[f].getIdentifier() << '\n';
+            enemySquads.reserve(enemySquads.size() + _rivals[f].getSquads().size());
             //Append rival factions squads to enemy squads.
             enemySquads.insert(
-                        enemySquads.begin(),
+                        enemySquads.end(),
                         _rivals[f].getSquads().begin(),
                         _rivals[f].getSquads().end()
                         );
@@ -168,6 +170,10 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         //Don't do shit if everything is too spread out.
         if(s.m_averageDistance > sqr(s.m_regroupDist))
         {
+            if(b)
+            {
+                //std::cout << "enemy squads len " << enemySquads.size() << '\n';
+            }
             //Targeting enemy squads.
             for(auto &target : enemySquads)
             {
@@ -182,7 +188,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "targeting enemies\n";
+            //if(b) std::cout << "targeting enemies\n";
             if( done ) continue;
 
             //Targeting of player.
@@ -203,7 +209,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                 s.m_targetPos = vec3();
                 done = true;
             }
-            if(b) std::cout << "targeting player\n";
+            //if(b) std::cout << "targeting player\n";
             if( done ) continue;
 
             //Reinforcing of squads within the SAME faction.
@@ -222,7 +228,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "reinforcing teammates\n";
+            //if(b) std::cout << "reinforcing teammates\n";
             if( done ) continue;
 
             //Targeting of individual ships/structures (since not every ship is in a squad).
@@ -238,12 +244,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "chasing down stragglers\n";
+            //if(b) std::cout << "chasing down stragglers\n";
             if( done ) continue;
             //std::cout << "p5\n";
             //If no targets, withdraw.
             s.m_targetPos = unit(s.m_averagePos) * 200000.0f;
-            if(b) std::cout << "withdrawing\n";
+            //if(b) std::cout << "withdrawing\n";
         }
     }
 }
@@ -286,21 +292,24 @@ void faction::addReserve()
 {
     float maxCost = 0.0f;
     std::vector<float> rcosts;
+    //rcosts.push_back(0.0f);
     std::vector<float> costs;
-    for(ship_spec i = m_combatShips.first; i < m_combatShips.second; ++i)
+    for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
     {
         float cost = calcAICost(i);
+        std::cout << "COST OF " << g_ship_templates[i].getIdentifier() << " IS " << cost << '\n';
         if(cost < m_wealth)
         {
-            float rcost = 1.0f / cost;
-            rcosts.push_back( rcost + maxCost );
-            costs.push_back(cost);
+            float rcost = /*1.0f / */cost;
             maxCost += rcost;
+            rcosts.push_back( rcost - maxCost );
+            costs.push_back( cost );
         }
         else
             break;
     }
-    //std::cout << "max calculated " << max << " vs min " << m_combatShips.first << '\n';
+    std::cout << "min cost " << 1 / costs.front() << " vs max " << 1 / costs.back() << '\n';
+    std::cout << "comp " << maxCost << ", " << rcosts.back() << '\n';
 
     if(rcosts.size() == 0) return;
 
@@ -314,7 +323,7 @@ void faction::addReserve()
         else
             break;
     }
-
+    std::cout << "type " << g_ship_templates[offset + m_combatShips.first].getIdentifier() << " offset " << offset << ", m_reserves size " << m_reserves.size() << '\n';
     m_reserves.at(offset)++;
     m_wealth -= costs.at(offset);
 }
@@ -350,13 +359,11 @@ void faction::addAggression(const float _mult)
 
 void faction::addActive(const ship_spec _i, const int _v)
 {
-    debug("as");
     int index = _i - m_combatShips.first;
     int val = m_active[index] + _v;
     val = std::max(val, 0);
 
     m_active.at(index) = val;
-    debug("ae");
 }
 
 void faction::resetSquads()

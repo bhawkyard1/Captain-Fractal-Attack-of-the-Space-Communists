@@ -5,7 +5,8 @@ enemy::enemy(
         const vec3 _v,
         const ship_spec _type,
         const aiTeam _team
-        ):
+        )
+    :
     ship(g_ship_templates[_type], _p)
 {	
     m_curGoal = GOAL_IDLE;

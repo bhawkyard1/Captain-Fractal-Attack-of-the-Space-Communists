@@ -4,6 +4,12 @@
 #include <string>
 #include "common.hpp"
 
+soundPlayer::soundPlayer()
+{
+    m_channels = 128;
+    m_curChannel = 0;
+}
+
 void soundPlayer::sfxInit()
 {
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 1024 ) == -1 )
@@ -12,6 +18,8 @@ void soundPlayer::sfxInit()
         //SDL_Quit();
         //exit(EXIT_FAILURE);
     }
+
+    Mix_AllocateChannels(m_channels);
 }
 
 void soundPlayer::loadSound(std::string _path, int _len)
@@ -49,9 +57,41 @@ void soundPlayer::loadSounds()
     loadSound(g_RESOURCE_LOC + "../" + "sfx/menu_button_", 1);
     loadSound(g_RESOURCE_LOC + "../" + "sfx/ui_fail_", 1);
     loadSound(g_RESOURCE_LOC + "../" + "sfx/clunk_", 1);
+    loadSound(g_RESOURCE_LOC + "../" + "sfx/radio_chatter_", 5);
 
     loadMusic(g_RESOURCE_LOC + "../" + "sfx/deep_space_0");
     loadMusic(g_RESOURCE_LOC + "../" + "sfx/soviet_national_anthem_0");
+}
+
+void soundPlayer::playSnd(sound _snd, vec3 _pos, float _vol)
+{
+    float dist = mag(_pos);
+    float mul = 1000.0f / dist;
+
+    mul *= _vol;
+
+    if(mul < 0.01f) return;
+
+    int left = clamp(-_pos.m_x / 2.0f, 0.0f, 255.0f);
+
+    Mix_Volume(m_curChannel, mul * 128);
+    Mix_SetPanning(m_curChannel,
+                   left,
+                   255 - left
+                   );
+
+    playSnd(_snd);
+}
+
+void soundPlayer::playUISnd(sound _snd)
+{
+    Mix_Volume(m_curChannel, 128);
+    Mix_SetPanning(m_curChannel,
+                   255,
+                   255
+                   );
+
+    playSnd(_snd);
 }
 
 void soundPlayer::playSnd(sound _snd)
@@ -63,7 +103,11 @@ void soundPlayer::playSnd(sound _snd)
     size_t size = m_snds.at(snd).size();
 
     Mix_Chunk * to_play = m_snds.at(snd).at(rand()%size);
-    Mix_PlayChannel( -1, to_play, 0 );
+
+    std::cout << Mix_PlayChannel( m_curChannel, to_play, 0 ) << std::endl;
+
+    m_curChannel++;
+    if(m_curChannel >= m_channels) m_curChannel = 0;
 }
 
 void soundPlayer::playMusic(size_t _mus)

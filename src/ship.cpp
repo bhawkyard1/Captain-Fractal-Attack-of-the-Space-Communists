@@ -633,10 +633,10 @@ ship::ship(
 
     m_type = _src.m_type;
 
-    for(size_t i = 0; i < _src.getWeaps().size(); ++i)
+    /*for(size_t i = 0; i < _src.getWeaps().size(); ++i)
     {
         m_weapons.push_back(_src.getWeaps()[i]);
-    }
+    }*/
 
     switch(_src.getClassification())
     {

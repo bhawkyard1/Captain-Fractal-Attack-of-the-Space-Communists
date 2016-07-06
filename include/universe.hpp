@@ -180,13 +180,13 @@ public:
     /// \brief This function only actually incremements the max number of wingmen available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
-    void addWingman() {m_maxWingmen++; m_sounds.playSnd(CLUNK_SND);}
+    void addWingman() {m_maxWingmen++; m_sounds.playUISnd(CLUNK_SND);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief This function only actually incremements the max number of miners available, which
     /// are randomly spawned into the scene in the update function.
     //----------------------------------------------------------------------------------------------------------------------
-    void addMiner() {m_maxMiners++; m_sounds.playSnd(CLUNK_SND);}
+    void addMiner() {m_maxMiners++; m_sounds.playUISnd(CLUNK_SND);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Used to place static structures into the world, although under the hood it just spawns a ship with a given classification.
@@ -434,7 +434,8 @@ public:
     /// \brief Plays a sound. I don't like this function much, but I need it to play sounds externally.
     /// \param _sound to play
     //----------------------------------------------------------------------------------------------------------------------
-    void playSnd(sound _sound) {m_sounds.playSnd(_sound);}
+    void playSnd(sound _sound, vec3 _pos, float _vol) {m_sounds.playSnd(_sound, _pos, _vol);}
+    void playUISnd(sound _sound) {m_sounds.playUISnd(_sound);}
     void playMus(int _music) {m_sounds.playMusic(_music);}
 
     //----------------------------------------------------------------------------------------------------------------------

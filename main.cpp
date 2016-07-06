@@ -897,7 +897,7 @@ void playTutorial(universe &uni)
             asteroid.setPos(vec3(0.0f - 300.0f, 0.0f, 0.0f));
             asteroid.setVel(uni.getPly()->getVel());
             asteroid.setHealth(10);
-            uni.playSnd(PLACE_SND);
+            uni.playUISnd(PLACE_SND);
             uni.getAsteroids()->push_back(asteroid);
             tutStage = STAGE_ASTEROID_2;
             timer = 0.0f;
