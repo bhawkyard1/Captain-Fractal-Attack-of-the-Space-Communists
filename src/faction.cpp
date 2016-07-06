@@ -292,24 +292,21 @@ void faction::addReserve()
 {
     float maxCost = 0.0f;
     std::vector<float> rcosts;
-    //rcosts.push_back(0.0f);
+    rcosts.push_back(0.0f);
     std::vector<float> costs;
-    for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
+    for(ship_spec i = m_combatShips.first; i < m_combatShips.second; ++i)
     {
-        float cost = calcAICost(i);
-        std::cout << "COST OF " << g_ship_templates[i].getIdentifier() << " IS " << cost << '\n';
+        float cost = pow(calcAICost(i), 0.8f);
         if(cost < m_wealth)
         {
-            float rcost = /*1.0f / */cost;
-            maxCost += rcost;
-            rcosts.push_back( rcost - maxCost );
+            float rcost = 1.0f / cost;
+            rcosts.push_back( rcost + maxCost );
             costs.push_back( cost );
+            maxCost += rcost;
         }
         else
             break;
     }
-    std::cout << "min cost " << 1 / costs.front() << " vs max " << 1 / costs.back() << '\n';
-    std::cout << "comp " << maxCost << ", " << rcosts.back() << '\n';
 
     if(rcosts.size() == 0) return;
 
@@ -323,7 +320,7 @@ void faction::addReserve()
         else
             break;
     }
-    std::cout << "type " << g_ship_templates[offset + m_combatShips.first].getIdentifier() << " offset " << offset << ", m_reserves size " << m_reserves.size() << '\n';
+    //std::cout << "type " << g_ship_templates[offset + m_combatShips.first].getIdentifier() << " offset " << offset << ", m_reserves size " << m_reserves.size() << '\n';
     m_reserves.at(offset)++;
     m_wealth -= costs.at(offset);
 }

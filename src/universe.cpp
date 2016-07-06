@@ -1042,11 +1042,10 @@ void universe::draw(float _dt)
 
     for(auto &i : m_agents.m_objects)
     {
-        debug("         " + i.getIdentifier());
         float stat = (i.getAlphaStats()[0] * i.getEnginePower() * i.getRadius()) / 1000.0f;
         std::array<float, 4> col = i.getCurWeapCol();
         col[3] = 1.0f;
-        debug("             p1");
+
         if(stat > 0.05f)
         {
             m_drawer.drawFlames(

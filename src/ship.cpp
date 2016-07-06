@@ -164,7 +164,7 @@ ship::ship(
     case FEDERATION_GUNSHIP:
         m_identifier = "FEDERATION_GUNSHIP";
         setMaxHealth(500.0f,true);
-        setMaxShield(200.0f,true);
+        setMaxShield(250.0f,true);
         setMaxEnergy(500.0f,true);
         m_initInertia = 0.02f;
         m_enginePower = 8.0f;
@@ -243,8 +243,8 @@ ship::ship(
         break;
     case PIRATE_GUNSHIP:
         m_identifier = "PIRATE_GUNSHIP";
-        setMaxHealth(200.0f,true);
-        setMaxShield(120.0f,true);
+        setMaxHealth(400.0f,true);
+        setMaxShield(300.0f,true);
         setMaxEnergy(150.0f,true);
         m_initInertia = 0.05f;
         m_enginePower = 8.0f;
@@ -323,7 +323,7 @@ ship::ship(
         break;
     case ALLIANCE_GUNSHIP:
         m_identifier = "ALLIANCE_GUNSHIP";
-        setMaxHealth(200.0f,true);
+        setMaxHealth(400.0f,true);
         setMaxShield(250.0f,true);
         setMaxEnergy(250.0f,true);
         m_initInertia = 0.02f;
@@ -633,11 +633,6 @@ ship::ship(
 
     m_type = _src.m_type;
 
-    /*for(size_t i = 0; i < _src.getWeaps().size(); ++i)
-    {
-        m_weapons.push_back(_src.getWeaps()[i]);
-    }*/
-
     switch(_src.getClassification())
     {
     case COMMUNIST_1:
@@ -751,6 +746,10 @@ ship::ship(
         m_curWeap = 0;
         break;
     default:
+        for(size_t i = 0; i < _src.getWeaps().size(); ++i)
+        {
+            m_weapons.push_back(_src.getWeaps()[i]);
+        }
         break;
     }
 
@@ -783,7 +782,7 @@ void ship::accelerate(const float _mult)
 }
 
 void ship::accelerate(
-               const vec3 _dir,
+        const vec3 _dir,
         const float _mult
         )
 {
