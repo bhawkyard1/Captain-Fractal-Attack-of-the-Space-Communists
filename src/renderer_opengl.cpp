@@ -196,6 +196,7 @@ renderer_ngl::renderer_ngl()
     loadAsset("PLAYER_HUNTER",       "wingman_1");
     loadAsset("PLAYER_DEFENDER",     "wingman_2");
     loadAsset("PLAYER_DESTROYER",    "wingman_3");
+    loadAsset("PLAYER_GUNSHIP",    "wingman_4");
     loadAsset("PLAYER_MINER_DROID",  "miner_1");
     loadAsset("PLAYER_CAPITAL",      "wingman_capital");
     loadAsset("PLAYER_TURRET",       "turret_1");

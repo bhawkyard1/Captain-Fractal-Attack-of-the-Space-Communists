@@ -200,7 +200,7 @@ void universe::update(const float _dt)
     {
         m_sounds.playUISnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
-        addShot( m_ply.getPos() - m_ply.getVel(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1}, m_ply.getXP() );
+        addShot( m_ply.getPos(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1}, m_ply.getXP() );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
         m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -1557,7 +1557,7 @@ void universe::checkCollisions()
                 if(harm > 0)
                 {
                     enemy * lastAttacker = m_agents.getByID(so);
-                    if(lastAttacker != nullptr) lastAttacker->addXP( clamp( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.05f, 0.0f, 0.5f) );
+                    if(lastAttacker != nullptr) lastAttacker->addXP( clamp( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.005f, 0.0f, 0.5f) );
                     m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
                     addDamagePopup(harm, m_partitions[p].m_ships[s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
@@ -1860,9 +1860,9 @@ void universe::addParticleSprite(
     if( _tex == "SMOKE" ) col = randNum(200.0f, 220.0f);
     else if( _tex == "EXPLOSION" ) col = 255.0f;
 
-    int w = 0, h = 0;
     stardust_sprite sm (_tex, col, _dim, _dim);
     sm.setPos(_p);
+    sm.setPPos(_p);
     if( _tex == "SMOKE" ) sm.setVel(_v + tovec3(randVec2(1.0f)));
     else if( _tex == "EXPLOSION" ) sm.setVel(_v);
     sm.setZ(1.0f);
@@ -1915,8 +1915,9 @@ ship_spec universe::getRandomShipType(const aiTeam _t)
     else if( _t == TEAM_PLAYER )
     {
         type = PLAYER_HUNTER;
-        if(prob > 500 and prob <= 800) type = PLAYER_DEFENDER;
-        if(prob > 800 and prob <= 999) type = PLAYER_DESTROYER;
+        if(prob > 450 and prob <= 700) type = PLAYER_DEFENDER;
+        else if(prob > 700 and prob <= 900) type = PLAYER_DESTROYER;
+        else if(prob > 900) type = PLAYER_GUNSHIP;
         m_wingmenCount++;
     }
     else if( _t == ALLIANCE )
@@ -1941,9 +1942,9 @@ void universe::spawnShip(
     enemy newShip(_p, -m_vel, _type, _t);
 
     if(_type == PLAYER_MINER_DROID) m_minerCount++;
-
+    std::cout << "pre1\n";
     m_factions[_t].addActive(_type, 1);
-
+    std::cout << "post1\n";
     m_agents.push_back(newShip);
 
     //Do not assign squad if enemy cannot move and shoot.
@@ -2493,7 +2494,7 @@ void universe::createFactions()
     space_communists.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(space_communists);
 
-    faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_TURRET}, true );
+    faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_GRAVWELL}, true );
     alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     alliance.setWealth( randNum(20000.0f, 30000.0f) );
     m_factions.push_back(alliance);

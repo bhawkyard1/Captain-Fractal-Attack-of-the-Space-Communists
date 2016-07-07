@@ -1106,7 +1106,7 @@ void sandbox(universe &uni)
 {
     g_GAME_OVER = true;
     g_DIFFICULTY = 0;
-    uni.playMus(1);
+    uni.playMus(0);
     uni.reload(true);
     uni.getPly()->setHealth(-1);
     uni.update(0.1f);
@@ -1185,6 +1185,7 @@ void sandbox(universe &uni)
                     int mx = 0, my = 0;
                     SDL_GetMouseState(&mx, &my);
                     selectionReturn mainMenuSelected = uni.handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    std::cout << "sandbox click! " << mainMenuSelected.m_button_val << ", " << mainMenuSelected.m_sel_val << '\n';
                     if(mainMenuSelected.m_sel_val == 0)
                     {
                         if(mainMenuSelected.m_button_val < SHIPS_END) uni.setMouseState(mainMenuSelected.m_button_val);
@@ -1203,10 +1204,11 @@ void sandbox(universe &uni)
                 if(spec >= COMMUNIST_1 and spec < FEDERATION_MKI) team = SPACE_COMMUNISTS;
                 else if(spec >= FEDERATION_MKI and spec < PIRATE_GNAT) team = GALACTIC_FEDERATION;
                 else if(spec >= PIRATE_GNAT and spec < ALLIANCE_SCOUT) team = SPOOKY_SPACE_PIRATES;
-                else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_MINER_DROID) team = ALLIANCE;
-                else if(spec >= PLAYER_MINER_DROID and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
-
+                else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_HUNTER) team = ALLIANCE;
+                else if(spec >= PLAYER_HUNTER and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
+                std::cout << "adding spec " << spec << '\n';
                 uni.spawnShip(spec, team, tovec3( getMousePos() ) + uni.getCameraPosition());
+                std::cout << "post\n";
                 uni.setMouseState(-1);
                 break;
             }

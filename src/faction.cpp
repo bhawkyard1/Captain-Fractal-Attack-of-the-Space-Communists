@@ -67,8 +67,8 @@ void faction::updateEconomy(const float _dt)
     float upkeep = 0.0f;
     for(auto i = m_combatShips.first; i <= m_combatShips.second; ++i)
     {
-        upkeep += _dt * m_reserves.at(i - m_combatShips.first) * calcAICost(i) / 256.0f;
-        upkeep += _dt * m_active.at(i - m_combatShips.first) * calcAICost(i) / 256.0f;
+        upkeep += _dt * m_reserves.at(i - m_combatShips.first) * calcAICost(i) / 128.0f;
+        upkeep += _dt * m_active.at(i - m_combatShips.first) * calcAICost(i) / 128.0f;
     }
     m_wealth -= upkeep;
 
@@ -357,6 +357,7 @@ void faction::addAggression(const float _mult)
 void faction::addActive(const ship_spec _i, const int _v)
 {
     int index = _i - m_combatShips.first;
+    std::cout << m_identifier << " input spec " << _i  << " vs " << m_combatShips.first << ", normalised " << index << '\n';
     int val = m_active[index] + _v;
     val = std::max(val, 0);
 
