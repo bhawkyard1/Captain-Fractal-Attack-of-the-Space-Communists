@@ -4,8 +4,12 @@
 #include <array>
 #include <vector>
 
-#include "enemy.hpp"
+#include "aiTypes.hpp"
+#include "ship.hpp"
+#include "slotMap.hpp"
 #include "squad.hpp"
+
+class enemy;
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file faction.hpp
@@ -18,8 +22,6 @@
 /// \struct faction
 /// \brief Barebones implementation of factions, currently only contains colour.
 //----------------------------------------------------------------------------------------------------------------------
-
-enum diplomaticStatus {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_FRIEND, DIPLOMACY_SELF};
 
 typedef std::pair<ship_spec, ship_spec> shipBounds;
 

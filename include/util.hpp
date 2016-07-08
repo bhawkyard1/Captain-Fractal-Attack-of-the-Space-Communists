@@ -89,6 +89,23 @@ tt getClosest(tt _v, tt _m, tt _M)
     return _M;
 }
 
+template<typename t>
+t * getClosest(vec3 _pos, const std::vector<t> &_obj)
+{
+    vec3 ret = vec3();
+    float dist = F_INF;
+    for(auto &i : _obj)
+    {
+        float temp = magns(_pos - i.getPos());
+        if(temp < dist)
+        {
+            dist = temp;
+            ret = i.getPos();
+        }
+    }
+    return ret;
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns a random number between two values.
 /// \param _low lover limit

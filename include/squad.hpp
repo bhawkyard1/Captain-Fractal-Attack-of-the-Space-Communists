@@ -3,7 +3,8 @@
 
 #include <vector>
 
-#include "enemy.hpp"
+#include "aiTypes.hpp"
+#include "vectors.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file squad.hpp

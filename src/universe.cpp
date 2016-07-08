@@ -493,15 +493,6 @@ void universe::update(const float _dt)
             sq->m_averageDistance += magns(e.getPos() - sq->m_targetPos) / sq->m_size;
         }
     }
-    /*for(auto &s : m_squads)
-    {
-        float size = static_cast<float>(s.m_size);
-        if(s.m_size > 0)
-        {
-            s.m_centerPoint /= size;
-            s.m_averageVel /= size;
-        }
-    }*/
 
     debug("updates");
     //Update live m_agents.
@@ -537,12 +528,6 @@ void universe::update(const float _dt)
 
             m_agents[e].setVel(parent->getVel());
         }
-
-        //Setting energy priorities----------------------------------------------------------------------------//
-        if(m_agents[e].getHealth() < m_agents[e].getConfidence()) m_agents[e].setEnergyPriority(2);
-        else if(m_agents[e].getHealth() < m_agents[e].getMaxHealth() * 0.75f) m_agents[e].setEnergyPriority(1);
-        else m_agents[e].setEnergyPriority(0);
-        //-----------------------------------------------------------------------------------------------------//
 
         vec3 p = m_agents[e].getPos();
 
@@ -1915,9 +1900,9 @@ ship_spec universe::getRandomShipType(const aiTeam _t)
     else if( _t == TEAM_PLAYER )
     {
         type = PLAYER_HUNTER;
-        if(prob > 450 and prob <= 700) type = PLAYER_DEFENDER;
-        else if(prob > 700 and prob <= 900) type = PLAYER_DESTROYER;
-        else if(prob > 900) type = PLAYER_GUNSHIP;
+        if(prob > 450 and prob <= 750) type = PLAYER_DEFENDER;
+        else if(prob > 750 and prob <= 950) type = PLAYER_DESTROYER;
+        else if(prob > 950) type = PLAYER_GUNSHIP;
         m_wingmenCount++;
     }
     else if( _t == ALLIANCE )

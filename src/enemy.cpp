@@ -7,7 +7,7 @@ enemy::enemy(
         const aiTeam _team
         )
     :
-    ship(g_ship_templates[_type], _p)
+      ship(g_ship_templates[_type], _p)
 {	
     m_curGoal = GOAL_IDLE;
     setPos(_p);
@@ -23,8 +23,69 @@ enemy::enemy(
     m_tPos = getPos();
 }
 
+void enemy::targetAcquisition(slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources/*, const std::vector<faction> _factions*/)
+{
+    if(getType() != SHIP_TYPE_MINER)
+    {
+        //Lowest weight wins.
+        float bestWeight = F_INF;
+        for(auto &i : _enemies.m_objects)
+        {
+            //if()
+            //Distance as a base.
+            float weight = mag(getPos() - i.getPos());
+            //Concentrate on active / unweakened combatants.
+            weight /= i.getHealth() / i.getMaxHealth();
+            //Do not target enemies shooting by sideways.
+            weight /= clamp( dotProdUnit(getVel(), i.getVel()), 0.001f, 1.0f );
+            //Pursue last attacker.
+            if( _enemies.getByID( getLastAttacker() ) == &i) weight /= 2.0f;
+
+            if(bestWeight > weight)
+            {
+                bestWeight = weight;
+                m_target = (ship*)&i;
+            }
+        }
+    }
+    else
+    {
+        float bestDist = F_INF;
+        //Find the closest asteroid.
+        for(auto &k : _asteroids)
+        {
+            float nd = magns(getPos() - k.getPos());
+            if(nd < bestDist)
+            {
+                setTarget( (ship*)&k );
+                setGoal(GOAL_ATTACK);
+                bestDist = nd;
+            }
+        }
+        //Find the closest debris.
+        for(auto &d : _resources)
+        {
+            float nd = magns(getPos() - d.getPos());
+            if(nd < bestDist)
+            {
+                setTarget( nullptr );
+                setTPos( d.getPos() );
+                setTVel( vec3() );
+                setGoal( GOAL_GOTO );
+                bestDist = nd;
+            }
+        }
+    }
+}
+
 void enemy::behvrUpdate(float _dt)
 {
+    //Setting energy priorities----------------------------------------------------------------------------//
+    if(getHealth() < getConfidence()) setEnergyPriority(2);
+    else if(getHealth() < getMaxHealth() * 0.75f) setEnergyPriority(1);
+    else setEnergyPriority(0);
+    //-----------------------------------------------------------------------------------------------------//
+
     if(m_target != nullptr)
     {
         float dist = mag(getPos() - m_target->getPos());

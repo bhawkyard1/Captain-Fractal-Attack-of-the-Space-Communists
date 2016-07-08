@@ -1,18 +1,9 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
 
+#include "aiTypes.hpp"
 #include "ship.hpp"
 #include "vectors.hpp"
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief The goals that a ship can have
-//----------------------------------------------------------------------------------------------------------------------
-enum aiGoal{GOAL_IDLE, GOAL_CONGREGATE, GOAL_AVOID, GOAL_ATTACK, GOAL_FLEE, GOAL_TURRET, GOAL_SPACE_STATION, GOAL_WANDER, GOAL_TRADE, GOAL_RETREAT, GOAL_GOTO};
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief The teams that a ship can be on
-//----------------------------------------------------------------------------------------------------------------------
-enum aiTeam{TEAM_PLAYER, GALACTIC_FEDERATION, SPOOKY_SPACE_PIRATES, SPACE_COMMUNISTS, ALLIANCE, NEUTRAL, NONE};
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file enemy.hpp
@@ -43,6 +34,8 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
+
+  void targetAcquisition(slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources/*, const std::vector<faction> &_factions*/);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Updates the behaviour of the agent, based on any target it has, and its relative position

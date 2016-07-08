@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include "enemy.hpp"
 #include "faction.hpp"
 #include "ship.hpp"
 #include "util.hpp"
@@ -172,7 +173,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         {
             if(b)
             {
-                //std::cout << "enemy squads len " << enemySquads.size() << '\n';
+                std::cout << "enemy squads len " << enemySquads.size() << '\n';
             }
             //Targeting enemy squads.
             for(auto &target : enemySquads)
@@ -188,7 +189,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            //if(b) std::cout << "targeting enemies\n";
+            if(b) std::cout << "targeting enemies\n";
             if( done ) continue;
 
             //Targeting of player.
@@ -209,7 +210,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                 s.m_targetPos = vec3();
                 done = true;
             }
-            //if(b) std::cout << "targeting player\n";
+            if(b) std::cout << "targeting player\n";
             if( done ) continue;
 
             //Reinforcing of squads within the SAME faction.
@@ -228,7 +229,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            //if(b) std::cout << "reinforcing teammates\n";
+            if(b) std::cout << "reinforcing teammates\n";
             if( done ) continue;
 
             //Targeting of individual ships/structures (since not every ship is in a squad).
@@ -244,12 +245,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            //if(b) std::cout << "chasing down stragglers\n";
+            if(b) std::cout << "chasing down stragglers\n";
             if( done ) continue;
             //std::cout << "p5\n";
             //If no targets, withdraw.
             s.m_targetPos = unit(s.m_averagePos) * 200000.0f;
-            //if(b) std::cout << "withdrawing\n";
+            if(b) std::cout << "withdrawing\n";
         }
     }
 }
