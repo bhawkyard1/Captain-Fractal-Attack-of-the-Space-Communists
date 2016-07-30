@@ -6,17 +6,22 @@ inventory::inventory()
     m_dim = {0.0f, 0.0f};
     m_invMass = 1.0f;
     m_visible = false;
+    m_used = 0.0f;
 }
 
 bool inventory::addItem(debris _in)
 {
-    float area = m_dim.m_x * m_dim.m_y;
-    for(auto &i : m_contents.m_objects) area -= sqr(i.getRadius());
+    m_used += sqr(_in.getRadius());
 
-    if(area < sqr(_in.getRadius())) return false;
+    if(full())
+    {
+        //If it would be full with this item, remove and return.
+        m_used -= sqr(_in.getRadius());
+        return false;
+    }
 
     _in.setPos(
-                tovec3(randVec2({0.0f, 0.0f}, m_dim))
+                tovec3(randVec2(-m_dim / 2.0f, m_dim / 2.0f))
                 );
 
     _in.setVel(tovec3(randVec2(1.0f)));
@@ -30,8 +35,10 @@ bool inventory::addItem(debris _in)
 
 void inventory::removeItem(const size_t _index)
 {
-    m_contents.free(_index);
+    m_used -= sqr(m_contents[_index].getRadius());
+    std::cout << "  used " << m_used << '\n';
     m_invMass = 1.0f / (1.0f / m_invMass - 1.0f / m_contents[_index].getInertia());
+    m_contents.free(_index);
 }
 
 void inventory::update(const float _dt)
@@ -86,7 +93,7 @@ void inventory::update(const float _dt)
     }
 }
 
-void inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
+bool inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
 {
     std::cout << "pickup check " << _mouse.m_x << ", " << _mouse.m_y << '\n';
     vec3 test = {_mouse.m_x, _mouse.m_y, 0.0f};
@@ -98,7 +105,10 @@ void inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
             _fill->push_back(m_contents.m_objects[i]);
             removeItem(i);
             std::cout << "PICKUP!\n";
-            return;
+            break;
         }
     }
+
+    vec2 hdim = m_dim / 2.0f;
+    return pointInRect(_mouse, -hdim, hdim );
 }

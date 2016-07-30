@@ -23,14 +23,18 @@ public:
 
     slotMap<debris> * getItems() {return &m_contents;}
 
-    void handleInput(const vec2 _mouse, std::vector<debris> * _fill);
+    bool handleInput(const vec2 _mouse, std::vector<debris> * _fill);
 
     float getInvMass() const {return m_invMass;}
+
+    bool full() const {return m_used > m_dim.m_x * m_dim.m_y;}
+    bool canAddMoreItems() const {return m_used < m_dim.m_x * m_dim.m_y;}
 private:
     slotMap<debris> m_contents;
     vec2 m_dim;
     float m_invMass;
     bool m_visible;
+    float m_used;
 };
 
 #endif

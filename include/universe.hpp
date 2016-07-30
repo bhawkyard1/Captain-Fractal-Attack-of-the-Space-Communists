@@ -463,6 +463,10 @@ public:
 
     vec3 getCameraPosition() {return m_drawer.getCamera()->getPos();}
     void setCameraPosition(const vec3 _pos) {m_drawer.getCamera()->setPos(_pos);}
+
+    void conductTrade(enemy &_buyer, enemy &_seller);
+
+    void debug_lockPlayer() {g_PLAYER_MOVEMENT_LOCKED = !g_PLAYER_MOVEMENT_LOCKED;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "aiTypes.hpp"
+//#include "debris.hpp"
 #include "ship.hpp"
 #include "slotMap.hpp"
 #include "squad.hpp"
@@ -45,6 +46,11 @@ public:
 
     std::vector<diplomaticStatus> getRelations() const {return m_relations;}
     diplomaticStatus getRelations(const aiTeam _t) const {return m_relations[_t];}
+
+    bool isSame(const aiTeam &_f) const {return m_team == _f;}
+    bool isFriend(const aiTeam &_f) const {return m_relations[_f] > DIPLOMACY_NEUTRAL;}
+    bool isNeutral(const aiTeam &_f) const {return m_relations[_f] >= DIPLOMACY_NEUTRAL;}
+    bool isEnemy(const aiTeam &_f) const {return m_relations[_f] < DIPLOMACY_NEUTRAL;}
 
     void setRelations(const std::vector<diplomaticStatus> _relations) {m_relations = _relations;}
     void setRelations(const diplomaticStatus _relation, const int _i) {m_relations[_i] = _relation;}
@@ -98,6 +104,8 @@ public:
 
     void setWVel(const vec3 _wvel) {m_wvel = _wvel;}
     vec3 getWVel() const {return m_wvel;}
+
+    float getResourceDemand(const resourceType _type) const {return m_resourceDemand[_type];}
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
@@ -156,6 +164,8 @@ private:
     slotMap<squad> m_squads;
 
     vec3 m_wvel;
+
+    std::array<float, RESOURCE_NULL> m_resourceDemand;
 };
 
 //----------------------------------------------------------------------------------------------------------------------

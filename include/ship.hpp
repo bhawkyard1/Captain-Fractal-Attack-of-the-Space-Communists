@@ -7,6 +7,7 @@
 
 #include "base.hpp"
 #include "common.hpp"
+#include "debris.hpp"
 #include "inventory.hpp"
 #include "slotMap.hpp"
 #include "util.hpp"
@@ -423,6 +424,9 @@ public:
 
     bool addItem(debris _in) {return m_cargo.addItem(_in);}
     inventory * getCargo() {return &m_cargo;}
+
+    void transferCargo(ship * _target, uniqueID _item);
+    void transferAllCargo(ship * _target);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Calculate the cost for an AI faction to buy.

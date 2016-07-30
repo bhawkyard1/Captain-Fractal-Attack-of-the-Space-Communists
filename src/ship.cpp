@@ -424,7 +424,7 @@ ship::ship(
         m_generatorMul = 5.0f;
         m_weapons.push_back( g_weapons[WEAPON_MINER_LASER] );
         m_curWeap = 0;
-        m_cargo.setDim({128.0f, 128.0f});
+        m_cargo.setDim({64.0f, 64.0f});
         m_type = SHIP_TYPE_MINER;
         break;
     case ION_MISSILE_MKI:
@@ -1091,6 +1091,23 @@ void ship::addXP(const float _xp)
 float ship::calcAICost()
 {
     return (m_maxHealth + m_maxShield) * 0.025f;
+}
+
+void ship::transferCargo(ship *_target, uniqueID _item)
+{
+    debris item = *(m_cargo.getItems()->getByID(_item));
+    m_cargo.removeItem(_item.m_id);
+    _target->addItem(item);
+}
+
+void ship::transferAllCargo(ship *_target)
+{
+    for(size_t i = 0; i < m_cargo.getItems()->size(); ++i)
+    {
+        //If item added successfully, remove item from inventory.
+        if(_target->addItem(m_cargo.getItems()->m_objects[i]))
+            m_cargo.removeItem(i);
+    }
 }
 
 float calcAICost(const ship_spec _spec)

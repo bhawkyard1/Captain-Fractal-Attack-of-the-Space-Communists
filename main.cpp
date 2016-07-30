@@ -658,6 +658,9 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
         uni->getPly()->addItem(temp);
         break;
     }
+    case SDLK_k:
+        uni->debug_lockPlayer();
+        break;
     default:
         break;
     }

@@ -23,28 +23,60 @@ enemy::enemy(
     m_tPos = getPos();
 }
 
-void enemy::targetAcquisition(slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources/*, const std::vector<faction> _factions*/)
+void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
 {
+    debug("target acquisition start");
+    ship * curTarget = m_target;
+    m_target = nullptr;
+
+    enemy * lastAttacker = _enemies.getByID( getLastAttacker() );
+
     if(getType() != SHIP_TYPE_MINER)
     {
         //Lowest weight wins.
         float bestWeight = F_INF;
         for(auto &i : _enemies.m_objects)
         {
-            //if()
+            if(
+                    _factions[getTeam()].isNeutral(i.getTeam()) and
+                    _factions[i.getTeam()].isNeutral(getTeam())
+                    ) continue;
             //Distance as a base.
             float weight = mag(getPos() - i.getPos());
             //Concentrate on active / unweakened combatants.
-            weight /= i.getHealth() / i.getMaxHealth();
+            weight *= i.getHealth() / i.getMaxHealth() + 0.5f;
             //Do not target enemies shooting by sideways.
-            weight /= clamp( dotProdUnit(getVel(), i.getVel()), 0.001f, 1.0f );
+            //weight /= clamp( dotProdUnit(getVel(), i.getVel()), 0.001f, 1.0f );
+            //I know this pointer is unreliable, a target could easily change address between updates. But I just can't be bothered to code anything better at the moment.
+            if(curTarget != nullptr and curTarget == (ship*)&i) weight /= 1.5f;
             //Pursue last attacker.
-            if( _enemies.getByID( getLastAttacker() ) == &i) weight /= 2.0f;
+            if( lastAttacker != nullptr and lastAttacker == &i ) weight /= 2.0f;
 
-            if(bestWeight > weight)
+            if(weight < bestWeight)
             {
                 bestWeight = weight;
                 m_target = (ship*)&i;
+                setGoal(GOAL_ATTACK);
+            }
+        }
+
+        if( _factions[getTeam()].isEnemy(TEAM_PLAYER) and !g_GAME_OVER )
+        {
+            float weight = mag(getPos() - _ply.getPos());
+            //Concentrate on active / unweakened combatants.
+            weight *= _ply.getHealth() / _ply.getMaxHealth() + 0.5f;
+            //Do not target enemies shooting by sideways.
+            //weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
+            //Pursue last attacker.
+            if( getLastAttacker().m_id == 0
+                    and getLastAttacker().m_version == -2
+                    ) weight /= 2.0f;
+
+            if(weight < bestWeight)
+            {
+                bestWeight = weight;
+                m_target = (ship*)&_ply;
+                setGoal(GOAL_ATTACK);
             }
         }
     }
@@ -63,19 +95,77 @@ void enemy::targetAcquisition(slotMap<enemy> &_enemies, const std::vector<ship> 
             }
         }
         //Find the closest debris.
-        for(auto &d : _resources)
-        {
-            float nd = magns(getPos() - d.getPos());
-            if(nd < bestDist)
+        if(!getCargo()->full()) {
+            for(auto &d : _resources)
             {
-                setTarget( nullptr );
-                setTPos( d.getPos() );
-                setTVel( vec3() );
-                setGoal( GOAL_GOTO );
-                bestDist = nd;
+                float nd = magns(getPos() - d.getPos());
+                if(nd < bestDist)
+                {
+                    setTarget( nullptr );
+                    setTPos( d.getPos() );
+                    setTVel( vec3() );
+                    setGoal( GOAL_GOTO );
+                    bestDist = nd;
+                }
             }
         }
     }
+
+    float nd = magns(_ply.getPos() - getPos());
+    float fd = 2000.0f;
+
+    //If the agent can move, is friendly to the player, and close by, and not in combat.
+    if(getCanMove() and getTeam() == TEAM_PLAYER and nd > fd * fd and !inCombat())
+    {
+        setTarget( &_ply );
+        setGoal( GOAL_CONGREGATE );
+    }
+    else if( getTarget() == nullptr and m_curGoal != GOAL_GOTO )
+    {
+        //If the agent has no m_target, it becomes idle.
+        setGoal( GOAL_WANDER );
+    }
+
+    squad * sq = _factions[m_team].getSquad(m_squadID);
+    if(sq != nullptr)
+    {
+        //If too far from group center, congregate at center.
+        vec3 squadPos = sq->m_targetPos;
+        //std::cout << "squadPos : " << squadPos.m_x << " ," << squadPos.m_y << '\n';
+        vec3 squadVel = sq->m_averageVel;
+        if(!inCombat() and magns(getPos() - squadPos) > sqr(sq->m_regroupDist) )
+        {
+            setTarget( nullptr );
+            setTPos( squadPos );
+            setTVel( squadVel );
+            setGoal( GOAL_CONGREGATE );
+        }
+    }
+
+    //Dump resources at base.
+    if(!getCargo()->canAddMoreItems())
+    {
+        std::cout << "cargo bay full!!!\n";
+        float best = F_INF;
+        for(auto &i : _enemies.m_objects)
+        {
+            if(m_team != i.getTeam()) continue;
+            if(i.getType() == SHIP_TYPE_STRUCTURE)
+            {
+                float temp = magns(i.getPos() - getPos());
+                if(temp < best)
+                {
+                    best = temp;
+                    setTarget(&i);
+                    setGoal(GOAL_TRADE);
+                }
+            }
+        }
+    }
+
+    if(getType() == SHIP_TYPE_MINER) std::cout << "goal " << m_curGoal << '\n';
+
+    debug("target acquisition end");
 }
 
 void enemy::behvrUpdate(float _dt)
@@ -90,7 +180,8 @@ void enemy::behvrUpdate(float _dt)
     {
         float dist = mag(getPos() - m_target->getPos());
         vec3 diff = (m_target->getPos() - getPos()) / dist;
-        m_tPos = m_target->getPos() - diff * fmin(m_target->getRadius(), dist);
+        m_tPos = m_target->getPos();
+        if(m_curGoal == GOAL_ATTACK) m_tPos -= diff * fmin(m_target->getRadius(), dist);
         m_tVel = m_target->getVel();
     }
 
@@ -181,8 +272,8 @@ void enemy::steering()
     //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
     float accelMul;
 
-    if(m_curGoal != GOAL_GOTO) accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 50.0f, -1.0f, 0.5f);
-    else accelMul = clamp( (dist - stoppingDistance - radius ) / 50.0f, -1.0f, 0.5f);
+    if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE) accelMul = clamp( (dist - stoppingDistance) / 50.0f, -1.0f, 0.5f);
+    else accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 50.0f, -1.0f, 0.5f);
 
     //std::cout << "diff " << diff.m_x << ", " << diff.m_y << ", " << diff.m_z << ", mag " << dist << '\n';
     //std::cout << this << " accelMul " << accelMul << "\n\n";
@@ -226,7 +317,8 @@ void enemy::steering()
     float selfRadius = getRadius();
     if(getParent().m_id != -1) selfRadius += 2048.0f;
 
-    if(fabs(shortestAngle(getAng(),getTAng())) <= 2.0f
+    if(getCanShoot()
+            and fabs(shortestAngle(getAng(),getTAng())) <= 2.0f
             and dist < 800.0f + radius + selfRadius
             and ( m_curGoal == GOAL_ATTACK or m_curGoal == GOAL_TURRET )
             and getEnergy() / getMaxEnergy() > 0.05f)
@@ -257,6 +349,11 @@ void enemy::steering()
                             );
             }
         }
+    }
+    else if(m_curGoal == GOAL_TRADE
+            and dist < radius)
+    {
+
     }
 
     //This variable represents the ships' direction versus its ideal direction.

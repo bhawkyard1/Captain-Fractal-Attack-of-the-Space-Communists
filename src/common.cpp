@@ -20,6 +20,7 @@ float g_MAX_DIM = 1920.0f;
 bool g_DEV_MODE = false;
 bool g_BEAST_MODE = false;
 bool g_GAME_OVER = false;
+bool g_PLAYER_MOVEMENT_LOCKED = false;
 
 float g_TARG_ZOOM_LEVEL = 1.0f;
 float g_ZOOM_LEVEL = 1.0f;

@@ -2,6 +2,8 @@
 #define ENEMY_HPP
 
 #include "aiTypes.hpp"
+#include "faction.hpp"
+#include "player.hpp"
 #include "ship.hpp"
 #include "vectors.hpp"
 
@@ -35,7 +37,7 @@ public:
   void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
 
-  void targetAcquisition(slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources/*, const std::vector<faction> &_factions*/);
+  void targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Updates the behaviour of the agent, based on any target it has, and its relative position

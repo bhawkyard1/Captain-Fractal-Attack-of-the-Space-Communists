@@ -9,7 +9,8 @@
 universe::universe()
     :
       m_drawer(),
-      m_ply( {0.0f, 0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP) )
+      m_ply( {0.0f, 0.0f, 0.0f}, m_drawer.getTextureRadius(PLAYER_SHIP)
+             )
 {
     createFactions();
 
@@ -140,6 +141,8 @@ void universe::addMissile(
 
 void universe::update(const float _dt)
 {
+    if(g_PLAYER_MOVEMENT_LOCKED) m_ply.setVel(vec3());
+
     debug("updates start");
 
     m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
@@ -200,7 +203,7 @@ void universe::update(const float _dt)
     {
         m_sounds.playUISnd( static_cast<sound>(m_ply.getCurWeap()) );
         m_ply.shoot();
-        addShot( m_ply.getPos(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -1}, m_ply.getXP() );
+        addShot( m_ply.getPos(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, {0, -2}, m_ply.getXP() );
         m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
         m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -377,6 +380,7 @@ void universe::update(const float _dt)
                     {
                         ship a(g_ship_templates.at( static_cast<int>(m_asteroids[i].getClassification()) - 1 ), p + tovec3(randVec2( m_asteroids[i].getRadius()) ));
                         a.setVel( m_asteroids[i].getVel() + tovec3(randVec2(1.0f)) );
+                        a.setAng(randNum(-180.0f, 180.0f));
                         a.update(_dt);
                         m_asteroids.push_back(a);
                     }
@@ -500,6 +504,7 @@ void universe::update(const float _dt)
     {
         if(!rand()) playUISnd(RADIO_CHATTER_SND);
 
+        debug("parenting");
         if(!m_agents[e].hasParent())
         {
             m_agents[e].updatePos(_dt);
@@ -528,45 +533,14 @@ void universe::update(const float _dt)
 
             m_agents[e].setVel(parent->getVel());
         }
-
         vec3 p = m_agents[e].getPos();
 
         //If the agent is damaged, add smoke.
         if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius() * 4.0f, "SMOKE");
 
-        float minDist = F_MAX;
-        //Reset target.
-        m_agents[e].setTarget(nullptr);
-        m_agents[e].setGoal(GOAL_IDLE);
-
-        if(m_agents[e].getType() == SHIP_TYPE_MINER) //Set miner targets
-        {
-            //Find the closest asteroid.
-            for(auto &k : m_asteroids)
-            {
-                float nd = magns(p - k.getPos());
-                if(nd < minDist)
-                {
-                    m_agents[e].setTarget( &k );
-                    m_agents[e].setGoal(GOAL_ATTACK);
-                    minDist = nd;
-                }
-            }
-            //Find the closest debris.
-            for(auto &d : m_resources)
-            {
-                float nd = magns(p - d.getPos());
-                if(nd < minDist)
-                {
-                    m_agents[e].setTarget(nullptr);
-                    m_agents[e].setTPos( d.getPos() );
-                    m_agents[e].setTVel(vec3());
-                    m_agents[e].setGoal(GOAL_GOTO);
-                    minDist = nd;
-                }
-            }
-        }
-        else if(
+        debug("special actions");
+        //The stuff here is ships affecting other stuff easily accessible within the universe class, but not so easily dealt with inside enemy.cpp
+        if(
                 m_agents[e].getClassification() == PLAYER_GRAVWELL or
                 m_agents[e].getClassification() == ALLIANCE_GRAVWELL
                 ) //Gravwell attraction
@@ -588,49 +562,18 @@ void universe::update(const float _dt)
             //Spawn wingman.
             if(rand() % 2048 == 0 and m_wingmenCount < 20) spawnShip(getRandomShipType(m_agents[e].getTeam()), m_agents[e].getTeam(), p);
         }
-        else if(m_agents[e].getCanShoot()) //Default m_target acquisition
-        {
-            //Get closest enemy.
-            for(auto &k : m_agents.m_objects)
-            {
-                //Do not target self.
-                if(&m_agents[e] == &k) continue;
 
-                float nd = magns(p - k.getPos()) - sqr(k.getRadius()) + sqr(m_agents[e].getRadius());
-                if(nd < minDist and emnityCheck(m_agents[e].getTeam(), k.getTeam()))
-                {
-                    m_agents[e].setTarget( (enemy*)&k );
-                    if(m_agents[e].getClassification() != PLAYER_TURRET) m_agents[e].setGoal(GOAL_ATTACK);
-                    else m_agents[e].setGoal(GOAL_TURRET);
-                    minDist = nd;
-                }
-            }
+        if(m_agents[e].getGoal() == GOAL_TRADE
+                and magns(p - m_agents[e].getTarget()->getPos()) < sqr(m_agents[e].getRadius() + m_agents[e].getTarget()->getRadius()))
+        {
+            //What ugly, ugly code.
+            //The target held by an agent is always a ship pointer (to account for the fact that the player, asteroids, or other agents (all derived from the ship class) can be targeted.
+            //This conduct trade function takes two const enemy references though, so I must first convert the target to an enemy pointer before dereferencing.
+            //The major caveat here is we must be able to guarantee that the trade target is only another agent. If it is the player or an asteroid, we are probably looking at a crash.
+            conductTrade(*static_cast<enemy *>(m_agents[e].getTarget()), m_agents[e]);
         }
 
-        float nd = magns(m_ply.getPos() - m_agents[e].getPos());
-
-
-        if(emnityCheck( m_agents[e].getTeam(), TEAM_PLAYER ) and nd < minDist and !g_GAME_OVER )
-        {
-            //If the given agent is hostile, and the players distance is the closest ship.
-            m_agents[e].setTarget( &m_ply );
-            m_agents[e].setGoal( GOAL_ATTACK );
-            minDist = nd;
-        }
-
-        //If the agent can move, is friendly to the player, and close by, and not in combat.
-        if(m_agents[e].getType() == SHIP_TYPE_MINER and sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and ( nd > 150000.0f ) and !m_agents[e].inCombat())
-        {
-            m_agents[e].setTarget( &m_ply );
-            m_agents[e].setGoal( GOAL_CONGREGATE );
-        }
-
-        if( m_agents[e].getTarget() == nullptr )
-        {
-            //If the agent has no m_target, it becomes idle.
-            m_agents[e].setGoal( GOAL_WANDER );
-        }
-
+        debug("fleeing");
         if(!sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
         {
             //If the enemy can move and is scared, runs away.
@@ -638,6 +581,7 @@ void universe::update(const float _dt)
             m_agents[e].setGoal(GOAL_FLEE);
         }
 
+        debug("shooting");
         if(m_agents[e].isFiring() and m_agents[e].getCooldown() <= 0)
         {
             //If the agent is shooting, add lasers.
@@ -647,24 +591,8 @@ void universe::update(const float _dt)
             m_agents[e].setFiring(false);
         }
 
-        squad * sq = getSquadFromID( m_agents[e].getTeam(), m_agents[e].getSquadID() );
-
-        if(sq != nullptr)
-        {
-            //If too far from group center, congregate at center.
-            vec3 squadPos = sq->m_targetPos;
-            //std::cout << "squadPos : " << squadPos.m_x << " ," << squadPos.m_y << '\n';
-            vec3 squadVel = sq->m_averageVel;
-            if(!m_agents[e].inCombat() and magns(p - squadPos) > sqr(sq->m_regroupDist) )
-            {
-                m_agents[e].setTarget( nullptr );
-                m_agents[e].setTPos( squadPos );
-                m_agents[e].setTVel( squadVel );
-                m_agents[e].setGoal( GOAL_CONGREGATE );
-            }
-        }
-
         //Updating--------------------------------------------------------------------------------//
+        m_agents[e].targetAcquisition(m_ply, m_agents, m_asteroids, m_resources, m_factions);
         m_agents[e].update(_dt);
         m_agents[e].setWVel(m_vel);
         m_agents[e].behvrUpdate(_dt);
@@ -1319,11 +1247,12 @@ void universe::drawUI(const float _dt)
             infoCard->setVisible(false);
         }
 
+        //std::cout << "draw cargo\n";
         if(contextPtr != nullptr and contextPtr->getCargo()->isVisible())
         {
             m_drawer.useShader("plain");
             vec2 dim = contextPtr->getCargo()->getDim();
-            std::cout << "drawing cargo!!" << dim.m_x << ", " << dim.m_y << '\n';
+            //std::cout << "drawing cargo!!" << dim.m_x << ", " << dim.m_y << '\n';
             m_drawer.addRect(contextPtr->getInterpolatedPosition(_dt), dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
@@ -1332,10 +1261,13 @@ void universe::drawUI(const float _dt)
             //CRASH HERE
             for(auto &i : contextPtr->getCargo()->getItems()->m_objects)
             {
+                //std::cout <<  "pre\n" << i.getIdentifier() << "\npost\n";
                 m_drawer.drawShip(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+                //std::cout << "draw post\n";
             }
             m_drawer.useShader("plain");
         }
+        //std::cout << "draw cargo end\n";
     }
 
     if(m_ply.getCargo()->isVisible())
@@ -1723,6 +1655,7 @@ void universe::checkCollisions()
 
             if(circleIntersectCircle(tovec2(resource->getPos()), resource->getRadius(), tovec2(m_ply.getPos()), m_ply.getRadius() and !g_GAME_OVER))
             {
+                std::cout << "intersection!!!!\n";
                 if(!m_ply.addItem(*resource)) continue;
 
                 m_sounds.playUISnd(PLACE_SND);
@@ -2180,7 +2113,8 @@ bool universe::emnityCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].getRelations(_b) == DIPLOMACY_ENEMY and m_factions[_b].getRelations(_a) == DIPLOMACY_ENEMY;
+    return m_factions[_a].isEnemy(_b)
+            and m_factions[_b].isEnemy(_a);
 }
 
 bool universe::friendshipCheck(
@@ -2188,7 +2122,8 @@ bool universe::friendshipCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].getRelations(_b) >= DIPLOMACY_FRIEND and m_factions[_b].getRelations(_a) >= DIPLOMACY_FRIEND;
+    return m_factions[_a].isFriend(_b)
+            and m_factions[_b].isFriend(_a);
 }
 
 bool universe::neutralityCheck(
@@ -2196,7 +2131,8 @@ bool universe::neutralityCheck(
         aiTeam _b
         )
 {
-    return m_factions[_a].getRelations(_b) >= DIPLOMACY_NEUTRAL and m_factions[_b].getRelations(_a) >= DIPLOMACY_NEUTRAL;
+    return m_factions[_a].isNeutral(_b)
+            and m_factions[_b].isNeutral(_a);
 }
 
 bool universe::sameTeam(
@@ -2204,7 +2140,8 @@ bool universe::sameTeam(
         aiTeam _b
         )
 {
-    return m_factions[_a].getRelations(_b) >= DIPLOMACY_SELF and m_factions[_b].getRelations(_a) >= DIPLOMACY_SELF;
+    return m_factions[_a].isSame(_b)
+            and m_factions[_b].isSame(_a);
 }
 
 void universe::reload(const bool _newGame)
@@ -2533,11 +2470,28 @@ void universe::calcPowerBalance()
 
 selectionReturn universe::handleInput(vec2 _mouse)
 {
+    //UI check
     selectionReturn ret = m_ui.handleInput(_mouse);
-    if(ret.m_sel_val > -1) m_sounds.playUISnd(MENU_SELECT_SND);
+    if(ret.m_sel_val > -1)
+    {
+        m_sounds.playUISnd(MENU_SELECT_SND);
+        return ret;
+    }
+
+    //Get mouse position.
+    _mouse = toWorldSpace(_mouse );
+
+    //Is the player moving an item in their inventory?
+    m_ply.getCargo()->handleInput(_mouse, &m_selectedItems);
+
+    enemy * contextShip = m_agents.getByID(m_contextShip);
+    if(contextShip != nullptr)
+    {
+        contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems);
+    }
     else
     {
-        _mouse = toWorldSpace(_mouse );
+        //Context ship selection, if UI handle returns null.
         m_contextShip = {0, -1};
         for(size_t i = 0; i < m_agents.size(); ++i)
         {
@@ -2547,13 +2501,6 @@ selectionReturn universe::handleInput(vec2 _mouse)
                 break;
             }
         }
-
-        enemy * contextPt = m_agents.getByID(m_contextShip);
-
-        _mouse -= tovec2( m_ply.getPos() );
-        //std::cout << "CONTEXT SHIP: " << m_contextShip.m_id << ", " << m_contextShip.m_version << '\n';
-        if(m_selectedItems.size() == 0) m_ply.getCargo()->handleInput(_mouse, &m_selectedItems);
-        if(m_selectedItems.size() == 0 and contextPt != nullptr) m_agents.getByID(m_contextShip)->getCargo()->handleInput(_mouse, &m_selectedItems);
     }
 
     return ret;
@@ -2648,6 +2595,53 @@ void universe::mouseUp()
         m_resources.push_back( i );
     }
     m_selectedItems.clear();
+}
+
+void universe::conductTrade(enemy &_buyer, enemy &_seller)
+{
+    //If the two ships are on the same team, no transaction takes place, we simply
+    //transfer all items from the source to the target.
+    std::cout << "trading!\n";
+    if(sameTeam(_buyer.getTeam(), _seller.getTeam()))
+    {
+        std::cout << "transferring!\n";
+        _seller.transferAllCargo(&_buyer);
+        return;
+    }
+
+    //The items the buyer wants will be placed in this vector.
+    std::vector<uniqueID> itemsToBuy;
+
+    float totalEconomy = m_factions[_buyer.getTeam()].getEconomicalStrength() +
+            m_factions[_seller.getTeam()].getEconomicalStrength();
+    float sellerRatio = m_factions[_seller.getTeam()].getEconomicalStrength() / totalEconomy;
+
+    slotMap<debris> * src = _seller.getCargo()->getItems();
+    for(size_t i = 0; i < src->size(); ++i)
+    {
+        resourceType type = src->m_objects[i].getResourceType();
+        float buyerPrice = src->m_objects[i].calcCost(
+                    m_factions[_buyer.getTeam()].getResourceDemand(type)
+                );
+        float sellerPrice = src->m_objects[i].calcCost(
+                    m_factions[_seller.getTeam()].getResourceDemand(type)
+                );
+
+        //If the seller demands too much, do not buy.
+        if(sellerPrice > buyerPrice) continue;
+        //Else, compute a deal based on the economical strength of each faction.
+        //Result is interpolated between the seller and buyer price.
+        //Since the seller price is lower (given above condition) the seller will try to push price up to max.
+        float price = sellerPrice + (buyerPrice - sellerPrice) * sellerRatio;
+
+        m_factions[_buyer.getTeam()].addWealth( -price );
+        itemsToBuy.push_back( src->getID(i) );
+    }
+
+    for(auto &i : itemsToBuy)
+    {
+        _seller.transferCargo(&_buyer, i);
+    }
 }
 
 /*ship * universe::getByID(const unsigned long _i)

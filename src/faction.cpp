@@ -34,12 +34,17 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
     m_economy = randNum(0.00015f, 0.0001f);
 
     m_organised = _organised;
+
+    for(auto &i : m_resourceDemand) i = randNum(-1000.0f, 1000.0f);
 }
 
 //What do we spend money on?
 void faction::updateEconomy(const float _dt)
 {
     if(!m_organised) return;
+
+    if(!rand())
+        for(auto &i : m_resourceDemand) i = randNum(-1000.0f, 1000.0f);
 
     m_oldWealth = m_wealth;
 
@@ -93,11 +98,12 @@ void faction::updateEconomy(const float _dt)
 //Do we need to field more units? Where?
 void faction::updateDeployment(const float _dt, const std::vector<faction> &_rivals)
 {
+    //return;
     if(!m_organised) return;
 
     for(int i = m_squads.m_objects.size() - 1; i >= 0; --i)
     {
-        if(m_squads[i].m_size == 0) m_squads.free(i);
+        if(m_squads[i].m_size <= 0) m_squads.free(i);
     }
 
     //Enemies, neutrals, and friends
@@ -184,6 +190,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                         s.m_strength * m_aggression > target.m_strength
                         )
                 {
+                    if(b) std::cout << "  targeting squad at " << target.m_averagePos.m_x << ", " << target.m_averagePos.m_y << " belonging to faction " << target.m_team << " of size " << target.m_size << '\n';
                     bestDistance = dist;
                     s.m_targetPos = target.m_averagePos;
                     done = true;
@@ -205,6 +212,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
             }
             else if(
                     getRelations(TEAM_PLAYER) == DIPLOMACY_SELF
+                    and dist > sqr(1500.0f)
                     )
             {
                 s.m_targetPos = vec3();
@@ -358,7 +366,6 @@ void faction::addAggression(const float _mult)
 void faction::addActive(const ship_spec _i, const int _v)
 {
     int index = _i - m_combatShips.first;
-    std::cout << m_identifier << " input spec " << _i  << " vs " << m_combatShips.first << ", normalised " << index << '\n';
     int val = m_active[index] + _v;
     val = std::max(val, 0);
 

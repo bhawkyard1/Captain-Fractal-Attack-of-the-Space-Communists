@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "aiTypes.hpp"
+#include "ship.hpp"
 #include "vectors.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -75,6 +76,8 @@ struct squad
     float m_confidence;
 
     float m_averageDistance;
+
+    void removeMember(ship_spec _type);
 };
 
 //----------------------------------------------------------------------------------------------------------------------
