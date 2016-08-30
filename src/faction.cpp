@@ -98,7 +98,7 @@ void faction::updateEconomy(const float _dt)
 //Do we need to field more units? Where?
 void faction::updateDeployment(const float _dt, const std::vector<faction> &_rivals)
 {
-    //return;
+    return;
     if(!m_organised) return;
 
     for(int i = m_squads.m_objects.size() - 1; i >= 0; --i)

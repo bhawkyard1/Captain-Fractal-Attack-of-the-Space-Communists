@@ -425,7 +425,7 @@ void universe::update(const float _dt)
     {
         vec3 p = m_agents[i].getPos();
 
-        bool isOffscreen = isOffScreen(p - getCameraPosition(), 120000.0f);
+        bool isOffscreen = isOffScreen(p - getCameraPosition(), 120000.0f) and m_agents[i].getGoal() == GOAL_FLEE;
         bool isDead = m_agents[i].getHealth() <= 0.0f;
         bool isPlayerOwned = sameTeam(m_agents[i].getTeam(), TEAM_PLAYER);
         bool isSmall = m_agents[i].getType() == SHIP_TYPE_FIGHTER;
@@ -2216,6 +2216,17 @@ void universe::reload(const bool _newGame)
     m_ply.setMissiles(3);
     setScore(16);
 
+    int rep = rand() % 16;
+    for(int i = 0; i < rep; ++i)
+    {
+        spawnBase(
+                    ALLIANCE,
+                    tovec3( randVec2(1000000.0f) ),
+                    rand() % 3,
+                    randNum(0.0f, 360.0f)
+                );
+    }
+
     std::cout << "reloading done\n";
 }
 
@@ -2487,7 +2498,8 @@ selectionReturn universe::handleInput(vec2 _mouse)
     enemy * contextShip = m_agents.getByID(m_contextShip);
     if(contextShip != nullptr)
     {
-        contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems);
+        if(!contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems))
+            m_contextShip = {0, -1};
     }
     else
     {

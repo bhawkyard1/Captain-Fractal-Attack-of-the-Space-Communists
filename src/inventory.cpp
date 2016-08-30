@@ -95,6 +95,10 @@ void inventory::update(const float _dt)
 
 bool inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
 {
+    vec2 hdim = m_dim / 2.0f;
+    if(!pointInRect( _mouse, -hdim, m_dim))
+        return false;
+
     std::cout << "pickup check " << _mouse.m_x << ", " << _mouse.m_y << '\n';
     vec3 test = {_mouse.m_x, _mouse.m_y, 0.0f};
     for(size_t i = 0; i < m_contents.m_objects.size(); ++i)
@@ -109,6 +113,5 @@ bool inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
         }
     }
 
-    vec2 hdim = m_dim / 2.0f;
-    return pointInRect(_mouse, -hdim, hdim );
+    return true;
 }

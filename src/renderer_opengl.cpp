@@ -1249,6 +1249,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
 
     vec3 center;
     vec2 dim;
+    float zoom;
 
     if(_mode)
     {
@@ -1256,11 +1257,13 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         center -= {0.0f, 100.0f, 0.0f};
         dim.m_x = std::min(g_WIN_WIDTH, g_WIN_HEIGHT) - 300.0f;
         dim.m_y = dim.m_x;
+        zoom = g_ZOOM_LEVEL;
     }
     else if(!_mode)
     {
         center = {g_WIN_WIDTH - 128.0f, 128.0f, 0.0f};
         dim = {256.0f, 256.0f};
+        zoom = 1.0f;
     }
 
     drawRect(center, dim, 0.0f, false);
@@ -1273,8 +1276,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     {
         vec3 lpp = _lp->at(i).getPos() - m_camera.getPos();
 
-        float x = clamp(lpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
-        float y = clamp(lpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
+        float x = clamp(zoom * lpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(zoom * lpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         drawCircle({x, y, 0.0f}, 1.0f, false);
     }
@@ -1284,8 +1287,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     {
         vec3 mpp = _mp->at(i).getPos() - m_camera.getPos();
 
-        float x = clamp(mpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
-        float y = clamp(mpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
+        float x = clamp(zoom * mpp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(zoom * mpp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         drawCircle({x, y, 0.0f}, 1.0f, false);
     }
@@ -1295,8 +1298,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     {
         vec3 app = _ap->at(i).getPos() - m_camera.getPos();
 
-        float x = clamp(app.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
-        float y = clamp(app.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
+        float x = clamp(zoom * app.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(zoom * app.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         float radius = 1.0f;
         if(_ap->at(i).getClassification() == ASTEROID_MID) radius = 2.0f;
@@ -1315,8 +1318,8 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         col[3] = 1.0f;
         m_shader->setRegisteredUniform("inColour", ngl::Vec4(col[0], col[1], col[2], col[3]));
 
-        float x = clamp(epp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
-        float y = clamp(epp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
+        float x = clamp(zoom * epp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
+        float y = clamp(zoom * epp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);
 
         drawCircle({x, y, 0.0f}, radius, false);
     }
