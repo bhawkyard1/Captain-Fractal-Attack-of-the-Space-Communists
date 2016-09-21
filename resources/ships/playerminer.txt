@@ -1,0 +1,12 @@
+identifier PLAYER_MINER_DROID
+asset miner_1
+type 3
+size 16.0
+health 10
+shield 20
+energy 200
+inertia 0.2
+enginepower 4
+generatorpower 5
+weapons 14
+holdspace 64.0 64.0

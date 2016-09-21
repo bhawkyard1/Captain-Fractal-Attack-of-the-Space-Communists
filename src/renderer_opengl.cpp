@@ -7,15 +7,15 @@
 
 #include "camera.hpp"
 #include "common.hpp"
+#include "file.hpp"
 
-#if RENDER_MODE == 1
-
-#include "renderer_opengl.hpp"
-#include "util.hpp"
+//#if RENDER_MODE == 1
 
 #include "enemy.hpp"
 #include "laser.hpp"
 #include "missile.hpp"
+#include "renderer_opengl.hpp"
+#include "util.hpp"
 
 #include <ngl/VAOPrimitives.h>
 
@@ -64,7 +64,7 @@ renderer_ngl::renderer_ngl()
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 0, 0,
                                 m_w, m_h,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS );
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_FULLSCREEN*/ );
 
     if(!m_window)
     {
@@ -83,8 +83,6 @@ renderer_ngl::renderer_ngl()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    glViewport(0, 0, m_w, m_h);
-
     m_gl_context = SDL_GL_CreateContext( m_window );
 
     if(!m_gl_context)
@@ -95,12 +93,60 @@ renderer_ngl::renderer_ngl()
     makeCurrent();
     SDL_GL_SetSwapInterval(1);
 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    finalise();
-
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ngl::NGLInit::instance();
+
+    //Set up framebuffer
+    glGenFramebuffers(1, &m_framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+
+    //Generate textures
+    m_bufferBackgroundDiffuse = genTexture(m_w, m_h, GL_RGBA, GL_RGBA);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    m_bufferLitNormal = genTexture(m_w, m_h, GL_RGBA, GL_RGBA16F);
+    m_bufferLitPosition = genTexture(m_w, m_h, GL_RGBA, GL_RGBA16F);
+    m_bufferLitDiffuse = genTexture(m_w, m_h, GL_RGBA, GL_RGBA);
+    m_bufferEffectsDiffuse = genTexture(m_w, m_h, GL_RGBA, GL_RGBA);
+
+    glGenRenderbuffers(1, &m_bufferBackgroundDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_bufferBackgroundDepth);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, m_w, m_h);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_bufferBackgroundDepth);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_bufferEffectsDiffuse, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_bufferLitDiffuse, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_bufferLitNormal, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_bufferLitPosition, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_bufferBackgroundDiffuse, 0);
+
+    useAttachments({GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4});
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cerr << "Error! Framebuffer failed!\n";
+        exit(EXIT_FAILURE);
+    }
+
+    //Set up framebuffer
+    glGenFramebuffers(1, &m_tinyFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_tinyFramebuffer);
+
+    m_bufferDownscaledBackgroundDiffuse = genTexture(m_w / AMBIENT_RESOLUTION_DIVIDER, m_h / AMBIENT_RESOLUTION_DIVIDER, GL_RGBA, GL_RGBA);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_bufferDownscaledBackgroundDiffuse, 0);
+
+    useAttachments({GL_COLOR_ATTACHMENT0});
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        std::cerr << "Error! Framebuffer failed!\n";
+        exit(EXIT_FAILURE);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glViewport(0, 0, m_w, m_h);
 
@@ -137,6 +183,10 @@ renderer_ngl::renderer_ngl()
 
     m_shader = ngl::ShaderLib::instance();
 
+    createShaderProgram("bufferCopy", "backgroundVertex", "bufferCopyFragment");
+    createShaderProgram("bufferBlur", "backgroundVertex", "bufferDirectionalBlurFragment");
+    createShaderProgram("bufferLight", "backgroundVertex", "bufferLightFragment");
+
     createShaderProgram("background", "backgroundVertex", "backgroundFragment");
     createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
     createShaderProgram("xp", "MVPUVVert", "XPFragment");
@@ -153,14 +203,20 @@ renderer_ngl::renderer_ngl()
     createShaderProgramVGF("sparks", "laserVertex", "lineToRectGeo", "sparksFragment");
     createShaderProgramVGF("laser", "laserVertex", "lineToRectGeo", "laserFragment");
 
-    m_shader->use("laser");
-    m_shader->setRegisteredUniform("resolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
+    m_shader->use("bufferBlur");
+    m_shader->setRegisteredUniform("iResolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
 
     m_shader->use("background");
     m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
     m_shader->setRegisteredUniform("iterations", (g_GRAPHICAL_DETAIL + 2.0f) * 3.0f);
 
-    loadAsset("COMMUNIST_1",         "commie_1");
+    m_shader->use("bufferCopy");
+    m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+
+    std::cout << "loading ships starting!\n";
+    loadShips();
+    std::cout << "loading ships complete!\n";
+    /*loadAsset("COMMUNIST_1",         "commie_1");
     loadAsset("COMMUNIST_2",         "commie_2");
     loadAsset("COMMUNIST_CAPITAL", "commie_capital");
     loadAsset("COMMUNIST_TURRET", "commie_turret_1");
@@ -196,7 +252,7 @@ renderer_ngl::renderer_ngl()
     loadAsset("PLAYER_HUNTER",       "wingman_1");
     loadAsset("PLAYER_DEFENDER",     "wingman_2");
     loadAsset("PLAYER_DESTROYER",    "wingman_3");
-    loadAsset("PLAYER_GUNSHIP",    "wingman_4");
+    loadAsset("PLAYER_GUNSHIP",      "wingman_4");
     loadAsset("PLAYER_MINER_DROID",  "miner_1");
     loadAsset("PLAYER_CAPITAL",      "wingman_capital");
     loadAsset("PLAYER_TURRET",       "turret_1");
@@ -209,13 +265,13 @@ renderer_ngl::renderer_ngl()
 
     loadAsset("ASTEROID_SMALL",      "asteroid_1");
     loadAsset("ASTEROID_MID",        "asteroid_2");
-    loadAsset("ASTEROID_LARGE",      "asteroid_3");
+    loadAsset("ASTEROID_LARGE",      "asteroid_3");*/
 
     loadAsset("RESOURCE_IRON_ROCK",  "resource_iron_rock");
 
-    loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
-    loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 20);
-    loadFontSpriteSheet("pix90", g_RESOURCE_LOC + "fonts/pix.TTF", 60);
+    loadFontSpriteSheet("pix", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 20);
+    loadFontSpriteSheet("minimal", g_GRAPHICAL_RESOURCE_LOC + "fonts/minimal.otf", 20);
+    loadFontSpriteSheet("pix90", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 60);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -267,23 +323,62 @@ renderer_ngl::renderer_ngl()
                             }
                             );
 
+    std::cout << "creating screen quad!\n";
     m_screenQuadVAO = createVAO({
                                     ngl::Vec3(-1.0f, -1.0f, 0.5f),
                                     ngl::Vec3(-1.0f, 1.0f, 0.5f),
                                     ngl::Vec3(1.0f, 1.0f, 0.5f),
                                     ngl::Vec3(1.0f, -1.0f, 0.5f)
-                                });
+                                },
+    {
+                                    ngl::Vec2(-0.5f, -0.5f),
+                                    ngl::Vec2(-0.5f, 0.5f),
+                                    ngl::Vec2(0.5f, 0.5f),
+                                    ngl::Vec2(0.5f, -0.5f)
+                                }
+                                );
 
     m_pointVAO = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f)});
 
-
-    m_shield = new ngl::Obj(g_RESOURCE_LOC + "models/shield.obj");
+    m_shield = new ngl::Obj(g_GRAPHICAL_RESOURCE_LOC + "models/shield.obj");
     m_shield->createVAO();
+
+    resetLights();
+    m_activeLights = 0;
+
+    finalise(0.0f, vec2());
+}
+
+//This function loads all the ships in the game into a vector that we can copy from later.
+void renderer_ngl::loadShips()
+{
+    std::ifstream data (g_RESOURCE_LOC + "ships/config.txt");
+    std::string cur;
+
+    int spec = 0;
+    while(getlineSafe( data, cur ))
+    {
+        if(cur.length() == 0)
+            continue;
+        std::cout << "Loading ship from " << (g_RESOURCE_LOC + "ships/" + cur) << '\n';
+        std::string asset = "";
+        ship temp = loadShip(g_RESOURCE_LOC + "ships/" + cur, &asset, spec);
+        loadAsset(temp.getIdentifier(), asset);
+        g_ship_templates.push_back(temp);
+        spec++;
+    }
+    /*for(int i = 0; i <= SHIPS_END; ++i)
+    {
+        ship insert = loadShip("");
+        g_ship_templates.push_back(insert);
+    }
+    std::cout << "No of ship types: " << g_ship_templates.size() << std::endl;*/
+
 }
 
 void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
 {
-    std::cout << "LOADING ASSET: " << _path << std::endl;
+    std::cout << "LOADING ASSET: " << _path << '\n';
     std::vector<ngl::Obj*> models;
     models.push_back( loadObj(_path, "") );
     models.push_back( loadObj(_path, "_static") );
@@ -293,9 +388,9 @@ void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
 ngl::Obj * renderer_ngl::loadObj(const std::string _path, const std::string _append)
 {
     std::string full = _path + _append;
-    if(std::ifstream(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj"))
+    if(std::ifstream(g_GRAPHICAL_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj"))
     {
-        ngl::Obj * tempObj = new ngl::Obj(g_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
+        ngl::Obj * tempObj = new ngl::Obj(g_GRAPHICAL_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_GRAPHICAL_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
         tempObj->createVAO();
         return tempObj;
     }
@@ -326,10 +421,13 @@ void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string 
 
 void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string _asset)
 {
+    m_transform.reset();
+
     m_shader->setRegisteredUniform("alpha", 1.0f);
 
     m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, _p.m_z));
     m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
+    m_shader->setRegisteredUniform("transform", m_transform.getMatrix());
     loadMatricesToShader();
 
     size_t modlen = m_models[_asset].size();
@@ -339,6 +437,7 @@ void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string 
     }
 
     m_transform.setRotation(90.0f, 0.0f, 0.0f);
+    m_shader->setRegisteredUniform("transform", m_transform.getMatrix());
     loadMatricesToShader();
 
     if(m_models[_asset][modlen - 1] != nullptr) m_models[_asset][modlen - 1]->draw();
@@ -520,6 +619,8 @@ renderer_ngl::~renderer_ngl()
 
     delete m_shield;
     m_shield = nullptr;
+
+    glDeleteFramebuffers(1, &m_framebuffer);
 }
 
 int renderer_ngl::init()
@@ -639,6 +740,7 @@ void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v, std::array<float,
 
 GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts)
 {
+    std::cout << "pure verts\n";
     GLuint temp_vao;
     glGenVertexArrays(1, &temp_vao);
     glBindVertexArray(temp_vao);
@@ -662,6 +764,7 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts)
 
 GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols)
 {
+    std::cout << "verts and cols\n";
     GLuint temp_vao;
     glGenVertexArrays(1, &temp_vao);
     glBindVertexArray(temp_vao);
@@ -692,6 +795,45 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::V
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
     glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    glBindVertexArray(0);
+
+    return temp_vao;
+}
+
+GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec2> _UVs)
+{
+    std::cout << "verts and uvs\n";
+    GLuint temp_vao;
+    glGenVertexArrays(1, &temp_vao);
+    glBindVertexArray(temp_vao);
+
+    //Generate a VBO
+    GLuint vertBuffer;
+    glGenBuffers(1, &vertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3) * _verts.size(),
+                 &_verts[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+
+    GLuint UVBuffer;
+    glGenBuffers(1, &UVBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec2) * _UVs.size(),
+                 &_UVs[0].m_x,
+            GL_STATIC_DRAW
+            );
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 0, 0 );
 
     glBindVertexArray(0);
 
@@ -735,7 +877,7 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::V
     glGenBuffers(1, &UVBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, UVBuffer);
     glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Vec4) * _UVs.size(),
+                 sizeof(ngl::Vec2) * _UVs.size(),
                  &_UVs[0].m_x,
             GL_STATIC_DRAW
             );
@@ -990,15 +1132,129 @@ void renderer_ngl::drawFlames(const vec3 _pos, const vec2 _d, float _ang, std::a
     m_shader->setRegisteredUniform("speed", _speed);
 
     glBindVertexArray(m_spriteVAO);
+    //glBindVertexArray(m_unit_square_vao);
 
     m_transform.setScale(ngl::Vec3(_d.m_x, _d.m_y, 0.0f));
     m_transform.setRotation(ngl::Vec3(0.0f, 0.0f, _ang));
-    m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y));
+    m_transform.setPosition(ngl::Vec3(_pos.m_x, _pos.m_y, 0.0f));
 
     loadMatricesToShader();
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
     glBindVertexArray(0);
     m_transform.reset();
+}
+
+void renderer_ngl::clear()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+    useAttachments({GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4});
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glViewport(0, 0, m_w, m_h);
+}
+
+void renderer_ngl::finalise(const float _t, const vec2 _vel)
+{
+    //Downsample background texture.
+    glBindFramebuffer(GL_FRAMEBUFFER, m_tinyFramebuffer);
+    useAttachments({GL_COLOR_ATTACHMENT0});
+    glViewport(0, 0, m_w / AMBIENT_RESOLUTION_DIVIDER, m_h / AMBIENT_RESOLUTION_DIVIDER);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    m_shader->use("bufferCopy");
+    GLuint id = m_shader->getProgramID("bufferCopy");
+    bindTextureToSampler(id, m_bufferBackgroundDiffuse, "diffuse", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_bufferBackgroundDiffuse);
+    glBindVertexArray(m_screenQuadVAO);
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+    glBindVertexArray(0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, m_w, m_h);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    drawCustomBuffers(_t, _vel);
+    SDL_GL_SwapWindow(m_window);
+}
+
+void renderer_ngl::bindTextureToSampler(const GLint _shaderID, const GLuint _tex, const char * _uniform, int _target)
+{
+    GLint loc = glGetUniformLocation(_shaderID, _uniform);
+
+    if(loc == -1)
+    {
+        std::cerr << "Uh oh! Invalid uniform location in renderer_ngl::bindTextureToSampler!! " << _uniform << '\n';
+    }
+    glUniform1i(loc, _target);
+}
+
+void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
+{
+    glBindVertexArray(m_screenQuadVAO);
+
+    //Background draw
+    //m_shader->use("bufferCopy");
+    m_shader->use("bufferBlur");
+
+    //GLuint id = m_shader->getProgramID("bufferCopy");
+    GLuint id = m_shader->getProgramID("bufferBlur");
+    bindTextureToSampler(id, m_bufferBackgroundDiffuse, "diffuse", 0);
+    m_shader->setRegisteredUniform("vel", ngl::Vec2(_vel.m_x, _vel.m_y));
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_bufferBackgroundDiffuse);
+
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+
+    //Lighting draw.
+    m_shader->use("bufferLight");
+
+    id = m_shader->getProgramID("bufferLight");
+
+    bindTextureToSampler(id, m_bufferLitDiffuse, "diffuse", 0);
+    bindTextureToSampler(id, m_bufferLitNormal, "normal", 1);
+    bindTextureToSampler(id, m_bufferLitPosition, "position", 2);
+    bindTextureToSampler(id, m_bufferDownscaledBackgroundDiffuse, "ambient", 3);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_bufferLitDiffuse);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_bufferLitNormal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_bufferLitPosition);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, m_bufferDownscaledBackgroundDiffuse);
+
+    m_shader->setRegisteredUniform("ambientSteps", ngl::Vec2(m_w / AMBIENT_RESOLUTION_DIVIDER, m_h / AMBIENT_RESOLUTION_DIVIDER));
+    m_shader->setRegisteredUniform("inverseVP", (m_project * m_view).inverse());
+    m_shader->setRegisteredUniform("iGlobalTime", _t);
+    m_shader->setRegisteredUniform("lightMul", AMBIENT_RESOLUTION_DIVIDER / (256.0f * g_ZOOM_LEVEL));
+    m_shader->setRegisteredUniform("ACTIVE_LIGHTS", m_activeLights);
+
+    for(size_t i = 0; i < m_pointLights.size(); ++i)
+    {
+        std::string uniform = "lights[" + std::to_string(i) + "]";
+        GLint posloc = glGetUniformLocation(id, (uniform + ".pos").c_str());
+        GLint colloc = glGetUniformLocation(id, (uniform + ".col").c_str());
+        vec3 pos = m_pointLights[i].m_pos;// + vec3(0.0f, 0.0f, 1.0f);
+        vec3 col = m_pointLights[i].m_col;
+        glUniform3f(posloc, pos.m_x, pos.m_y, pos.m_z);
+        glUniform4f(colloc, col.m_x, col.m_y, col.m_z, 1.0f);
+    }
+
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+
+    //Effects draw.
+    m_shader->use("bufferCopy");
+
+    id = m_shader->getProgramID("bufferCopy");
+    bindTextureToSampler(id, m_bufferEffectsDiffuse, "diffuse", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_bufferEffectsDiffuse);
+
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+
+    glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void renderer_ngl::loadMatricesToShader()
@@ -1117,7 +1373,7 @@ void renderer_ngl::loadFontSpriteSheet(
         //We need to first render to a surface as that's what TTF_RenderText
         //returns, then load that surface into a texture
         SDL_Surface * surf = TTF_RenderGlyph_Blended(fnt, ascii[i], {255,255,255});
-        //SDL_Surface * surf = IMG_Load((g_RESOURCE_LOC + "textures/player/player.png").c_str());
+        //SDL_Surface * surf = IMG_Load((g_GRAPHICAL_RESOURCE_LOC + "textures/player/player.png").c_str());
 
         if(!surf)
         {
@@ -1182,6 +1438,8 @@ void renderer_ngl::drawText(
 
     for(int i = 0; i < _text.length(); ++i)
     {
+        //bindTextureToSampler(id, tmp->m_sheet[_text[i]], "diffuse", 0);
+        //glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
 
         float w = static_cast<float>(tmp->m_dim[_text[i]].first);
@@ -1333,4 +1591,18 @@ void renderer_ngl::clearVectors()
     m_genericData.clear();
 }
 
-#endif
+GLuint renderer_ngl::genTexture(int _width, int _height, GLint _format, GLint _internalFormat)
+{
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, _format, GL_FLOAT, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    return tex;
+}
+
+//#endif

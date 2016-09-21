@@ -24,10 +24,14 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 
     m_wealth = 0.0f;
 
-    int range = _structures.second + 1 - _fighters.first;
+    /*int range = _structures.second + 1 - _fighters.first;
     m_reserves.assign( range, 0 );
     m_deploy.assign( range, 0 );
-    m_active.assign( range, 0 );
+    m_active.assign( range, 0 );*/
+
+    m_reserves.assign( SHIPS_END + 1, 0 );
+    m_deploy.assign( SHIPS_END + 1, 0 );
+    m_active.assign( SHIPS_END + 1, 0 );
 
     m_aggression = randNum(0.0f, 1.0f);
 
@@ -41,6 +45,23 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 //What do we spend money on?
 void faction::updateEconomy(const float _dt)
 {
+    if(m_organised)
+    {
+        /*std::cout << "FACTION " << m_identifier << '\n' <<
+                     "Wealth : " << m_wealth << '\n' <<
+                     "Aggression : " << m_aggression << '\n' <<
+                     "Reserves : \n";
+
+        for(ship_spec i = m_combatShips.first; i < m_combatShips.second; ++i)
+            std::cout << g_ship_templates[i].getIdentifier() << ") " << m_reserves[i] << ", " << m_active[i] << '\n';
+
+        std::cout << std::endl;*/
+    }
+    /*
+     *
+     * for(auto &i : m_reserves)
+        std::cout << i << '\n';
+    std::cout << '\n';*/
     if(!m_organised) return;
 
     if(!rand())
@@ -73,8 +94,8 @@ void faction::updateEconomy(const float _dt)
     float upkeep = 0.0f;
     for(auto i = m_combatShips.first; i <= m_combatShips.second; ++i)
     {
-        upkeep += _dt * m_reserves.at(i - m_combatShips.first) * calcAICost(i) / 128.0f;
-        upkeep += _dt * m_active.at(i - m_combatShips.first) * calcAICost(i) / 128.0f;
+        upkeep += _dt * m_reserves.at(i/* - m_combatShips.first*/) * calcAICost(i) / 128.0f;
+        upkeep += _dt * m_active.at(i/* - m_combatShips.first*/) * calcAICost(i) / 128.0f;
     }
     m_wealth -= upkeep;
 
@@ -98,8 +119,8 @@ void faction::updateEconomy(const float _dt)
 //Do we need to field more units? Where?
 void faction::updateDeployment(const float _dt, const std::vector<faction> &_rivals)
 {
-    return;
     if(!m_organised) return;
+    //return;
 
     for(int i = m_squads.m_objects.size() - 1; i >= 0; --i)
     {
@@ -119,13 +140,13 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
 
         for(size_t slot = 0; slot < _rivals[f].m_active.size(); ++slot)
         {
-            powerBalance[index] += calcAIPower( _rivals[curTeam].getShittiestShip() + slot ) * _rivals[curTeam].m_active[slot];
+            powerBalance[index] += calcAIPower( /*_rivals[curTeam].getShittiestShip() +*/ static_cast<ship_spec>(slot) ) * _rivals[curTeam].m_active[slot];
         }
     }
 
     //Power of all ships in reserve. What is the point of deploying if the faction has shit reserve power?
     float reservesPower = 0.0f;
-    for(size_t r = 0; r < m_reserves.size(); ++r) reservesPower += calcAIPower(getShittiestShip() + r) * m_reserves[r];
+    for(size_t r = 0; r < m_reserves.size(); ++r) reservesPower += calcAIPower(/*getShittiestShip() +*/ static_cast<ship_spec>(r)) * m_reserves[r];
 
     float targetPower = powerBalance[0] * (m_aggression + 0.25f);
     //std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << '\n';
@@ -179,7 +200,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         {
             if(b)
             {
-                std::cout << "enemy squads len " << enemySquads.size() << '\n';
+                //std::cout << "enemy squads len " << enemySquads.size() << '\n';
             }
             //Targeting enemy squads.
             for(auto &target : enemySquads)
@@ -190,13 +211,13 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                         s.m_strength * m_aggression > target.m_strength
                         )
                 {
-                    if(b) std::cout << "  targeting squad at " << target.m_averagePos.m_x << ", " << target.m_averagePos.m_y << " belonging to faction " << target.m_team << " of size " << target.m_size << '\n';
+                    //if(b) std::cout << "  targeting squad at " << target.m_averagePos.m_x << ", " << target.m_averagePos.m_y << " belonging to faction " << target.m_team << " of size " << target.m_size << '\n';
                     bestDistance = dist;
                     s.m_targetPos = target.m_averagePos;
                     done = true;
                 }
             }
-            if(b) std::cout << "targeting enemies\n";
+            //if(b) std::cout << "targeting enemies\n";
             if( done ) continue;
 
             //Targeting of player.
@@ -218,7 +239,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                 s.m_targetPos = vec3();
                 done = true;
             }
-            if(b) std::cout << "targeting player\n";
+            //if(b) std::cout << "targeting player\n";
             if( done ) continue;
 
             //Reinforcing of squads within the SAME faction.
@@ -237,7 +258,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "reinforcing teammates\n";
+            //if(b) std::cout << "reinforcing teammates\n";
             if( done ) continue;
 
             //Targeting of individual ships/structures (since not every ship is in a squad).
@@ -253,12 +274,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "chasing down stragglers\n";
+            //if(b) std::cout << "chasing down stragglers\n";
             if( done ) continue;
             //std::cout << "p5\n";
             //If no targets, withdraw.
             s.m_targetPos = unit(s.m_averagePos) * 200000.0f;
-            if(b) std::cout << "withdrawing\n";
+            //if(b) std::cout << "withdrawing\n";
         }
     }
 }
@@ -330,7 +351,7 @@ void faction::addReserve()
             break;
     }
     //std::cout << "type " << g_ship_templates[offset + m_combatShips.first].getIdentifier() << " offset " << offset << ", m_reserves size " << m_reserves.size() << '\n';
-    m_reserves.at(offset)++;
+    m_reserves.at(m_combatShips.first + offset)++;
     m_wealth -= costs.at(offset);
 }
 
@@ -366,10 +387,10 @@ void faction::addAggression(const float _mult)
 void faction::addActive(const ship_spec _i, const int _v)
 {
     int index = _i - m_combatShips.first;
-    int val = m_active[index] + _v;
+    int val = m_active[_i/*ndex*/] + _v;
     val = std::max(val, 0);
 
-    m_active.at(index) = val;
+    m_active.at(_i/*ndex*/) = val;
 }
 
 void faction::resetSquads()

@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file smokeFragment.glsl
@@ -19,7 +19,7 @@ in vec2 UV;
 
 uniform float iGlobalTime;
 
-out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 float rand(vec2 c){
     return fract(sin(dot(c.xy ,vec2(12.9898,78.233))) * 43758.5453);

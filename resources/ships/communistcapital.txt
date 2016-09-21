@@ -1,0 +1,12 @@
+identifier COMMUNIST_CAPITAL
+asset commie_capital
+type 1
+size 1024.0
+health 8000
+shield 5000
+energy 2000
+inertia 0.001
+enginepower 7.0
+generatorpower 5000
+weapons 22
+holdspace 1024.0 1024.0

@@ -1,0 +1,11 @@
+identifier ALLIANCE_PHOENIX
+asset neutral_3
+type 0
+size 35.0
+health 90
+shield 110
+energy 150
+inertia 0.07
+enginepower 7
+weaponrange 23 25
+holdspace 32.0 32.0

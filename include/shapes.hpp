@@ -89,8 +89,8 @@ void sphereSphereCollision(t * _a, t * _b)
     vec3 impulse = force * normal;
     impulse.m_z = 0.0f;
 
-    _a->addVel( ainvmass * impulse );
-    _b->addVel( -binvmass * impulse );
+    _a->addForce( ainvmass * impulse );
+    _b->addForce( -binvmass * impulse );
 }
 
 template<class t>

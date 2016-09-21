@@ -71,5 +71,7 @@ void pfx::update(float _dt)
     if(done) m_active = false;
     m_elapsed += _dt;
 
+    m_col[3] *= 0.995f;
+
     updatePos(_dt);
 }

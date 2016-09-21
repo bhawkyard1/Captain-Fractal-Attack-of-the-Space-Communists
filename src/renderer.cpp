@@ -122,8 +122,8 @@ void renderer::loadTextures()
     loadTexture("SMOKE", "smoke_1", SDL_BLENDMODE_BLEND);
     loadTexture("SKY", "sky", SDL_BLENDMODE_NONE);
 
-    loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
-    loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 25);
+    loadFontSpriteSheet("pix", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 20);
+    loadFontSpriteSheet("minimal", g_GRAPHICAL_RESOURCE_LOC + "fonts/minimal.otf", 25);
 }
 
 void renderer::loadTexture(
@@ -134,10 +134,10 @@ void renderer::loadTexture(
 {
     std::vector<SDL_Texture*> temp;
 
-    SDL_Surface * s = IMG_Load( (g_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() );
+    SDL_Surface * s = IMG_Load( (g_GRAPHICAL_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() );
     if(!s) std::cerr << "Texture load error! " << SDL_GetError() << std::endl;
 
-    SDL_Texture * t = SDL_CreateTextureFromSurface(m_renderer, IMG_Load( (g_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() ) );
+    SDL_Texture * t = SDL_CreateTextureFromSurface(m_renderer, IMG_Load( (g_GRAPHICAL_RESOURCE_LOC + "textures/" + _path + "/" + _path + ".png").c_str() ) );
     SDL_SetTextureBlendMode(t, _b);
     if(!t) std::cerr << "Texture load error! " << SDL_GetError() << std::endl;
 
@@ -154,12 +154,12 @@ void renderer::loadTextureSet(
 {
     std::vector<SDL_Surface*> temp_surf;
 
-    temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + ".png") );
-    temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_engines.png") );
-    temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_steering.png") );
-    temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shoot.png") );
-    temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shield.png") );
-    temp_surf.push_back( getSurface( g_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_static.png") );
+    temp_surf.push_back( getSurface( g_GRAPHICAL_RESOURCE_LOC + "textures/" + _set + "/" + _set + ".png") );
+    temp_surf.push_back( getSurface( g_GRAPHICAL_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_engines.png") );
+    temp_surf.push_back( getSurface( g_GRAPHICAL_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_steering.png") );
+    temp_surf.push_back( getSurface( g_GRAPHICAL_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shoot.png") );
+    temp_surf.push_back( getSurface( g_GRAPHICAL_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_shield.png") );
+    temp_surf.push_back( getSurface( g_GRAPHICAL_RESOURCE_LOC + "textures/" + _set + "/" + _set + "_static.png") );
 
     std::vector<SDL_Texture*> temp_tex;
     for(auto &i : temp_surf)

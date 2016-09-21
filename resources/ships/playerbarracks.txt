@@ -1,0 +1,11 @@
+identifier PLAYER_BARRACKS
+asset barracks_1
+type 6
+size 512.0
+health 2000
+shield 4000
+energy 80000
+holdspace 512.0 512.0
+canmove 0
+canshoot 0
+angvelrange -10.0 10.0

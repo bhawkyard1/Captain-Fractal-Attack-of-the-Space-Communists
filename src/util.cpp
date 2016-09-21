@@ -2,6 +2,10 @@
 #include "util.hpp"
 #include <iostream>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 float computeAngle(vec2 _v)
 {
     return -deg(atan2(_v.m_x,_v.m_y));
@@ -20,6 +24,13 @@ double dotProd(double x0, double y0, double x1, double y1)
 float sqr(float _arg)
 {
     return _arg*_arg;
+}
+
+int gcd(int _a, int _b)
+{
+    if(_b == 0)
+        return _a;
+    return gcd(_b, _a % _b);
 }
 
 float fastInvSqrt(float _val)
@@ -174,7 +185,71 @@ vec2 toScreenSpace(vec2 _in)
     return _in;
 }
 
+std::istream& getlineSafe(std::istream& is, std::string& t)
+{
+    t.clear();
+
+    // The characters in the stream are read one-by-one using a std::streambuf.
+    // That is faster than reading them one-by-one using the std::istream.
+    // Code that uses streambuf this way must be guarded by a sentry object.
+    // The sentry object performs various tasks,
+    // such as thread synchronization and updating the stream state.
+
+    std::istream::sentry se(is, true);
+    std::streambuf* sb = is.rdbuf();
+
+    for(;;) {
+        int c = sb->sbumpc();
+        switch (c) {
+        case '\n':
+            return is;
+        case '\r':
+            if(sb->sgetc() == '\n')
+                sb->sbumpc();
+            return is;
+        case EOF:
+            // Also handle the case when the last line has no line ending
+            if(t.empty())
+                is.setstate(std::ios::eofbit);
+            return is;
+        default:
+            t += (char)c;
+        }
+    }
+}
+
 void debug(const std::string _msg)
 {
     if(PRINT_DEBUG_MESSAGES) std::cout << _msg << std::endl;
 }
+
+void clearTerminal()
+{
+#ifdef _WIN32
+    COORD topLeft = {0, 0};
+    HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO screen;
+    DWORD written;
+
+    GetConsoleScreenBufferInfo(console, &screen);
+    FillConsoleOutputCharacterA(console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
+    FillConsoleOutputAttribute(console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE, screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
+    SetConsoleCursorPosition(console, topLeft);
+#endif
+#ifdef __linux__
+    return;
+#endif
+}
+
+std::vector<SDL_Event> getEvents()
+{
+    std::vector<SDL_Event> ret;
+    SDL_Event event;
+    while( SDL_PollEvent( &event ) )
+    {
+        ret.push_back(event);
+    }
+    return ret;
+}
+
+

@@ -106,6 +106,11 @@ struct vec3
         m_x = m_y = m_z = 0.0f;
     }
 
+    vec3(const float _f)
+    {
+        m_x = m_y = m_z = _f;
+    }
+
     vec3(const float _x, const float _y, const float _z)
     {
         m_x = _x;

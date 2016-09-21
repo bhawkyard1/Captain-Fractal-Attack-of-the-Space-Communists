@@ -11,10 +11,10 @@ std::vector<tinfo> g_texture_keys = {
     {"PIRATE_TURRET", 16},
     {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64},
     {"ALLIANCE_TRADER", 64},
-    {"ALLIANCE_TURRET", 16}, {"ALLIANCE_STATION", 2048}, {"ALLIANCE_BARRACKS", 512}, {"ALLIANCE_GRAVWELL", 128},
+    {"ALLIANCE_TURRET", 16}, {"ALLIANCE_GRAVWELL", 128}, {"ALLIANCE_BARRACKS", 512}, {"ALLIANCE_STATION", 2048},
     {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32}, {"PLAYER_GUNSHIP", 64}, {"PLAYER_CAPITAL", 1024},
     {"PLAYER_MINER_DROID", 16},
-    {"PLAYER_TURRET", 16}, {"PLAYER_STATION", 1024}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512},
+    {"PLAYER_TURRET", 16}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512}, {"PLAYER_STATION", 1024},
     {"PLAYER_SHIP", 32},
     {"ION_MISSILE_MKI", 16},
     {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
@@ -25,26 +25,20 @@ std::vector<ship> g_ship_templates;
 
 std::string getTextureKey(ship_spec _s) {return g_texture_keys[_s].m_name;}
 
-ship::ship(
-        vec3 _p,
-        ship_spec _type,
-        float _radius
-        )
+ship::ship()
 {
-
     m_coolDown = 0.0f;
     m_shooting = false;
 
-    setPos(_p);
-    setPPos(_p);
+    setPos(vec3());
+    setPPos(vec3());
 
-    setVel({0.0f, 0.0f, 0.0f});
-    setWVel({0.0f, 0.0f, 0.0f});
+    setVel(vec3());
+    setWVel(vec3());
     m_angle = 0.0f;
     m_targetAngle = 0.0f;
 
     m_engineGlow = 0.0f;
-    m_steeringGlow = 0.0f;
     m_shieldGlow = 0.0f;
     m_drawShot = 0.0f;
     m_angVel = 0.0f;
@@ -53,22 +47,32 @@ ship::ship(
     m_canShoot = true;
 
     m_curWeap = 0;
+    m_weaponRange = {0, 0};
 
     m_hasParent = false;
     m_parent = {0, -1};
     m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
-    m_shieldMul = _radius;
+    m_shieldMul = 1.0f;
     m_generatorMul = 1.0f;
 
     m_lastAttacker = {0, -1};
 
-    m_cargo.setDim({0.0f, 0.0f});
+    m_cargo.setDim(vec2());
 
     m_type = SHIP_TYPE_FIGHTER;
 
-    switch(_type)
+    m_identifier = "";
+    setMaxHealth(0.0f,true);
+    setMaxShield(0.0f,true);
+    setMaxEnergy(0.0f,true);
+    m_initInertia = 0.0f;
+    m_enginePower = 0.0f;
+    //m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
+
+
+    /*switch(_type)
     {
     case COMMUNIST_1:
         m_identifier = "COMMUNIST_1";
@@ -567,22 +571,24 @@ ship::ship(
         m_identifier = "ERROR";
         m_type = SHIP_TYPE_NONE;
         break;
-    }
+    }*/
 
-    if(m_type == SHIP_TYPE_NONE)
+    m_angVelRange = {0, 0};
+    m_angVel = 0.0f;
+    /*if(m_type == SHIP_TYPE_NONE)
     {
         m_angVel = randNum(-1.0f, 1.0f);
     }
     else if(m_type == SHIP_TYPE_STRUCTURE)
     {
-        m_angVel = randNum(-0.1f, 0.1f);
-    }
+        m_angVel = randNum(-10.0f, 10.0f);
+    }*/
 
     m_priority = PRIORITY_NONE;
 
-    m_classification = _type;
+    m_classification = SHIPS_END;
 
-    m_radius = _radius;
+    m_radius = 0.0f;
 
     m_kills = 0;
     m_experience = 0.0f;
@@ -605,7 +611,6 @@ ship::ship(
     m_targetAngle = 0.0f;
 
     m_engineGlow = 0.0f;
-    m_steeringGlow = 0.0f;
     m_shieldGlow = 0.0f;
     m_drawShot = 0.0f;
 
@@ -618,7 +623,8 @@ ship::ship(
 
     m_initInertia = _src.m_initInertia;
     m_enginePower = _src.getEnginePower();
-    m_angVel = _src.getAngVel();
+    m_angVelRange = _src.m_angVelRange;
+    m_angVel = randNum(m_angVelRange.first, m_angVelRange.second);
 
     m_identifier = _src.getIdentifier();
 
@@ -644,7 +650,12 @@ ship::ship(
 
     m_type = _src.m_type;
 
-    switch(_src.getClassification())
+    if(m_weaponRange.first != 0 or m_weaponRange.second != 0)
+        m_weapons.push_back( g_weapons[ randNum(m_weaponRange.first, m_weaponRange.second) ] );
+    else
+        m_weapons = _src.m_weapons;
+
+    /*switch(_src.getClassification())
     {
     case COMMUNIST_1:
         m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
@@ -735,7 +746,7 @@ ship::ship(
             m_weapons.push_back(_src.getWeaps()[i]);
         }
         break;
-    }
+    }*/
 
     m_kills = 0;
     m_experience = 0.0f;
@@ -743,7 +754,8 @@ ship::ship(
 
 void ship::accelerate(const float _mult)
 {
-    float energyLoss = 0.6f * _mult, accelMult = 1.0f * _mult;
+    float energyLoss = 0.6f * _mult;
+    float accelMult = 1.0f * _mult * m_inertia * m_enginePower;
 
     if(m_priority == PRIORITY_ENGINES)
     {
@@ -757,10 +769,10 @@ void ship::accelerate(const float _mult)
     }
 
     if(m_energy <= energyLoss) return;
-    vec2 add = vec(getAng() + 90.0f) * accelMult * m_inertia * m_enginePower;
-    addVel(vec3(add.m_x, add.m_y, 0.0f));
+    vec2 add = vec(getAng() + 90.0f) * accelMult;
+    addForce(vec3(add.m_x, add.m_y, 0.0f));
     m_energy -= energyLoss;
-    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
+    m_engineGlow = clamp(m_engineGlow + 5.0f * (accelMult + 0.75f), 0.0f, 255.0f);
 
     setAccelerating(true);
 }
@@ -770,7 +782,8 @@ void ship::accelerate(
         const float _mult
         )
 {
-    float energyLoss = 0.6f, accelMult = 1.0f;
+    float energyLoss = 0.6f;
+    float accelMult = 1.0f * _mult * m_inertia * m_enginePower;
 
     if(m_priority == PRIORITY_ENGINES)
     {
@@ -784,9 +797,9 @@ void ship::accelerate(
     }
 
     if(m_energy <= energyLoss) return;
-    addVel(_dir * _mult * m_inertia * m_enginePower);
+    addForce(_dir * accelMult);
     m_energy -= energyLoss;
-    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
+    m_engineGlow = clamp(m_engineGlow + 5.0f * accelMult, 0.0f, 255.0f);
 
     setAccelerating(true);
 }
@@ -817,9 +830,9 @@ void ship::decelerate()
     float clamped = clamp(accelMult * m_inertia * m_enginePower, 0.0f, spd);
     add *= clamped;
 
-    addVel(add);
+    addForce(add);
     m_energy -= energyLoss;
-    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult,0.0f,255.0f);
+    m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult, 0.0f, 255.0f);
 
     setAccelerating(true);
 }
@@ -841,63 +854,63 @@ void ship::dodge(const float _side)
 
     if(m_energy <= energyLoss) return;
     vec2 avec = vec(getAng());
-    addVel( vec3(avec.m_x, avec.m_y, 0.0f) * _side * accelMult * m_inertia * m_enginePower );
+    addForce( vec3(avec.m_x, avec.m_y, 0.0f) * _side * accelMult * m_inertia * m_enginePower );
     m_energy -= energyLoss * fabs(_side);
 }
 
 void ship::update(const float _dt)
 {
+    float spd = mag(getVel()) / 100.0f;
+    spd *= _dt;
+    if(spd > 0.5f) damage( spd );
     m_inertia = 1.0f / (1.0f / m_initInertia + 1.0f / m_cargo.getInvMass());
 
     float angDiff = clampRoll(m_targetAngle - m_angle, -180.0f, 180.0f);
     float turnConst = 0.1f;
 
-    if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel, -180.0f, 180.0f ) );
+    if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel * _dt, -180.0f, 180.0f ) );
     else if(angDiff < -0.5f)
     {
         setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -90.0f, -0.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
-        m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
     else if(angDiff > 0.5f)
     {
         setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 0.0f, 90.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
-        m_steeringGlow = clamp(m_steeringGlow + 20.0f, 0.0f, 255.0f);
     }
 
-    float energy_loss = 0.05f, shield_add = 0.05f;
+    float energy_loss = 0.5f, shield_add = 0.5f;
 
     if(m_priority == PRIORITY_SHIELDS)
     {
-        energy_loss = 0.3f;
-        shield_add = 0.4f;
+        energy_loss = 3.0f;
+        shield_add = 4.0f;
         if(m_shield >= 0.0f) m_shieldGlow = 255.0f;
     }
     else if(m_priority == PRIORITY_GUNS or m_priority == PRIORITY_ENGINES)
     {
-        energy_loss = 0.01f;
-        shield_add = 0.03f;
+        energy_loss = 0.1f;
+        shield_add = 0.3f;
     }
 
     if(m_energy >= energy_loss and m_shield < m_maxShield)
     {
         m_shield = clamp(m_shield + shield_add * m_shieldMul * _dt, 0.0f, m_maxShield);
-        m_energy -= energy_loss;
+        m_energy -= energy_loss * _dt;
     }
 
     m_energy = clamp(m_energy + m_generatorMul * _dt * 5.0f, 0.0f, m_maxEnergy);
 
-    if(rand()%999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
+    if(rand() % 999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
-    m_steeringGlow = clamp(m_steeringGlow - 5.0f, 0.0f, 255.0f);
-    m_shieldGlow = clamp(m_shieldGlow - 10.0f, 0.0f, 255.0f);
-    m_engineGlow = clamp(m_engineGlow - 20.0f, 0.0f, 255.0f);
+    m_shieldGlow = clamp(m_shieldGlow - 200.0f * _dt, 0.0f, 255.0f);
+    if(!m_accelerating) m_engineGlow = clamp(m_engineGlow - 500.0f * _dt, 0.0f, 255.0f);
 
     m_coolDown = clamp(m_coolDown - _dt, 0.0f, 999.0f);
     m_damageTimer = clamp(m_damageTimer - _dt, 0.0f, 10.0f);
 
     m_drawShot *= clamp(20.0f * _dt, 0.0f, 0.9f);
 
-    addVel(-getVel() * 0.00001f);
+    addForce(-getVel() * 0.0001f);
 
     m_accelerating = false;
 
@@ -935,7 +948,7 @@ void ship::damage(float _d, const vec3 _v)
     {
         _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
         vec3 add = {_v.m_x, _v.m_y, 0.0f};
-        addVel(add * m_inertia);
+        addForce(add * m_inertia);
     }
 
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;
@@ -958,7 +971,7 @@ void ship::damage(float _d, const vec3 _v, uniqueID _id)
     {
         _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
         vec3 add = {_v.m_x, _v.m_y, 0.0f};
-        addVel(add * m_inertia);
+        addForce(add * m_inertia);
     }
 
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;
@@ -1057,13 +1070,13 @@ void ship::setCooldown(const float _f)
 
 std::array<float, 4> ship::getCurWeapCol() const
 {
-    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getLaserGlow()};
+    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, 1.0f};
     return {0.0f, 0.0f, 0.0f, 0.0f};
 }
 
 std::array<float, 4> ship::getShieldCol() const
 {
-    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getLaserGlow()};
+    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow()};
     return {0.1f, 0.4f, 1.0f, 1.0f};
 }
 
@@ -1090,7 +1103,7 @@ void ship::addXP(const float _xp)
 
 float ship::calcAICost()
 {
-    return (m_maxHealth + m_maxShield) * 0.025f;
+    return (m_maxHealth + m_maxShield) * 0.5f;
 }
 
 void ship::transferCargo(ship *_target, uniqueID _item)

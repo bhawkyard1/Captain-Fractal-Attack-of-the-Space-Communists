@@ -1,0 +1,28 @@
+red laser.txt
+green laser.txt
+blue laser.txt
+yellow laser.txt
+fed laser 1.txt
+fed laser 2.txt
+fed laser 3.txt
+fed laser turret.txt
+fed laser boss 1.txt
+fed laser boss 2.txt
+wingman laser 1.txt
+wingman laser 2.txt
+wingman laser 3.txt
+wingman laser boss.txt
+wingman laser miner.txt
+wingman laser turret.txt
+pirate laser 1.txt
+pirate laser 2.txt
+pirate laser 3.txt
+pirate laser boss 1.txt
+commie laser 1.txt
+commie laser 2.txt
+commie laser capital.txt
+alliance laser 1.txt
+alliance laser 2.txt
+alliance laser 3.txt
+alliance laser boss 1.txt
+null.txt

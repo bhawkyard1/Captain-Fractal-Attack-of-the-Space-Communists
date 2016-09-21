@@ -1,0 +1,11 @@
+identifier FEDERATION_MKIV
+asset enemy_4
+type 0
+size 32.0
+health 120
+shield 80
+energy 200
+inertia 0.15
+enginepower 7
+weaponrange 4 6
+holdspace 64.0 64.0

@@ -1,12 +1,11 @@
 #ifndef WEAPONS_HPP
 #define WEAPONS_HPP
 
-#define WEAPS_W 10
-#define WEAPS_H 18
-
 #include "common.hpp"
 #include "util.hpp"
 #include <array>
+
+#define WEAPS_W 10
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file weapons.hpp
@@ -44,37 +43,39 @@ enum WEAPON_TYPE {
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Global array containing base stats of all weapons in-game. These are copied out to ships upon their construction.
 //----------------------------------------------------------------------------------------------------------------------
-static std::array<std::array<float,10>,28> g_weapons =
-{{
-     {{1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.08f}},//Laser cannon	0
-     {{12.0f,	5.0f,                           3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.1f}},//Shotgun			1
-     {{1.0f,	1.0f,                           2.0f,       30.0f,		40.0f,	75.0f,	255.0f,	1.0f,   0.05f,  0.04f}},//Blue laser		2
-     {{1.0f,	1.0f,                           2000.0f,    100.0f,		255.0f,	210.0f,	0.0f,   0.0f,   0.02f,  0.1f}},//Yellow laser	3
-     {{1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 12.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.5f,   0.02f}},//AI laser 1		4
-     {{3.0f,	4.0f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       10.0f,      255.0f,	20.0f,	240.0f,	0.5f,   0.8f,   0.03f}},//AI laser 2		5
-     {{1.0f,	2.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       15.0f,		255.0f,	20.0f,	240.0f,	0.3f,   0.4f,   0.04f}},//AI laser 3		6
-     {{1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 10.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.8f,   0.02f}},
-     {{30.0f,	2.0f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       10.0f,      255.0f,	30.0f,	80.0f,	1.0f,   1.0f,   0.08f}},//Boss laser 1	7
-     {{1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       20.0f,		255.0f,	30.0f,	80.0f,	1.0f,   0.05f,  0.09f}},//Boss laser 2	8
-     {{2.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	10.0f,		24.0f,		20.0f,	255.0f,	40.0f,	0.8f,   0.8f,   0.1f}},//Wingman laser	9
-     {{1.0f,	1.0f/clamp(g_DIFFICULTY, 1, 9),	1.0f,       40.0f,		20.0f,	255.0f,	40.0f,	0.4f,   0.2f,   0.08f}},//Wingman laser	10
-     {{1.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	12.0f,		12.0f,      20.0f,	255.0f,	40.0f,	1.0f,   1.0f,   0.09f}},//Wingman laser	11
-     {{10.0f,	1.0f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       40.0f,		20.0f,	255.0f,	40.0f,	0.4f,   0.5f,   0.07f}},//Wingman boss laser	11
-     {{1.0f,	0.1f/clamp(g_DIFFICULTY, 1, 9),	100.0f,		40.0f,		20.0f,	255.0f,	40.0f,	0.2f,   5.0f,   0.02f}},//Mining laser	12
-     {{1.0f,	0.6f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       20.0f,		20.0f,	255.0f,	40.0f,	1.0f,   0.9f,   0.3f}},//Turret laser	13
-     {{1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.04f}},//Pirate laser 1	14
-     {{1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.3f,   0.04f}},//Pirate laser 2	15
-     {{3.0f,	2.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.7f,   0.04f}},//Pirate laser 3	16
-     {{3.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	12.0f,      10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.08f}},//P gunship laser	17
-     {{1.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.9f,   0.04f}},//Commie laser 1 18
-     {{2.0f,	1.2f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.3f,   0.04f}},//Commie laser 2 19
-     {{15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.5f,   0.04f}},//Commie laser capital 20
-     {{1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       15.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.9f,   0.08f}},//Alliance 1
-     {{5.0f,	2.2f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       12.0f,		0.0f,	200.0f,	255.0f, 2.0f,   0.9f,   0.09f}},//Alliance 2
-     {{2.0f,	1.2f/clamp(g_DIFFICULTY, 1, 9),	1.0f,       18.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.3f,   0.04f}},//Alliance 3
-     {{2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      50.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.1f,   0.3f}},//Alliance boss
-     {{0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}}   //Null 20
-}};
+extern std::vector<std::array<float,WEAPS_W>> g_weapons;/* =
+{
+    {1.0f,	2.0f,                           8.0f,       12.0f,		255.0f,	50.0f,	50.0f,	4.0f,   0.2f,   0.08f},//Laser cannon      0
+    {12.0f,	5.0f,                           3.0f,       8.0f,       50.0f,	255.0f,	65.0f,	10.0f,	0.5f,   0.1f},//Shotgun			1
+    {1.0f,	1.0f,                           2.0f,       30.0f,		40.0f,	75.0f,	255.0f,	1.0f,   0.05f,  0.04f},//Blue laser		2
+    {1.0f,	1.0f,                           2000.0f,    100.0f,		255.0f,	210.0f,	0.0f,   0.0f,   0.02f,  0.1f},//Yellow laser       3
+    {1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 12.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.5f,   0.02f},//AI laser 1		4
+    {3.0f,	4.0f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       10.0f,      255.0f,	20.0f,	240.0f,	0.5f,   0.8f,   0.03f},//AI laser 2		5
+    {1.0f,	2.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       15.0f,		255.0f,	20.0f,	240.0f,	0.3f,   0.4f,   0.04f},//AI laser 3		6
+    {1.0f,	3.0f/clamp(g_DIFFICULTY, 1, 9), 10.0f,      10.0f,		255.0f,	20.0f,	240.0f,	1.0f,   0.8f,   0.02f},//Fed turret laser  7
+    {30.0f,	2.0f/clamp(g_DIFFICULTY, 1, 9),	4.0f,       10.0f,      255.0f,	30.0f,	80.0f,	1.0f,   1.0f,   0.08f},//Boss laser 1      8
+    {1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       20.0f,		255.0f,	30.0f,	80.0f,	1.0f,   0.05f,  0.09f},//Boss laser 2      9
+    {2.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	10.0f,		24.0f,		20.0f,	255.0f,	40.0f,	0.8f,   0.8f,   0.1f},//Wingman laser      10
+    {1.0f,	1.0f/clamp(g_DIFFICULTY, 1, 9),	1.0f,       40.0f,		20.0f,	255.0f,	40.0f,	0.4f,   0.2f,   0.08f},//Wingman laser     11
+    {1.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	12.0f,		12.0f,      20.0f,	255.0f,	40.0f,	1.0f,   1.0f,   0.09f},//Wingman laser     12
+    {10.0f,	1.0f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       40.0f,		20.0f,	255.0f,	40.0f,	0.4f,   0.5f,   0.07f},//Wingman boss laser13
+    {1.0f,	0.1f/clamp(g_DIFFICULTY, 1, 9),	100.0f,		40.0f,		20.0f,	255.0f,	40.0f,	0.2f,   5.0f,   0.02f},//Mining laser      14
+    {1.0f,	0.6f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       20.0f,		20.0f,	255.0f,	40.0f,	1.0f,   0.9f,   0.3f},//Turret laser       15
+    {1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.5f,   0.04f},//Pirate laser 1	16
+    {1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.3f,   0.04f},//Pirate laser 2	17
+    {3.0f,	2.5f/clamp(g_DIFFICULTY, 1, 9),	6.0f,       10.0f,		255.0f,	216.0f,	0.0f,   0.8f,   0.7f,   0.04f},//Pirate laser 3	18
+    {3.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	12.0f,      10.0f,		255.0f,	216.0f,	0.0f,   1.0f,   0.9f,   0.08f},//P gunship laser	19
+    {1.0f,	0.8f/clamp(g_DIFFICULTY, 1, 9),	7.0f,       15.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.9f,   0.04f},//Commie laser 1    20
+    {2.0f,	1.2f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.3f,   0.04f},//Commie laser 2    21
+    {15.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      10.0f,		255.0f,	0.0f,	0.0f,   1.0f,   0.5f,   0.04f},//Commie laser capital 22
+    {1.0f,	1.5f/clamp(g_DIFFICULTY, 1, 9),	8.0f,       15.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.9f,   0.08f},//Alliance          23
+    {5.0f,	2.2f/clamp(g_DIFFICULTY, 1, 9),	2.0f,       12.0f,		0.0f,	200.0f,	255.0f, 2.0f,   0.9f,   0.09f},//Alliance          24
+    {2.0f,	1.2f/clamp(g_DIFFICULTY, 1, 9),	1.0f,       18.0f,		0.0f,	200.0f,	255.0f, 3.0f,   0.3f,   0.04f},//Alliance          25
+    {2.0f,	0.5f/clamp(g_DIFFICULTY, 1, 9),	20.0f,      50.0f,		0.0f,	200.0f,	255.0f, 0.8f,   0.1f,   0.3f},//Alliance boss      26
+    {0.0f,    0.0f,                           0.0f,       0.0f,       0.0f,   0.0f,   0.0f,   0.0f,   0.0f,   0.0f}   //Null             27
+};*/
+
+void loadWeapons();
 
 inline float getEnergyCost(int weap)
 {

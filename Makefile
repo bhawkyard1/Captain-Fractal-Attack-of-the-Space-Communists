@@ -177,6 +177,7 @@ Makefile: ed2.pro .qmake.cache D:\Qt\5.4\msvc2013_64_opengl\mkspecs\win32-msvc20
 		D:\Qt\5.4\msvc2013_64_opengl\mkspecs\win32-msvc2013\qmake.conf \
 		D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\spec_post.prf \
 		.qmake.cache \
+		.qmake.stash \
 		D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\exclusive_builds.prf \
 		D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\default_pre.prf \
 		D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\default_pre.prf \
@@ -306,6 +307,7 @@ D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\qt_config.prf:
 D:\Qt\5.4\msvc2013_64_opengl\mkspecs\win32-msvc2013\qmake.conf:
 D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\spec_post.prf:
 .qmake.cache:
+.qmake.stash:
 D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\exclusive_builds.prf:
 D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\default_pre.prf:
 D:\Qt\5.4\msvc2013_64_opengl\mkspecs\features\win32\default_pre.prf:
@@ -341,6 +343,7 @@ clean: release-clean debug-clean FORCE
 	-$(DEL_FILE) "Captain Fractal- Attack of the Space Communists.exp"
 distclean: release-distclean debug-distclean FORCE
 	-$(DEL_FILE) Makefile
+	-$(DEL_FILE) .qmake.stash
 
 release-mocclean:
 	@set MAKEFLAGS=$(MAKEFLAGS)

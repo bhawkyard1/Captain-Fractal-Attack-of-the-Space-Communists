@@ -1,0 +1,10 @@
+lasers 1.0
+spread 1.0
+damage 2.0
+speed 30.0
+red 40.0
+green 75.0
+blue 255.0
+cost 1.0
+cooldown 0.05
+power 0.04

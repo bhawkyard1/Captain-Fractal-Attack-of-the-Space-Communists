@@ -1,0 +1,11 @@
+identifier PLAYER_GUNSHIP
+asset wingman_4
+type 0
+size 64.0
+health 350
+shield 400
+energy 500
+inertia 0.04
+enginepower 9
+weapons 13
+holdspace 256.0 256.0

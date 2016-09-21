@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file shipFragment.glsl
@@ -12,22 +12,24 @@
 
 in vec2 UV;
 in vec3 normal;
+in vec4 position;
 
 uniform sampler2D diffuse;
-uniform vec4 shootingLightCol;
 uniform float alpha;
 
 layout(location = 0) out vec4 fragColour;
+layout(location = 1) out vec4 fragNormal;
+layout(location = 2) out vec4 fragPosition;
 
 void main()
 {
-    vec3 ambientLightPos = vec3(0.01, 1.0, -1.2);
-    vec3 shootingLightPos = vec3(0.0, 0.02, -1.2);
-
     fragColour = texture( diffuse, UV );
+    fragNormal = vec4(normalize(normal), 1.0);
+    fragPosition = position;
+    //fragPosition = gl_FragCoord;
 
     //Ambient diffuse
-    fragColour.rgb *= dot(normal, ambientLightPos) * 0.5;
+    /*fragColour.rgb *= dot(normal, ambientLightPos) * 0.5;
 
     //Shooting diffuse
     fragColour += dot(normal, shootingLightPos) * vec4(shootingLightCol.rgb * shootingLightCol.a, shootingLightCol.a) * 0.2;
@@ -38,5 +40,5 @@ void main()
     //Shooting Spec
     fragColour += pow( shootingLightCol * dot(normal, reflect(-shootingLightPos, normal)), vec4(1.0)) * shootingLightCol.a;
 
-    fragColour.a *= alpha;
+    fragColour.a *= alpha;*/
 }

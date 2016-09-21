@@ -37,10 +37,10 @@ enum ship_spec {
     PIRATE_TURRET,
     ALLIANCE_SCOUT, ALLIANCE_TRACKER, ALLIANCE_PHOENIX, ALLIANCE_DRAGON, ALLIANCE_GUNSHIP,
     ALLIANCE_TRADER,
-    ALLIANCE_TURRET, ALLIANCE_STATION, ALLIANCE_BARRACKS, ALLIANCE_GRAVWELL,
+    ALLIANCE_TURRET, ALLIANCE_GRAVWELL, ALLIANCE_BARRACKS, ALLIANCE_STATION,
     PLAYER_HUNTER, PLAYER_DEFENDER, PLAYER_DESTROYER, PLAYER_GUNSHIP, PLAYER_CAPITAL,
     PLAYER_MINER_DROID,
-    PLAYER_TURRET, PLAYER_STATION, PLAYER_GRAVWELL, PLAYER_BARRACKS,
+    PLAYER_TURRET, PLAYER_GRAVWELL, PLAYER_BARRACKS, PLAYER_STATION,
     PLAYER_SHIP,
     ION_MISSILE_MKI,
     ASTEROID_SMALL, ASTEROID_MID, ASTEROID_LARGE,
@@ -65,7 +65,7 @@ ship_spec& operator++(ship_spec &_lhs);
 //----------------------------------------------------------------------------------------------------------------------
 enum ship_type {
     SHIP_TYPE_FIGHTER, SHIP_TYPE_CAPITAL, SHIP_TYPE_TRADER, SHIP_TYPE_MINER,
-    SHIP_TYPE_TURRET, SHIP_TYPE_STRUCTURE,
+    SHIP_TYPE_TURRET, SHIP_TYPE_STATION, SHIP_TYPE_BARRACKS, SHIP_TYPE_GRAVWELL,
     SHIP_TYPE_NONE
 };
 
@@ -110,12 +110,9 @@ class ship: public base
 {
 public:
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief ctor for the ship class.
-    /// \param _p position
-    /// \param _type ship type
-    /// \param _radius ship size
+    /// \brief ctor for the ship class. Needs values to be loaded in from text file, useless on its own.
     //----------------------------------------------------------------------------------------------------------------------
-    ship(const vec3 _p, const ship_spec _type, const float _radius);
+    ship();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Copy ctor for the ship class.
@@ -128,7 +125,7 @@ public:
     /// \brief Adds velocity to the ship.
     /// \param _v base vector
     //----------------------------------------------------------------------------------------------------------------------
-    void addVelS(const vec3 _v) {if(m_canMove) addVel(_v * m_inertia * m_enginePower);}
+    void addVelS(const vec3 _v) {if(m_canMove) addForce(_v * m_inertia * m_enginePower);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Accelerates the ship, in the direction that it is facing.
@@ -213,6 +210,7 @@ public:
     /// \brief Returns all data concerning a specific weapon.
     //----------------------------------------------------------------------------------------------------------------------
     std::array<float, 10> getWeap() const {return m_weapons[m_curWeap];}
+    void addWeap(size_t _i) {m_weapons.push_back(g_weapons[_i]);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns current weapon index.
@@ -260,6 +258,9 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void setShield(const float _s) {m_shield = _s;}
     float getShield() const {return m_shield;}
+
+    void setShieldMul(const float _s) {m_shieldMul = _s;}
+    float getShieldMul() const {return m_shieldMul;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for m_energy.
@@ -320,7 +321,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for m_inertia.
     //----------------------------------------------------------------------------------------------------------------------
-    void setInertia(const float _in) {m_inertia = _in;}
+    void setInertia(const float _in, bool _set = false) {m_inertia = _in; if(_set) m_initInertia = _in;}
     float getInertia() const {return m_inertia;}
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -338,13 +339,16 @@ public:
     /// \brief m_classification getter.
     //----------------------------------------------------------------------------------------------------------------------
     ship_spec getClassification() const {return m_classification;}
+    void setClassification(const ship_spec _spec) {m_classification = _spec;}
 
     ship_type getType() const {return m_type;}
+    void setType(const ship_type _type) {m_type = _type;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief m_radius getter.
     //----------------------------------------------------------------------------------------------------------------------
     float getRadius() const {return m_radius;}
+    void setRadius(const float _radius) {m_radius = _radius;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns the score value for the ship, how many points the player gets for blowing it up.
@@ -355,16 +359,19 @@ public:
     /// \brief Getter for m_angVel.
     //----------------------------------------------------------------------------------------------------------------------
     float getAngVel() const {return m_angVel;}
+    void setAngVelRange(float _start, float _end, bool _set = false) {m_angVelRange = {_start, _end}; if(_set) m_angVel = randNum(_start, _end);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for m_canMove.
     //----------------------------------------------------------------------------------------------------------------------
     bool getCanMove() const {return m_canMove;}
+    void setCanMove(const bool _b) {m_canMove = _b;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for m_canShoot.
     //----------------------------------------------------------------------------------------------------------------------
     bool getCanShoot() const {return m_canShoot;}
+    void setCanShoot(const bool _b) {m_canShoot = _b;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Whether the ship can be considered to be in combat.
@@ -375,11 +382,12 @@ public:
     /// \brief Getter for the ship type id.
     //----------------------------------------------------------------------------------------------------------------------
     std::string getIdentifier() const {return m_identifier;}
+    void setIdentifier(const std::string _id) {m_identifier = _id;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets the alpha values for various colours associated with the ship.
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<float, 4> getAlphaStats() const {std::array<float, 4> ret = {static_cast<float>(m_engineGlow), static_cast<float>(m_steeringGlow), static_cast<float>(m_drawShot), static_cast<float>(m_shieldGlow)}; return ret;}
+    std::array<float, 3> getAlphaStats() const {std::array<float, 3> ret = {static_cast<float>(m_engineGlow), static_cast<float>(m_drawShot), static_cast<float>(m_shieldGlow)}; return ret;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for m_shieldGlow.
@@ -390,6 +398,8 @@ public:
     /// \brief Getter for m_drawShot, converts it to the range 0-1.
     //----------------------------------------------------------------------------------------------------------------------
     float getLaserGlow() const {return m_drawShot / 255.0f;}
+
+    float getEngineGlow() const {return m_engineGlow;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for parents.
@@ -451,6 +461,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Angular velocity.
     //----------------------------------------------------------------------------------------------------------------------
+    std::pair<float, float> m_angVelRange;
     float m_angVel;
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -523,6 +534,7 @@ private:
     /// \brief Vector containing weapons data.
     //----------------------------------------------------------------------------------------------------------------------
     std::vector< std::array<float, 10> > m_weapons;
+    std::pair<size_t, size_t> m_weaponRange;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Ship type.
@@ -563,12 +575,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Glowing of the engines.
     //----------------------------------------------------------------------------------------------------------------------
-    size_t m_engineGlow;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Glowing of the steering surfaces.
-    //----------------------------------------------------------------------------------------------------------------------
-    size_t m_steeringGlow;
+    float m_engineGlow;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Muzzle flash.

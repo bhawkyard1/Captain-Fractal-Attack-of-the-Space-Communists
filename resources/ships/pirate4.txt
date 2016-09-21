@@ -1,0 +1,11 @@
+identifier PIRATE_MARAUDER
+asset pirate_4
+type 0
+size 40.0
+health 120
+shield 60
+energy 120
+inertia 0.15
+enginepower 7
+weaponrange 16 18
+holdspace 100.0 100.0

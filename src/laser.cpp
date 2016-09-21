@@ -36,5 +36,6 @@ laser::laser(vec3 _p,
 void laser::update(float _dt)
 {
     m_power -= 64.0f * _dt;
+    addForce(randVec3(m_stop));
     updatePos(_dt);
 }

@@ -1,0 +1,11 @@
+identifier PLAYER_STATION
+asset station_1
+type 5
+size 1024.0
+health 10000
+shield 10000
+energy 10000
+holdspace 16000.0 16000.0
+canmove 0
+canshoot 0
+angvelrange -10.0 10.0

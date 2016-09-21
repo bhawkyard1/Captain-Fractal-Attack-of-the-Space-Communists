@@ -101,6 +101,7 @@ private:
   /// \brief A reference to the current target. Since the target need not be another enemy, it is of type ship
   //----------------------------------------------------------------------------------------------------------------------
   ship * m_target;
+  uniqueID m_targetID;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The distance this agent will attempt to hold around its target

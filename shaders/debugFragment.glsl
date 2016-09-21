@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file debugFragment.glsl
@@ -14,7 +14,7 @@
 in vec4 fragCoord;
 uniform vec4 inColour;
 
-out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 void main()
 {

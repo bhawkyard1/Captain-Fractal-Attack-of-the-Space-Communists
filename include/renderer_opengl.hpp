@@ -1,6 +1,8 @@
 #ifndef RENDERER_OPENGL_HPP
 #define RENDERER_OPENGL_HPP
 
+#define MAX_LIGHTS 256
+
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -10,9 +12,11 @@
 #include "common.hpp"
 #include "enemy.hpp"
 #include "faction.hpp"
+//#include "framebuffer.hpp"
 #include "laser.hpp"
 #include "missile.hpp"
 #include "player.hpp"
+#include "pointLight.hpp"
 #include "sprite_sheet_opengl.hpp"
 #include "ship.hpp"
 #include "vectors.hpp"
@@ -23,6 +27,8 @@
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/Obj.h>
+
+#define AMBIENT_RESOLUTION_DIVIDER 256
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file renderer_opengl.hpp
@@ -55,6 +61,10 @@ public:
     /// \brief Initialises SDL for use in creating the window
     //----------------------------------------------------------------------------------------------------------------------
     int init();
+
+    void loadShips();
+
+    void bindTextureToSampler(const GLint _shaderID, const GLuint _tex, const char * _uniform, int _target);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Creates a shader program using a vertex and fragment file, using ngl::ShaderLib
@@ -90,6 +100,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols);
 
+    GLuint createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec2> _UVs);
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Creates a VAO, returns the id
     /// \param _verts vector of vertices
@@ -105,6 +117,9 @@ public:
     /// \param _UVs vector of uv coordinates
     //----------------------------------------------------------------------------------------------------------------------
     void clearVectors();
+
+    void addLight(pointLight _light, size_t _i) {m_pointLights[_i] = _light; m_activeLights = _i;}
+    void resetLights() {m_pointLights.fill({vec3(0.0f), vec3(0.0f)}); m_activeLights = 0;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws the background
@@ -173,7 +188,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Clears the window
     //----------------------------------------------------------------------------------------------------------------------
-    void clear() const {glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);}
+    void clear();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Exits the program, prints and error message
@@ -318,7 +333,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Swaps the window
     //----------------------------------------------------------------------------------------------------------------------
-    void finalise() { SDL_GL_SwapWindow(m_window); }
+    void finalise(const float _t, const vec2 _vel);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Loads an image and returns a SDL_Surface
@@ -331,6 +346,7 @@ public:
     /// \param _s shake magnitude
     //----------------------------------------------------------------------------------------------------------------------
     void addShake(float _s);
+    vec3 getShake() {return m_camera.getCamPos();}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Converts an SDL_Surface to an openGL texture, returns the ID
@@ -351,6 +367,8 @@ public:
     uniqueID getFocus() {return m_focus;}
 
     camera * getCamera() {return &m_camera;}
+
+    void useAttachments(const std::vector<GLenum> _bufs) {glDrawBuffers(_bufs.size(), &_bufs[0]);}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The window the game will be drawn in
@@ -361,6 +379,23 @@ private:
     /// \brief Window dimensions
     //----------------------------------------------------------------------------------------------------------------------
     int m_w, m_h;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Framebuffer stuff
+    //----------------------------------------------------------------------------------------------------------------------
+    GLuint m_framebuffer;
+
+    GLuint m_bufferBackgroundDiffuse;
+    GLuint m_bufferBackgroundDepth;
+    GLuint m_bufferLitDiffuse;
+    GLuint m_bufferLitNormal;
+    GLuint m_bufferLitPosition;
+    GLuint m_bufferEffectsDiffuse;
+
+    GLuint m_tinyFramebuffer;
+    GLuint m_bufferDownscaledBackgroundDiffuse;
+
+    GLuint genTexture(int _width, int _height, GLint _format, GLint _internalFormat);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container of letter sprites, can be used to draw text
@@ -482,6 +517,11 @@ private:
     void loadTransformToShader();
 
     //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Draws the contents of the custom buffers to the screen
+    //----------------------------------------------------------------------------------------------------------------------
+    void drawCustomBuffers(const float _t, const vec2 _vel);
+
+    //----------------------------------------------------------------------------------------------------------------------
     /// \brief The amount of camera shake
     //----------------------------------------------------------------------------------------------------------------------
     float m_cameraShake;
@@ -499,6 +539,9 @@ private:
     camera m_camera;
 
     uniqueID m_focus;
+
+    std::array<pointLight, MAX_LIGHTS> m_pointLights;
+    int m_activeLights;
 };
 
 #endif

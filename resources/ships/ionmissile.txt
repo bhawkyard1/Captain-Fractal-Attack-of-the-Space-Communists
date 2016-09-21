@@ -1,0 +1,10 @@
+identifier ION_MISSILE_MKI
+asset missile_1
+type 6
+size 16.0
+health 10
+shield 10
+energy 1000
+inertia 0.1
+enginepower 6
+canshoot 0

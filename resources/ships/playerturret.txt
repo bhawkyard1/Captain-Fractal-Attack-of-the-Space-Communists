@@ -1,0 +1,12 @@
+identifier PLAYER_TURRET
+asset turret_1
+type 4
+size 16.0
+health 100
+shield 200
+energy 300
+inertia 0.1
+enginepower 4
+weapons 15
+holdspace 64.0 64.0
+canmove 0

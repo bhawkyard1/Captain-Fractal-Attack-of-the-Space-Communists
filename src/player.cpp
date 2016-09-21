@@ -1,10 +1,10 @@
 #include "player.hpp"
 
 player::player(
-        vec3 _p,
-        float _r)
+        vec3 _p
+        )
     :
-      ship(_p, PLAYER_SHIP, _r)
+      ship(g_ship_templates[PLAYER_SHIP], _p)
 {
     setWeap(0);
     setMissiles(3);

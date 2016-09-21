@@ -1,0 +1,11 @@
+identifier ALLIANCE_TRACKER
+asset neutral_2
+type 0
+size 32.0
+health 50
+shield 80
+energy 125
+inertia 0.09
+enginepower 5
+weaponrange 23 25
+holdspace 16.0 16.0

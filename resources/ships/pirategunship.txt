@@ -1,0 +1,11 @@
+identifier PIRATE_GUNSHIP
+asset pirate_5
+type 0
+size 64.0
+health 400
+shield 300
+energy 150
+inertia 0.05
+enginepower 8
+weapons 19
+holdspace 100.0 100.0

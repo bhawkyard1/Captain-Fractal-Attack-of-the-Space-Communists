@@ -1,0 +1,11 @@
+identifier ALLIANCE_GRAVWELL
+asset neutral_gravwell_1
+type 7
+size 128.0
+health 700
+shield 2000
+energy 50000
+holdspace 512.0 512.0
+canmove 0
+canshoot 0
+angvelrange -10.0 10.0

@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 in vec4 gl_FragCoord;
 in vec2 UV;
@@ -9,7 +9,7 @@ in float variation_seed;
 in float explosion_seed;
 in float speed;
 
-out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 //float iGlobalTime = vertCol.a;
 
@@ -23,7 +23,7 @@ out vec4 fragColour;
 // ray cast is only performed for nearby pixels, and raycast can begin from the sphere
 // (instead of walking out from the camera)
 float expRadius = 1.75;
-                        // keep this constant for a whole explosion, but when differing from explosion to the next one, you get non-identical looking ones
+// keep this constant for a whole explosion, but when differing from explosion to the next one, you get non-identical looking ones
 float downscale = 1.25;				// how much smaller (than expRadius) one explosion ball should be. bigger value = smaller. 1.0 = no scale down.
 int steps = int(clamp(4 / speed, 24, 64));				// iterations when marching through cloud noise. default = 64. 40 might still suffice. When putting higher, explosion becomes too dense, so make colBottom and colTop more transparent.
 float grain = 1.5;					// increase for more detailed explosions, but then you should also increase iterations (and decrease step, which is done automatically)
@@ -75,20 +75,7 @@ vec2 hash2( float n )
     return fract(sin(vec2(n,n+1.0))*vec2(13.5453123,31.1459123));
 }
 
-vec3 hash3( float n )
-{
-    return fract(sin(vec3(n,n+1.0,n+2.0))*vec3(13.5453123,31.1459123,37.3490423));
-}
-
-float hash13(vec3 p3)
-{
-    p3  = fract(p3 * vec3(.1031,.11369,.13787));
-    p3 += dot(p3, p3.yzx + 19.19);
-    return fract((p3.x + p3.y) * p3.z);
-}
-
-
-float noise( in vec3 x )
+float noise( vec3 x )
 {
     vec3 f = fract(x);
     vec3 p = x - f; // this avoids the floor() but doesnt affect performance for me.
@@ -109,56 +96,8 @@ float fbm( vec3 p, vec3 dir )
     q = q*2.03 - dir; f += 0.12500*noise( q );
     q = q*2.01 - dir; f += 0.06250*noise( q );
     q = q*2.02 - dir; f += 0.03125*noise( q );
+
     return f;
-}
-
-
-float tri(in float x){return abs(fract(x)-.5);}
-vec3 tri3(in vec3 p){return vec3( tri(p.z+tri(p.y*1.)), tri(p.z+tri(p.x*1.)), tri(p.y+tri(p.x*1.)));}
-
-float triNoise3d(in vec3 p, in float spd, float ti)
-{
-    float z=1.1;
-    float rz = 0.;
-    vec3 bp = p*1.5;
-    for (float i=0.; i<=3.; i++ )
-    {
-        vec3 dg = tri3(bp);
-        p += (dg+spd);
-        bp *= 1.9;
-        z *= 1.5;
-        p *= 1.3;
-
-        rz+= (tri(p.z+tri(p.x+tri(p.y))))/z;
-        bp += 0.14;
-    }
-    return rz;
-}
-
-float fogmap(in vec3 p, in float d, float ti)
-{
-    p.x *= .4;
-    p.x += ti*1.5;
-    p.z += sin(p.x*.5);
-    p.z *= .4;
-    return max(triNoise3d(p*.3/(d+20.),0.2, ti)-.4, 0.)*(smoothstep(0.,25.,p.y));
-    //return triNoise3d(p*1.2/(d+20.),0.2, ti)*(1.25-smoothstep(0.,25.,p.y));
-}
-// Thanks to nimitz for the fast fog/clouds idea...
-// https://www.shadertoy.com/view/4ts3z2
-vec3 clouds(in vec3 col, in vec3 ro, in vec3 rd, in float mt, float ti, in vec3 cloudcolour)
-{
-    float d = 1.5;	//.5
-    for(int i=0; i<7; i++)
-    {
-        if (d>mt)break;
-        vec3  pos = ro + rd*d;
-        float rz = fogmap(pos, d, ti);
-        col = mix(col,cloudcolour,clamp(rz*smoothstep(d-0.4,2.+d*1.75,mt),0.,1.) );
-        d *= 1.5+0.3;
-    }
-    return col;
-
 }
 
 // assign colour to the media
@@ -177,28 +116,11 @@ float densityFn( in vec3 p, in float r, float t, in vec3 dir, float seed )
     //const float pi = 3.1415926;
     float den = ballness + (growth+ballness)*log(t)*r;
     den -= (2.5+ballness)*pow(t,fade)/r;
-    //den = -1.7 - p.y;
-    //den *= 1.+smoothstep(0.75,1.,r);
 
-    //if ( den <= -4. || den > -1. ) return -1.;
-    //if ( den <= -2.8 ) return -1.;
     if ( den <= -3. ) return -1.;
-    //if ( den > -1. ) return -1.;
 
-#ifdef SHOW_BOUNDS
-    p = 0.5 * normalize(p);
-    return abs(p.y);
-    //return 0.8;
-#endif
-
-    // offset noise based on seed
-    // plus a time based offset for the rolling effect (together with the space inversion below)
-    //float s = seed-(rolling_speed/(t+rolling_init_damp));
     float s = seed-(rolling_speed/(sin(min(t*3.,1.57))+rolling_init_damp));
-    //if( iMouse.z > 0.0 ) t += iMouse.y * 0.02;
-    //vec3 dir = vec3(0.,1.,0.);
-    //vec3 dir = -0.5*(p - expCenter);
-    //vec3 dir = normalize( vec3( noise(p.xyz), noise(p.yxz), noise(p.zyx) ) );
+
     dir *= s;
 
     // invert space
@@ -210,11 +132,6 @@ float densityFn( in vec3 p, in float r, float t, in vec3 dir, float seed )
 
     // add in noise with scale factor
     den += 4.0*f;
-    //den -= r*r;
-
-    //den *= density;	// we do that outside
-    //den *= 1.25;
-    //den *= .8;
 
     return den;
 }
@@ -265,14 +182,14 @@ void calcDens( in vec3 pos, out float rad, out float r, out float rawDens, in fl
 
 }
 
-void contributecolour( in vec4 col, inout vec4 sum )
+void contributecolour( vec4 col, vec4 sum )
 {
     // alpha blend in contribution
     sum = sum + col*(1.0 - sum.a);
     sum.a+=0.15*col.a;
 }
 
-vec4 raymarch( in vec3 rayo, in vec3 rayd, in vec2 expInter, in float t, out float d )
+vec4 raymarch( vec3 rayo, vec3 rayd, vec2 expInter, float t, out float d )
 {
     vec4 sum = vec4( 0.0 );
 
@@ -326,7 +243,7 @@ vec4 raymarch( in vec3 rayo, in vec3 rayd, in vec2 expInter, in float t, out flo
 }
 
 // iq's sphere intersection, but here fixed for a sphere at (0,0,0)
-vec2 iSphere(in vec3 ro, in vec3 rd, in float rad)
+vec2 iSphere(vec3 ro, vec3 rd, float rad)
 {
     float b = dot(ro, rd);					//=dot(oc, rd);
     float c = dot(ro, ro) - rad * rad;		//=dot(oc, oc) - sph.w * sph.w; //sph.w is radius
@@ -338,7 +255,7 @@ vec2 iSphere(in vec3 ro, in vec3 rd, in float rad)
     return vec2(-b-h, -b+h);
 }
 
-vec3 computePixelRay( in vec2 p, out vec3 cameraPos )
+vec3 computePixelRay( vec2 p, out vec3 cameraPos )
 {
     // camera orbits around explosion
 
@@ -391,7 +308,7 @@ void setup()
         vec2 phi = hash2(pseed) * vec2(2.*pi, pi*ball_spread);
         vec2 tilted = vec2( sin(phi.y), cos(phi.y) );
         vec3 rotated = vec3( tilted.x * cos(phi.x), tilted.y, tilted.x * sin(phi.x) );
-        balls[k].offset = 0.7 * rotated; //hash3(pseed) - 0.5;
+        balls[k].offset = 0.7 * rotated;
         balls[k].dir = normalize( balls[k].offset );
         balls[k].delay = delay_range * hash(tseed);
         pseed += 3.;
@@ -410,6 +327,8 @@ void setup()
 
 void main()
 {
+    fragColour = vec4(0.0);
+    return;
     float t = getTime();
 
     // some global initialization.

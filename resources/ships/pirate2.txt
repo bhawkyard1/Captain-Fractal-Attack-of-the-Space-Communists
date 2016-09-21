@@ -1,0 +1,11 @@
+identifier PIRATE_CRUISER
+asset pirate_2
+type 0
+size 32.0
+health 50
+shield 50
+energy 100
+inertia 0.1
+enginepower 5
+weaponrange 16 18
+holdspace 64.0 64.0

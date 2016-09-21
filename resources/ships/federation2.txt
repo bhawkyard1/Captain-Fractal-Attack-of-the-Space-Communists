@@ -1,0 +1,11 @@
+identifier FEDERATION_MKII
+asset enemy_2
+type 0
+size 32.0
+health 50
+shield 50
+energy 100
+inertia 0.09
+enginepower 5
+weaponrange 4 6
+holdspace 32.0 32.0

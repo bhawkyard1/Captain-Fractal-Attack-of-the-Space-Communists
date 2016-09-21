@@ -23,34 +23,16 @@
 //Including this causes conflicts with ngl, since this includes gl.h before it is supposed to be included or something.
 //#include <SDL2/SDL_opengl.h>
 
-//Keeps track of time
-#include "sim_time.hpp"
-
-//Used for all vector math
-#include "vectors.hpp"
-
-//General utility library
-#include "util.hpp"
-//#include "utility/rendering.hpp"
-
-//Contains program-wide variables
 #include "common.hpp"
-
-//Sound effects
-#include "sfx.hpp"
-
-//Universe class, main class in game
-#include "universe.hpp"
-
-#include "ui/user_interface.hpp"
-
-//Contains funtions to save/load the game
 #include "file.hpp"
-/*
-#ifdef _WIN32
-#include <windows.h>
-#endif
-*/
+#include "sfx.hpp"
+#include "sim_time.hpp"
+#include "ui/user_interface.hpp"
+#include "universe.hpp"
+#include "util.hpp"
+#include "vectors.hpp"
+#include "weapons.hpp"
+
 #undef userInterface
 
 //Function prototypes.
@@ -70,6 +52,8 @@ int main(int argc, char* argv[])
 {
     std::cout << "CAPTAIN FRACTAL INITIALISING..." << std::endl;
     loadConfig();
+    loadWeapons();
+    std::cout << "weapons size : " << g_weapons.size() << '\n';
     universe uni;
 
     while(g_GAME_STATE != MODE_QUIT)
@@ -109,6 +93,7 @@ void mainMenu(universe &uni)
     uni.getUI()->clear();
 
     selection mainMenuSelection = loadSelection("mainMenuSelection.txt");
+    std::cout << "MAIN MENU LOADED! Len : " << mainMenuSelection.getButtons()->size() << '\n';
     if(g_DEV_MODE)
     {
         button sandboxMode(
@@ -145,21 +130,21 @@ void mainMenu(universe &uni)
     uni.setVel(scrollVel);
     uni.setMaxWingmanCount(10);
 
+    uni.addBuild(vec3(-2000.0f, -900.0f, 0.0f), PLAYER_GRAVWELL, TEAM_PLAYER);
+    uni.addBuild(vec3(-1500.0f, 600.0f, 0.0f), PLAYER_BARRACKS, TEAM_PLAYER);
     uni.addBuild(vec3(600.0f, 300.0f, 0.0f), PLAYER_STATION, TEAM_PLAYER);
 
-    for(int i = 0; i < 360; i += 6)
+    for(int i = 0; i < 360; i += 12)
     {
         vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1100.0f;
-        pos += vec3(600.0f, 300.0f, 0.0f);
-        uni.addBuild(pos, PLAYER_TURRET, TEAM_PLAYER);
+        uni.addBuild(pos + vec3(600.0f, 300.0f, 0.0f), PLAYER_TURRET, TEAM_PLAYER);
     }
-    for(int i = 3; i < 360; i += 6)
+    for(int i = 6; i < 360; i += 12)
     {
         vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
         pos *= 1150.0f;
-        pos += vec3(600.0f, 300.0f, 0.0f);
-        uni.addBuild(pos, PLAYER_TURRET, TEAM_PLAYER);
+        uni.addBuild(pos + vec3(600.0f, 300.0f, 0.0f), PLAYER_TURRET, TEAM_PLAYER);
     }
 
     for(int i = 0; i < 10; ++i)
@@ -168,6 +153,17 @@ void mainMenu(universe &uni)
         int r = randNum(5, 10);
         uni.spawnSquad(t, 3000.0f, 8000.0f, r);
     }
+
+    uni.spawnShip(PLAYER_SHIP, TEAM_PLAYER, vec3());
+    uni.getAgents()->back().setMaxHealth(10000.0f, true);
+    uni.getAgents()->back().setMaxShield(10000.0f, true);
+    uni.getAgents()->back().setMaxEnergy(10000.0f, true);
+
+    uni.getAgents()->back().setGrade(0, 8);
+    uni.getAgents()->back().setGrade(1, 12);
+    uni.getAgents()->back().setGrade(2, 16);
+    uni.getAgents()->back().setGrade(3, 4);
+    uni.getAgents()->back().setWeap(1);
 
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
@@ -197,7 +193,7 @@ void mainMenu(universe &uni)
                 switch(incomingEvent.button.button)
                 {
                 case SDL_BUTTON_LEFT:
-                    selectionReturn mainMenuSelected = uni.handleInput( getMousePos() );
+                    selectionReturn mainMenuSelected = uni.handleMouseDownInput( getMousePos() );
                     std::cout << "CLICK : " << mainMenuSelected.m_sel_val << ", " << mainMenuSelected.m_button_val << std::endl;
                     if(mainMenuSelected.m_sel_val == 0)
                     {
@@ -240,32 +236,25 @@ void mainMenu(universe &uni)
                         switch(mainMenuSelected.m_button_val)
                         {
                         case 0:
-                            setConfigValue("res_x", 1280);
-                            setConfigValue("res_y", 720);
+                            setConfigValue("resolution", vec2(1280, 720));
                             break;
                         case 1:
-                            setConfigValue("res_x", 1280);
-                            setConfigValue("res_y", 1024);
+                            setConfigValue("resolution", vec2(1280, 1024));
                             break;
                         case 2:
-                            setConfigValue("res_x", 1366);
-                            setConfigValue("res_y", 768);
+                            setConfigValue("resolution", vec2(1366, 768));
                             break;
                         case 3:
-                            setConfigValue("res_x", 1440);
-                            setConfigValue("res_y", 900);
+                            setConfigValue("resolution", vec2(1440, 900));
                             break;
                         case 4:
-                            setConfigValue("res_x", 1600);
-                            setConfigValue("res_y", 900);
+                            setConfigValue("resolution", vec2(1600, 900));
                             break;
                         case 5:
-                            setConfigValue("res_x", 1920);
-                            setConfigValue("res_y", 1080);
+                            setConfigValue("resolution", vec2(1920, 1080));
                             break;
                         case 6:
-                            setConfigValue("res_x", 1920);
-                            setConfigValue("res_y", 1200);
+                            setConfigValue("resolution", vec2(1920, 1200));
                             break;
                         default:
                             break;
@@ -306,7 +295,7 @@ void mainMenu(universe &uni)
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
         uni.getRenderer()->drawText("CAPTAIN FRACTAL:", "pix90", {g_HALFWIN.m_x - 180.0f, g_HALFWIN.m_y - 350.0f}, false, 1.0f);
         uni.getRenderer()->drawText("ATTACK OF THE SPACE COMMUNISTS", "pix90", {g_HALFWIN.m_x - 340.0f, g_HALFWIN.m_y - 300.0f}, false, 1.0f);
-        uni.swap();
+        uni.swap( );
     }
 }
 
@@ -328,10 +317,13 @@ void playGame(universe &uni)
 
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
+    std::vector<SDL_Event> events;
     while(g_GAME_STATE == MODE_GAME)
     {
+        events = getEvents();
+        uni.updateInputs(events);
         //Event handling.
-        SDL_Event incomingEvent;
+        /*SDL_Event incomingEvent;
         while( SDL_PollEvent( &incomingEvent ) )
         {
             //Quit event.
@@ -359,13 +351,13 @@ void playGame(universe &uni)
                 handleUserScroll(incomingEvent.wheel.y, uni.getPly());
                 break;
             case SDL_KEYDOWN:
-                handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
+                //handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
                 break;
             case SDL_KEYUP:
-                handleUserKeyUpInput(incomingEvent.key.keysym.sym, &keymod);
+                //handleUserKeyUpInput(incomingEvent.key.keysym.sym, &keymod);
                 break;
             }
-        }
+        }*/
         //Set current time (timer keeps track of time since cur time was last set).
         clock.setCur();
 
@@ -410,8 +402,8 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
     {
         if(btn == SDL_BUTTON_LEFT)
         {
-            selectionReturn ret = uni->handleInput( getMousePos() );
-            uni->processInput(ret, *keymod);
+            selectionReturn ret = uni->handleMouseDownInput( getMousePos() );
+            uni->processUIInput(ret/*, *keymod*/);
 
             /*if(ret.m_sel_val == 0)
             {
@@ -494,7 +486,7 @@ void gameInit()
 
     g_GAME_OVER = false;
 }
-
+/*
 void handleUserMouseUpInput(int btn, int keymod, player *ply, universe *uni)
 {
     if(keymod == 0)
@@ -564,12 +556,14 @@ void handleUserKeyDownInput(int sym, player *ply, universe *uni, int * keymod)
     {
     case SDLK_w:
         ply->accelerate(1);
+        uni->addShake(0.5f);
         break;
     case SDLK_s:
         if(*keymod == 1) saveGame(uni);
         else
         {
             ply->accelerate(-1);
+            uni->addShake(0.5f);
         }
         break;
     case SDLK_a:
@@ -674,7 +668,7 @@ void handleUserKeyUpInput(int sym, int * keymod)
         *keymod = 0;
         break;
     }
-}
+}*/
 
 void playTutorial(universe &uni)
 {
@@ -710,21 +704,22 @@ void playTutorial(universe &uni)
     sim_time clock(120.0f);
     std::array<bool, 4> directionsTravelled = {false, false, false, false};
     float timer = 0.0f;
+    std::vector<SDL_Event> events;
     //Keypress modifiers (shift, ctrl etc).
     int keymod = 0;
     while(g_GAME_STATE == MODE_TUTORIAL)
     {
-        //Event handling.
-        SDL_Event incomingEvent;
-        while( SDL_PollEvent( &incomingEvent ) )
+        events = getEvents();
+        for( auto &incomingEvent : events )
         {
+
             //Quit event.
-            switch( incomingEvent.type )
+            /*switch( incomingEvent.type )
             {
             case SDL_QUIT:
                 g_GAME_STATE = MODE_QUIT;
                 break;
-            }
+            }*/
 
             //Ignore if the player is dead.
             if(g_GAME_OVER) break;
@@ -745,7 +740,7 @@ void playTutorial(universe &uni)
                 default:
                     break;
                 }
-                handleUserMouseDownInput(incomingEvent.button.button, &keymod, uni.getPly(), &uni);
+                //handleUserMouseDownInput(incomingEvent.button.button, &keymod, uni.getPly(), &uni);
                 if(tutStage == STAGE_ENERGY_LEVELS_2 and uni.getPly()->getEnergyPriority() == 3)
                 {
                     tutStage = STAGE_ASTEROID_1;
@@ -753,10 +748,10 @@ void playTutorial(universe &uni)
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
-                handleUserMouseUpInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
+                //handleUserMouseUpInput(incomingEvent.button.button, keymod, uni.getPly(), &uni);
                 break;
             case SDL_MOUSEWHEEL:
-                handleUserScroll(incomingEvent.wheel.y, uni.getPly());
+                //handleUserScroll(incomingEvent.wheel.y, uni.getPly());
                 break;
             case SDL_KEYDOWN:
                 switch(incomingEvent.key.keysym.sym)
@@ -783,13 +778,15 @@ void playTutorial(universe &uni)
                 default:
                     break;
                 }
-                handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
+                //handleUserKeyDownInput(incomingEvent.key.keysym.sym, uni.getPly(), &uni, &keymod);
                 break;
             case SDL_KEYUP:
-                handleUserKeyUpInput(incomingEvent.key.keysym.sym, &keymod);
+                //handleUserKeyUpInput(incomingEvent.key.keysym.sym, &keymod);
                 break;
             }
         }
+        uni.updateInputs(events);
+
         //Set current time (timer keeps track of time since cur time was last set).
         clock.setCur();
 
@@ -1101,7 +1098,7 @@ void playTutorial(universe &uni)
             }
         }
 
-        uni.swap();
+        uni.swap( );
     }
 }
 
@@ -1111,7 +1108,13 @@ void sandbox(universe &uni)
     g_DIFFICULTY = 0;
     uni.playMus(0);
     uni.reload(true);
-    uni.getPly()->setHealth(-1);
+    uni.getAgents()->clear();
+    uni.getPly()->setHealth(-1.0f);
+    uni.getPly()->setShield(-1.0f);
+    uni.getPly()->setMaxEnergy(100000.0f, true);
+    uni.getPly()->setGeneratorMul(100000.0f);
+    uni.getPly()->setEnginePower(50.0f);
+    uni.getPly()->setAng(0.0f);
     uni.update(0.1f);
     uni.getUI()->clear();
 
@@ -1153,29 +1156,16 @@ void sandbox(universe &uni)
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
     //Keypress modifiers (shift, ctrl etc).
+    std::vector<SDL_Event> events;
     int keymod = 0;
     while(g_GAME_STATE == MODE_SANDBOX)
     {
-        vec3 center = {0.0f, 0.0f, 0.0f};
-        for(auto &i : uni.getAgents()->m_objects)
-        {
-            center += i.getPos();
-        }
-        if(uni.getAgents()->size()) center *= 1.0f / uni.getAgents()->size();
-        uni.getPly()->setVel( center / 10.0f );
+        events = getEvents();
+        uni.getPly()->setVel( uni.getPly()->getVel() * 0.95f );
 
         //Event handling.
-        SDL_Event incomingEvent;
-        while( SDL_PollEvent( &incomingEvent ) )
+        for( auto &incomingEvent : events )
         {
-            //Quit event.
-            switch( incomingEvent.type )
-            {
-            case SDL_QUIT:
-                g_GAME_STATE = MODE_QUIT;
-                break;
-            }
-
             //Input events.
             //This is different to the main game, we only want the user to be able to select from the main menu, i.e no shooting etc.
             switch( incomingEvent.type )
@@ -1187,7 +1177,7 @@ void sandbox(universe &uni)
                 case SDL_BUTTON_LEFT:
                     int mx = 0, my = 0;
                     SDL_GetMouseState(&mx, &my);
-                    selectionReturn mainMenuSelected = uni.handleInput({static_cast<float>(mx), static_cast<float>(my)});
+                    selectionReturn mainMenuSelected = uni.handleMouseDownInput({static_cast<float>(mx), static_cast<float>(my)});
                     std::cout << "sandbox click! " << mainMenuSelected.m_button_val << ", " << mainMenuSelected.m_sel_val << '\n';
                     if(mainMenuSelected.m_sel_val == 0)
                     {
@@ -1210,13 +1200,14 @@ void sandbox(universe &uni)
                 else if(spec >= ALLIANCE_SCOUT and spec < PLAYER_HUNTER) team = ALLIANCE;
                 else if(spec >= PLAYER_HUNTER and spec < ASTEROID_SMALL) team = TEAM_PLAYER;
                 std::cout << "adding spec " << spec << '\n';
-                uni.spawnShip(spec, team, tovec3( getMousePos() ) + uni.getCameraPosition());
+                uni.spawnShip(spec, team, tovec3( toWorldSpace(getMousePos()) ));
                 std::cout << "post\n";
                 uni.setMouseState(-1);
                 break;
             }
             }
         }
+        uni.updateInputs(events);
 
         //Set current time (timer keeps track of time since cur time was last set).
         clock.setCur();
@@ -1237,7 +1228,7 @@ void sandbox(universe &uni)
 
         uni.clear();
         uni.draw( clock.getAcc() / diff_clamped * g_TIME_SCALE );
-        uni.swap();
+        uni.swap( );
     }
 }
 

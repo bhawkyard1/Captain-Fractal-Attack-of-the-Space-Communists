@@ -8,7 +8,7 @@
 
 void saveGame(universe * uni)
 {
-    std::ofstream save( g_RESOURCE_LOC + "../" + "save.txt" );
+    std::ofstream save( g_RESOURCE_LOC + "save.txt" );
 
     save 	<< "score " << uni->getScore() << '\n'
                //<< "mec " << uni->getMaxEnemyCount(GALACTIC_FEDERATION) << '\n'
@@ -316,7 +316,7 @@ void readVectorFaction(std::string _str, universe *_u)
 
 void loadGame(universe * uni)
 {
-    std::ifstream save(g_RESOURCE_LOC + "../" + "save.txt");
+    std::ifstream save(g_RESOURCE_LOC + "save.txt");
     std::string cur;
 
     unsigned long tempIDCounter;
@@ -371,7 +371,7 @@ void loadGame(universe * uni)
 
 void loadConfig()
 {
-    std::ifstream config( g_RESOURCE_LOC + "../" + "config.txt" );
+    std::ifstream config( g_RESOURCE_LOC + "config.txt" );
     std::string cur;
 
     while(getline( config, cur ))
@@ -415,11 +415,11 @@ void setResolution(std::string _width, std::string _height)
 
 void setConfigValue(const std::string _entry, const int _val)
 {
-    std::ifstream src( g_RESOURCE_LOC + "../" + "config.txt");
-    std::ofstream config( g_RESOURCE_LOC + "../" + "temp.txt");
+    std::ifstream src( g_RESOURCE_LOC + "config.txt");
+    std::ofstream config( g_RESOURCE_LOC + "temp.txt");
     std::string cur;
 
-    while(getline( src, cur ))
+    while(getlineSafe( src, cur ))
     {
         if(cur.length() == 0) continue;
         std::vector<std::string> strings = split(cur, ' ');
@@ -436,19 +436,52 @@ void setConfigValue(const std::string _entry, const int _val)
     src.close();
     config.close();
 
-    std::remove(( g_RESOURCE_LOC + "../" + "config.txt").c_str());
-    std::rename(( g_RESOURCE_LOC + "../" + "temp.txt").c_str(), ( g_RESOURCE_LOC + "../" + "config.txt").c_str());
+    std::remove(( g_RESOURCE_LOC + "config.txt").c_str());
+    std::rename(( g_RESOURCE_LOC + "temp.txt").c_str(), ( g_RESOURCE_LOC + "config.txt").c_str());
+}
+
+void setConfigValue(const std::string _entry, const vec2 _val)
+{
+    std::ifstream src( g_RESOURCE_LOC + "config.txt");
+    std::ofstream config( g_RESOURCE_LOC + "temp.txt");
+    std::string cur;
+
+    while(getlineSafe( src, cur ))
+    {
+        if(cur.length() == 0) continue;
+        std::vector<std::string> strings = split(cur, ' ');
+
+        if(strings[0] == _entry)
+        {
+            config << _entry << " " << _val.m_x << ' ' << _val.m_y << std::endl;
+        }
+        else
+        {
+            config << cur << std::endl;
+        }
+    }
+    src.close();
+    config.close();
+
+    std::remove(( g_RESOURCE_LOC + "config.txt").c_str());
+    std::rename(( g_RESOURCE_LOC + "temp.txt").c_str(), ( g_RESOURCE_LOC + "config.txt").c_str());
 }
 
 selection loadSelection(const std::string _path)
 {
     selection menu;
 
-    std::ifstream data( g_RESOURCE_LOC + "../menus/" + _path );
+    std::ifstream data( g_RESOURCE_LOC + "menus/" + _path );
+    if(!data.is_open())
+    {
+        std::cerr << "Error! Cannot open text file in loadSelection(). Aborting...";
+        exit(EXIT_FAILURE);
+    }
+
     std::string cur;
     std::vector< std::string > allStrings;
 
-    while(getline( data, cur ))
+    while(getlineSafe( data, cur ))
     {
         if(cur.length() > 0) allStrings.push_back(cur);
     }
@@ -456,6 +489,7 @@ selection loadSelection(const std::string _path)
 
     for(auto i = allStrings.begin(); i != allStrings.end(); ++i)
     {
+        //std::cout << "READING STRING : " << *i << ", " << i->length() << ", last character is " << ((*i)[i->length() - 1] == '\r') << '\n';
         if(*i == "BUTTON START")
         {
             button temp;
@@ -542,7 +576,64 @@ selection loadSelection(const std::string _path)
             }
         }
     }
+    //std::cout << "menu loaded, size " << menu.getButtons()->size() << '\n';
     return menu;
+}
+
+ship loadShip(const std::string &_path, std::string * _asset, int _classification)
+{
+    std::ifstream data (_path);
+    std::string cur;
+
+    ship ret;
+    ret.setClassification(static_cast<ship_spec>(_classification));
+
+    while(getlineSafe( data, cur ))
+    {
+        if(cur.length() == 0) continue;
+
+        std::vector<std::string> s = split(cur, ' ');
+
+        for(size_t i = 0; i < s.size(); i++)
+        {
+            if(s[i] == "identifier") ret.setIdentifier( s[i + 1] );
+            else if(s[i] == "asset") *_asset = s[i + 1];
+            else if(s[i] == "type") ret.setType( static_cast<ship_type>(stoi(s[i+1])) );
+            else if(s[i] == "size") ret.setRadius( stof(s[i + 1]) );
+            else if(s[i] == "health") ret.setMaxHealth( stof(s[i + 1]), true );
+            else if(s[i] == "shield") ret.setMaxShield( stof(s[i + 1]), true );
+            else if(s[i] == "energy") ret.setMaxEnergy( stof(s[i + 1]), true );
+            else if(s[i] == "inertia") ret.setInertia( stof(s[i + 1]), true );
+            else if(s[i] == "enginepower") ret.setEnginePower( stof(s[i + 1]) );
+            else if(s[i] == "generatorpower") ret.setGeneratorMul( stof(s[i + 1]) );
+            else if(s[i] == "weaponrange") ret.addWeap( rand() % (stoi(s[i + 2]) - stoi(s[i + 1])) + stoi(s[i + 1]) );
+            else if(s[i] == "weapons")
+                for(size_t j = i + 1; j < s.size(); ++j)
+                    ret.addWeap(stoi(s[j]));
+            else if(s[i] == "angvelrange") ret.setAngVelRange( stof(s[i + 1]), stof(s[i + 2]), true );
+            else if(s[i] == "holdspace") ret.getCargo()->setDim( {stof(s[i + 1]), stof(s[i + 2])} );
+            else if(s[i] == "canshoot") ret.setCanShoot( stoi(s[i + 1]) );
+            else if(s[i] == "canmove") ret.setCanMove( stoi(s[i + 1]) );
+            else if(s[i] == "angvelrange") ret.setAngVelRange(stof(s[i + 1]), stof(s[i + 2]), true);
+        }
+    }
+
+    data.close();
+
+    return ret;
+}
+
+std::vector<std::string> readLines(std::istream &_file)
+{
+    std::string cur;
+    std::vector< std::string > ret;
+
+    while(getlineSafe( _file, cur ))
+    {
+        if(cur.length() > 0) ret.push_back(cur);
+    }
+
+    return ret;
 }
 
 float convertMeasureF(std::string _str)
@@ -592,4 +683,43 @@ int convertMeasureI(std::string _str)
         break;
     }
     return 0.0f;
+}
+
+std::array<float, 10> loadWeapon(const std::string &_path)
+{
+    std::array<float, 10> ret;
+
+    std::ifstream data (_path);
+    if(!data.is_open())
+    {
+        std::cerr << "Weapon definition file " << _path << " could not be opened! Aborting...\n";
+        exit(EXIT_FAILURE);
+    }
+    std::string cur;
+
+    while(getlineSafe( data, cur ))
+    {
+        //std::cout << "loading line " << cur << '\n';
+        if(cur.length() == 0) continue;
+
+        std::vector<std::string> s = split(cur, ' ');
+
+        for(size_t i = 0; i < s.size(); i++)
+        {
+            if(s[i] == "lasers") ret[0] = stof(s[i + 1]);
+            else if(s[i] == "spread") ret[1] = stof(s[i + 1]);
+            else if(s[i] == "damage") ret[2] = stof(s[i + 1]);
+            else if(s[i] == "speed") ret[3] = stof(s[i + 1]);
+            else if(s[i] == "red") ret[4] = stof(s[i + 1]);
+            else if(s[i] == "green") ret[5] = stof(s[i + 1]);
+            else if(s[i] == "blue") ret[6] = stof(s[i + 1]);
+            else if(s[i] == "cost") ret[7] = stof(s[i + 1]);
+            else if(s[i] == "cooldown") ret[8] = stof(s[i + 1]);
+            else if(s[i] == "power") ret[9] = stof(s[i + 1]);
+        }
+    }
+
+    data.close();
+
+    return ret;
 }

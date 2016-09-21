@@ -23,20 +23,22 @@ MOC_DIR = moc
 
 SOURCES += $$PWD/main.cpp \
            $$PWD/src/*.cpp \
-           $$PWD/src/ui/*.cpp
+           $$PWD/src/ui/*.cpp \
+           $$PWD/src/input/*.cpp
 
 HEADERS += $$PWD/include/*.hpp \
-           $$PWD/include/ui/*.hpp
+           $$PWD/include/ui/*.hpp \
+           $$PWD/include/input/*.hpp
 
 CONFIG += console
 
 !equals(PWD, $${OUT_PWD}){
-        copydata.commands = echo "creating destination dirs" ;
+        copydata.commands = echo "creating destination dirs";
         # now make a dir
-        copydata.commands += mkdir -p $$OUT_PWD/shaders ;
-        copydata.commands += echo "copying files" ;
+        copydata.commands += mkdir -p $$OUT_PWD/shaders;
+        copydata.commands += echo "copying files";
         # then copy the files
-        copydata.commands += $(COPY_DIR) $$PWD/shaders/* $$OUT_PWD/shaders/ ;
+        copydata.commands += $(COPY_DIR) $$PWD/shaders/* $$OUT_PWD/shaders/;
         # now make sure the first target is built before copy
         first.depends = $(first) copydata
         export(first.depends)
@@ -60,7 +62,9 @@ win32: {
 
 OTHER_FILES += readme.md \
             += ./shaders/*.glsl \
-            += ./resources/menus/*.txt
+            += ./resources/menus/*.txt \
+            += ./resources/ships/*.txt \
+            += ./resources/weapons/*.txt \
 
 CONFIG += console
 

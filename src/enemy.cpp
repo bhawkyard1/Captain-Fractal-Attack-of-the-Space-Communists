@@ -27,6 +27,7 @@ void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std:
 {
     debug("target acquisition start");
     ship * curTarget = m_target;
+    uniqueID curTargetID = m_targetID;
     m_target = nullptr;
 
     enemy * lastAttacker = _enemies.getByID( getLastAttacker() );
@@ -35,27 +36,27 @@ void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std:
     {
         //Lowest weight wins.
         float bestWeight = F_INF;
-        for(auto &i : _enemies.m_objects)
+        for(size_t i = 0; i < _enemies.m_objects.size(); ++i)
         {
             if(
-                    _factions[getTeam()].isNeutral(i.getTeam()) and
-                    _factions[i.getTeam()].isNeutral(getTeam())
+                    _factions[getTeam()].isNeutral(_enemies[i].getTeam()) and
+                    _factions[_enemies[i].getTeam()].isNeutral(getTeam())
                     ) continue;
             //Distance as a base.
-            float weight = mag(getPos() - i.getPos());
+            float weight = mag(getPos() - _enemies[i].getPos());
             //Concentrate on active / unweakened combatants.
-            weight *= i.getHealth() / i.getMaxHealth() + 0.5f;
+            weight *= _enemies[i].getHealth() / _enemies[i].getMaxHealth() + 0.5f;
             //Do not target enemies shooting by sideways.
-            //weight /= clamp( dotProdUnit(getVel(), i.getVel()), 0.001f, 1.0f );
+            //weight /= clamp( dotProdUnit(getVel(), _enemies[i].getVel()), 0.001f, 1.0f );
             //I know this pointer is unreliable, a target could easily change address between updates. But I just can't be bothered to code anything better at the moment.
-            if(curTarget != nullptr and curTarget == (ship*)&i) weight /= 1.5f;
+            if(curTarget != nullptr and curTargetID == _enemies.getID(i)) weight /= 3.0f;
             //Pursue last attacker.
-            if( lastAttacker != nullptr and lastAttacker == &i ) weight /= 2.0f;
+            if( lastAttacker != nullptr and lastAttacker == &_enemies[i] ) weight /= 2.0f;
 
             if(weight < bestWeight)
             {
                 bestWeight = weight;
-                m_target = (ship*)&i;
+                m_target = (ship*)&_enemies[i];
                 setGoal(GOAL_ATTACK);
             }
         }
@@ -150,7 +151,7 @@ void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std:
         for(auto &i : _enemies.m_objects)
         {
             if(m_team != i.getTeam()) continue;
-            if(i.getType() == SHIP_TYPE_STRUCTURE)
+            if(!i.getCanMove())
             {
                 float temp = magns(i.getPos() - getPos());
                 if(temp < best)
@@ -162,8 +163,6 @@ void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std:
             }
         }
     }
-
-    if(getType() == SHIP_TYPE_MINER) std::cout << "goal " << m_curGoal << '\n';
 
     debug("target acquisition end");
 }
@@ -272,8 +271,9 @@ void enemy::steering()
     //This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
     float accelMul;
 
-    if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE) accelMul = clamp( (dist - stoppingDistance) / 50.0f, -1.0f, 0.5f);
-    else accelMul = clamp( (dist - stoppingDistance - m_stopDist - radius ) / 50.0f, -1.0f, 0.5f);
+    if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE) accelMul = dist - stoppingDistance;
+    else accelMul = dist - stoppingDistance - m_stopDist - radius ;
+    accelMul = clamp(accelMul / 50.0f, -1.0f, 0.5f);
 
     //std::cout << "diff " << diff.m_x << ", " << diff.m_y << ", " << diff.m_z << ", mag " << dist << '\n';
     //std::cout << this << " accelMul " << accelMul << "\n\n";
@@ -329,7 +329,9 @@ void enemy::steering()
         if(getType() == SHIP_TYPE_FIGHTER)
         {
             //Dodge
-            if(!(rand()%64) and
+            //1.0f + getCooldown = more likely to dodge just after shooting.
+            int prob = static_cast<int>(64 * (1.0f + getCooldown()));
+            if(!(rand() % prob) and
                     m_target != nullptr and
                     dotProd(vec(getAng()), vec(m_target->getAng())) < -0.8f
                     )
@@ -338,7 +340,7 @@ void enemy::steering()
             }
 
             //Charge
-            if(!(rand()%128) and
+            if(!(rand() % prob * 2) and
                     m_target != nullptr and
                     m_target->getType() == SHIP_TYPE_FIGHTER
                     )

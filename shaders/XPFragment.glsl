@@ -1,9 +1,9 @@
-#version 410 core
+#version 430 core
 
 in vec2 UV;
 in vec4 fragCoord;
 
-out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 uniform float xp;
 

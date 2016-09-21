@@ -47,20 +47,20 @@ void soundPlayer::loadMusic(std::string _path)
 
 void soundPlayer::loadSounds()
 {
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/red_laser_", 3);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/green_laser_", 3);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/blue_laser_", 3);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/explosion_", 3);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/ricochet_", 1);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/save_", 1);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/place_", 4);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/menu_button_", 1);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/ui_fail_", 1);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/clunk_", 1);
-    loadSound(g_RESOURCE_LOC + "../" + "sfx/radio_chatter_", 5);
+    loadSound(g_RESOURCE_LOC + "sfx/red_laser_", 3);
+    loadSound(g_RESOURCE_LOC + "sfx/green_laser_", 3);
+    loadSound(g_RESOURCE_LOC + "sfx/blue_laser_", 3);
+    loadSound(g_RESOURCE_LOC + "sfx/explosion_", 3);
+    loadSound(g_RESOURCE_LOC + "sfx/ricochet_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/save_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/place_", 4);
+    loadSound(g_RESOURCE_LOC + "sfx/menu_button_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/ui_fail_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/clunk_", 1);
+    loadSound(g_RESOURCE_LOC + "sfx/radio_chatter_", 5);
 
-    loadMusic(g_RESOURCE_LOC + "../" + "sfx/deep_space_0");
-    loadMusic(g_RESOURCE_LOC + "../" + "sfx/soviet_national_anthem_0");
+    loadMusic(g_RESOURCE_LOC + "sfx/deep_space_0");
+    loadMusic(g_RESOURCE_LOC + "sfx/soviet_national_anthem_0");
 }
 
 void soundPlayer::playSnd(sound _snd, vec3 _pos, float _vol)
@@ -104,7 +104,7 @@ void soundPlayer::playSnd(sound _snd)
 
     Mix_Chunk * to_play = m_snds.at(snd).at(rand()%size);
 
-    std::cout << Mix_PlayChannel( m_curChannel, to_play, 0 ) << std::endl;
+    //std::cout << Mix_PlayChannel( m_curChannel, to_play, 0 ) << std::endl;
 
     m_curChannel++;
     if(m_curChannel >= m_channels) m_curChannel = 0;

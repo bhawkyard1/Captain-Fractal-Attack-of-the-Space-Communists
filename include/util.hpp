@@ -13,6 +13,7 @@
 
 #include <ciso646>
 
+#include <SDL.h>
 #include "SDL2/SDL_ttf.h"
 
 #include "vectors.hpp"
@@ -56,6 +57,8 @@
 /// \param _v vector to convert.
 //----------------------------------------------------------------------------------------------------------------------
 float computeAngle(vec2 _v);
+
+int gcd(int _a, int _b);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Clamps a value of any type to two values of the same type.
@@ -338,6 +341,16 @@ t sumVec(const std::vector<t> _vec)
     return ret;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Like getline but works for text files from windows and linux.
+/// \param _path path to the file
+//----------------------------------------------------------------------------------------------------------------------
+std::istream& getlineSafe(std::istream& is, std::string& t);
+
 void debug(const std::string _msg);
+
+void clearTerminal();
+
+std::vector<SDL_Event> getEvents();
 
 #endif

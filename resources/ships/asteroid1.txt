@@ -1,0 +1,11 @@
+identifier ASTEROID_SMALL
+asset asteroid_1
+type 6
+size 32.0
+health 200
+shield 0
+energy 0
+inertia 0.1
+enginepower 0
+canshoot 0
+angvelrange -15.0 15.0

@@ -7,6 +7,7 @@
 #include "debris.hpp"
 #include "enemy.hpp"
 #include "faction.hpp"
+#include "input/inputMap.hpp"
 #include "laser.hpp"
 #include "missile.hpp"
 #include "pfx.hpp"
@@ -174,7 +175,7 @@ public:
     /// \param _max maximum distance from origin
     /// \param _ships ships to spawn
     //----------------------------------------------------------------------------------------------------------------------
-    void spawnSquad(const aiTeam _t, const float _min, const float _max, const std::vector<size_t> _ships, const ship_spec _minSpec);
+    void spawnSquad(const aiTeam _t, const float _min, const float _max, const std::vector<size_t> _ships);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief This function only actually incremements the max number of wingmen available, which
@@ -206,7 +207,13 @@ public:
     /// may be called multiple times in between each draw-call.
     /// \param _dt time difference.
     //----------------------------------------------------------------------------------------------------------------------
-    void update(const float _dt);
+    void update(float _dt);
+
+    void processInputMap();
+
+    void cullAgents();
+    void calcSquadPositions();
+    //void manageAgents(const float _dt);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Clears the renderer.
@@ -228,7 +235,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the renderer.
     //----------------------------------------------------------------------------------------------------------------------
-    void swap() {m_drawer.finalise();}
+    void swap() {m_drawer.finalise(m_time_elapsed, tovec2(m_vel));}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A broad phase, this is used to detect entities which are close to one another.
@@ -319,14 +326,9 @@ public:
     void reload(const bool _newGame);
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Fills g_ship_templates, which we can copy from later on.
-    //----------------------------------------------------------------------------------------------------------------------
-    void loadShips();
-
-    //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setters for game pause.
     //----------------------------------------------------------------------------------------------------------------------
-    void pause() {m_paused = !m_paused; if(!m_paused) g_TIME_SCALE = 1;}
+    void pause() {m_paused = !m_paused; if(!m_paused) g_PLAYER_TIME_SCALE = 1.0f;}
     void setPause(bool _p) {m_paused = _p;}
     bool isPaused() const {return m_paused;}
 
@@ -339,9 +341,9 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for the UI.
     //----------------------------------------------------------------------------------------------------------------------
-    selectionReturn handleInput(vec2 _mouse);
+    selectionReturn handleMouseDownInput(vec2 _mouse);
     void mouseUp();
-    void processInput(selectionReturn _sel, int _keymod);
+    void processUIInput(selectionReturn _sel);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A function to tell whether we are allowed to upgrade (compares cost vs score etc).
@@ -467,6 +469,12 @@ public:
     void conductTrade(enemy &_buyer, enemy &_seller);
 
     void debug_lockPlayer() {g_PLAYER_MOVEMENT_LOCKED = !g_PLAYER_MOVEMENT_LOCKED;}
+
+    void addShake(const float _force) {m_drawer.addShake(_force);}
+
+    float getTime() {return m_time_elapsed;}
+
+    void updateInputs(const std::vector<SDL_Event> &_events) {m_inputs.update(_events);}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
@@ -477,6 +485,9 @@ private:
     /// \brief Contains all of the data for the user interface.
     //----------------------------------------------------------------------------------------------------------------------
     userInterface m_ui;
+    selection m_escMenuSelection;
+
+    inputMap m_inputs;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Renderer specific members.
@@ -497,7 +508,7 @@ private:
     std::vector<laser> m_shots;
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Container for all AI controlled ships in the game.
+    /// \brief Container for all nearby AI controlled ships in the game.
     //----------------------------------------------------------------------------------------------------------------------
     slotMap<enemy> m_agents;
 
@@ -639,6 +650,12 @@ private:
 
     bool m_selectedItemOwner;
     std::vector<debris> m_selectedItems;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Destroys agent at index _i of m_agents.
+    /// \param _i Index of enemy to be destroyed.
+    //----------------------------------------------------------------------------------------------------------------------
+    void destroyAgent(size_t _i);
 };
 
 #endif

@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file shipVertex.glsl
@@ -16,12 +16,15 @@ layout(location = 2) in vec3 inNormal;
 
 out vec2 UV;
 out vec3 normal;
+out vec4 position;
 
 uniform mat4 MVP;
+uniform mat4 transform;
 
 void main()
 {
     gl_Position = MVP * inPosition;
     UV = inUV;
-    normal = inNormal;
+    normal = (transform * vec4(inNormal.xyz, 0.0)).xyz;
+    position = transform * inPosition;
 }

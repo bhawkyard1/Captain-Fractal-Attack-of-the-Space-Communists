@@ -1,0 +1,12 @@
+identifier PIRATE_CAPITAL
+asset pirate_capital
+type 1
+size 1024.0
+health 11000
+shield 2400
+energy 2000
+inertia 0.002
+enginepower 3.5
+generatorpower 5000
+weapons 19
+holdspace 1500.0 1500.0

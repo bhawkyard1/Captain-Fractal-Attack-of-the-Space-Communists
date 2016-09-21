@@ -1,0 +1,11 @@
+identifier ALLIANCE_GUNSHIP
+asset neutral_5
+type 0
+size 64.0
+health 400
+shield 250
+energy 250
+inertia 0.02
+enginepower 10
+weapons 26
+holdspace 256.0 256.0

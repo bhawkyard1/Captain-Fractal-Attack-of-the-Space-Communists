@@ -1,0 +1,11 @@
+identifier PLAYER_GRAVWELL
+asset well_1
+type 7
+size 256.0
+health 700
+shield 2000
+energy 50000
+holdspace 512.0 512.0
+canmove 0
+canshoot 0
+angvelrange -10.0 10.0

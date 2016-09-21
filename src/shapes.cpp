@@ -25,7 +25,7 @@ bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim)
     closest.m_x = clamp(_pos.m_x, _min.m_x, _min.m_x + _dim.m_x);
     closest.m_y = clamp(_pos.m_y, _min.m_y, _min.m_y + _dim.m_y);
     vec2 dc = _pos - closest;
-    return magns(dc) < _r;
+    return magns(dc) < sqr(_r);
 }
 
 bool circleIntersectCircle(vec2 _pos1, float _r1, vec2 _pos2, float _r2)

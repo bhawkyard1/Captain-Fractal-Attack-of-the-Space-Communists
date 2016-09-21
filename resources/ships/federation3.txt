@@ -1,0 +1,11 @@
+identifier FEDERATION_MKIII
+asset enemy_3
+type 0
+size 32.0
+health 90
+shield 60
+energy 150
+inertia 0.08
+enginepower 6
+weaponrange 4 6
+holdspace 64.0 64.0

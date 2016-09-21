@@ -10,6 +10,9 @@
 #include "ship.hpp"
 #include "ui/selection.hpp"
 #include "universe.hpp"
+#include "vectors.hpp"
+
+class renderer_ngl;
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file file.hpp
@@ -78,6 +81,7 @@ void setResolution(std::string _width, std::string _height);
 /// \param _val the value to set _entry to
 //----------------------------------------------------------------------------------------------------------------------
 void setConfigValue(const std::string _entry, const int _val);
+void setConfigValue(const std::string _entry, const vec2 _val);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Loads a menu from a text file
@@ -91,5 +95,11 @@ selection loadSelection(const std::string _path);
 //----------------------------------------------------------------------------------------------------------------------
 float convertMeasureF(std::string _str);
 int convertMeasureI(std::string _str);
+
+std::vector<std::string> readLines(std::ifstream &_file);
+
+ship loadShip(const std::string &_path, std::string *_asset, int _classification);
+
+std::array<float,10> loadWeapon(const std::string &_path);
 
 #endif

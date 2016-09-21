@@ -1,10 +1,10 @@
 #include "missile.hpp"
 
 missile::missile(
-        const vec3 _p,
-        const float _r)
+        const vec3 _p
+        )
         :
-        ship(_p, ION_MISSILE_MKI, _r)
+        ship(g_ship_templates[ION_MISSILE_MKI], _p)
 {
     setPos(_p);
     setMaxHealth(10.0f, true);

@@ -1,0 +1,11 @@
+identifier COMMUNIST_2
+asset commie_2
+type 0
+size 32.0
+health 40
+shield 50
+energy 100
+inertia 0.09
+enginepower 5
+weaponrange 20 21
+holdspace 32.0 32.0

@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file laserFragment.glsl
@@ -16,7 +16,7 @@ in vec4 gl_FragCoord;
 in vec4 vertColour;
 in vec2 UV;
 
-out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 /*void main()
 {

@@ -1,0 +1,11 @@
+identifier ALLIANCE_DRAGON
+asset neutral_4
+type 0
+size 45.0
+health 120
+shield 130
+energy 200
+inertia 0.05
+enginepower 8
+weaponrange 23 25
+holdspace 32.0 32.0

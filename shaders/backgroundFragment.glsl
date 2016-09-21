@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file backgroundFragment.glsl
@@ -17,7 +17,7 @@
 #define tile 0.850
 
 #define brightness 0.0015
-#define darkmatter 0.300
+#define darkmatter 0.00300
 
 //Higher= brigwhter/less faded.
 #define distfading 0.45
@@ -25,6 +25,7 @@
 #define saturation 0.9
 
 in vec4 gl_FragCoord;
+in vec2 UV;
 
 uniform vec2 iResolution;
 uniform float iGlobalTime;
@@ -36,7 +37,7 @@ uniform vec3 inColour;
 
 float formuparam = 0.5 + (sin(iGlobalTime / 256.0)) / 16.0;
 
-out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 float vec2Ang(vec2 _v)
 {
@@ -57,7 +58,7 @@ void main()
 {
     //Get coords and direction.
     //The current UV point.
-    vec2 uv = gl_FragCoord.xy / iResolution.xy - 0.5;
+    vec2 uv = UV;
     //Multiply up by current aspect ratio.
     uv.y *= iResolution.y / iResolution.x;
 

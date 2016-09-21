@@ -1,0 +1,11 @@
+identifier FEDERATION_GUNSHIP
+asset enemy_5
+type 0
+size 64.0
+health 500
+shield 250
+energy 500
+inertia 0.02
+enginepower 8
+weaponrange 8 9
+holdspace 256.0 256.0

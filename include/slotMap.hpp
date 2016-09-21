@@ -137,4 +137,11 @@ private:
     std::vector< long > m_freeList;
 };
 
+template<class t>
+void transfer(size_t _i, slotMap<t> &_src, slotMap<t> &_dst)
+{
+    _dst.push_back( _src[_i] );
+    _src.free( _i );
+}
+
 #endif

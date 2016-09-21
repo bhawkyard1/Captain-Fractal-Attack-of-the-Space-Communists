@@ -1,0 +1,11 @@
+identifier PLAYER_DEFENDER
+asset wingman_2
+type 0
+size 32.0
+health 125
+shield 125
+energy 125
+inertia 0.1
+enginepower 8
+weaponrange 10 12
+holdspace 32.0 32.0
