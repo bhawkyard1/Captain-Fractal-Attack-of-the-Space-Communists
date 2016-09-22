@@ -1036,7 +1036,7 @@ int ship::upgrade(const int _i)
         m_generatorMul *= 1.2f;
         break;
     case 3:
-        m_enginePower *= 1.2f;
+        m_enginePower *= 1.1f;
         break;
     case 4:
         m_missiles++;

@@ -159,7 +159,6 @@ void universe::update(float _dt)
     if(m_paused) _dt = 0.0f;
 
     g_VELOCITY_TIME_SCALE = 1.0f - (clamp(mag(m_vel) * 80.0f, 0.0f, static_cast<float>(LIGHTSPEED)) / LIGHTSPEED);
-    std::cout << "pv " << m_ply.getVel().m_x << ", " << m_ply.getVel().m_y << '\n';
     g_TIME_SCALE = g_PLAYER_TIME_SCALE * g_VELOCITY_TIME_SCALE;
 
     debug("updates start");
@@ -167,8 +166,6 @@ void universe::update(float _dt)
     m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
 
     processInputMap();
-
-    std::cout << "Force : " << m_ply.getForce().m_x << ", " << m_ply.getForce().m_y << '\n';
 
     /*if(!g_GAME_OVER)
     {
@@ -1424,7 +1421,7 @@ void universe::drawUI(const float _dt)
 
             infoCard->getAt(0)->setLabel(contextPtr->getIdentifier());
             infoCard->getAt(1)->setLabel("KILLS: " + std::to_string(contextPtr->getKills()));
-            infoCard->getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) / 4.0f)));
+            infoCard->getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) /*/ g_PIXEL_UNIT_CONVERSION*/)) + " m");
             for(auto &i : *(infoCard->getButtons()))
             {
                 vec2 pos = i.getPos();
@@ -1484,6 +1481,8 @@ void universe::drawUI(const float _dt)
 
                 m_drawer.drawLines(2.0f);
                 m_drawer.clearVectors();
+
+                m_drawer.drawText("Goal " + std::to_string(contextPtr->getGoal()), "pix", tovec2(csp) + vec2(0.0f, 128.0f), true, 2.0f);
             }
         }
         else
@@ -1516,6 +1515,8 @@ void universe::drawUI(const float _dt)
 
     if(m_ply.getCargo()->isVisible())
     {
+        m_drawer.useShader("plain");
+
         vec2 dim = m_ply.getCargo()->getDim();
         m_drawer.addRect(m_ply.getInterpolatedPosition(_dt), dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
         m_drawer.drawRects(true);
@@ -1527,7 +1528,6 @@ void universe::drawUI(const float _dt)
         {
             m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
         }
-        m_drawer.useShader("plain");
     }
 
     for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
@@ -1976,8 +1976,8 @@ void universe::resolveCollision(ship *_a, ship *_b)
     _a->damage(admg, _b->getVel());
     _b->damage(bdmg, _a->getVel());
 
-    if(_a->getHealth() > 0.0f) _a->addForce( ainvmass * impulse );
-    if(_b->getHealth() > 0.0f) _b->addForce( -binvmass * impulse );
+    if(_a->getHealth() > 0.0f) _a->addVel( ainvmass * impulse );
+    if(_b->getHealth() > 0.0f) _b->addVel( -binvmass * impulse );
 }
 
 void universe::addpfx(

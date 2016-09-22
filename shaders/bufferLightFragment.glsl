@@ -76,9 +76,7 @@ void main()
     vec3 fragNormal = texture(normal, uv).xyz;
     vec3 fragPosition = texture(position, uv).xyz;
 
-    vec3 lightCol = vec3(0.1);
-
-    float lightMulSq = lightMul * lightMul;
+    vec3 lightCol = vec3(0.2);
 
     for(int i = 0; i < ACTIVE_LIGHTS; i++)
     {
@@ -89,12 +87,12 @@ void main()
         for(float j = 0; j < ambientSteps.y; j++)
         {
             vec2 coord = vec2(i, j) / ambientSteps;
-            vec3 ambientCol = 256.0 * texture(ambient, coord).xyz * lightMulSq;
+            vec3 ambientCol = 256.0 * texture(ambient, coord).xyz * lightMul;
             vec4 ambientPos = vec4(1.0);
             ambientPos.xy = coord * 2 - vec2(1.0);//Convert to NDC (-1.0 to 1.0)
             ambientPos = inverseVP * ambientPos;//Multiply by inverse vp to project to world space.
             ambientPos.z = -400.0 + 5.0 * sin(iGlobalTime + coord.x) + 0.001 * length(ambientCol);
-            lightCol += calcDiffuseSpec(fragPosition, fragNormal, ambientPos.xyz, ambientCol, 0.0005, 0.5, 0.2);
+            lightCol += calcDiffuseSpec(fragPosition, fragNormal, ambientPos.xyz, ambientCol, 0.00025, 0.5, 1.0);
         }
     }
 

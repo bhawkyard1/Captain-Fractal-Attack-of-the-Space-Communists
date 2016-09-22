@@ -272,6 +272,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void loadFontSpriteSheet(std::string _name, std::string _path, int _size);
 
+    GLuint loadTexture(const std::string &_path);
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws white text
     /// \param _text text to draw
@@ -280,7 +282,7 @@ public:
     /// \param _ws world or screen space
     /// \param _scale text scale
     //----------------------------------------------------------------------------------------------------------------------
-    void drawText(std::string _text, std::string _font, vec2 _pos, const bool _ws, const float _scale);
+    void drawText(const std::string _text, std::string _font, vec2 _pos, const bool _ws, const float _scale);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws coloured text
@@ -542,6 +544,11 @@ private:
 
     std::array<pointLight, MAX_LIGHTS> m_pointLights;
     int m_activeLights;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Noise texture, used for explosions
+    //----------------------------------------------------------------------------------------------------------------------
+    GLuint m_noise512;
 };
 
 #endif

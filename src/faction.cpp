@@ -167,7 +167,7 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
 //How should active squads behave?
 void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships)
 {
-    bool b = (m_team == ALLIANCE);
+    //bool b = (m_team == ALLIANCE);
 
     std::vector<squad> enemySquads;
     for(size_t f = 0; f < _rivals.size(); ++f)
@@ -198,10 +198,10 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         //Don't do shit if everything is too spread out.
         if(s.m_averageDistance > sqr(s.m_regroupDist))
         {
-            if(b)
+            /*if(b)
             {
-                //std::cout << "enemy squads len " << enemySquads.size() << '\n';
-            }
+                std::cout << "enemy squads len " << enemySquads.size() << '\n';
+            }*/
             //Targeting enemy squads.
             for(auto &target : enemySquads)
             {

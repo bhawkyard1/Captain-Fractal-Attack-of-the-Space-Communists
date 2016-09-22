@@ -346,6 +346,8 @@ renderer_ngl::renderer_ngl()
     resetLights();
     m_activeLights = 0;
 
+    m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "/textures/util/noise512RGB.png");
+
     finalise(0.0f, vec2());
 }
 
@@ -1397,7 +1399,13 @@ void renderer_ngl::loadFontSpriteSheet(
     m_letters.insert({_name, sheet});
 }
 
-
+GLuint renderer_ngl::loadTexture(const std::string &_path)
+{
+    SDL_Surface * surf = IMG_Load(_path.c_str());
+    GLuint tex = SDLSurfaceToGLTexture(surf);
+    SDL_FreeSurface(surf);
+    return tex;
+}
 
 GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s)
 {

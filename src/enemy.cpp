@@ -14,6 +14,7 @@ enemy::enemy(
     setPPos(_p);
     setVel(_v);
     m_stopDist = randNum(200.0f,600.0f);
+    m_aggroRadius = randNum(2000.0f, 2200.0f);
     if(_type == PLAYER_MINER_DROID) m_stopDist = randNum(20.0f, 60.0f);
     m_target = nullptr;
     m_curGoal = GOAL_IDLE;
@@ -43,12 +44,17 @@ void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std:
                     _factions[_enemies[i].getTeam()].isNeutral(getTeam())
                     ) continue;
             //Distance as a base.
-            float weight = mag(getPos() - _enemies[i].getPos());
+            float weight = magns(getPos() - _enemies[i].getPos());
+
+            //Skip this enemy if it is too far away.
+            if(weight > sqr(m_aggroRadius)) continue;
+
+            weight = sqrt(weight);
             //Concentrate on active / unweakened combatants.
             weight *= _enemies[i].getHealth() / _enemies[i].getMaxHealth() + 0.5f;
             //Do not target enemies shooting by sideways.
             //weight /= clamp( dotProdUnit(getVel(), _enemies[i].getVel()), 0.001f, 1.0f );
-            //I know this pointer is unreliable, a target could easily change address between updates. But I just can't be bothered to code anything better at the moment.
+            //If this is the agent's current target, prioritise.
             if(curTarget != nullptr and curTargetID == _enemies.getID(i)) weight /= 3.0f;
             //Pursue last attacker.
             if( lastAttacker != nullptr and lastAttacker == &_enemies[i] ) weight /= 2.0f;
@@ -63,21 +69,26 @@ void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std:
 
         if( _factions[getTeam()].isEnemy(TEAM_PLAYER) and !g_GAME_OVER )
         {
-            float weight = mag(getPos() - _ply.getPos());
-            //Concentrate on active / unweakened combatants.
-            weight *= _ply.getHealth() / _ply.getMaxHealth() + 0.5f;
-            //Do not target enemies shooting by sideways.
-            //weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
-            //Pursue last attacker.
-            if( getLastAttacker().m_id == 0
-                    and getLastAttacker().m_version == -2
-                    ) weight /= 2.0f;
+            float weight = magns(getPos() - _ply.getPos());
 
-            if(weight < bestWeight)
+            if(weight < sqr(m_aggroRadius))
             {
-                bestWeight = weight;
-                m_target = (ship*)&_ply;
-                setGoal(GOAL_ATTACK);
+                weight = sqrt(weight);
+                //Concentrate on active / unweakened combatants.
+                weight *= _ply.getHealth() / _ply.getMaxHealth() + 0.5f;
+                //Do not target enemies shooting by sideways.
+                //weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
+                //Pursue last attacker.
+                if( getLastAttacker().m_id == 0
+                        and getLastAttacker().m_version == -2
+                        ) weight /= 2.0f;
+
+                if(weight < bestWeight)
+                {
+                    bestWeight = weight;
+                    m_target = (ship*)&_ply;
+                    setGoal(GOAL_ATTACK);
+                }
             }
         }
     }
@@ -201,7 +212,7 @@ void enemy::behvrUpdate(float _dt)
     else if(m_curGoal == GOAL_WANDER)
     {
         m_tVel = {0.0f, 0.0f, 0.0f};
-        m_tPos += getWVel();
+        m_tPos += getWVel() * g_PIXEL_UNIT_CONVERSION * _dt;;
         if(magns(getPos() - m_tPos) < 10000.0f)
         {
             m_tPos += tovec3(randVec2(2000.0f));
