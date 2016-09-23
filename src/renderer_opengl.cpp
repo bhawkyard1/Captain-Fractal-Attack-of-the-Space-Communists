@@ -193,7 +193,7 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("ship", "shipVertex", "shipFragment");
     createShaderProgram("laser", "laserVertex", "laserFragment");
     //createShaderProgram("explosion", "explosionVertex", "explosionFragment");
-    createShaderProgram("explosion", "explosionVertex", "explosion2");
+    createShaderProgram("explosion", "explosionVertex", "explosion3");
     createShaderProgram("flame", "explosionVertex", "flameFragment");
     createShaderProgram("smoke", "explosionVertex", "smokeFragment");
     createShaderProgram("shield", "MVPUVNVert", "shieldFragment");
@@ -346,7 +346,9 @@ renderer_ngl::renderer_ngl()
     resetLights();
     m_activeLights = 0;
 
-    m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "/textures/util/noise512RGB.png");
+    std::cout << "p1\n";
+    m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "/textures/util/noise512RGB.png", GL_RGB);
+    std::cout << "p2\n";
 
     finalise(0.0f, vec2());
 }
@@ -1102,7 +1104,26 @@ void renderer_ngl::drawLine(
 
 void renderer_ngl::drawExplosions()
 {
-    useShader("explosion");
+    //clearVectors();
+
+    /*addRect(
+                vec3(),
+                vec2(1024.0f, 1024.0f),
+                0.0f,
+    {0.0f, 0.0f, 0.0f, 0.0f}
+                );
+
+    packExtraData(
+    {50.0f, 0.0f, 0.0f, 100.0f}
+                );*/
+
+
+    GLuint id = m_shader->getProgramID("explosion");
+    bindTextureToSampler(id, m_noise512, "noiseTex", 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_noise512);
+
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
     glBindVertexArray(m_vao);
 
@@ -1118,6 +1139,9 @@ void renderer_ngl::drawExplosions()
     glVertexAttribPointer( 3, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
     drawRects(true);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void renderer_ngl::drawSmoke(const float _dt)
@@ -1384,7 +1408,7 @@ void renderer_ngl::loadFontSpriteSheet(
             return;
         }
 
-        GLuint texture = SDLSurfaceToGLTexture(surf);
+        GLuint texture = SDLSurfaceToGLTexture(surf, GL_RGBA);
 
         sheet.m_dim.push_back(std::make_pair(surf->w, surf->h));
 
@@ -1399,15 +1423,23 @@ void renderer_ngl::loadFontSpriteSheet(
     m_letters.insert({_name, sheet});
 }
 
-GLuint renderer_ngl::loadTexture(const std::string &_path)
+GLuint renderer_ngl::loadTexture(const std::string &_path, const int _format)
 {
     SDL_Surface * surf = IMG_Load(_path.c_str());
-    GLuint tex = SDLSurfaceToGLTexture(surf);
+    GLuint tex;
+    if(surf != nullptr)
+        tex = SDLSurfaceToGLTexture(surf, _format);
+    else
+    {
+        std::cerr << "Warning! Null surface. " << SDL_GetError() << '\n';
+        return 0;
+    }
+
     SDL_FreeSurface(surf);
     return tex;
 }
 
-GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s)
+GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s, int _format)
 {
     GLuint textureID;
 
@@ -1420,8 +1452,7 @@ GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s)
         //mode = GL_RGB;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _s->w, _s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, _s->pixels);
-
+    glTexImage2D(GL_TEXTURE_2D, 0, _format, _s->w, _s->h, 0, _format, GL_UNSIGNED_BYTE, _s->pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

@@ -51,7 +51,7 @@ public:
     float getCol(int i) const {return m_col[i];}
 
     float getAlpha(const int _i) {return m_alphas[_i];}
-    std::array<float, 4> getShaderData() const {return {m_elapsed, m_seed_position, m_seed_explosion, m_force};}
+    std::array<float, 4> getShaderData() const {return {m_elapsed, m_seed_position, m_seed_explosion, m_duration};}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Identifier getter
@@ -84,7 +84,7 @@ private:
     float m_elapsed;
     float m_seed_position;
     float m_seed_explosion;
-    float m_expiry;
+    float m_duration;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The string id of the particle system

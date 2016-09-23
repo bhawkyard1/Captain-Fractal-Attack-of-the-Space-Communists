@@ -272,7 +272,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void loadFontSpriteSheet(std::string _name, std::string _path, int _size);
 
-    GLuint loadTexture(const std::string &_path);
+    GLuint loadTexture(const std::string &_path, const int _format);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws white text
@@ -354,7 +354,7 @@ public:
     /// \brief Converts an SDL_Surface to an openGL texture, returns the ID
     /// \param _s the input SDL surface
     //----------------------------------------------------------------------------------------------------------------------
-    GLuint SDLSurfaceToGLTexture(SDL_Surface * _s);
+    GLuint SDLSurfaceToGLTexture(SDL_Surface * _s, int _format);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Enables depth-based fragment culling

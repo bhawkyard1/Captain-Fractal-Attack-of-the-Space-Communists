@@ -18,10 +18,15 @@ layout(location = 3) in vec4 inSeed;
 out vec4 vertCol;
 out vec2 UV;
 
-out float iGlobalTime;
+/*out float iGlobalTime;
 out float variation_seed;
 out float explosion_seed;
-out float speed;
+out float speed;*/
+
+out float elapsed_time;
+out float variation_seed;
+out float explosion_seed;
+out float duration;
 
 uniform mat4 MVP;
 
@@ -31,8 +36,12 @@ void main()
     vertCol = inColour;
     UV = inUV;
 
-    iGlobalTime = inSeed.x;
+    /*iGlobalTime = inSeed.x;
     variation_seed = inSeed.y;
     explosion_seed = inSeed.z;
-    speed = clamp(12.0 / inSeed.w, 0.4, 0.8);
+    speed = clamp(12.0 / inSeed.w, 0.4, 0.8);*/
+    elapsed_time = inSeed.x;
+    variation_seed = inSeed.y;
+    explosion_seed = inSeed.z;
+    duration = inSeed.w;
 }

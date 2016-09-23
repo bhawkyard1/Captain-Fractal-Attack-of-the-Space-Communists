@@ -2908,7 +2908,7 @@ void universe::destroyAgent(size_t _i)
 
     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
     pos += m_agents[_i].getPos();
-    addpfx(pos, m_agents[_i].getVel(), randNum(5, 7), m_agents[_i].getMaxHealth() * randNum(0.5f, 0.8f), col1to255(m_agents[_i].getCurWeapCol()));
+    addpfx(pos, m_agents[_i].getVel(), randNum(5.0, 7.0), m_agents[_i].getRadius() * randNum(0.5f, 0.8f), col1to255(m_agents[_i].getCurWeapCol()));
 
     //Dump inventory.
     for(auto &d : m_agents[_i].getCargo()->getItems()->m_objects)

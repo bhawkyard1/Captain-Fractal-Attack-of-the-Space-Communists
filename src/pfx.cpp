@@ -17,7 +17,7 @@ pfx::pfx(
     m_seed_position = static_cast<float>(rand());
     m_seed_explosion = static_cast<float>(rand());
 
-    m_expiry = 60.0f / _force;
+    m_duration = _force / 12.0f;
 
     m_active = true;
 
@@ -61,17 +61,17 @@ void pfx::update(float _dt)
 
         if(m_alphas[i] > 0.0f)
         {
-            m_alphas[i] -= 1;
+            m_alphas[i] -= 1.0f;
             done = false;
         }
     }
 
-    if(m_elapsed < m_expiry) done = false;
+    if(m_elapsed < m_duration) done = false;
 
     if(done) m_active = false;
     m_elapsed += _dt;
 
-    m_col[3] *= 0.995f;
+    //m_col[3] *= 0.995f;
 
     updatePos(_dt);
 }
