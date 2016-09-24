@@ -104,6 +104,7 @@ void soundPlayer::playSnd(sound _snd)
 
     Mix_Chunk * to_play = m_snds.at(snd).at(rand()%size);
 
+    Mix_PlayChannel( m_curChannel, to_play, 0 );
     //std::cout << Mix_PlayChannel( m_curChannel, to_play, 0 ) << std::endl;
 
     m_curChannel++;

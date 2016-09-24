@@ -1,6 +1,6 @@
 #version 430 core
 
-#define SMOOTHNESS 0.03
+#define SMOOTHNESS 0.04
 
 in vec4 gl_FragCoord;
 in vec2 UV;
@@ -13,8 +13,8 @@ in float duration;
 
 layout (location = 0) out vec4 fragColour;
 
-const int ITERATIONS = 24;
-const float STEP = 0.02;
+const int ITERATIONS = 30;
+const float STEP = 0.01;
 const float DITHER = 0.2;
 //const float DURATION = 2.0;
 const float PI = 3.14159265;
