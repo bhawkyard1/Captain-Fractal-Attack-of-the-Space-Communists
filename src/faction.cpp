@@ -397,7 +397,8 @@ void faction::resetSquads()
 {
     for(auto &s : m_squads.m_objects)
     {
-        s.m_averagePos = vec3();
+        s.m_pAveragePos = s.m_averagePos;
+        //s.m_averagePos = vec3();
         s.m_averageVel = vec3();
     }
 }

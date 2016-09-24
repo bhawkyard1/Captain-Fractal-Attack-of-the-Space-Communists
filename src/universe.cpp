@@ -709,7 +709,10 @@ void universe::calcSquadPositions()
         squad * sq = getSquadFromID(e.getTeam(), e.getSquadID());
         if(sq != nullptr)
         {
-            sq->m_averagePos += e.getPos() / sq->m_size;
+            //Get the distance to the average position last f rame.
+            float dist = mag(e.getPos() - sq->m_pAveragePos);
+
+            sq->m_averagePos += (e.getPos() / sq->m_size) * dist;
             sq->m_averageVel += e.getVel() / sq->m_size;
         }
     }

@@ -14,6 +14,8 @@ squad createSquad(aiTeam _t)
 
     if(_t = TEAM_PLAYER) r.m_targetPos = vec3();
     else r.m_targetPos = tovec3( randVec2(1000.0f, 100000.0f) );
+    r.m_pAveragePos = r.m_targetPos;
+
     r.m_averagePos = vec3();
     r.m_averageVel = vec3();
 

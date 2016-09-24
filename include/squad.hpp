@@ -54,6 +54,7 @@ struct squad
     //----------------------------------------------------------------------------------------------------------------------
     vec3 m_targetPos;
     vec3 m_averagePos;
+    vec3 m_pAveragePos;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The average velocity of the members. Useful for Craig-Reynolds-eque alignment.
