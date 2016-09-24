@@ -703,19 +703,25 @@ void universe::calcSquadPositions()
 {
     //Reset squad variables
     for(auto &f : m_factions) f.resetSquads();
-    //Set acerate positions and velocities.
+
+    //Set average positions and velocities.
     for(auto &e : m_agents.m_objects)
     {
         squad * sq = getSquadFromID(e.getTeam(), e.getSquadID());
         if(sq != nullptr)
         {
             //Get the distance to the average position last f rame.
-            float dist = mag(e.getPos() - sq->m_pAveragePos);
+            float weight = clamp(mag(e.getPos() - sq->m_pAveragePos) /  20000.0f, 1.0f, 100.0f);
+            vec3 averageDiff = e.getPos() - sq->m_pAveragePos;
 
-            sq->m_averagePos += (e.getPos() / sq->m_size) * dist;
+            sq->m_averagePos += (averageDiff / sq->m_size) / weight;
             sq->m_averageVel += e.getVel() / sq->m_size;
         }
     }
+
+    /*for(auto &f : m_factions)
+        f.finaliseSquadAveragePos();*/
+
     //Set average distance.
     for(auto &e : m_agents.m_objects)
     {
@@ -1351,7 +1357,7 @@ void universe::draw(float _dt)
         vec3 pos = m_particles[i].getPos();
         if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) or m_particles[i].getForce() < 5.0f) continue;
         std::array<float, 4> col = col255to1(m_particles[i].getCol());
-        for(int j = 0; j < 3; ++j) col[j] *= col[3] * m_particles[i].getForce() * 32.0f;
+        for(int j = 0; j < 3; ++j) col[j] *= col[3] * clamp(1.0f - m_particles[i].normalisedLifetime(), 0.0f, 1.0f);
         m_drawer.addLight({pos, vec3(col[0], col[1], col[2])}, lightCount);
         lightCount++;
     }

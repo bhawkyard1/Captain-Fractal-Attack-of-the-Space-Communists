@@ -67,6 +67,8 @@ public:
     /// \brief Force getter
     //----------------------------------------------------------------------------------------------------------------------
     float getForce() {return m_force;}
+
+    float normalisedLifetime() {return m_elapsed / m_duration;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of 'base' (glorified points), representing particles

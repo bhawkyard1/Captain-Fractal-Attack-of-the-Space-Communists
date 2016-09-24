@@ -47,7 +47,8 @@ pfx::pfx(
 
 void pfx::update(float _dt)
 {
-    bool done = true;
+    bool alphas = true;
+    bool elapsed = false;
 
     for(auto &i : m_particles)
     {
@@ -62,13 +63,13 @@ void pfx::update(float _dt)
         if(m_alphas[i] > 0.0f)
         {
             m_alphas[i] -= 1.0f;
-            done = false;
+            alphas = false;
         }
     }
 
-    if(m_elapsed < m_duration) done = false;
+    if(m_elapsed < m_duration) elapsed = true;
 
-    if(done) m_active = false;
+    if(alphas and elapsed) m_active = false;
     m_elapsed += _dt;
 
     //m_col[3] *= 0.995f;

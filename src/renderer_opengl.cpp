@@ -347,7 +347,7 @@ renderer_ngl::renderer_ngl()
     m_activeLights = 0;
 
     std::cout << "p1\n";
-    m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "/textures/util/noise512RGB.png", GL_RGB);
+    m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
     std::cout << "p2\n";
 
     finalise(0.0f, vec2());

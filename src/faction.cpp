@@ -196,7 +196,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         float bestDistance = F_INF;
 
         //Don't do shit if everything is too spread out.
-        if(s.m_averageDistance > sqr(s.m_regroupDist))
+        if(s.m_averageDistance < sqr(s.m_regroupDist))
         {
             /*if(b)
             {

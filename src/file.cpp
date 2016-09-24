@@ -321,7 +321,7 @@ void loadGame(universe * uni)
 
     unsigned long tempIDCounter;
 
-    while(getline( save, cur ))
+    while(getlineSafe( save, cur ))
     {
         if(cur.length() == 0) continue;
         std::vector<std::string> strings = split(cur, ' ');
