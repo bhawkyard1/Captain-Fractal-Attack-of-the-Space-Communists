@@ -24,7 +24,7 @@ layout (location = 0) out vec4 fragColour;
 void main()
 {
     float t = iGlobalTime * 256.0;
-    vec2 p = 1.0 * UV - 1.0;
+    vec2 p = UV - 1.0;
     vec2 op = p;
     vec4 colour = inColour;
     colour += vec4(0.25);
@@ -67,5 +67,7 @@ void main()
 
     //output final colour
     fragColour = colour;
-    fragColour.a *= min(alpha, 0.8);
+
+    float dist = distance(UV, vec2(0.5)) * 2.0;
+    fragColour.a *= mix(fragColour.a, 0.0, dist);
 }

@@ -1568,7 +1568,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
     m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
     drawCircle(center, 4.0f, false);
 
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, 1.0f));
+    m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 1.0f));
     for(unsigned int i = 0; i < _lp->size(); i++)
     {
         vec3 lpp = _lp->at(i).getPos() - m_camera.getPos();

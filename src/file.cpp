@@ -615,6 +615,20 @@ ship loadShip(const std::string &_path, std::string * _asset, int _classificatio
             else if(s[i] == "canshoot") ret.setCanShoot( stoi(s[i + 1]) );
             else if(s[i] == "canmove") ret.setCanMove( stoi(s[i + 1]) );
             else if(s[i] == "angvelrange") ret.setAngVelRange(stof(s[i + 1]), stof(s[i + 2]), true);
+            else if(s[i] == "attachmentpoints")
+            {
+                std::vector<vec3> attachmentPoints;
+                std::vector<std::string> vecs = split(s[i + 1], '|');
+                for(auto &v : vecs)
+                {
+                    std::vector<std::string> vector = split(v, ',');
+                    if(vector.size() == 3)
+                        attachmentPoints.push_back(
+                                    vec3(stof(vector[0]), stof(vector[1]), stof(vector[2]))
+                                );
+                }
+                ret.setAttachmentPoints(attachmentPoints);
+            }
         }
     }
 

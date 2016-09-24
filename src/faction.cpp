@@ -167,12 +167,13 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
 //How should active squads behave?
 void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships)
 {
-    //bool b = (m_team == ALLIANCE);
+    bool b = (m_team == ALLIANCE);
+
+    //if(b) std::cout << "DIP " << _rivals[ALLIANCE].getRelations(m_team) << ", " << getRelations(ALLIANCE) << '\n';
 
     std::vector<squad> enemySquads;
     for(size_t f = 0; f < _rivals.size(); ++f)
     {
-        if(&_rivals[f] == this) continue;
         aiTeam curTeam = _rivals[f].getTeam();
         if(_rivals[f].getRelations(m_team) < DIPLOMACY_NEUTRAL and getRelations(curTeam) < DIPLOMACY_NEUTRAL)
         {
@@ -196,15 +197,14 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         float bestDistance = F_INF;
 
         //Don't do shit if everything is too spread out.
-        if(s.m_averageDistance < sqr(s.m_regroupDist))
+        if(s.m_averageDistance > sqr(s.m_regroupDist))
         {
-            /*if(b)
-            {
-                std::cout << "enemy squads len " << enemySquads.size() << '\n';
-            }*/
+            if(b) std::cout << "squad " << &s << " size : " << s.m_size << '\n';
+
             //Targeting enemy squads.
             for(auto &target : enemySquads)
             {
+                if(b) std::cout << "target : " << target.m_size << ", " << target.m_team << '\n';
                 float dist = magns(s.m_averagePos - target.m_targetPos);
                 if(
                         dist < bestDistance and
@@ -217,7 +217,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            //if(b) std::cout << "targeting enemies\n";
+            if(b) std::cout << "targeting enemies\n";
             if( done ) continue;
 
             //Targeting of player.
@@ -227,22 +227,22 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     dist < bestDistance
                     )
             {
-                bestDistance = dist;
                 s.m_targetPos = vec3();
                 done = true;
             }
             else if(
                     getRelations(TEAM_PLAYER) == DIPLOMACY_SELF
-                    and dist > sqr(1500.0f)
+                    and dist > sqr(512.0f)
                     )
             {
                 s.m_targetPos = vec3();
                 done = true;
             }
-            //if(b) std::cout << "targeting player\n";
+            if(b) std::cout << "targeting player\n";
             if( done ) continue;
 
             //Reinforcing of squads within the SAME faction.
+            //To do: I expect this is causing ships to hang around forever, because they reinforce rather than withdrawing...?
             for(auto &ally : m_squads.m_objects)
             {
                 if(&s == &ally) continue;
@@ -258,7 +258,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            //if(b) std::cout << "reinforcing teammates\n";
+            if(b) std::cout << "reinforcing teammates\n";
             if( done ) continue;
 
             //Targeting of individual ships/structures (since not every ship is in a squad).
@@ -274,12 +274,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            //if(b) std::cout << "chasing down stragglers\n";
+            if(b) std::cout << "chasing down stragglers\n";
             if( done ) continue;
             //std::cout << "p5\n";
             //If no targets, withdraw.
-            s.m_targetPos = unit(s.m_averagePos) * 200000.0f;
-            //if(b) std::cout << "withdrawing\n";
+            s.m_targetPos = unit(s.m_averagePos) * F_MAX;
+            if(b) std::cout << "withdrawing\n";
         }
     }
 }

@@ -148,7 +148,7 @@ void universe::addMissile(
     m.setVel(_v + tovec3(vec(_angle + 90)) * 5);
     m.setAng(_angle);
 
-    m.setTarget( closestEnemy( tovec3( toScreenSpace( getMousePos() ) ) * g_ZOOM_LEVEL, _team ) );
+    m.setTarget( closestEnemy( tovec3( toWorldSpace( getMousePos() ) ), _team ) );
 
     m_missiles.push_back(m);
 }
@@ -527,10 +527,10 @@ void universe::update(float _dt)
         }
 
         debug("fleeing");
-        if(!sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove())
+        if(!sameTeam( m_agents[e].getTeam(), TEAM_PLAYER ) and m_agents[e].getHealth() < m_agents[e].getConfidence() and m_agents[e].getCanMove() and m_agents[e].getSquadID().m_id != 0 and m_agents[e].getSquadID().m_version != -1 )
         {
             //If the enemy can move and is scared, runs away.
-            removeFromSquad(&m_agents[e], m_agents[e].getSquadID());
+            removeFromSquad(&m_agents[e]);
             m_agents[e].setGoal(GOAL_FLEE);
         }
 
@@ -683,6 +683,8 @@ void universe::cullAgents()
         //Offscreen elimination, health-based elimination
         if( isDead or ( isOffscreen and (!isPlayerOwned or isSmall) ) )
         {
+            removeFromSquad(&m_agents[i]);
+
             if(isDead)
             {
                 destroyAgent(i);
@@ -692,7 +694,6 @@ void universe::cullAgents()
                 //destroyAgent(i);
                 m_factions[ m_agents[i].getTeam() ].unitWithdrawn(m_agents[i].getClassification());
                 if(m_agents.getByID(m_contextShip) == &m_agents[i]) m_contextShip = {0, -1};
-                removeFromSquad(&m_agents[i], m_agents[i].getSquadID());
                 m_agents.free(i);
             }
         }
@@ -1128,7 +1129,7 @@ void universe::draw(float _dt)
         //col[3] *= 255.0f;
         m_drawer.addRect(ipos, idim, 0.0f, col);
     }
-    m_drawer.drawSmoke(m_time_elapsed);
+    //m_drawer.drawSmoke(m_time_elapsed);
     m_drawer.clearVectors();
 
     m_drawer.useShader("flame");
@@ -1285,7 +1286,7 @@ void universe::draw(float _dt)
         vec3 ipos = i.getInterpolatedPosition(_dt);
         float idim = i.getForce() * 20.0f;
 
-        if(col[3] > 0.05f)
+        if(i.normalisedLifetime() < 1.0f)
         {
             m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
             m_drawer.packExtraData( i.getShaderData() );
@@ -2119,92 +2120,33 @@ void universe::spawnShip(
     if(!newShip.getCanMove() or !newShip.getCanShoot() or newShip.getType() == SHIP_TYPE_MINER) return;
 
     std::vector<enemy> temp;
+    ship_spec turretType;
     //Turrets.
-    if(_type == FEDERATION_CAPITAL)
+    switch(_t)
     {
-        for(int q = 0; q < 10; ++q)
-        {
-            enemy temp1({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
-            enemy temp2({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, FEDERATION_TURRET, GALACTIC_FEDERATION);
-
-            shipAddParent(m_agents.size() - 1, &temp1, {200.0f, q * 200.0f - 960.0f, 0.0f});
-            shipAddParent(m_agents.size() - 1, &temp2, {-200.0f, q * 200.0f - 960.0f, 0.0f});
-
-            temp.push_back(temp1);
-            temp.push_back(temp2);
-        }
+    case TEAM_PLAYER:
+        turretType = PLAYER_TURRET;
+        break;
+    case GALACTIC_FEDERATION:
+        turretType = FEDERATION_TURRET;
+        break;
+    case SPOOKY_SPACE_PIRATES:
+        turretType = PIRATE_TURRET;
+        break;
+    case SPACE_COMMUNISTS:
+        turretType = COMMUNIST_TURRET;
+        break;
+    default:
+        turretType = PLAYER_TURRET;
+        break;
     }
-    else if(_type == PIRATE_CAPITAL)
+
+    //Turrets
+    for(auto &p : newShip.getAttachmentPoints())
     {
-        for(int p = 1; p < 5; ++p)
-        {
-            int wang = 60;
-            for(int pang = 0; pang < 360; pang += wang)
-            {
-                vec3 pos = {static_cast<float>(cos(rad(pang))) * p * 150.0f, static_cast<float>(sin(rad(pang))) * p * 150.0f, 0.0f};
-                enemy temp1({0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PIRATE_TURRET, SPOOKY_SPACE_PIRATES);
-
-                shipAddParent(m_agents.size() - 1, &temp1, pos);
-
-                temp.push_back(temp1);
-            }
-            wang -= 15;
-        }
-    }
-    else if(_type == COMMUNIST_CAPITAL)
-    {
-        vec3 base = {-184.0f, -604.0f, 0.0f};
-
-        for(int i = 0; i < 3; ++i)
-        {
-            for(int j = 0; j < 4; ++j)
-            {
-                vec3 pos = {120.0f * i, 120.0f * j, 0.0f};
-                pos += base;
-
-                enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, COMMUNIST_TURRET, SPACE_COMMUNISTS);
-
-                shipAddParent(m_agents.size() - 1, &temp1, pos);
-
-                temp.push_back(temp1);
-            }
-        }
-    }
-    else if(_type == PLAYER_CAPITAL)
-    {
-        vec3 base;
-        for(int i = 0; i < 3; ++i)
-        {
-            base = {-164.0f, -424.0f, 0.0f};
-            for(int j = 0; j < 3; ++j)
-            {
-                vec3 pos = {164.0f * i, 80.0f * j, 0.0f};
-                pos += base;
-
-                enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
-
-                shipAddParent(m_agents.size() - 1, &temp1, pos);
-
-                temp.push_back(temp1);
-            }
-        }
-
-        for(int j = 1; j < 3; ++j)
-        {
-            base = {0.0f, 143.0f, 0.0f};
-            for(int i = 0; i < 360; i += 60)
-            {
-                vec3 pos = {static_cast<float>(cos(rad(i))), static_cast<float>(sin(rad(i))), 0.0f};
-                pos *= j * 100.0f;
-                pos += base;
-
-                enemy temp1( {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, PLAYER_TURRET, TEAM_PLAYER);
-
-                shipAddParent(m_agents.size() - 1, &temp1, pos);
-
-                temp.push_back(temp1);
-            }
-        }
+        enemy temp1(vec3(), vec3(), turretType, _t);
+        shipAddParent(m_agents.size() - 1, &temp1, p);
+        temp.push_back(temp1);
     }
 
     bool quit = false;
@@ -2212,13 +2154,13 @@ void universe::spawnShip(
     for(auto &s : m_factions[_t].getSquads())
     {
         if(
-                s.m_team == _t and
                 s.m_size < s.m_max_size and
                 /*magns(m_agents.m_objects.back().getPos() - s.m_centerPoint) < sqr(s.m_regroupDist) and*/
                 rand() % 100 < 95)
         {
             addToSquad(&m_agents.m_objects.back(), m_factions[_t].getBackSquad());
             quit = true;
+            break;
         }
     }
 
@@ -2244,27 +2186,26 @@ void universe::addToSquad(
         uniqueID _s
         )
 {
-    _e->setSquadID(_s);
-
     squad * sq = m_factions[_e->getTeam()].getSquad(_s);
     if(sq != nullptr)
     {
-        sq->m_size++;
+        _e->setSquadID(_s);
+        sq->m_size += 1;
         sq->m_strength += calcAICost(_e->getClassification());
     }
 }
 
 void universe::removeFromSquad(
-        enemy *_e,
-        uniqueID _s
+        enemy *_e
         )
 {
+    squad * sq = m_factions[_e->getTeam()].getSquad(_e->getSquadID());
+
     _e->setSquadID({0, -1});
 
-    squad * sq = m_factions[_e->getTeam()].getSquad(_s);
     if(sq != nullptr)
     {
-        sq->m_size--;
+        sq->m_size -= 1;
         sq->m_strength -= calcAICost(_e->getClassification());
     }
 }
@@ -2927,7 +2868,7 @@ void universe::destroyAgent(size_t _i)
 
     addScore( m_agents[_i].getScore() );
     addFrag( m_agents[_i].getLastAttacker() );
-    if(lastAttacker != nullptr) lastAttacker->addXP( clamp(calcAICost(m_agents[_i].getClassification()), 0.0f, 5.0f) );
+    if(lastAttacker != nullptr) lastAttacker->addXP( clamp(calcAICost(m_agents[_i].getClassification()) * 0.1f, 0.0f, 5.0f) );
 
     playSnd(EXPLOSION_SND, m_agents[_i].getPos(), 1.0f);
     m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[_i].getPos() - m_ply.getPos())));
@@ -2944,6 +2885,5 @@ void universe::destroyAgent(size_t _i)
     m_factions[ m_agents[_i].getTeam() ].unitDestroyed(m_agents[_i].getClassification());
 
     if(m_agents.getByID(m_contextShip) == &m_agents[_i]) m_contextShip = {0, -1};
-    removeFromSquad(&m_agents[_i], m_agents[_i].getSquadID());
     m_agents.free(_i);
 }

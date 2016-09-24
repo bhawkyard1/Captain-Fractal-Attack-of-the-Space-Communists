@@ -67,7 +67,7 @@ void pfx::update(float _dt)
         }
     }
 
-    if(m_elapsed < m_duration) elapsed = true;
+    if(m_elapsed > m_duration) elapsed = true;
 
     if(alphas and elapsed) m_active = false;
     m_elapsed += _dt;

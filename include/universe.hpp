@@ -371,7 +371,7 @@ public:
     /// \param _e enemy to remove
     /// \param _s squad to remove from
     //----------------------------------------------------------------------------------------------------------------------
-    void removeFromSquad(enemy * _e, uniqueID _s);
+    void removeFromSquad(enemy * _e);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Creates the factions and stores them in m_factions.
