@@ -32,5 +32,6 @@ const float g_PIXEL_UNIT_CONVERSION = 80.0f;
 float g_TIME_SCALE = 1.0f;
 float g_PLAYER_TIME_SCALE = 1.0f;
 float g_VELOCITY_TIME_SCALE = 1.0f;
+float g_KILL_TIME_SCALE = 1.0f;
 
 float g_BG_DENSITY = 5.0f;

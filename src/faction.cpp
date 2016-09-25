@@ -199,12 +199,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
         //Don't do shit if everything is too spread out.
         if(s.m_averageDistance > sqr(s.m_regroupDist))
         {
-            if(b) std::cout << "squad " << &s << " size : " << s.m_size << '\n';
+            //if(b) std::cout << "squad " << &s << " size : " << s.m_size << '\n';
 
             //Targeting enemy squads.
             for(auto &target : enemySquads)
             {
-                if(b) std::cout << "target : " << target.m_size << ", " << target.m_team << '\n';
+                //if(b) std::cout << "target : " << target.m_size << ", " << target.m_team << '\n';
                 float dist = magns(s.m_averagePos - target.m_targetPos);
                 if(
                         dist < bestDistance and
@@ -217,7 +217,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "targeting enemies\n";
+            //if(b) std::cout << "targeting enemies\n";
             if( done ) continue;
 
             //Targeting of player.
@@ -238,7 +238,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                 s.m_targetPos = vec3();
                 done = true;
             }
-            if(b) std::cout << "targeting player\n";
+            //if(b) std::cout << "targeting player\n";
             if( done ) continue;
 
             //Reinforcing of squads within the SAME faction.
@@ -258,7 +258,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "reinforcing teammates\n";
+            //if(b) std::cout << "reinforcing teammates\n";
             if( done ) continue;
 
             //Targeting of individual ships/structures (since not every ship is in a squad).
@@ -274,12 +274,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                     done = true;
                 }
             }
-            if(b) std::cout << "chasing down stragglers\n";
+            //if(b) std::cout << "chasing down stragglers\n";
             if( done ) continue;
             //std::cout << "p5\n";
             //If no targets, withdraw.
             s.m_targetPos = unit(s.m_averagePos) * F_MAX;
-            if(b) std::cout << "withdrawing\n";
+            //if(b) std::cout << "withdrawing\n";
         }
     }
 }

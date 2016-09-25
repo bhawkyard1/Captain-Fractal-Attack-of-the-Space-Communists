@@ -6,6 +6,18 @@
 
 struct uniqueID
 {
+    uniqueID()
+    {
+        m_id = 0;
+        m_version = -1;
+    }
+
+    uniqueID(const long _id, const long _version)
+    {
+        m_id = _id;
+        m_version = _version;
+    }
+
     long m_id;
     long m_version;
 };

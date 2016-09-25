@@ -22,6 +22,8 @@
 #include <SDL2/SDL.h>
 #include <SDL_ttf.h>
 
+#define XP_DISPLAY_DIVISOR 64.0f
+
 renderer_ngl::renderer_ngl()
     :
       m_camera()
@@ -768,7 +770,6 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts)
 
 GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::Vec4> _cols)
 {
-    std::cout << "verts and cols\n";
     GLuint temp_vao;
     glGenVertexArrays(1, &temp_vao);
     glBindVertexArray(temp_vao);
@@ -1024,7 +1025,7 @@ void renderer_ngl::drawRects(const bool _ws)
 void renderer_ngl::drawXP(const float _xp)
 {
     m_shader->use("xp");
-    m_shader->setRegisteredUniform("xp", _xp);
+    m_shader->setRegisteredUniform("xp", _xp / XP_DISPLAY_DIVISOR);
 
     drawRects(true);
 }
@@ -1337,6 +1338,12 @@ void renderer_ngl::statusBars(player * _ply)
     //energy
     col = {0.2f, 0.9f, 0.2f, 1.0f};
     drawbutton({width / 2.0f, 72.0f, 0.0f}, {width, 16}, 0.0f, col);
+
+    addRect({128.0f, 106.0f, 0.0f}, {256, 64}, 0.0f, col);
+    m_shader->use("xp");
+    m_shader->setRegisteredUniform("xp", _ply->getXP() / XP_DISPLAY_DIVISOR);
+    drawRects(false);
+    clearVectors();
 }
 
 void renderer_ngl::drawWeaponStats(player *_ply)

@@ -101,7 +101,7 @@ vec4 scene(vec3 pos, vec3 dir, out float dist)
     colour.a *= clamp(1.5 * rnTime, 0.0, 1.0);
     
     //Base colour
-    colour.rgb = 1.2 * mix(vec3(1.0), vertCol.rgb * 0.9, clamp((r - 1.1) * 3.0, 0.0, 1.0));
+    colour.rgb = 1.2 * mix((vertCol.rgb + vec3(0.05)) * 5.5, vertCol.rgb * 0.9, clamp((r - 1.1) * 3.0, 0.0, 1.0));
     
     //Fire->Smoke interpolation
     colour.rgb = mix(colour.rgb, grayscale(colour.rgb) * 0.25, clamp((rad2 - rad0) * 15.0, 0.0, 1.0));

@@ -506,6 +506,8 @@ void ship::addXP(const float _xp)
 {
     float div = 1.0f + (m_experience / 32.0f);
     m_experience += _xp / div;
+    //std::cout << "real experience " << (_xp / div) << '\n';
+    //std::cout << "new experience " << m_experience << '\n';
 }
 
 float ship::calcAICost()

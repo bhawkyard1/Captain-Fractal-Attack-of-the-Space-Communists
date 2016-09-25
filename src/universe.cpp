@@ -159,7 +159,8 @@ void universe::update(float _dt)
     if(m_paused) _dt = 0.0f;
 
     g_VELOCITY_TIME_SCALE = 1.0f - (clamp(mag(m_vel) * 80.0f, 0.0f, static_cast<float>(LIGHTSPEED)) / LIGHTSPEED);
-    g_TIME_SCALE = g_PLAYER_TIME_SCALE * g_VELOCITY_TIME_SCALE;
+    g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE + _dt * 0.25f, 0.0f, 1.0f);
+    g_TIME_SCALE = g_PLAYER_TIME_SCALE * g_VELOCITY_TIME_SCALE * g_KILL_TIME_SCALE;
 
     debug("updates start");
 
@@ -835,9 +836,9 @@ void universe::processInputMap()
     }
 
     if(m_inputs.key(SDLK_LEFTBRACKET))
-        g_TIME_SCALE = clamp(g_PLAYER_TIME_SCALE - 0.05f, 0.0f, 2.0f);
+        g_PLAYER_TIME_SCALE = clamp(g_PLAYER_TIME_SCALE - 0.05f, 0.0f, 2.0f);
     else if(m_inputs.key(SDLK_RIGHTBRACKET))
-        g_TIME_SCALE = clamp(g_PLAYER_TIME_SCALE + 0.05f, 0.0f, 2.0f);
+        g_PLAYER_TIME_SCALE = clamp(g_PLAYER_TIME_SCALE + 0.05f, 0.0f, 2.0f);
 
     if(m_inputs.keyEvent(SDLK_i) == INPUT_EVENT_PRESS)
     {
@@ -1473,7 +1474,7 @@ void universe::drawUI(const float _dt)
 
             csp.m_y += 24.0f;
             m_drawer.addRect(csp, {128.0f, 24.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
-            m_drawer.drawXP( contextPtr->getXP() / 48.0f );
+            m_drawer.drawXP( contextPtr->getXP() );
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
 
@@ -1728,7 +1729,13 @@ void universe::checkCollisions()
                 if(harm > 0)
                 {
                     enemy * lastAttacker = m_agents.getByID(so);
-                    if(lastAttacker != nullptr) lastAttacker->addXP( clamp( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.005f, 0.0f, 0.5f) );
+
+                    float xp = clamp( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.00005f, 0.0f, 0.5f);
+
+                    if(lastAttacker != nullptr) lastAttacker->addXP( xp );
+                    else if(so == uniqueID(0, -2))
+                        m_ply.addXP(xp);
+
                     m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
                     addDamagePopup(harm, m_partitions[p].m_ships[s]->getTeam(), ep, -m_vel + randVec3(2.0f));
                     break;
@@ -2468,7 +2475,7 @@ void universe::addBuild(
 
     m_agents.push_back(newShip);
 
-    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {2, 2, 2, 0});
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {0.2f, 0.2f, 0.3f, 1.0f});
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
     m_sounds.playSnd(PLACE_SND, _p, 1.0f);
     m_sounds.playSnd(CLUNK_SND, _p, 1.0f);
@@ -2597,22 +2604,22 @@ void universe::createFactions()
 
     faction galactic_fed("Galactic Federation", {165, 14, 226, 255}, GALACTIC_FEDERATION, {FEDERATION_MKI, FEDERATION_CAPITAL}, {SHIPS_END, SHIPS_END}, {FEDERATION_TURRET, FEDERATION_TURRET}, true );
     galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    galactic_fed.setWealth( randNum(20000.0f, 30000.0f) );
+    galactic_fed.setWealth( randNum(5000.0f, 8000.0f) );
     m_factions.push_back(galactic_fed);
 
     faction spooky_pirates("Spooky Space Pirates", {240, 211, 10, 255}, SPOOKY_SPACE_PIRATES, {PIRATE_GNAT, PIRATE_CAPITAL}, {SHIPS_END, SHIPS_END}, {PIRATE_TURRET, PIRATE_TURRET}, true );
     spooky_pirates.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    spooky_pirates.setWealth( randNum(20000.0f, 30000.0f) );
+    spooky_pirates.setWealth( randNum(15000.0f, 16000.0f) );
     m_factions.push_back(spooky_pirates);
 
     faction space_communists("Space Communists", {255, 0, 0, 255}, SPACE_COMMUNISTS, {COMMUNIST_1, COMMUNIST_CAPITAL}, {SHIPS_END, SHIPS_END}, {COMMUNIST_TURRET, COMMUNIST_TURRET}, true );
     space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    space_communists.setWealth( randNum(20000.0f, 30000.0f) );
+    space_communists.setWealth( randNum(12000.0f, 16000.0f) );
     m_factions.push_back(space_communists);
 
     faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_STATION}, true );
     alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    alliance.setWealth( randNum(20000.0f, 30000.0f) );
+    alliance.setWealth( randNum(15000.0f, 19000.0f) );
     m_factions.push_back(alliance);
 
     faction neutral("Neutral", {200, 200, 200, 255}, NEUTRAL, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, false );
@@ -2868,7 +2875,15 @@ void universe::destroyAgent(size_t _i)
 
     addScore( m_agents[_i].getScore() );
     addFrag( m_agents[_i].getLastAttacker() );
-    if(lastAttacker != nullptr) lastAttacker->addXP( clamp(calcAICost(m_agents[_i].getClassification()) * 0.1f, 0.0f, 5.0f) );
+
+    float xp = clamp(calcAICost(m_agents[_i].getClassification()) * 0.005f, 0.0f, 5.0f);
+
+    if(lastAttacker != nullptr) lastAttacker->addXP( xp );
+    else if(m_agents[_i].getLastAttacker() == uniqueID(0, -2))
+    {
+        g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE - m_ply.getXP() * 0.01f, 0.0f, 1.0f);
+        m_ply.addXP(xp);
+    }
 
     playSnd(EXPLOSION_SND, m_agents[_i].getPos(), 1.0f);
     m_drawer.addShake(10000.0f / (1.0f + mag(m_agents[_i].getPos() - m_ply.getPos())));
