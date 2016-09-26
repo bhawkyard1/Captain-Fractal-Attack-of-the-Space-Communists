@@ -169,7 +169,7 @@ vec2 getMousePos()
     int x = 0;
     int y = 0;
     SDL_GetMouseState(&x, &y);
-    return {static_cast<float>(x), static_cast<float>(y)};
+    return vec2(static_cast<float>(x), static_cast<float>(y));
 }
 
 vec2 toWorldSpace(vec2 _in)

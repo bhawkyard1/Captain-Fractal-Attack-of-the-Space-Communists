@@ -348,15 +348,18 @@ void ship::damage(float _d)
     m_damageTimer = 10.0f;
 }
 
-void ship::damage(float _d, const vec3 _v)
+float ship::damage(float _d, const vec3 _v)
 {
+    float ret = 0.0f;
     //Shots to the rear do more damage.
     if(m_canMove)
     {
-        _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
+        _d *= (dotProd( tovec3(vec(m_angle + 90.0f)), unit(_v) ) / 2.0f) + 1.5f;
         vec3 add = {_v.m_x, _v.m_y, 0.0f};
         addForce(add * m_inertia);
     }
+
+    ret = _d;
 
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;
 
@@ -369,10 +372,13 @@ void ship::damage(float _d, const vec3 _v)
     setHealth(getHealth()-healthDmg);
 
     m_damageTimer = 10.0f;
+
+    return ret;
 }
 
-void ship::damage(float _d, const vec3 _v, uniqueID _id)
+float ship::damage(float _d, const vec3 _v, uniqueID _id)
 {
+    float ret = 0.0f;
     //Shots to the rear do more damage.
     if(m_canMove)
     {
@@ -380,6 +386,8 @@ void ship::damage(float _d, const vec3 _v, uniqueID _id)
         vec3 add = {_v.m_x, _v.m_y, 0.0f};
         addForce(add * m_inertia);
     }
+
+    ret = _d;
 
     if(getShield() - _d > 0) m_shieldGlow = 255.0f;
 
@@ -393,6 +401,8 @@ void ship::damage(float _d, const vec3 _v, uniqueID _id)
 
     m_damageTimer = 10.0f;
     m_lastAttacker = _id;
+
+    return ret;
 }
 
 int ship::upgrade(const int _i)

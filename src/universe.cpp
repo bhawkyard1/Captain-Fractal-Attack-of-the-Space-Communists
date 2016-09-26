@@ -155,6 +155,7 @@ void universe::addMissile(
 
 void universe::update(float _dt)
 {
+    //std::cout << "MOUSE POS IS " << getMousePos().m_x << ", " << getMousePos().m_y << '\n';
     if(g_PLAYER_MOVEMENT_LOCKED) m_ply.setVel(vec3());
     if(m_paused) _dt = 0.0f;
 
@@ -351,7 +352,7 @@ void universe::update(float _dt)
 
                     dmg = 1/mag(mp - ep) * 30000;
                     m_agents[j].damage(dmg);
-                    addDamagePopup(dmg, m_agents[j].getTeam(), ep, -m_vel + randVec3(2.0f));
+                    addDamagePopup(dmg, m_agents[j].getTeam(), ep, m_agents[i].getVel() + randVec3(2.0f));
                 }
 
                 vec3 pdiff = m_missiles[i].getPos() - m_ply.getPos();
@@ -819,6 +820,7 @@ void universe::processInputMap()
 
     if(m_inputs.keyEvent(SDLK_l) == INPUT_EVENT_PRESS and m_inputs.key(SDLK_LCTRL))
     {
+        reload(false);
         loadGame(this);
         //m_inputs.deactivate(SDLK_l);
     }
@@ -1736,8 +1738,8 @@ void universe::checkCollisions()
                     else if(so == uniqueID(0, -2))
                         m_ply.addXP(xp);
 
-                    m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
-                    addDamagePopup(harm, m_partitions[p].m_ships[s]->getTeam(), ep, -m_vel + randVec3(2.0f));
+                    float realDamage = m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
+                    addDamagePopup(realDamage, m_partitions[p].m_ships[s]->getTeam(), ep, m_partitions[p].m_ships[s]->getVel() + randVec3(2.0f));
                     break;
                 }
             }
@@ -1797,8 +1799,8 @@ void universe::checkCollisions()
                 }
                 if(harm > 0)
                 {
-                    m_partitions[p].m_rockets[m]->damage(harm, d_dir * stop, so);
-                    addDamagePopup(harm, TEAM_PLAYER, ep, -m_vel + randVec3(2.0f));
+                    float realDamage = m_partitions[p].m_rockets[m]->damage(harm, d_dir * stop, so);
+                    addDamagePopup(realDamage, TEAM_PLAYER, ep, m_partitions[p].m_rockets[m]->getVel() + randVec3(2.0f));
                     break;
                 }
             }

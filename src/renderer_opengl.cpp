@@ -157,13 +157,12 @@ renderer_ngl::renderer_ngl()
                          ngl::Vec3(0,1,0));
 
 
-    float yOffset = 0.0f;//g_WIN_HEIGHT * 0.015;
     float divz = 1 / g_ZOOM_LEVEL;
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
                 g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
-                g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y - yOffset,
-                -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y - yOffset,
+                g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
+                -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
                 -2048.0,
                 2048.0
                 );
@@ -171,8 +170,8 @@ renderer_ngl::renderer_ngl()
     m_uiProject = ngl::ortho(
                 0.0f,
                 m_w,
-                m_h - yOffset,
-                -yOffset,
+                m_h,
+                0.0f,
                 -256.0,
                 256.0
                 );
@@ -353,6 +352,9 @@ renderer_ngl::renderer_ngl()
     std::cout << "p2\n";
 
     finalise(0.0f, vec2());
+
+    std::cout << "g_HALFWIN is " << g_HALFWIN.m_x << ", " << g_HALFWIN.m_y << std::endl;
+    std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;
 }
 
 //This function loads all the ships in the game into a vector that we can copy from later.
@@ -687,18 +689,6 @@ void renderer_ngl::update(float _dt, base * _focus)
 {
     clearVectors();
 
-    /*m_cameraShake = clamp(m_cameraShake - _dt * 5.0f, 0.0f, 20.0f);
-
-    //m_cameraShake = 15.0f;
-
-    if(magns(m_cameraShakeTargetOffset - m_cameraShakeOffset) < 80.0f)
-    {
-        m_cameraShakeTargetOffset = randVec2(m_cameraShake);
-    }
-    m_cameraShakeOffset += (m_cameraShakeTargetOffset - m_cameraShakeOffset) * clamp(_dt * 5.0f, 0.0f, 1.0f);
-
-    g_ZOOM_LEVEL +=  m_cameraShake * 0.00003f;*/
-
     m_camera.setVel(_focus->getVel());
     m_camera.setTPos( _focus->getPos() );
     m_camera.update(_dt);
@@ -707,13 +697,11 @@ void renderer_ngl::update(float _dt, base * _focus)
 
     float divz = 1 / g_ZOOM_LEVEL;
 
-    float yOffset = 0.0f;//g_WIN_HEIGHT * 0.015;
-
     m_project = ngl::ortho(
                 -g_HALFWIN.m_x * divz + offset.m_x,
                 g_HALFWIN.m_x * divz + offset.m_x,
-                (g_HALFWIN.m_y - yOffset) * divz + offset.m_y,
-                (-g_HALFWIN.m_y - yOffset) * divz + offset.m_y,
+                g_HALFWIN.m_y  * divz + offset.m_y,
+                -g_HALFWIN.m_y * divz + offset.m_y,
                 -2048.0,
                 2048.0
                 );
@@ -1178,7 +1166,6 @@ void renderer_ngl::clear()
     glBindTexture(GL_TEXTURE_2D, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glViewport(0, 0, m_w, m_h);
 }
 
 void renderer_ngl::finalise(const float _t, const vec2 _vel)
@@ -1198,7 +1185,7 @@ void renderer_ngl::finalise(const float _t, const vec2 _vel)
     glBindVertexArray(0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, m_w, m_h);
+    glViewport(0, 0, m_w - 1, m_h - 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawCustomBuffers(_t, _vel);
     SDL_GL_SwapWindow(m_window);
