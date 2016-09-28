@@ -3,11 +3,7 @@
 
 game_mode g_GAME_STATE = MODE_MENU;
 
-#if RENDER_MODE == 0
-std::string g_GRAPHICAL_RESOURCE_LOC = "./resources/SDL2/";
-#elif RENDER_MODE == 1
 std::string g_GRAPHICAL_RESOURCE_LOC = "./resources/NGL/";
-#endif
 
 std::string g_RESOURCE_LOC = "./resources/";
 
@@ -18,7 +14,6 @@ int g_GRAPHICAL_DETAIL = 2;
 int g_DIFFICULTY = 1;
 vec2 g_HALFWIN;
 vec2 g_VIEWPOS;
-float g_MAX_DIM = 1920.0f;
 bool g_DEV_MODE = false;
 bool g_BEAST_MODE = false;
 bool g_GAME_OVER = false;

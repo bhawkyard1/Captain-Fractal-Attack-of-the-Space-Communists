@@ -252,4 +252,8 @@ std::vector<SDL_Event> getEvents()
     return ret;
 }
 
+bool prob(const int _r)
+{
+    return !(rand() % _r);
+}
 

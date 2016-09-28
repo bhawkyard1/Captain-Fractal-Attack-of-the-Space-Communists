@@ -21,8 +21,6 @@
 #include "ship.hpp"
 #include "vectors.hpp"
 
-#if RENDER_MODE == 1
-
 #include <ngl/NGLInit.h>
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
@@ -37,7 +35,7 @@
 /// \version 1.0
 /// \date 11/04/16
 /// Revision History :
-/// This is an initial version used for the game, an alternative SDL based renderer is available in renderer.hpp
+/// This is an initial version used for the game
 /// \class renderer_ngl
 /// \brief Contains all the data for the window, elements, primitives to be drawn.
 //----------------------------------------------------------------------------------------------------------------------
@@ -552,6 +550,3 @@ private:
 };
 
 #endif
-
-#endif
-

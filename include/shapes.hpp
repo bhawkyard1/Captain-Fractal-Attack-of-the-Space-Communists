@@ -50,7 +50,7 @@ bool circleIntersectCircle(vec2 _pos1, float _r1, vec2 _pos2, float _r2);
 /// \param _pos sphere position
 /// \param _radius sphere radius
 //----------------------------------------------------------------------------------------------------------------------
-bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius);
+bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius, vec3 *_contact);
 
 template<class t>
 void sphereSphereCollision(t * _a, t * _b)

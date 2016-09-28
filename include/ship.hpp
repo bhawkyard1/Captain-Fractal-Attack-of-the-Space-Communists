@@ -22,7 +22,7 @@
 /// \version 1.0
 /// \date 11/04/16
 /// Revision History :
-/// This is an initial version used for the game, an alternative SDL based renderer is available in renderer.hpp
+/// This is an initial version used for the game
 //----------------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------------------------

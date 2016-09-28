@@ -353,4 +353,6 @@ void clearTerminal();
 
 std::vector<SDL_Event> getEvents();
 
+bool prob(const int _r);
+
 #endif

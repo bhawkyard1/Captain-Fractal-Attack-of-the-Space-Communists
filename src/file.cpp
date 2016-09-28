@@ -86,7 +86,7 @@ void writeVectorFaction(std::ostream &_file, std::vector<faction> *_f)
         }
         _file << "/|" << name << "|"
               << i.getTeam() << "|"
-              << i.getCol(0) << "," << i.getCol(1) << "," << i.getCol(2) << "," << i.getCol(2) << "|";
+              << i.getCol(0) << "," << i.getCol(1) << "," << i.getCol(2) << "," << i.getCol(3) << "|";
         for(auto &r : i.getRelations())
         {
             _file << r << ",";
@@ -391,7 +391,6 @@ void loadConfig()
     }
     config.close();
     g_HALFWIN = {g_WIN_WIDTH / 2.0f, g_WIN_HEIGHT / 2.0f};
-    g_MAX_DIM = std::max( g_WIN_WIDTH, g_WIN_HEIGHT );
     std::cout << "g_HALFWIN is " << g_HALFWIN.m_x << ", " << g_HALFWIN.m_y << std::endl;
 
     std::cout << "Resolution: " << g_WIN_WIDTH << " x " << g_WIN_HEIGHT << std::endl;

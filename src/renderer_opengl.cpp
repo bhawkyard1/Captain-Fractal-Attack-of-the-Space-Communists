@@ -9,8 +9,6 @@
 #include "common.hpp"
 #include "file.hpp"
 
-//#if RENDER_MODE == 1
-
 #include "enemy.hpp"
 #include "laser.hpp"
 #include "missile.hpp"
@@ -55,7 +53,6 @@ renderer_ngl::renderer_ngl()
         g_WIN_HEIGHT = best.h;
 
         g_HALFWIN = {g_WIN_WIDTH / 2.0f, g_WIN_HEIGHT / 2.0f};
-        g_MAX_DIM = std::max( g_WIN_WIDTH, g_WIN_HEIGHT );
 
         m_w = g_WIN_WIDTH;
         m_h = g_WIN_HEIGHT;

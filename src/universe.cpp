@@ -38,40 +38,6 @@ universe::universe()
     m_cCol[1] = 200.0f;
     m_cCol[2] = 50.0f;
 
-#if RENDER_MODE == 0
-    for(int i = 0; i < 2048 * pow(2, g_GRAPHICAL_DETAIL) ; i++)
-    {
-        m_dots.push_back(stardust(m_cCol));
-    }
-
-    for(int i = 0; i < 1024 * pow(2, g_GRAPHICAL_DETAIL); i++)
-    {
-        std::string id;
-        switch(rand()%4)
-        {
-        case 0:
-            id = "STARDUST_1";
-            break;
-        case 1:
-            id = "STARDUST_2";
-            break;
-        case 2:
-            id = "STARDUST_3";
-            break;
-        case 3:
-            id = "STARDUST_4";
-            break;
-        default:
-            break;
-        }
-
-        int w = 0;
-        int h = 0;
-        m_drawer.queryTexture(id, 0, &w, &h);
-        m_sparkles.push_back(stardust_sprite(id, m_cCol, w, h));
-    }
-#endif
-
     initUI();
     if(g_DEV_MODE) setScore(100000);
     else setScore(16);
@@ -255,32 +221,6 @@ void universe::update(float _dt)
         g_GAME_OVER = true;
     }
 
-#if RENDER_MODE == 0
-    for(auto &i : m_dots)
-    {
-        i.updatePos(_dt);
-        if(isOffScreen(i.getPos(), clamp(g_MAX_DIM * g_BG_DENSITY / g_ZOOM_LEVEL, g_MAX_DIM, F_INF)))
-        {
-            i.gen(true, m_cCol);
-        }
-    }
-
-    for(auto &i : m_sparkles)
-    {
-        i.updateSprite(_dt);
-
-        std::string temp = i.getIdentifier();
-        int w = 0;
-        int h = 0;
-        m_drawer.queryTexture(temp, 0, &w, &h);
-
-        if(isOffScreen(i.getPos(), clamp((g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * i.getZ() / g_ZOOM_LEVEL, (g_MAX_DIM + std::max(w, h)), F_INF )))
-        {
-            i.spriteGen(m_cCol, w, h);
-        }
-    }
-#endif
-
     for(int i = m_shots.size() - 1; i >= 0; i--)
     {
         if(m_shots[i].getPower() < 0.0f)
@@ -296,9 +236,6 @@ void universe::update(float _dt)
         }
     }
 
-#if RENDER_MODE == 0
-    m_partitions.rects.clear();
-#endif
     m_partitions.clear();
 
     std::vector<enemy*> init_ship;
@@ -572,7 +509,7 @@ void universe::update(float _dt)
         int w = 32;
         int h = 32;
 
-        if(alph <= 0.1f or isOffScreen(m_passiveSprites[i].getPos(), (g_MAX_DIM + std::max(w, h)) * g_BG_DENSITY * m_passiveSprites[i].getZ() / g_ZOOM_LEVEL) or m_passiveSprites[i].getDim() <= 0.0f)
+        if(alph <= 0.1f or m_passiveSprites[i].getDim() <= 0.0f)
         {
             //std::cout <<"popit" << std::endl;
             swapnpop(&m_passiveSprites, i);
@@ -608,6 +545,7 @@ void universe::update(float _dt)
     if(g_DIFFICULTY == 0) return;
 
     debug("factions");
+    //std::cout << "Pre facs\n";
     for(auto &i : m_factions)
     {
         //std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
@@ -620,6 +558,7 @@ void universe::update(float _dt)
         spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed());
         i.clearDeployed();
     }
+    //std::cout << "Post facs\n";
 
     /*if(rand() % m_enemySpawnRate <= g_DIFFICULTY * m_gameplay_intensity and m_factionCounts[GALACTIC_FEDERATION] < clamp(m_factionMaxCounts[GALACTIC_FEDERATION],0,100))
     {
@@ -920,198 +859,6 @@ void universe::processInputMap()
     }
 }
 
-#if RENDER_MODE == 0
-void universe::draw(float _dt)
-{
-    //std::cout << 1/_dt << " fps" << std::endl;
-    //std::cout << m_passiveSprites.size() << std::endl;
-    if(m_paused) _dt = 0.0f;
-
-    m_drawer.clear();
-
-    for(auto i = m_dots.begin(); i != m_dots.end(); ++i)
-    {
-        if(i->getZ() > 1) continue;
-
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        vec3 ivel = (i->getVel() + i->getWVel()) * i->getZ();
-        std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawLine(tovec2(ipos), tovec2(ipos + ivel), icol);
-    }
-
-    m_drawer.setBlendMode(SDL_BLENDMODE_ADD);
-    for(auto i = m_sparkles.begin(); i != m_sparkles.end(); ++i)
-    {
-        if(i->getZ() <= 1)
-        {
-            vec3 ipos = i->getInterpolatedPosition(_dt);
-            std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-            m_drawer.drawTexture( i->getTex(), 0, tovec2(ipos), i->getAng(), col );
-        }
-    }
-    m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
-
-    for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
-    {
-        if(!m_paused) i->incrDim();
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawTexture( i->getTex(), 0, tovec2(ipos), i->getAng(), col );
-    }
-
-    for(auto i = m_shots.begin(); i != m_shots.end(); ++i)
-    {
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        vec3 ivel = (i->getVel() + i->getWVel()) * 3;
-        std::array<float, 4> iscol = {i->getCol(0), i->getCol(1), i->getCol(2), 255};
-        std::array<float, 4> iecol = {iscol[0] / 2, iscol[1] / 2, iscol[2] / 2, 20};
-        m_drawer.drawLineGr(tovec2(ipos), tovec2(ipos + ivel), iecol, iscol);
-    }
-
-    for(auto i = m_asteroids.begin(); i != m_asteroids.end(); ++i)
-    {
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        std::array<float, 4> icol = {255, 255, 255, 255};
-        m_drawer.drawTexture(i->getIdentifier(), 0, tovec2(ipos), i->getAng(), icol);
-    }
-
-    for(auto i = m_agents.begin(); i != m_agents.end(); ++i)
-    {
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        std::array<float, 4> ialpha = i->getAlphaStats();
-        m_drawer.drawTextureSet(i->getIdentifier(), tovec2(ipos), i->getAng(), ialpha);
-    }
-
-    if(!g_GAME_OVER)
-    {
-        vec3 ppos = m_ply.getInterpolatedPosition(_dt);
-        std::array<float, 4> palpha = m_ply.getAlphaStats();
-        m_drawer.drawTextureSet(m_ply.getIdentifier(), tovec2(ppos), m_ply.getAng(), palpha);
-    }
-
-    for(auto i = m_missiles.begin(); i != m_missiles.end(); ++i)
-    {
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        std::array<float, 4> ialpha = i->getAlphaStats();
-        m_drawer.drawTextureSet(i->getIdentifier(), tovec2(ipos), i->getAng(), ialpha);
-    }
-
-    for(auto i = m_particles.begin(); i != m_particles.end(); ++i)
-    {
-        vec3 ipos = i->getPos();
-        std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getAlpha()};
-
-        m_drawer.drawTexture(i->getIdentifier(), 0, tovec2(ipos), 0, col);
-        int k = 0;
-        for(auto j = i->getParticles()->begin(); j != i->getParticles()->end(); ++j)
-        {
-            vec3 jpos = j->getInterpolatedPosition(_dt);
-            col[3] = i->getAlpha(k);
-            m_drawer.drawLine(tovec2(jpos), tovec2(jpos + j->getVel()), col);
-            k++;
-        }
-    }
-
-    for(auto i = m_dots.begin(); i != m_dots.end(); ++i)
-    {
-        if(i->getZ() <= 1) continue;
-        vec3 ipos = i->getInterpolatedPosition(_dt);
-        vec3 ivel = (i->getVel() + i->getWVel()) * i->getZ();
-        std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-        m_drawer.drawLine(tovec2(ipos), tovec2(ipos + ivel), icol);
-    }
-
-    m_drawer.setBlendMode(SDL_BLENDMODE_ADD);
-    for(auto i = m_sparkles.begin(); i != m_sparkles.end(); ++i)
-    {
-        if(i->getZ() > 1)
-        {
-            vec3 ipos = i->getInterpolatedPosition(_dt);
-            std::array<float, 4> icol = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
-            m_drawer.drawTexture( i->getTex(), 0, tovec2(ipos), i->getAng(), icol );
-
-        }
-    }
-    m_drawer.setBlendMode(SDL_BLENDMODE_BLEND);
-
-    /*if(g_DEV_MODE)
-                                                                            {
-                                                                                for(auto i = m_partitions.rects.begin(); i != m_partitions.rects.end(); ++i)
-                                                                                {
-                                                                                    std::array<int, 4> col = {255, 0, 0, 255};
-                                                                                    m_drawer.drawRect({static_cast<float>(i->x), static_cast<float>(i->y)}, {static_cast<float>(i->w), static_cast<float>(i->h)}, col, true);
-                                                                                }
-                                                                            }*/
-
-    int mx = 0, my = 0;
-    SDL_GetMouseState(&mx, &my);
-    vec2 dpos = {static_cast<float>(mx), static_cast<float>(my)};
-    dpos -= g_HALFWIN;
-    dpos /= g_ZOOM_LEVEL;
-
-    switch(m_mouse_state)
-    {
-    case 7:
-        m_drawer.drawTexture("PLAYER_TURRET", 0, dpos, 0, {255, 255, 255, 100});
-        m_drawer.drawTexture("PLAYER_TURRET", 5, dpos, 0, {255, 255, 255, 100});
-        break;
-    case 8:
-        m_drawer.drawTexture("PLAYER_GRAVWELL", 0, dpos, 0, {255, 255, 255, 100});
-        break;
-    case 9:
-        m_drawer.drawTexture("PLAYER_BARRACKS", 0, dpos, 0, {255, 255, 255, 100});
-        break;
-    case 10:
-        m_drawer.drawTexture("PLAYER_STATION", 0, dpos, 0, {255, 255, 255, 100});
-        break;
-    default:
-        break;
-    }
-
-    //Draw the ui
-    if(showUI) drawUI();
-
-    m_drawer.finalise();
-
-}
-
-void universe::drawUI()
-{
-    if(!g_GAME_OVER)
-    {
-        m_drawer.drawText("SCORE: " + std::to_string( m_factions[TEAM_PLAYER].m_wealth ),"pix",{260, 2}, false, 1.0f);
-        m_drawer.drawText("MISSILES: " + std::to_string( m_ply.getMissiles() ),"pix",{260, 20}, false, 1.0f);
-
-        m_drawer.drawMap(&m_missiles, &m_agents, &m_asteroids, &m_shots, &m_factions);
-        m_drawer.ss(&m_ply);
-        m_drawer.drawWeaponStats(&m_ply);
-    }
-
-    for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
-    {
-        if(!i->isVisible()) continue;
-        for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
-        {
-            std::array<int, 8> col = j->getCol();
-            if(!j->isSelected())
-            {
-                m_drawer.drawRect(j->getPos(), j->getDim(), {col[0], col[1], col[2], col[3]}, false);
-            }
-            else
-            {
-                m_drawer.drawRect(j->getPos(), j->getDim(), {col[4], col[5], col[6], col[7]}, false);
-            }
-            m_drawer.drawText(j->getLabel(), "pix", j->getPos(), false, 1.0f);
-
-            if(j->isDark())
-            {
-                m_drawer.drawRect(j->getPos(), j->getDim(), {0, 0 ,0 , 200}, false);
-            }
-        }
-    }
-}
-
-#elif RENDER_MODE == 1
 void universe::draw(float _dt)
 {
     debug("draw start");
@@ -1576,7 +1323,6 @@ void universe::drawUI(const float _dt)
         }
     }
 }
-#endif
 
 void universe::detectCollisions(
         SDL_Rect _box,
@@ -1659,9 +1405,6 @@ void universe::detectCollisions(
                                    presources,
                                });
 
-#if RENDER_MODE == 0
-        m_partitions.rects.push_back(_box);
-#endif
     }
     //Subdivide otherwise.
     else
@@ -1716,9 +1459,10 @@ void universe::checkCollisions()
                 er = m_partitions[p].m_ships[s]->getRadius();
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
-                if(lineIntersectSphere(sp, spv, ep, er))
+                vec3 contact;
+                if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(ep + randVec3(er), ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
+                    addpfx(contact, ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
                     harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1754,10 +1498,11 @@ void universe::checkCollisions()
                 ev = m_partitions[p].m_rocks[r]->getVel();
                 er = m_partitions[p].m_rocks[r]->getRadius();
 
+                vec3 contact;
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
-                if(lineIntersectSphere(sp, spv, ep, er))
+                if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(ep + randVec3(er), ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {2, 2, 2, 0});
+                    addpfx(contact, ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {2, 2, 2, 0});
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er * 2.0f, "SMOKE");
                     harm = sd;
 
@@ -1784,10 +1529,11 @@ void universe::checkCollisions()
                 ev = m_partitions[p].m_rockets[m]->getVel();
                 er = m_partitions[p].m_rockets[m]->getRadius();
 
+                vec3 contact;
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
-                if(lineIntersectSphere(sp, spv, ep, er))
+                if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(ep + randVec3(er), ev, randNum(3.0f, 8.0f), sd * randNum(1.0f, 3.0f), {255, 200, 20, 255});
+                    addpfx(contact, ev, randNum(3.0f, 8.0f), sd * randNum(1.0f, 3.0f), {255, 200, 20, 255});
 
                     harm = sd;
 
@@ -1810,16 +1556,17 @@ void universe::checkCollisions()
 
             vec3 dp = sp - m_ply.getPos();
             vec3 dv = sv + m_ply.getVel();
+            vec3 contact;
             if(!g_GAME_OVER and fabs(dv.m_x) > fabs(dp.m_x) - 32 and fabs(dv.m_y) > fabs(dp.m_y) - 32 and emnityCheck(m_partitions[p].m_lasers[l]->getTeam(), TEAM_PLAYER))
             {
                 vec3 spv = sp + sv;
 
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(dp), m_ply.getRadius()))
-                if(lineIntersectSphere(sp, spv, dp, m_ply.getRadius()))
+                if(lineIntersectSphere(sp, spv, dp, m_ply.getRadius(), &contact))
                 {
                     playUISnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(sp + randVec3(32.0f), m_ply.getVel(), sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
+                    addpfx(contact, m_ply.getVel(), sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), sc);
                     harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -2372,9 +2119,6 @@ void universe::reload(const bool _newGame)
 
     m_partitions.clear();
 
-#if RENDER_MODE == 0
-    m_partitions.rects.clear();
-#endif
     std::cout << "p1\n";
     m_time_elapsed = 0.0;
 

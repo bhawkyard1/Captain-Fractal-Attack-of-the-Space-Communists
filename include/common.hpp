@@ -17,11 +17,6 @@
 
 #include "vectors.hpp"
 
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief 0 = Rendered using SDL, 1 = Rendered using NGL.
-//----------------------------------------------------------------------------------------------------------------------
-#define RENDER_MODE 1
-
 #define LIGHTSPEED 2997924.580
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -82,13 +77,6 @@ extern int g_DIFFICULTY;
 extern vec2 g_HALFWIN;
 
 extern vec2 g_VIEWPOS;
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief The maximum dimension of the window, used in some places to cull objects which are too far away, in the SDL version
-//----------------------------------------------------------------------------------------------------------------------
-#ifdef RENDER_MODE == 0
-extern float g_MAX_DIM;
-#endif
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Whether the game is in developer mode (this can be changed in config.txt, in the resources folder)

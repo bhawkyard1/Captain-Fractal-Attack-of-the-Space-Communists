@@ -341,8 +341,8 @@ void enemy::steering()
         {
             //Dodge
             //1.0f + getCooldown = more likely to dodge just after shooting.
-            int prob = static_cast<int>(64 * (1.0f + getCooldown()));
-            if(!(rand() % prob) and
+            int odds = static_cast<int>(64 * (1.0f + getCooldown()));
+            if(prob(odds) and
                     m_target != nullptr and
                     dotProd(vec(getAng()), vec(m_target->getAng())) < -0.8f
                     )
@@ -351,7 +351,7 @@ void enemy::steering()
             }
 
             //Charge
-            if(!(rand() % prob * 2) and
+            if(prob(odds * 2) and
                     m_target != nullptr and
                     m_target->getType() == SHIP_TYPE_FIGHTER
                     )

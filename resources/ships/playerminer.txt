@@ -6,7 +6,7 @@ health 10
 shield 20
 energy 200
 inertia 0.2
-enginepower 4
+enginepower 2
 generatorpower 5
 weapons 14
 holdspace 64.0 64.0

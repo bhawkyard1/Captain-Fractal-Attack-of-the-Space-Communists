@@ -14,12 +14,6 @@
 #include "player.hpp"
 #include "popup.hpp"
 
-#if RENDER_MODE == 0
-#include "renderer.hpp"
-#elif RENDER_MODE == 1
-#include "renderer_opengl.hpp"
-#endif
-
 #include "renderer_opengl.hpp"
 
 #include "sfx.hpp"
@@ -73,13 +67,6 @@ struct col_partition
     /// \brief Vector of resource references.
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<debris*> m_resources;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Used only for some debug views with the SDL Renderer.
-    //----------------------------------------------------------------------------------------------------------------------
-#if RENDER_MODE == 0
-    std::vector<SDL_Rect> rects;
-#endif
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -386,11 +373,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns the renderer. Mostly used to hack text into the tutorial.
     //----------------------------------------------------------------------------------------------------------------------
-#if RENDER_MODE == 0
-    renderer * getRenderer() {return &m_drawer;}
-#elif RENDER_MODE == 1
     renderer_ngl * getRenderer() {return &m_drawer;}
-#endif
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for the boolean associated with the in game options menu display.
@@ -492,13 +475,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Renderer specific members.
     //----------------------------------------------------------------------------------------------------------------------
-#if RENDER_MODE == 0
-    renderer m_drawer;
-    std::vector<stardust> m_dots;
-    std::vector<stardust_sprite> m_sparkles;
-#elif RENDER_MODE == 1
     renderer_ngl m_drawer;
-#endif
 
     soundPlayer m_sounds;
 

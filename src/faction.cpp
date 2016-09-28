@@ -35,7 +35,7 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 
     m_aggression = randNum(0.0f, 1.0f);
 
-    m_economy = randNum(0.00015f, 0.0001f);
+    m_economy = randNum(0.00015f, 0.001f);
 
     m_organised = _organised;
 
@@ -47,9 +47,7 @@ void faction::updateEconomy(const float _dt)
 {
     if(m_organised)
     {
-        /*std::cout << "FACTION " << m_identifier << '\n' <<
-                     "Wealth : " << m_wealth << '\n' <<
-                     "Aggression : " << m_aggression << '\n' <<
+        std::cout << m_identifier << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n';/* <<
                      "Reserves : \n";
 
         for(ship_spec i = m_combatShips.first; i < m_combatShips.second; ++i)
@@ -70,14 +68,14 @@ void faction::updateEconomy(const float _dt)
     m_oldWealth = m_wealth;
 
     if(m_wealth > 0.0f) m_wealth += m_wealth * _dt * m_economy;
-    else if(!(rand() & 128)) m_wealth += m_economy * _dt;
+    else if(!(rand() & 128)) m_wealth += m_economy * _dt * 256.0f;
 
     //As aggression gets lower, a faction must be wealthier to spawn reserves.
-    float wealthDT = (m_wealth - m_oldWealth) * _dt;
+    float wealthDT = (m_wealth - m_oldWealth) / _dt;
 
     //std::cout << "aggression " << m_aggression << '\n';
     //If the faction is too poor / not aggressive enough / already has enough ships, invest money.
-    if( (rand() % 128) or wealthDT < -m_oldWealth / (10000.0f * m_aggression) )
+    if( !prob(256) or wealthDT < -m_oldWealth / (10000.0f * m_aggression) )
     {
         m_economy *= 1 + _dt * 0.000025f;
     }
@@ -94,13 +92,13 @@ void faction::updateEconomy(const float _dt)
     float upkeep = 0.0f;
     for(auto i = m_combatShips.first; i <= m_combatShips.second; ++i)
     {
-        upkeep += _dt * m_reserves.at(i/* - m_combatShips.first*/) * calcAICost(i) / 128.0f;
-        upkeep += _dt * m_active.at(i/* - m_combatShips.first*/) * calcAICost(i) / 128.0f;
+        upkeep += _dt * m_reserves[i]/* - m_combatShips.first*/ * calcAICost(i) / 128.0f;
+        //upkeep += _dt * m_active.at(i/* - m_combatShips.first*/) * calcAICost(i) / 128.0f;
     }
     m_wealth -= upkeep;
 
     //Look at dt in wealth. If it is negative, below 1% of wealth multiplied by aggression and rand() hit, remove a ship.
-    if(wealthDT < -m_wealth / (10000.0f * m_aggression) and rand() % 128)
+    if(wealthDT < -m_wealth / (10000.0f * m_aggression) and !(rand() % 128))
     {
         for(auto &i : m_reserves)
         {
