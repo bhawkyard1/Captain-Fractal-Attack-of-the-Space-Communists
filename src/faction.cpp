@@ -34,8 +34,10 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
     m_active.assign( SHIPS_END + 1, 0 );
 
     m_aggression = randNum(0.0f, 1.0f);
+    m_aggression = 10.0f;
 
-    m_economy = randNum(0.00015f, 0.001f);
+    m_economy = randNum(0.00001f, 0.0005f);
+    m_economy = randNum(0.01f, 0.05f);
 
     m_organised = _organised;
 
@@ -45,6 +47,7 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 //What do we spend money on?
 void faction::updateEconomy(const float _dt)
 {
+    m_aggression = 2.0f;
     /*
      *
      * for(auto &i : m_reserves)
@@ -60,23 +63,23 @@ void faction::updateEconomy(const float _dt)
     if(m_wealth > 0.0f) m_wealth += m_wealth * _dt * m_economy;
     else if(!(rand() & 128)) m_wealth += m_economy * _dt * 256.0f;
 
-    bool losingWealthTooFast = m_wealthDT < -m_oldWealth / (m_aggression - 0.5f) * 0.000001f;
+    bool losingWealthTooFast = m_wealthDT < m_oldWealth / (m_aggression - 0.35f) * 0.0000001f;
 
     if(m_organised)
     {
-        std::cout << m_identifier << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n' <<
+        std::cout << m_identifier << " ES : " << m_economy << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n' <<
                      "Reserves : \n";
 
         for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
             std::cout << g_ship_templates[i].getIdentifier() << ") " << m_reserves[i] << ", " << m_active[i] << '\n';
 
-        std::cout << "WDT : " << m_wealthDT << " Crisis : " << losingWealthTooFast << '\n';
+        std::cout << "WDT : " << m_wealthDT << " WTHS : " << (m_oldWealth / (m_aggression - 0.35f) * 0.0000001f) << " Crisis : " << losingWealthTooFast << '\n';
         std::cout << std::endl;
     }
 
     //std::cout << "aggression " << m_aggression << '\n';
     //If the faction is too poor / not aggressive enough / already has enough ships, invest money.
-    if( !prob(256) or losingWealthTooFast )
+    if( !prob(64) or losingWealthTooFast )
     {
         m_economy *= 1.0f + _dt * 0.000025f;
     }
@@ -114,8 +117,10 @@ void faction::updateEconomy(const float _dt)
         }
     }
 
-    m_aggression *= clamp(0.9999f + m_wealthDT / 128.0f, 0.0f, 1.0000001f);
+    m_aggression *= clamp(0.9999f + m_wealthDT / 4.0f, 0.0f, 1.00001f);
     if(prob(20000)) m_aggression = randNum(0.0f, 1.0f);
+    float rec = m_economy / 2.0f;
+    if(prob(20000)) m_economy = clamp(m_economy + randNum(-rec, rec), 0.0f, 1.0f);
 }
 
 //Do we need to field more units? Where?
@@ -154,9 +159,9 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
     //std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << '\n';
 
     //Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
-    int prob = 512 / m_aggression / g_DIFFICULTY;
+    int p = 256 / m_aggression / g_DIFFICULTY;
     if(
-            !(rand() % prob) and
+            prob(p) and
             powerBalance[2] < targetPower and //More friendlies needed
             reservesPower > targetPower - powerBalance[2] //Enough reserves to make deploying worthwhile.
             )

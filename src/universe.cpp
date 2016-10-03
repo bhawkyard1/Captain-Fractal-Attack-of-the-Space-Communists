@@ -125,6 +125,8 @@ void universe::update(float _dt)
     if(g_PLAYER_MOVEMENT_LOCKED) m_ply.setVel(vec3());
     if(m_paused) _dt = 0.0f;
 
+    _dt *= 0.5f;
+
     g_VELOCITY_TIME_SCALE = 1.0f - (clamp(mag(m_vel) * 80.0f, 0.0f, static_cast<float>(LIGHTSPEED)) / LIGHTSPEED);
     g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE + _dt * 0.25f, 0.0f, 1.0f);
     g_TIME_SCALE = g_PLAYER_TIME_SCALE * g_VELOCITY_TIME_SCALE * g_KILL_TIME_SCALE;
@@ -2350,22 +2352,22 @@ void universe::createFactions()
 
     faction galactic_fed("Galactic Federation", {165, 14, 226, 255}, GALACTIC_FEDERATION, {FEDERATION_MKI, FEDERATION_CAPITAL}, {SHIPS_END, SHIPS_END}, {FEDERATION_TURRET, FEDERATION_TURRET}, true );
     galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    galactic_fed.setWealth( randNum(5000.0f, 8000.0f) );
+    galactic_fed.setWealth( randNum(10000.0f, 16000.0f) );
     m_factions.push_back(galactic_fed);
 
     faction spooky_pirates("Spooky Space Pirates", {240, 211, 10, 255}, SPOOKY_SPACE_PIRATES, {PIRATE_GNAT, PIRATE_CAPITAL}, {SHIPS_END, SHIPS_END}, {PIRATE_TURRET, PIRATE_TURRET}, true );
     spooky_pirates.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    spooky_pirates.setWealth( randNum(15000.0f, 16000.0f) );
+    spooky_pirates.setWealth( randNum(30000.0f, 32000.0f) );
     m_factions.push_back(spooky_pirates);
 
     faction space_communists("Space Communists", {255, 0, 0, 255}, SPACE_COMMUNISTS, {COMMUNIST_1, COMMUNIST_CAPITAL}, {SHIPS_END, SHIPS_END}, {COMMUNIST_TURRET, COMMUNIST_TURRET}, true );
     space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    space_communists.setWealth( randNum(12000.0f, 16000.0f) );
+    space_communists.setWealth( randNum(24000.0f, 32000.0f) );
     m_factions.push_back(space_communists);
 
     faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_STATION}, true );
     alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
-    alliance.setWealth( randNum(15000.0f, 19000.0f) );
+    alliance.setWealth( randNum(30000.0f, 35000.0f) );
     m_factions.push_back(alliance);
 
     faction neutral("Neutral", {200, 200, 200, 255}, NEUTRAL, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, false );
@@ -2627,7 +2629,7 @@ void universe::destroyAgent(size_t _i)
     if(lastAttacker != nullptr) lastAttacker->addXP( xp );
     else if(m_agents[_i].getLastAttacker() == uniqueID(0, -2))
     {
-        g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE - m_ply.getXP() * 0.01f, 0.0f, 1.0f);
+        g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE - m_ply.getXP() * 0.01f, 0.2f, 1.0f);
         m_ply.addXP(xp);
     }
 
