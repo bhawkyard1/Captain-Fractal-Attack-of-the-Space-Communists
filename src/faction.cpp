@@ -34,10 +34,10 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
     m_active.assign( SHIPS_END + 1, 0 );
 
     m_aggression = randNum(0.0f, 1.0f);
-    m_aggression = 10.0f;
+    //m_aggression = 10.0f;
 
     m_economy = randNum(0.00001f, 0.0005f);
-    m_economy = randNum(0.01f, 0.05f);
+    //m_economy = randNum(0.01f, 0.05f);
 
     m_organised = _organised;
 
@@ -47,7 +47,7 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 //What do we spend money on?
 void faction::updateEconomy(const float _dt)
 {
-    m_aggression = 2.0f;
+    //m_aggression = 2.0f;
     /*
      *
      * for(auto &i : m_reserves)
@@ -63,7 +63,7 @@ void faction::updateEconomy(const float _dt)
     if(m_wealth > 0.0f) m_wealth += m_wealth * _dt * m_economy;
     else if(!(rand() & 128)) m_wealth += m_economy * _dt * 256.0f;
 
-    bool losingWealthTooFast = m_wealthDT < m_oldWealth / (m_aggression - 0.35f) * 0.0000001f;
+    bool losingWealthTooFast = m_wealthDT < m_oldWealth / (m_aggression - 0.35f) * 0.00000001f;
 
     if(m_organised)
     {
@@ -73,7 +73,7 @@ void faction::updateEconomy(const float _dt)
         for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
             std::cout << g_ship_templates[i].getIdentifier() << ") " << m_reserves[i] << ", " << m_active[i] << '\n';
 
-        std::cout << "WDT : " << m_wealthDT << " WTHS : " << (m_oldWealth / (m_aggression - 0.35f) * 0.0000001f) << " Crisis : " << losingWealthTooFast << '\n';
+        std::cout << "WDT : " << m_wealthDT << " WTHS : " << (m_oldWealth / (m_aggression - 0.35f) * 0.00000001f) << " Crisis : " << losingWealthTooFast << '\n';
         std::cout << std::endl;
     }
 
@@ -158,8 +158,11 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
     float targetPower = powerBalance[0] * (m_aggression + 0.25f);
     //std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << '\n';
 
+    std::cout << "POWER BALANCES: F " << powerBalance[2] << ", N " << powerBalance[1] << ", E " << powerBalance[0] <<
+                 "\n RP " << reservesPower << ", TP " << targetPower << "\n\n";
+
     //Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
-    int p = 256 / m_aggression / g_DIFFICULTY;
+    int p = 512 / g_DIFFICULTY;
     if(
             prob(p) and
             powerBalance[2] < targetPower and //More friendlies needed

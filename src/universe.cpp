@@ -30,13 +30,18 @@ universe::universe()
     m_ply.setPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f,0.0f});
     m_ply.setPPos({g_WIN_WIDTH/2.0f,g_WIN_HEIGHT/2.0f,0.0f});
 
-    m_tCol[0] = 255.0f;
-    m_tCol[1] = 200.0f;
-    m_tCol[2] = 50.0f;
+    float p0 = randNum(0.0f, 1.0f);
+    float p1 = randNum(0.0f, 1.0f);
+    float p2 = randNum(0.0f, 1.0f);
+    float total = p0 + p1 + p2;
 
-    m_cCol[0] = 255.0f;
-    m_cCol[1] = 200.0f;
-    m_cCol[2] = 50.0f;
+    m_tCol[0] = ( p0 / total ) * 250.0f;
+    m_tCol[1] = ( p1 / total ) * 250.0f;
+    m_tCol[2] = ( p2 / total ) * 250.0f;
+
+    m_cCol[0] = 0.0f;
+    m_cCol[1] = 0.0f;
+    m_cCol[2] = 0.0f;
 
     initUI();
     if(g_DEV_MODE) setScore(100000);
@@ -125,7 +130,7 @@ void universe::update(float _dt)
     if(g_PLAYER_MOVEMENT_LOCKED) m_ply.setVel(vec3());
     if(m_paused) _dt = 0.0f;
 
-    _dt *= 0.5f;
+    //_dt *= 0.5f;
 
     g_VELOCITY_TIME_SCALE = 1.0f - (clamp(mag(m_vel) * 80.0f, 0.0f, static_cast<float>(LIGHTSPEED)) / LIGHTSPEED);
     g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE + _dt * 0.25f, 0.0f, 1.0f);
@@ -173,7 +178,7 @@ void universe::update(float _dt)
     m_cCol[2] += clamp(m_tCol[2] - m_cCol[2], -0.01f, 0.01f);
 
     //Randomly change background colour.
-    if(rand()%1024 == 0)
+    if(prob(1024))
     {
         float p0 = randNum(0.0f, 1.0f);
         float p1 = randNum(0.0f, 1.0f);
@@ -185,8 +190,8 @@ void universe::update(float _dt)
         m_tCol[2] = ( p2 / total ) * 250.0f;
     }
 
-    if(rand()%10000 == 0) g_BG_DENSITY = randNum(1.0f,10.0f);
-    if(rand()%10000 == 0) m_gameplay_intensity = randNum(0.0f, 2.2f);
+    if(prob(10000)) g_BG_DENSITY = randNum(1.0f,10.0f);
+    if(prob(10000)) m_gameplay_intensity = randNum(0.0f, 2.2f);
 
     //If player health is below 25%, emit smoke.
     if(m_ply.getHealth() < m_ply.getMaxHealth() / 2.0f and m_ply.getHealth() > 0.0f) addParticleSprite(m_ply.getPos(), m_ply.getVel(), m_ply.getRadius() * 2.0f, "SMOKE");
