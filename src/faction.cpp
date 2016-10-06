@@ -67,14 +67,14 @@ void faction::updateEconomy(const float _dt)
 
     if(m_organised)
     {
-        std::cout << m_identifier << " ES : " << m_economy << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n' <<
+       /* std::cout << m_identifier << " ES : " << m_economy << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n' <<
                      "Reserves : \n";
 
         for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
             std::cout << g_ship_templates[i].getIdentifier() << ") " << m_reserves[i] << ", " << m_active[i] << '\n';
 
         std::cout << "WDT : " << m_wealthDT << " WTHS : " << (m_oldWealth / (m_aggression - 0.35f) * 0.00000001f) << " Crisis : " << losingWealthTooFast << '\n';
-        std::cout << std::endl;
+        std::cout << std::endl;*/
     }
 
     //std::cout << "aggression " << m_aggression << '\n';
@@ -158,8 +158,8 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
     float targetPower = powerBalance[0] * (m_aggression + 0.25f);
     //std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << '\n';
 
-    std::cout << "POWER BALANCES: F " << powerBalance[2] << ", N " << powerBalance[1] << ", E " << powerBalance[0] <<
-                 "\n RP " << reservesPower << ", TP " << targetPower << "\n\n";
+    /*std::cout << "POWER BALANCES: F " << powerBalance[2] << ", N " << powerBalance[1] << ", E " << powerBalance[0] <<
+                 "\n RP " << reservesPower << ", TP " << targetPower << "\n\n";*/
 
     //Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
     int p = 512 / g_DIFFICULTY;

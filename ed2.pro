@@ -47,7 +47,7 @@ CONFIG += console
         QMAKE_EXTRA_TARGETS += first copydata
 }
 
-win32: {
+win32 {
     PRE_TARGETDEPS += C:/NGL/lib/NGL.lib
     INCLUDEPATH += -I c:/boost
     INCLUDEPATH += $$(HOMEDRIVE)/NGL/include/

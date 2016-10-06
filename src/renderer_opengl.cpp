@@ -388,6 +388,7 @@ void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
     models.push_back( loadObj(_path, "") );
     models.push_back( loadObj(_path, "_static") );
     m_models.insert({_key, models});
+    std::cout << "ASSET LOADED!\n";
 }
 
 ngl::Obj * renderer_ngl::loadObj(const std::string _path, const std::string _append)
