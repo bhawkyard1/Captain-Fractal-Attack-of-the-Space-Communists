@@ -1,8 +1,6 @@
 #ifndef RENDERER_OPENGL_HPP
 #define RENDERER_OPENGL_HPP
 
-#define MAX_LIGHTS 256
-
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -26,6 +24,7 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/Obj.h>
 
+#define MAX_LIGHTS 512
 #define AMBIENT_RESOLUTION_DIVIDER 256
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -83,7 +82,7 @@ public:
     /// \brief Sets the shader for the renderer to use
     /// \param _shader name of the shader program
     //----------------------------------------------------------------------------------------------------------------------
-    void useShader(const std::string _shader) {m_shader->use(_shader);}
+    void useShader(const std::string _shader) {ngl::ShaderLib * slib = ngl::ShaderLib::instance(); slib->use(_shader);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Creates a VAO, returns the id
@@ -116,8 +115,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void clearVectors();
 
-    void addLight(pointLight _light, size_t _i) {m_pointLights[_i] = _light; m_activeLights = _i;}
-    void resetLights() {m_pointLights.fill({vec3(0.0f), vec3(0.0f)}); m_activeLights = 0;}
+    void addLight(pointLight _light) {m_pointLights.push_back(_light);}
+    void resetLights() {m_pointLights.clear();}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws the background
@@ -364,7 +363,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void disableDepthSorting();
 
-    uniqueID getFocus() {return m_focus;}
+    slot getFocus() {return m_focus;}
 
     camera * getCamera() {return &m_camera;}
 
@@ -426,11 +425,6 @@ private:
     /// \brief This is used to transform objects before they are drawn
     //----------------------------------------------------------------------------------------------------------------------
     ngl::Transformation m_transform;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief An instance of ShaderLib
-    //----------------------------------------------------------------------------------------------------------------------
-    ngl::ShaderLib * m_shader;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A container of models and textures
@@ -538,10 +532,10 @@ private:
 
     camera m_camera;
 
-    uniqueID m_focus;
+    slot m_focus;
 
-    std::array<pointLight, MAX_LIGHTS> m_pointLights;
-    int m_activeLights;
+    std::vector<pointLight> m_pointLights;
+    GLuint m_lightbuffer;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Noise texture, used for explosions

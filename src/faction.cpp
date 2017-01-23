@@ -135,7 +135,7 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
     }
 
     //Enemies, neutrals, and friends
-    std::array<float, 3> powerBalance = {0.0f, 0.0f, 0.0f};
+    std::array<float, 3> powerBalance = {{0.0f, 0.0f, 0.0f}};
     for(size_t f = 0; f < _rivals.size(); ++f)
     {
         aiTeam curTeam = static_cast<aiTeam>(f);
@@ -177,7 +177,7 @@ void faction::updateDeployment(const float _dt, const std::vector<faction> &_riv
 //How should active squads behave?
 void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships)
 {
-    bool b = (m_team == ALLIANCE);
+    //bool b = (m_team == ALLIANCE);
 
     //if(b) std::cout << "DIP " << _rivals[ALLIANCE].getRelations(m_team) << ", " << getRelations(ALLIANCE) << '\n';
 
@@ -396,7 +396,7 @@ void faction::addAggression(const float _mult)
 
 void faction::addActive(const ship_spec _i, const int _v)
 {
-    int index = _i - m_combatShips.first;
+    //int index = _i - m_combatShips.first;
     int val = m_active[_i/*ndex*/] + _v;
     val = std::max(val, 0);
 

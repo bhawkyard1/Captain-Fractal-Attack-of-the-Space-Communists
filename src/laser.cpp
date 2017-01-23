@@ -5,7 +5,7 @@ laser::laser(vec3 _p,
         float _ang,
         std::array<float, WEAPS_W> _data,
         aiTeam _team,
-        uniqueID _parent)
+        slot _parent)
 {
     float temp_angle = _ang + randNum(-_data[1], _data[1]);
     vec3 vAdd = tovec3(vec(temp_angle));

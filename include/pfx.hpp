@@ -51,7 +51,7 @@ public:
     float getCol(int i) const {return m_col[i];}
 
     float getAlpha(const int _i) {return m_alphas[_i];}
-    std::array<float, 4> getShaderData() const {return {m_elapsed, m_seed_position, m_seed_explosion, m_duration};}
+    std::array<float, 4> getShaderData() const {return {{m_elapsed, m_seed_position, m_seed_explosion, m_duration}};}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Identifier getter

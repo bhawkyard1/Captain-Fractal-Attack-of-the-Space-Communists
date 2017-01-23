@@ -1,18 +1,34 @@
-#ifndef SLOTMAP_HPP
-#define SLOTMAP_HPP
+//----------------------------------------------------------------------------------------------------------------------
+/// \file slotmap.hpp
+/// \brief This file contains the 'slotmap' class, and related structs.
+/// \author Ben Hawkyard
+/// \version 1.0
+/// \date 19/01/17
+/// Revision History :
+/// This is an initial version used for the program.
+/// \class slotmap
+/// \brief A wrapper around stl std::vector which allows the user to extract persistant references to entities
+/// contained within.
+//----------------------------------------------------------------------------------------------------------------------
 
+#ifndef slotmap_HPP
+#define slotmap_HPP
+
+#ifdef _WIN32
+#include <ciso646>
+#endif
 #include <stddef.h>
 #include <vector>
 
-struct uniqueID
+struct slot
 {
-    uniqueID()
+    slot()
     {
         m_id = 0;
         m_version = -1;
     }
 
-    uniqueID(const long _id, const long _version)
+    slot(const long _id, const long _version)
     {
         m_id = _id;
         m_version = _version;
@@ -22,12 +38,11 @@ struct uniqueID
     long m_version;
 };
 
-bool operator ==(const uniqueID &_lhs, const uniqueID &_rhs);
-bool operator !=(const uniqueID &_lhs, const uniqueID &_rhs);
+bool operator ==(const slot &_lhs, const slot &_rhs);
+bool operator !=(const slot &_lhs, const slot &_rhs);
 
 template<class t>
-
-class slotMap
+class slotmap
 {
 public:
     //----------------------------------------------------------------------------------------------------------------------
@@ -35,17 +50,17 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<t> m_objects;
 
-    t * getByID(uniqueID _i)
+    t * getByID(slot _i)
     {
         //Something wrong here. m_indirection not keeping up with m_ids.
-        if(_i.m_id < m_indirection.size() and m_indirection[ _i.m_id ].m_version == _i.m_version)
+        if(_i.m_id < static_cast<long>(m_indirection.size()) and m_indirection[ _i.m_id ].m_version == _i.m_version)
             return &m_objects[ m_indirection[ _i.m_id ].m_id ];
         return nullptr;
     }
 
-    uniqueID push_back(const t &_obj)
+    slot push_back(const t &_obj)
     {
-        uniqueID ret;
+        slot ret;
         //If there are free spaces...
         if(m_freeList.size() > 0)
         {
@@ -61,7 +76,7 @@ public:
         //Create a new object, a new id and a new entry in the indirection list.
         else
         {
-            uniqueID id = {static_cast<long>(m_objects.size()), 0};
+            slot id = {static_cast<long>(m_objects.size()), 0};
             m_indirection.push_back( id );
             m_ids.push_back( id );
 
@@ -79,7 +94,7 @@ public:
         if(_a == _b) return;
 
         //Store entry pointed to by the id of _a
-        uniqueID swap = {_a, m_ids[_b].m_version};
+        slot swap = {_a, m_ids[_b].m_version};
 
         //Make the entry at _a's id point to _a's future index.
         m_indirection[ m_ids[_a].m_id ] = {_b, m_ids[_a].m_version};
@@ -114,7 +129,7 @@ public:
 
     t& back() const {return m_objects.back();}
     t& back() {return m_objects.back();}
-    uniqueID backID() {return m_ids.back();}
+    slot backID() {return m_ids.back();}
 
     void clear()
     {
@@ -126,22 +141,26 @@ public:
 
     size_t size() const {return m_objects.size();}
 
-    uniqueID getID(size_t _i) const {return m_ids[_i];}
+    slot getID(size_t _i) const {return m_ids[_i];}
+    size_t getIndex(slot _id) const {return m_indirection[ _id.m_id ].m_id;}
 
     t operator [](size_t _i) const {return m_objects[_i];}
     t & operator [](size_t _i) {return m_objects[_i];}
+
+    t get(size_t _i) const {return m_objects[_i];}
+    t & get(size_t _i) {return m_objects[_i];}
 
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The index of each entry is the id of the object. The contents id is the index of the object. The version is the version of the object.
     /// Confused? Me too.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< uniqueID > m_indirection;
+    std::vector< slot > m_indirection;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Means we do not have to store ids in the object, this matches movements of m_objects by index.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector< uniqueID > m_ids;
+    std::vector< slot > m_ids;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief List of all free IDs.
@@ -150,10 +169,26 @@ private:
 };
 
 template<class t>
-void transfer(size_t _i, slotMap<t> &_src, slotMap<t> &_dst)
+void transfer(size_t _i, slotmap<t> &_src, slotmap<t> &_dst)
 {
     _dst.push_back( _src[_i] );
     _src.free( _i );
 }
+
+template<class T>
+struct slotID : public slot
+{
+    slotID() : slot()
+    {
+        m_address = nullptr;
+    }
+
+    slotID(const long _id, const long _version, slotmap<T> * _src) : slot(_id, _version)
+    {
+        m_address = _src;
+    }
+
+    slotmap<T> * m_address;
+};
 
 #endif

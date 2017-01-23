@@ -37,7 +37,7 @@ public:
   void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
 
-  void targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
+  void targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Updates the behaviour of the agent, based on any target it has, and its relative position
@@ -72,8 +72,8 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter and setter for squad id
   //----------------------------------------------------------------------------------------------------------------------
-  uniqueID getSquadID() const {return m_squadID;}
-  void setSquadID(uniqueID _id) {m_squadID = _id;}
+  slot getSquadID() const {return m_squadID;}
+  void setSquadID(slot _id) {m_squadID = _id;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter and setter for the target position
@@ -101,7 +101,7 @@ private:
   /// \brief A reference to the current target. Since the target need not be another enemy, it is of type ship
   //----------------------------------------------------------------------------------------------------------------------
   ship * m_target;
-  uniqueID m_targetID;
+  slot m_targetID;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The distance this agent will attempt to hold around its target
@@ -121,7 +121,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The id of this agents' squad
   //----------------------------------------------------------------------------------------------------------------------
-  uniqueID m_squadID;
+  slot m_squadID;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The agent will ignore enemies that are further away than this distance

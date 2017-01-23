@@ -9,7 +9,7 @@
 #include "common.hpp"
 #include "debris.hpp"
 #include "inventory.hpp"
-#include "slotMap.hpp"
+#include "slotmap.hpp"
 #include "util.hpp"
 #include "weapons.hpp"
 
@@ -303,7 +303,7 @@ public:
     /// \brief Damages the ship.
     /// \param _d damage, _v knockback vector (laser velocity), _id attacker id
     //----------------------------------------------------------------------------------------------------------------------
-    float damage(const float _d, const vec3 _v, uniqueID _id);
+    float damage(const float _d, const vec3 _v, slot _id);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for m_upgrades.
@@ -387,7 +387,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets the alpha values for various colours associated with the ship.
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<float, 3> getAlphaStats() const {std::array<float, 3> ret = {static_cast<float>(m_engineGlow), static_cast<float>(m_drawShot), static_cast<float>(m_shieldGlow)}; return ret;}
+    std::array<float, 3> getAlphaStats() const {std::array<float, 3> ret = {{static_cast<float>(m_engineGlow), static_cast<float>(m_drawShot), static_cast<float>(m_shieldGlow)}}; return ret;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for m_shieldGlow.
@@ -405,8 +405,8 @@ public:
     /// \brief Getters and setters for parents.
     //----------------------------------------------------------------------------------------------------------------------
     bool hasParent() const {return m_hasParent;}
-    uniqueID getParent() const {return m_parent;}
-    void setParent(uniqueID _p);
+    slot getParent() const {return m_parent;}
+    void setParent(slot _p);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for parent offsets.
@@ -417,8 +417,8 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for last attacker.
     //----------------------------------------------------------------------------------------------------------------------
-    uniqueID getLastAttacker() {return m_lastAttacker;}
-    void setLastAttacker(uniqueID _id) {m_lastAttacker = _id;}
+    slot getLastAttacker() {return m_lastAttacker;}
+    void setLastAttacker(slot _id) {m_lastAttacker = _id;}
 
     void toggleInventory() {m_cargo.toggleVisible();}
     void showInventory(const bool _v) {m_cargo.setVisible(_v);}
@@ -435,7 +435,7 @@ public:
     bool addItem(debris _in) {return m_cargo.addItem(_in);}
     inventory * getCargo() {return &m_cargo;}
 
-    void transferCargo(ship * _target, uniqueID _item);
+    void transferCargo(ship * _target, slot _item);
     void transferAllCargo(ship * _target);
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -613,7 +613,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The parent ships unique ID.
     //----------------------------------------------------------------------------------------------------------------------
-    uniqueID m_parent;
+    slot m_parent;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Attachment points, for turrets.
@@ -628,7 +628,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The id of the ship which last damaged this ship.
     //----------------------------------------------------------------------------------------------------------------------
-    uniqueID m_lastAttacker;
+    slot m_lastAttacker;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The inventory of the ship.

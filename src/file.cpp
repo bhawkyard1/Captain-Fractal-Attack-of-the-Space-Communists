@@ -43,9 +43,9 @@ void saveGame(universe * uni)
     std::cout << "SAVED" << '\n';
 }
 
-void writeVectorEnemy(std::ostream &_file, slotMap<enemy> * _u)
+void writeVectorEnemy(std::ostream &_file, slotmap<enemy> * _u)
 {
-    slotMap<enemy> cpy = *_u;
+    slotmap<enemy> cpy = *_u;
     for(size_t i = 0; i < cpy.size(); ++i)
     {
         _file << "/|" << cpy[i].getClassification() << "," << cpy[i].getTeam() << "|"
@@ -131,7 +131,7 @@ void readVectorEnemy(std::string _str, universe * _u)
         type = std::stof(stat[0]);
         team = std::stof(stat[1]);
 
-        uniqueID id, parentID;
+        slot id, parentID;
         stat = split(stats[2], ',');
         id = {std::stoi(stat[0]), std::stoi(stat[1])};
         parentID = {std::stoi(stat[2]), std::stoi(stat[3])};
@@ -250,12 +250,12 @@ void readVectorFaction(std::string _str, universe *_u)
         aiTeam team = static_cast<aiTeam>(std::stoi(stats[2]));
 
         stat = split(stats[3], ',');
-        std::array<float, 4> colour = {
+        std::array<float, 4> colour = {{
             std::stof(stat[0]),
             std::stof(stat[1]),
             std::stof(stat[2]),
             std::stof(stat[3])
-        };
+        }};
 
         std::vector<diplomaticStatus> relations;
         stat = split(stats[4], ',');
@@ -508,7 +508,7 @@ selection loadSelection(const std::string _path)
                 if(btnData[0] == "Name")
                 {
                     std::string tempStr = "";
-                    for(int k = 1; k < btnData.size(); ++k)
+                    for(size_t k = 1; k < btnData.size(); ++k)
                     {
                         tempStr += btnData[k];
                         if(k < btnData.size() - 1) tempStr += ' ';
@@ -540,21 +540,21 @@ selection loadSelection(const std::string _path)
                 else if(btnData[0] == "TextSize") temp.setTextSizeMul(std::stof(btnData[1]));
                 else if(btnData[0] == "TextCol")
                 {
-                    temp.setTCol({
+                    temp.setTCol({{
                                      std::stoi(btnData[1]),
                                      std::stoi(btnData[2]),
                                      std::stoi(btnData[3]),
                                      std::stoi(btnData[4])
-                                 });
+                                 }});
                 }
                 else if(btnData[0] == "BackCol")
                 {
-                    temp.setCol({
+                    temp.setCol({{
                                     std::stoi(btnData[1]),
                                     std::stoi(btnData[2]),
                                     std::stoi(btnData[3]),
                                     std::stoi(btnData[4])
-                                });
+                                }});
                 }
             }
         }
@@ -652,7 +652,7 @@ std::vector<std::string> readLines(std::istream &_file)
 float convertMeasureF(std::string _str)
 {
     std::string toConvert = "";
-    for(int i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
+    for(size_t i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
     switch(_str[ _str.length() - 1 ])
     {
     case 'a':
@@ -679,7 +679,7 @@ float convertMeasureF(std::string _str)
 int convertMeasureI(std::string _str)
 {
     std::string toConvert = "";
-    for(int i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
+    for(size_t i = 0; i < _str.length() - 1; ++i) toConvert += _str[i];
 
     switch(_str[ _str.length() - 1 ])
     {

@@ -7,7 +7,7 @@
 #include "aiTypes.hpp"
 //#include "debris.hpp"
 #include "ship.hpp"
-#include "slotMap.hpp"
+#include "slotmap.hpp"
 #include "squad.hpp"
 
 class enemy;
@@ -95,9 +95,9 @@ public:
 
     bool isOrganised() const {return m_organised;}
 
-    uniqueID addSquad(const squad _s) {return m_squads.push_back(_s);}
-    squad * getSquad(uniqueID _id) {return m_squads.getByID(_id);}
-    uniqueID getBackSquad() {return m_squads.backID();}
+    slot addSquad(const squad _s) {return m_squads.push_back(_s);}
+    squad * getSquad(slot _id) {return m_squads.getByID(_id);}
+    slot getBackSquad() {return m_squads.backID();}
     const std::vector<squad> & getSquads() const {return m_squads.m_objects;}
 
     void resetSquads();
@@ -163,7 +163,7 @@ private:
 
     std::string m_identifier;
 
-    slotMap<squad> m_squads;
+    slotmap<squad> m_squads;
 
     vec3 m_wvel;
 

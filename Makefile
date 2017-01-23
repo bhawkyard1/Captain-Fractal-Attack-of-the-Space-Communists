@@ -35,7 +35,7 @@ COMPRESS      = gzip -9f
 DISTNAME      = Captain\ Fractal-\ Attack\ of\ the\ Space\ Communists1.0.0
 DISTDIR = /home/i7620560/Documents/Captain-Fractal-Attack-Of-The-Space-Communists/obj/Captain\ Fractal-\ Attack\ of\ the\ Space\ Communists1.0.0
 LINK          = clang++
-LFLAGS        = -ccc-gcc-name g++ -Wl,-rpath,/home/i7620560/NGL/lib -Wl,-rpath,/opt/Qt5.7.0/5.7/gcc_64/lib
+LFLAGS        = -ccc-gcc-name g++ -Wl,-z,origin -Wl,-rpath,\$$ORIGIN/L/home/i7620560/NGL/lib -Wl,-rpath,/home/i7620560/NGL/lib -Wl,-rpath,/opt/Qt5.7.0/5.7/gcc_64/lib
 LIBS          = $(SUBLIBS) -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -L/home/i7620560/NGL/lib -l NGL -ltiff -L/opt/Qt5.7.0/5.7/gcc_64/lib -lQt5OpenGL -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
@@ -72,7 +72,7 @@ SOURCES       = main.cpp \
 		src/shapes.cpp \
 		src/ship.cpp \
 		src/sim_time.cpp \
-		src/slotMap.cpp \
+		src/slotmap.cpp \
 		src/sprite_sheet.cpp \
 		src/sprite_sheet_opengl.cpp \
 		src/squad.cpp \
@@ -111,7 +111,7 @@ OBJECTS       = obj/main.o \
 		obj/shapes.o \
 		obj/ship.o \
 		obj/sim_time.o \
-		obj/slotMap.o \
+		obj/slotmap.o \
 		obj/sprite_sheet.o \
 		obj/sprite_sheet_opengl.o \
 		obj/squad.o \
@@ -152,7 +152,7 @@ DIST          = resources/menus/buyMenu.txt \
 		include/shapes.hpp \
 		include/ship.hpp \
 		include/sim_time.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/sprite_sheet.hpp \
 		include/sprite_sheet_opengl.hpp \
 		include/squad.hpp \
@@ -191,7 +191,7 @@ DIST          = resources/menus/buyMenu.txt \
 		src/shapes.cpp \
 		src/ship.cpp \
 		src/sim_time.cpp \
-		src/slotMap.cpp \
+		src/slotmap.cpp \
 		src/sprite_sheet.cpp \
 		src/sprite_sheet_opengl.cpp \
 		src/squad.cpp \
@@ -548,8 +548,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents include/aiTypes.hpp include/base.hpp include/camera.hpp include/common.hpp include/debris.hpp include/enemy.hpp include/entity.hpp include/faction.hpp include/file.hpp include/frame.hpp include/framebuffer.hpp include/inventory.hpp include/laser.hpp include/missile.hpp include/observer.hpp include/pfx.hpp include/player.hpp include/pointLight.hpp include/popup.hpp include/renderer_opengl.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/sim_time.hpp include/slotMap.hpp include/sprite_sheet.hpp include/sprite_sheet_opengl.hpp include/squad.hpp include/stardust.hpp include/stardust_sprite.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/selection.hpp include/ui/user_interface.hpp include/input/command.hpp include/input/inputMap.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp src/base.cpp src/camera.cpp src/common.cpp src/debris.cpp src/enemy.cpp src/entity.cpp src/faction.cpp src/file.cpp src/frame.cpp src/framebuffer.cpp src/inventory.cpp src/laser.cpp src/missile.cpp src/observer.cpp src/pfx.cpp src/player.cpp src/pointLight.cpp src/popup.cpp src/renderer_opengl.cpp src/sfx.cpp src/shapes.cpp src/ship.cpp src/sim_time.cpp src/slotMap.cpp src/sprite_sheet.cpp src/sprite_sheet_opengl.cpp src/squad.cpp src/stardust.cpp src/stardust_sprite.cpp src/universe.cpp src/util.cpp src/vectors.cpp src/weapons.cpp src/ui/button.cpp src/ui/selection.cpp src/ui/user_interface.cpp src/input/command.cpp src/input/inputMap.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents include/aiTypes.hpp include/base.hpp include/camera.hpp include/common.hpp include/debris.hpp include/enemy.hpp include/entity.hpp include/faction.hpp include/file.hpp include/frame.hpp include/framebuffer.hpp include/inventory.hpp include/laser.hpp include/missile.hpp include/observer.hpp include/pfx.hpp include/player.hpp include/pointLight.hpp include/popup.hpp include/renderer_opengl.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/sim_time.hpp include/slotmap.hpp include/sprite_sheet.hpp include/sprite_sheet_opengl.hpp include/squad.hpp include/stardust.hpp include/stardust_sprite.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/selection.hpp include/ui/user_interface.hpp include/input/command.hpp include/input/inputMap.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp src/base.cpp src/camera.cpp src/common.cpp src/debris.cpp src/enemy.cpp src/entity.cpp src/faction.cpp src/file.cpp src/frame.cpp src/framebuffer.cpp src/inventory.cpp src/laser.cpp src/missile.cpp src/observer.cpp src/pfx.cpp src/player.cpp src/pointLight.cpp src/popup.cpp src/renderer_opengl.cpp src/sfx.cpp src/shapes.cpp src/ship.cpp src/sim_time.cpp src/slotmap.cpp src/sprite_sheet.cpp src/sprite_sheet_opengl.cpp src/squad.cpp src/stardust.cpp src/stardust_sprite.cpp src/universe.cpp src/util.cpp src/vectors.cpp src/weapons.cpp src/ui/button.cpp src/ui/selection.cpp src/ui/user_interface.cpp src/input/command.cpp src/input/inputMap.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -599,7 +599,7 @@ obj/main.o: main.cpp include/common.hpp \
 		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/file.hpp \
@@ -735,7 +735,7 @@ obj/main.o: main.cpp include/common.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/Transformation.h \
 		/home/i7620560/NGL/include/ngl/Mat4.h \
 		/home/i7620560/NGL/include/ngl/NGLassert.h \
@@ -752,7 +752,6 @@ obj/main.o: main.cpp include/common.hpp \
 		/home/i7620560/NGL/include/ngl/Image.h \
 		/home/i7620560/NGL/include/ngl/AbstractMesh.h \
 		/home/i7620560/NGL/include/ngl/BBox.h \
-		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/RibExport.h \
 		include/sfx.hpp \
 		include/observer.hpp \
@@ -770,7 +769,7 @@ obj/base.o: src/base.cpp include/base.hpp \
 		include/ship.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/base.o src/base.cpp
@@ -789,7 +788,7 @@ obj/common.o: src/common.cpp include/common.hpp \
 		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/common.o src/common.cpp
@@ -811,7 +810,7 @@ obj/enemy.o: src/enemy.cpp include/enemy.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -832,7 +831,7 @@ obj/faction.o: src/faction.cpp include/enemy.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -851,7 +850,7 @@ obj/file.o: src/file.cpp include/file.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -983,7 +982,7 @@ obj/file.o: src/file.cpp include/file.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/Transformation.h \
 		/home/i7620560/NGL/include/ngl/Mat4.h \
 		/home/i7620560/NGL/include/ngl/NGLassert.h \
@@ -1000,7 +999,6 @@ obj/file.o: src/file.cpp include/file.hpp \
 		/home/i7620560/NGL/include/ngl/Image.h \
 		/home/i7620560/NGL/include/ngl/AbstractMesh.h \
 		/home/i7620560/NGL/include/ngl/BBox.h \
-		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/RibExport.h \
 		include/sfx.hpp \
 		include/observer.hpp \
@@ -1126,7 +1124,7 @@ obj/frame.o: src/frame.cpp include/frame.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/frame.o src/frame.cpp
 
 obj/framebuffer.o: src/framebuffer.cpp include/framebuffer.hpp \
@@ -1246,14 +1244,14 @@ obj/framebuffer.o: src/framebuffer.cpp include/framebuffer.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/framebuffer.o src/framebuffer.cpp
 
 obj/inventory.o: src/inventory.cpp include/inventory.hpp \
 		include/debris.hpp \
 		include/base.hpp \
 		include/vectors.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/shapes.hpp \
 		include/util.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/inventory.o src/inventory.cpp
@@ -1270,7 +1268,7 @@ obj/laser.o: src/laser.cpp include/laser.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -1286,7 +1284,7 @@ obj/missile.o: src/missile.cpp include/missile.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/enemy.hpp \
@@ -1308,7 +1306,7 @@ obj/observer.o: src/observer.cpp include/observer.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -1325,7 +1323,7 @@ obj/pfx.o: src/pfx.cpp include/pfx.hpp \
 		include/ship.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/pfx.o src/pfx.cpp
 
@@ -1338,7 +1336,7 @@ obj/player.o: src/player.cpp include/player.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/player.o src/player.cpp
@@ -1360,7 +1358,7 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp include/camera.hpp \
 		include/ship.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/file.hpp \
@@ -1495,7 +1493,7 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp include/camera.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/Transformation.h \
 		/home/i7620560/NGL/include/ngl/Mat4.h \
 		/home/i7620560/NGL/include/ngl/NGLassert.h \
@@ -1512,7 +1510,6 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp include/camera.hpp \
 		/home/i7620560/NGL/include/ngl/Image.h \
 		/home/i7620560/NGL/include/ngl/AbstractMesh.h \
 		/home/i7620560/NGL/include/ngl/BBox.h \
-		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/RibExport.h \
 		include/sfx.hpp \
 		include/observer.hpp \
@@ -1534,7 +1531,7 @@ obj/sfx.o: src/sfx.cpp include/sfx.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -1554,7 +1551,7 @@ obj/ship.o: src/ship.cpp include/ship.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/ship.o src/ship.cpp
@@ -1562,8 +1559,8 @@ obj/ship.o: src/ship.cpp include/ship.hpp \
 obj/sim_time.o: src/sim_time.cpp include/sim_time.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/sim_time.o src/sim_time.cpp
 
-obj/slotMap.o: src/slotMap.cpp include/slotMap.hpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/slotMap.o src/slotMap.cpp
+obj/slotmap.o: src/slotmap.cpp include/slotmap.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/slotmap.o src/slotmap.cpp
 
 obj/sprite_sheet.o: src/sprite_sheet.cpp include/sprite_sheet.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/sprite_sheet.o src/sprite_sheet.cpp
@@ -1581,7 +1578,7 @@ obj/squad.o: src/squad.cpp include/squad.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/squad.o src/squad.cpp
@@ -1596,7 +1593,7 @@ obj/stardust.o: src/stardust.cpp include/stardust.hpp \
 		include/ship.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/stardust.o src/stardust.cpp
 
@@ -1611,7 +1608,7 @@ obj/stardust_sprite.o: src/stardust_sprite.cpp include/stardust_sprite.hpp \
 		include/ship.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/stardust_sprite.o src/stardust_sprite.cpp
 
@@ -1623,7 +1620,7 @@ obj/universe.o: src/universe.cpp include/common.hpp \
 		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/file.hpp \
@@ -1759,7 +1756,7 @@ obj/universe.o: src/universe.cpp include/common.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/Transformation.h \
 		/home/i7620560/NGL/include/ngl/Mat4.h \
 		/home/i7620560/NGL/include/ngl/NGLassert.h \
@@ -1776,7 +1773,6 @@ obj/universe.o: src/universe.cpp include/common.hpp \
 		/home/i7620560/NGL/include/ngl/Image.h \
 		/home/i7620560/NGL/include/ngl/AbstractMesh.h \
 		/home/i7620560/NGL/include/ngl/BBox.h \
-		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/RibExport.h \
 		include/sfx.hpp \
 		include/observer.hpp \
@@ -1795,7 +1791,7 @@ obj/util.o: src/util.cpp include/common.hpp \
 		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/util.o src/util.cpp
@@ -1816,7 +1812,7 @@ obj/weapons.o: src/weapons.cpp include/file.hpp \
 		include/input/command.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp \
 		include/squad.hpp \
@@ -1948,7 +1944,7 @@ obj/weapons.o: src/weapons.cpp include/file.hpp \
 		/opt/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
 		/home/i7620560/NGL/include/ngl/VAOPrimitives.h \
 		/home/i7620560/NGL/include/ngl/Vec3.h \
-		/home/i7620560/NGL/include/ngl/VertexArrayObject.h \
+		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/Transformation.h \
 		/home/i7620560/NGL/include/ngl/Mat4.h \
 		/home/i7620560/NGL/include/ngl/NGLassert.h \
@@ -1965,7 +1961,6 @@ obj/weapons.o: src/weapons.cpp include/file.hpp \
 		/home/i7620560/NGL/include/ngl/Image.h \
 		/home/i7620560/NGL/include/ngl/AbstractMesh.h \
 		/home/i7620560/NGL/include/ngl/BBox.h \
-		/home/i7620560/NGL/include/ngl/AbstractVAO.h \
 		/home/i7620560/NGL/include/ngl/RibExport.h \
 		include/sfx.hpp \
 		include/observer.hpp \
@@ -2004,7 +1999,7 @@ obj/inputMap.o: src/input/inputMap.cpp include/input/inputMap.hpp \
 		include/common.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
-		include/slotMap.hpp \
+		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/inputMap.o src/input/inputMap.cpp

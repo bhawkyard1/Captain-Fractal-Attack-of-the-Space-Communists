@@ -18,7 +18,7 @@
 
 #include "sfx.hpp"
 #include "ship.hpp"
-#include "slotMap.hpp"
+#include "slotmap.hpp"
 #include "squad.hpp"
 #include "stardust.hpp"
 #include "stardust_sprite.hpp"
@@ -105,7 +105,7 @@ public:
     /// \param _weap array of data such as damage
     /// \param _team source of the shot
     //----------------------------------------------------------------------------------------------------------------------
-    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, uniqueID _owner, const float _xpModifier);
+    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, slot _owner, const float _xpModifier);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a raw resource to the universe.
@@ -258,7 +258,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the agents vector. Mostly a quick and dirty way of doing stuff in the tutorial, and for file operations.
     //----------------------------------------------------------------------------------------------------------------------
-    slotMap<enemy> * getAgents() {return &m_agents;}
+    slotmap<enemy> * getAgents() {return &m_agents;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the laser vector. Mostly used for saving and loading the game.
@@ -323,7 +323,7 @@ public:
     /// \brief Getter and setter for the UI.
     //----------------------------------------------------------------------------------------------------------------------
     userInterface * getUI() {return &m_ui;}
-    userInterface setUI(userInterface _i) {m_ui = _i;}
+    void setUI(userInterface _i) {m_ui = _i;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for the UI.
@@ -351,7 +351,7 @@ public:
     /// \param _e enemy to add
     /// \param _s id of squad to add to
     //----------------------------------------------------------------------------------------------------------------------
-    void addToSquad(enemy * _e, uniqueID _s);
+    void addToSquad(enemy * _e, slot _s);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Removes a given enemy from a given squad. Requires you know which squad it is in.
@@ -368,7 +368,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Given a squad ID, returns the associated squad.
     //----------------------------------------------------------------------------------------------------------------------
-    squad * getSquadFromID(aiTeam _t, uniqueID _id);
+    squad * getSquadFromID(aiTeam _t, slot _id);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns the renderer. Mostly used to hack text into the tutorial.
@@ -444,7 +444,7 @@ public:
     vec3 getPos() const {return m_pos;}
 
     //ship * getByID(const unsigned long _i);
-    void addFrag(uniqueID _i);
+    void addFrag(slot _i);
 
     vec3 getCameraPosition() {return m_drawer.getCamera()->getPos();}
     void setCameraPosition(const vec3 _pos) {m_drawer.getCamera()->setPos(_pos);}
@@ -487,7 +487,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all nearby AI controlled ships in the game.
     //----------------------------------------------------------------------------------------------------------------------
-    slotMap<enemy> m_agents;
+    slotmap<enemy> m_agents;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all particle systems in the game.
@@ -587,7 +587,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Resolves a collision between two ships.
     //----------------------------------------------------------------------------------------------------------------------
-    void resolveCollision(uniqueID _a, uniqueID _b);
+    void resolveCollision(slot _a, slot _b);
     void resolveCollision(ship * _a, ship * _b);
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -618,7 +618,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Ship ID that the context menu is bound to.
     //----------------------------------------------------------------------------------------------------------------------
-    uniqueID m_contextShip;
+    slot m_contextShip;
 
     int m_maxMiners;
     int m_maxWingmen;

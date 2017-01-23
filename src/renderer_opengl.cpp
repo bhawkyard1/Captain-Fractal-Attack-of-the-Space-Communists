@@ -179,7 +179,7 @@ renderer_ngl::renderer_ngl()
 
     //m_project = ngl::perspective(200.0f, float(g_WIN_WIDTH / g_WIN_HEIGHT), 0.01f, 200.0f);
 
-    m_shader = ngl::ShaderLib::instance();
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
 
     createShaderProgram("bufferCopy", "backgroundVertex", "bufferCopyFragment");
     createShaderProgram("bufferBlur", "backgroundVertex", "bufferDirectionalBlurFragment");
@@ -201,69 +201,19 @@ renderer_ngl::renderer_ngl()
     createShaderProgramVGF("sparks", "laserVertex", "lineToRectGeo", "sparksFragment");
     createShaderProgramVGF("laser", "laserVertex", "lineToRectGeo", "laserFragment");
 
-    m_shader->use("bufferBlur");
-    m_shader->setRegisteredUniform("iResolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
+    slib->use("bufferBlur");
+    slib->setRegisteredUniform("iResolution", ngl::Vec2( g_WIN_WIDTH, g_WIN_HEIGHT ));
 
-    m_shader->use("background");
-    m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
-    m_shader->setRegisteredUniform("iterations", (g_GRAPHICAL_DETAIL + 2.0f) * 3.0f);
+    slib->use("background");
+    slib->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+    slib->setRegisteredUniform("iterations", (g_GRAPHICAL_DETAIL + 2.0f) * 3.0f);
 
-    m_shader->use("bufferCopy");
-    m_shader->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+    slib->use("bufferCopy");
+    slib->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
 
     std::cout << "loading ships starting!\n";
     loadShips();
     std::cout << "loading ships complete!\n";
-    /*loadAsset("COMMUNIST_1",         "commie_1");
-    loadAsset("COMMUNIST_2",         "commie_2");
-    loadAsset("COMMUNIST_CAPITAL", "commie_capital");
-    loadAsset("COMMUNIST_TURRET", "commie_turret_1");
-
-    loadAsset("FEDERATION_MKI",      "enemy_1");
-    loadAsset("FEDERATION_MKII",     "enemy_2");
-    loadAsset("FEDERATION_MKIII",    "enemy_3");
-    loadAsset("FEDERATION_MKIV",     "enemy_4");
-    loadAsset("FEDERATION_GUNSHIP",  "enemy_5");
-    loadAsset("FEDERATION_CAPITAL",  "enemy_capital");
-    loadAsset("FEDERATION_TURRET",   "enemy_turret_1");
-
-    loadAsset("PIRATE_GNAT",         "pirate_1");
-    loadAsset("PIRATE_CRUISER",      "pirate_2");
-    loadAsset("PIRATE_WRANGLER",     "pirate_3");
-    loadAsset("PIRATE_MARAUDER",     "pirate_4");
-    loadAsset("PIRATE_GUNSHIP",      "pirate_5");
-    loadAsset("PIRATE_CAPITAL",      "pirate_capital");
-    loadAsset("PIRATE_TURRET",       "pirate_turret_1");
-
-    loadAsset("ALLIANCE_SCOUT",      "neutral_1");
-    loadAsset("ALLIANCE_TRACKER",    "neutral_2");
-    loadAsset("ALLIANCE_PHOENIX",    "neutral_3");
-    loadAsset("ALLIANCE_DRAGON",     "neutral_4");
-    loadAsset("ALLIANCE_GUNSHIP",    "neutral_5");
-    loadAsset("ALLIANCE_TRADER",     "neutral_6");
-    loadAsset("ALLIANCE_TURRET",     "neutral_turret_1");
-    loadAsset("ALLIANCE_STATION",    "neutral_station_1");
-    loadAsset("ALLIANCE_BARRACKS",   "neutral_barracks_1");
-    loadAsset("ALLIANCE_GRAVWELL",   "neutral_gravwell_1");
-
-    loadAsset("PLAYER_SHIP",         "player");
-    loadAsset("PLAYER_HUNTER",       "wingman_1");
-    loadAsset("PLAYER_DEFENDER",     "wingman_2");
-    loadAsset("PLAYER_DESTROYER",    "wingman_3");
-    loadAsset("PLAYER_GUNSHIP",      "wingman_4");
-    loadAsset("PLAYER_MINER_DROID",  "miner_1");
-    loadAsset("PLAYER_CAPITAL",      "wingman_capital");
-    loadAsset("PLAYER_TURRET",       "turret_1");
-
-    loadAsset("PLAYER_STATION",      "station_1");
-    loadAsset("PLAYER_GRAVWELL",     "well_1");
-    loadAsset("PLAYER_BARRACKS",     "barracks_1");
-
-    loadAsset("ION_MISSILE_MKI",     "missile_1");
-
-    loadAsset("ASTEROID_SMALL",      "asteroid_1");
-    loadAsset("ASTEROID_MID",        "asteroid_2");
-    loadAsset("ASTEROID_LARGE",      "asteroid_3");*/
 
     loadAsset("RESOURCE_IRON_ROCK",  "resource_iron_rock");
 
@@ -342,11 +292,16 @@ renderer_ngl::renderer_ngl()
     m_shield->createVAO();
 
     resetLights();
-    m_activeLights = 0;
 
     std::cout << "p1\n";
     m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
     std::cout << "p2\n";
+
+    m_pointLights.reserve(MAX_LIGHTS);
+    glGenBuffers(1, &m_lightbuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_lightbuffer);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(pointLight) * MAX_LIGHTS, &m_pointLights[0].m_pos.m_x, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     finalise(0.0f, vec2());
 
@@ -405,7 +360,8 @@ ngl::Obj * renderer_ngl::loadObj(const std::string _path, const std::string _app
 
 void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha)
 {
-    m_shader->setRegisteredUniform("alpha", _alpha);
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->setRegisteredUniform("alpha", _alpha);
 
     m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
     m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
@@ -427,13 +383,15 @@ void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string 
 
 void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string _asset)
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+
     m_transform.reset();
 
-    m_shader->setRegisteredUniform("alpha", 1.0f);
+    slib->setRegisteredUniform("alpha", 1.0f);
 
     m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, _p.m_z));
     m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
-    m_shader->setRegisteredUniform("transform", m_transform.getMatrix());
+    slib->setRegisteredUniform("M", m_transform.getMatrix());
     loadMatricesToShader();
 
     size_t modlen = m_models[_asset].size();
@@ -443,7 +401,7 @@ void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string 
     }
 
     m_transform.setRotation(90.0f, 0.0f, 0.0f);
-    m_shader->setRegisteredUniform("transform", m_transform.getMatrix());
+    slib->setRegisteredUniform("transform", m_transform.getMatrix());
     loadMatricesToShader();
 
     if(m_models[_asset][modlen - 1] != nullptr) m_models[_asset][modlen - 1]->draw();
@@ -453,7 +411,8 @@ void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string 
 
 void renderer_ngl::drawShip(const vec3 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol)
 {
-    m_shader->setRegisteredUniform("shootingLightCol", ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3]));
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->setRegisteredUniform("shootingLightCol", ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3]));
     drawAsset(_p, _ang, _asset);
 }
 
@@ -471,10 +430,11 @@ void renderer_ngl::addLine(const vec3 _start, const vec3 _end, const float _widt
 
 void renderer_ngl::drawLasers(const float _globalTime)
 {
-    m_shader->use("laser");
-    m_shader->setRegisteredUniform("iGlobalTime", _globalTime);
-    //m_shader->setRegisteredUniform("halfwin", ngl::Vec2(g_HALFWIN.m_x, g_HALFWIN.m_y));
-    //m_shader->setRegisteredUniform("shake", ngl::Vec2(m_cameraShakeOffset.m_x, m_cameraShakeOffset.m_y));
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->use("laser");
+    slib->setRegisteredUniform("iGlobalTime", _globalTime);
+    //slib->setRegisteredUniform("halfwin", ngl::Vec2(g_HALFWIN.m_x, g_HALFWIN.m_y));
+    //slib->setRegisteredUniform("shake", ngl::Vec2(m_cameraShakeOffset.m_x, m_cameraShakeOffset.m_y));
 
     drawLines(5.0f);
 }
@@ -538,8 +498,8 @@ void renderer_ngl::drawLines(const float _width)
     fstart += g_HALFWIN + m_cameraShakeOffset;
     fend += g_HALFWIN + m_cameraShakeOffset;
 
-    m_shader->setRegisteredUniform("fstart", ngl::Vec2(fstart.m_x, fstart.m_y));
-    m_shader->setRegisteredUniform("fend", ngl::Vec2(fend.m_x, fend.m_y));
+    slib->setRegisteredUniform("fstart", ngl::Vec2(fstart.m_x, fstart.m_y));
+    slib->setRegisteredUniform("fend", ngl::Vec2(fend.m_x, fend.m_y));
 
     //std::cout << "TRANSLATE " << fstart.m_x << ", " << fstart.m_y << std::endl;
 
@@ -594,14 +554,16 @@ void renderer_ngl::drawLines(const float _width)
 
 void renderer_ngl::drawShield(const vec3 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col)
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+
     m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
     m_transform.setRotation(90.0f, 0.0f, 0.0f);
     m_transform.setScale(_r, _r, _r);
 
-    m_shader->use("shield");
-    m_shader->setRegisteredUniform("iGlobalTime", _dt);
-    m_shader->setRegisteredUniform("alpha", _alpha);
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+    slib->use("shield");
+    slib->setRegisteredUniform("iGlobalTime", _dt);
+    slib->setRegisteredUniform("alpha", _alpha);
+    slib->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
     loadMatricesToShader();
 
     m_shield->draw();
@@ -645,42 +607,46 @@ int renderer_ngl::init()
 
 void renderer_ngl::createShaderProgram(const std::string _name, const std::string _vert, const std::string _frag)
 {
-    m_shader->createShaderProgram(_name);
-    m_shader->attachShader(_vert, ngl::ShaderType::VERTEX);
-    m_shader->attachShader(_frag, ngl::ShaderType::FRAGMENT);
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
 
-    m_shader->loadShaderSource(_vert, "shaders/" + _vert + ".glsl");
-    m_shader->loadShaderSource(_frag, "shaders/" + _frag + ".glsl");
+    slib->createShaderProgram(_name);
+    slib->attachShader(_vert, ngl::ShaderType::VERTEX);
+    slib->attachShader(_frag, ngl::ShaderType::FRAGMENT);
 
-    m_shader->compileShader(_vert);
-    m_shader->compileShader(_frag);
+    slib->loadShaderSource(_vert, "shaders/" + _vert + ".glsl");
+    slib->loadShaderSource(_frag, "shaders/" + _frag + ".glsl");
 
-    m_shader->attachShaderToProgram(_name, _vert);
-    m_shader->attachShaderToProgram(_name, _frag);
+    slib->compileShader(_vert);
+    slib->compileShader(_frag);
 
-    m_shader->linkProgramObject(_name);
+    slib->attachShaderToProgram(_name, _vert);
+    slib->attachShaderToProgram(_name, _frag);
+
+    slib->linkProgramObject(_name);
 }
 
 void renderer_ngl::createShaderProgramVGF(const std::string _name, const std::string _vert, const std::string _geo, const std::string _frag)
 {
-    m_shader->createShaderProgram(_name);
-    m_shader->attachShader(_vert, ngl::ShaderType::VERTEX);
-    m_shader->attachShader(_geo, ngl::ShaderType::GEOMETRY);
-    m_shader->attachShader(_frag, ngl::ShaderType::FRAGMENT);
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
 
-    m_shader->loadShaderSource(_vert, "shaders/" + _vert + ".glsl");
-    m_shader->loadShaderSource(_geo, "shaders/" + _geo + ".glsl");
-    m_shader->loadShaderSource(_frag, "shaders/" + _frag + ".glsl");
+    slib->createShaderProgram(_name);
+    slib->attachShader(_vert, ngl::ShaderType::VERTEX);
+    slib->attachShader(_geo, ngl::ShaderType::GEOMETRY);
+    slib->attachShader(_frag, ngl::ShaderType::FRAGMENT);
 
-    m_shader->compileShader(_vert);
-    m_shader->compileShader(_geo);
-    m_shader->compileShader(_frag);
+    slib->loadShaderSource(_vert, "shaders/" + _vert + ".glsl");
+    slib->loadShaderSource(_geo, "shaders/" + _geo + ".glsl");
+    slib->loadShaderSource(_frag, "shaders/" + _frag + ".glsl");
 
-    m_shader->attachShaderToProgram(_name, _vert);
-    m_shader->attachShaderToProgram(_name, _geo);
-    m_shader->attachShaderToProgram(_name, _frag);
+    slib->compileShader(_vert);
+    slib->compileShader(_geo);
+    slib->compileShader(_frag);
 
-    m_shader->linkProgramObject(_name);
+    slib->attachShaderToProgram(_name, _vert);
+    slib->attachShaderToProgram(_name, _geo);
+    slib->attachShaderToProgram(_name, _frag);
+
+    slib->linkProgramObject(_name);
 }
 
 void renderer_ngl::update(float _dt, base * _focus)
@@ -717,13 +683,14 @@ void renderer_ngl::drawBackground(float _dt, vec2 _p, vec2 _v, std::array<float,
 
     for(auto &i : _cCol) i /= 255.0f;
 
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     //std::cout << "Col " << _cCol[0] << ", " << _cCol[1] << ", " << _cCol[2] << std::endl;
-    m_shader->use("background");
-    m_shader->setRegisteredUniform("iGlobalTime", _dt);
-    m_shader->setRegisteredUniform("zoom", 0.06f / g_ZOOM_LEVEL);
-    m_shader->setRegisteredUniform("unipos", convp);
-    m_shader->setRegisteredUniform("univel", convv);
-    m_shader->setRegisteredUniform("inColour", ngl::Vec3(_cCol[0], _cCol[1], _cCol[2]));
+    slib->use("background");
+    slib->setRegisteredUniform("iGlobalTime", _dt);
+    slib->setRegisteredUniform("zoom", 0.06f / g_ZOOM_LEVEL);
+    slib->setRegisteredUniform("unipos", convp);
+    slib->setRegisteredUniform("univel", convv);
+    slib->setRegisteredUniform("inColour", ngl::Vec3(_cCol[0], _cCol[1], _cCol[2]));
 
     glBindVertexArray(m_screenQuadVAO);
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
@@ -884,8 +851,9 @@ GLuint renderer_ngl::createVAO(std::vector<ngl::Vec3> _verts, std::vector<ngl::V
 
 void renderer_ngl::drawbutton(const vec3 _p, const vec2 _d, const float _ang, std::array<float, 4> _col)
 {
-    m_shader->use("debug");
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->use("debug");
+    slib->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
 
     drawRect(_p, _d, _ang, false);
 }
@@ -1010,8 +978,9 @@ void renderer_ngl::drawRects(const bool _ws)
 
 void renderer_ngl::drawXP(const float _xp)
 {
-    m_shader->use("xp");
-    m_shader->setRegisteredUniform("xp", _xp / XP_DISPLAY_DIVISOR);
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->use("xp");
+    slib->setRegisteredUniform("xp", _xp / XP_DISPLAY_DIVISOR);
 
     drawRects(true);
 }
@@ -1091,6 +1060,7 @@ void renderer_ngl::drawLine(
 
 void renderer_ngl::drawExplosions()
 {
+    return;
     //clearVectors();
 
     /*addRect(
@@ -1105,7 +1075,8 @@ void renderer_ngl::drawExplosions()
                 );*/
 
 
-    GLuint id = m_shader->getProgramID("explosion");
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    GLuint id = slib->getProgramID("explosion");
     bindTextureToSampler(id, m_noise512, "noiseTex", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_noise512);
@@ -1133,16 +1104,18 @@ void renderer_ngl::drawExplosions()
 
 void renderer_ngl::drawSmoke(const float _dt)
 {
-    m_shader->use("smoke");
-    m_shader->setRegisteredUniform("iGlobalTime", _dt);
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->use("smoke");
+    slib->setRegisteredUniform("iGlobalTime", _dt);
     drawRects(true);
 }
 
 void renderer_ngl::drawFlames(const vec3 _pos, const vec2 _d, float _ang, std::array<float, 4> _col, const float _t, const float _speed)
 {
-    m_shader->setRegisteredUniform("iGlobalTime", _t);
-    m_shader->setRegisteredUniform("flameCol", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
-    m_shader->setRegisteredUniform("speed", _speed);
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->setRegisteredUniform("iGlobalTime", _t);
+    slib->setRegisteredUniform("flameCol", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+    slib->setRegisteredUniform("speed", _speed);
 
     glBindVertexArray(m_spriteVAO);
     //glBindVertexArray(m_unit_square_vao);
@@ -1168,13 +1141,14 @@ void renderer_ngl::clear()
 
 void renderer_ngl::finalise(const float _t, const vec2 _vel)
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     //Downsample background texture.
     glBindFramebuffer(GL_FRAMEBUFFER, m_tinyFramebuffer);
     useAttachments({GL_COLOR_ATTACHMENT0});
     glViewport(0, 0, m_w / AMBIENT_RESOLUTION_DIVIDER, m_h / AMBIENT_RESOLUTION_DIVIDER);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_shader->use("bufferCopy");
-    GLuint id = m_shader->getProgramID("bufferCopy");
+    slib->use("bufferCopy");
+    GLuint id = slib->getProgramID("bufferCopy");
     bindTextureToSampler(id, m_bufferBackgroundDiffuse, "diffuse", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_bufferBackgroundDiffuse);
@@ -1202,25 +1176,39 @@ void renderer_ngl::bindTextureToSampler(const GLint _shaderID, const GLuint _tex
 
 void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    //Lighting setup.
+    glBindBuffer(GL_UNIFORM_BUFFER, m_lightbuffer);
+    GLvoid * dat = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+    memcpy(dat, &m_pointLights[0].m_pos.m_x, sizeof(pointLight) * std::min( m_pointLights.size(), static_cast<size_t>(MAX_LIGHTS)));
+    glUnmapBuffer(GL_UNIFORM_BUFFER);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    GLuint id = slib->getProgramID("bufferLight");
+    GLuint lightBlockIndex = glGetUniformBlockIndex( id, "lightBuffer" );
+    GLuint index = 1;
+    glBindBufferBase(GL_UNIFORM_BUFFER, index, m_lightbuffer);
+    glUniformBlockBinding(id, lightBlockIndex, index);
+
     glBindVertexArray(m_screenQuadVAO);
 
     //Background draw
-    //m_shader->use("bufferCopy");
-    m_shader->use("bufferBlur");
+    //slib->use("bufferCopy");
+    slib->use("bufferBlur");
 
-    //GLuint id = m_shader->getProgramID("bufferCopy");
-    GLuint id = m_shader->getProgramID("bufferBlur");
+    //GLuint id = slib->getProgramID("bufferCopy");
+    id = slib->getProgramID("bufferBlur");
     bindTextureToSampler(id, m_bufferBackgroundDiffuse, "diffuse", 0);
-    m_shader->setRegisteredUniform("vel", ngl::Vec2(_vel.m_x, _vel.m_y));
+    slib->setRegisteredUniform("vel", ngl::Vec2(_vel.m_x, _vel.m_y));
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_bufferBackgroundDiffuse);
 
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
     //Lighting draw.
-    m_shader->use("bufferLight");
+    slib->use("bufferLight");
 
-    id = m_shader->getProgramID("bufferLight");
+    id = slib->getProgramID("bufferLight");
 
     bindTextureToSampler(id, m_bufferLitDiffuse, "diffuse", 0);
     bindTextureToSampler(id, m_bufferLitNormal, "normal", 1);
@@ -1236,29 +1224,18 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, m_bufferDownscaledBackgroundDiffuse);
 
-    m_shader->setRegisteredUniform("ambientSteps", ngl::Vec2(m_w / AMBIENT_RESOLUTION_DIVIDER, m_h / AMBIENT_RESOLUTION_DIVIDER));
-    m_shader->setRegisteredUniform("inverseVP", (m_project * m_view).inverse());
-    m_shader->setRegisteredUniform("iGlobalTime", _t);
-    m_shader->setRegisteredUniform("lightMul", AMBIENT_RESOLUTION_DIVIDER / (256.0f * g_ZOOM_LEVEL));
-    m_shader->setRegisteredUniform("ACTIVE_LIGHTS", m_activeLights);
-
-    for(size_t i = 0; i < m_pointLights.size(); ++i)
-    {
-        std::string uniform = "lights[" + std::to_string(i) + "]";
-        GLint posloc = glGetUniformLocation(id, (uniform + ".pos").c_str());
-        GLint colloc = glGetUniformLocation(id, (uniform + ".col").c_str());
-        vec3 pos = m_pointLights[i].m_pos;// + vec3(0.0f, 0.0f, 1.0f);
-        vec3 col = m_pointLights[i].m_col;
-        glUniform3f(posloc, pos.m_x, pos.m_y, pos.m_z);
-        glUniform4f(colloc, col.m_x, col.m_y, col.m_z, 1.0f);
-    }
+    slib->setRegisteredUniform("ambientSteps", ngl::Vec2(m_w / AMBIENT_RESOLUTION_DIVIDER, m_h / AMBIENT_RESOLUTION_DIVIDER));
+    slib->setRegisteredUniform("inverseVP", (m_project * m_view).inverse());
+    slib->setRegisteredUniform("iGlobalTime", _t);
+    slib->setRegisteredUniform("lightMul", AMBIENT_RESOLUTION_DIVIDER / (256.0f * g_ZOOM_LEVEL));
+    slib->setRegisteredUniform("ACTIVE_LIGHTS", static_cast<int>(std::min( m_pointLights.size(), static_cast<size_t>(MAX_LIGHTS) )));
 
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
     //Effects draw.
-    m_shader->use("bufferCopy");
+    slib->use("bufferCopy");
 
-    id = m_shader->getProgramID("bufferCopy");
+    id = slib->getProgramID("bufferCopy");
     bindTextureToSampler(id, m_bufferEffectsDiffuse, "diffuse", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_bufferEffectsDiffuse);
@@ -1271,14 +1248,16 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
 
 void renderer_ngl::loadMatricesToShader()
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     ngl::Mat4 MVP = m_transform.getMatrix() * m_VP;
-    m_shader->setRegisteredUniform("MVP", MVP);
+    slib->setRegisteredUniform("MVP", MVP);
 }
 
 void renderer_ngl::loadTransformToShader()
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     ngl::Mat4 MVP = m_transform.getMatrix() * m_uiProject;
-    m_shader->setRegisteredUniform("MVP", MVP);
+    slib->setRegisteredUniform("MVP", MVP);
 }
 
 void renderer_ngl::errorExit(const std::string &_msg)
@@ -1297,49 +1276,51 @@ void renderer_ngl::addShake(float _s)
 
 void renderer_ngl::statusBars(player * _ply)
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     //health base
-    std::array<float, 4> col = {0.4f, 0.08f, 0.08f, 1.0f};
+    std::array<float, 4> col = {{0.4f, 0.08f, 0.08f, 1.0f}};
     drawbutton({128.0f, 40.0f, 0.0f}, {256, 16}, 0.0f, col);
 
     //health
     float width = (_ply->getHealth() / _ply->getMaxHealth()) * 256;
-    col = {0.9f, 0.2f, 0.2f, 1.0f};
+    col = {{0.9f, 0.2f, 0.2f, 1.0f}};
     drawbutton({width / 2.0f, 40.0f, 0.0f}, {width, 16}, 0.0f, col);
 
     //shield base
-    col = {0.1f, 0.1f, 0.4f, 1.0f};
+    col = {{0.1f, 0.1f, 0.4f, 1.0f}};
     drawbutton({128.0f, 56.0f, 0.0f}, {256, 16}, 0.0f, col);
 
     width = (_ply->getShield() / _ply->getMaxShield()) * 256;
     //shield
-    col = {0.2f, 0.2f, 0.9f, 1.0f};
+    col = {{0.2f, 0.2f, 0.9f, 1.0f}};
     drawbutton({width / 2.0f, 56.0f, 0.0f}, {width, 16}, 0.0f, col);
 
     //energy base
-    col = {0.08f, 0.4f, 0.08f, 1.0f};
+    col = {{0.08f, 0.4f, 0.08f, 1.0f}};
     drawbutton({128.0f, 72.0f, 0.0f}, {256, 16}, 0.0f, col);
 
     width = (_ply->getEnergy() / _ply->getMaxEnergy()) * 256;
     //energy
-    col = {0.2f, 0.9f, 0.2f, 1.0f};
+    col = {{0.2f, 0.9f, 0.2f, 1.0f}};
     drawbutton({width / 2.0f, 72.0f, 0.0f}, {width, 16}, 0.0f, col);
 
     addRect({128.0f, 106.0f, 0.0f}, {256, 64}, 0.0f, col);
-    m_shader->use("xp");
-    m_shader->setRegisteredUniform("xp", _ply->getXP() / XP_DISPLAY_DIVISOR);
+    slib->use("xp");
+    slib->setRegisteredUniform("xp", _ply->getXP() / XP_DISPLAY_DIVISOR);
     drawRects(false);
     clearVectors();
 }
 
 void renderer_ngl::drawWeaponStats(player *_ply)
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     vec2 dim = {g_WIN_WIDTH * 0.1f, g_WIN_HEIGHT * 0.2f};
     vec3 pos = {g_WIN_WIDTH - (dim.m_x / 2.0f), g_WIN_HEIGHT - 1.4f * (dim.m_y / 2.0f), 0.0f};
 
     std::array<float, 4> wc = _ply->getCurWeapCol();
 
-    m_shader->use("debug");
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(wc[0], wc[1], wc[2], 1.0f));
+    slib->use("debug");
+    slib->setRegisteredUniform("inColour", ngl::Vec4(wc[0], wc[1], wc[2], 1.0f));
     drawRect(pos, dim, 0.0f, false);
 
     dim.m_x *= 0.75f;
@@ -1459,15 +1440,17 @@ void renderer_ngl::drawText(
         const float _mul
         )
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+
     spriteSheet * tmp = &m_letters[_font];
 
-    m_shader->use("text");
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    slib->use("text");
+    slib->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
     float x = _pos.m_x;
     float y = _pos.m_y;
 
-    for(int i = 0; i < _text.length(); ++i)
+    for(size_t i = 0; i < _text.length(); ++i)
     {
         //bindTextureToSampler(id, tmp->m_sheet[_text[i]], "diffuse", 0);
         //glActiveTexture(GL_TEXTURE0);
@@ -1494,15 +1477,17 @@ void renderer_ngl::drawText(
         const std::array<float, 4> _col
         )
 {
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+
     spriteSheet * tmp = &m_letters[_font];
 
-    m_shader->use("text");
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
+    slib->use("text");
+    slib->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
 
     float x = _pos.m_x;
     float y = _pos.m_y;
 
-    for(int i = 0; i < _text.length(); ++i)
+    for(size_t i = 0; i < _text.length(); ++i)
     {
         //std::cout << "doot " << tmp->m_sheet[_text[i]] << std::endl;
         //glBindTexture(GL_TEXTURE_2D, tmp->m_sheet[_text[i]]);
@@ -1533,8 +1518,10 @@ void renderer_ngl::disableDepthSorting()
 
 void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep, std::vector<ship> * _ap, std::vector<laser> * _lp, std::vector<faction> * _fp, const bool _mode)
 {
-    m_shader->use("debug");
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 0.4f));
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+
+    slib->use("debug");
+    slib->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 0.4f));
 
     vec3 center;
     vec2 dim;
@@ -1557,10 +1544,10 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
 
     drawRect(center, dim, 0.0f, false);
 
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
+    slib->setRegisteredUniform("inColour", ngl::Vec4(0.0f, 0.5f, 1.0f, 1.0f));
     drawCircle(center, 4.0f, false);
 
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    slib->setRegisteredUniform("inColour", ngl::Vec4(0.5f, 0.5f, 0.5f, 1.0f));
     for(unsigned int i = 0; i < _lp->size(); i++)
     {
         vec3 lpp = _lp->at(i).getPos() - m_camera.getPos();
@@ -1571,7 +1558,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         drawCircle({x, y, 0.0f}, 1.0f, false);
     }
 
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 0.0f, 0.1f, 1.0f));
+    slib->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 0.0f, 0.1f, 1.0f));
     for(unsigned int i = 0; i < _mp->size(); i++)
     {
         vec3 mpp = _mp->at(i).getPos() - m_camera.getPos();
@@ -1582,7 +1569,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         drawCircle({x, y, 0.0f}, 1.0f, false);
     }
 
-    m_shader->setRegisteredUniform("inColour", ngl::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
+    slib->setRegisteredUniform("inColour", ngl::Vec4(0.8f, 0.8f, 0.8f, 1.0f));
     for(unsigned int i = 0; i < _ap->size(); i++)
     {
         vec3 app = _ap->at(i).getPos() - m_camera.getPos();
@@ -1605,7 +1592,7 @@ void renderer_ngl::drawMap(std::vector<missile> * _mp, std::vector<enemy> * _ep,
         std::array<float, 4> col;
         col = col255to1(_fp->at(_ep->at(i).getTeam()).getColour());
         col[3] = 1.0f;
-        m_shader->setRegisteredUniform("inColour", ngl::Vec4(col[0], col[1], col[2], col[3]));
+        slib->setRegisteredUniform("inColour", ngl::Vec4(col[0], col[1], col[2], col[3]));
 
         float x = clamp(zoom * epp.m_x / 156.0f + center.m_x, center.m_x - dim.m_x / 2.0f, center.m_x + dim.m_x / 2.0f);
         float y = clamp(zoom * epp.m_y / 156.0f + center.m_y, center.m_y - dim.m_y / 2.0f, center.m_y + dim.m_y / 2.0f);

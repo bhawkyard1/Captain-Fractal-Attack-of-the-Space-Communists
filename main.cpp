@@ -98,10 +98,10 @@ void mainMenu(universe &uni)
     {
         button sandboxMode(
                     "SANDBOX",
-        {0, 255, 255, 255},
-        {255, 255, 255, 255},
-        {g_HALFWIN.m_x + 256.0f, g_HALFWIN.m_y},
-        {256.0f, 256.0f}
+        {{0, 255, 255, 255}},
+        {{255, 255, 255, 255}},
+        vec2(g_HALFWIN.m_x + 256.0f, g_HALFWIN.m_y),
+        vec2(256.0f, 256.0f)
                     );
         mainMenuSelection.add(sandboxMode);
     }
@@ -169,7 +169,7 @@ void mainMenu(universe &uni)
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
     //Keypress modifiers (shift, ctrl etc).
-    int keymod = 0;
+    //int keymod = 0;
     while(g_GAME_STATE == MODE_MENU)
     {
         //Event handling.
@@ -316,7 +316,7 @@ void playGame(universe &uni)
     //uni.spawnBase(ALLIANCE, vec3(2000.0f, 2000.0f, 0.0f), 2, 180.0f);
 
     //Keypress modifiers (shift, ctrl etc).
-    int keymod = 0;
+    //int keymod = 0;
     std::vector<SDL_Event> events;
     while(g_GAME_STATE == MODE_GAME)
     {
@@ -702,11 +702,11 @@ void playTutorial(universe &uni)
     //Timer used to keep track of game time.
     //The argument is the fps of the updates, higher = more detailed.
     sim_time clock(120.0f);
-    std::array<bool, 4> directionsTravelled = {false, false, false, false};
+    std::array<bool, 4> directionsTravelled = {{false, false, false, false}};
     float timer = 0.0f;
     std::vector<SDL_Event> events;
     //Keypress modifiers (shift, ctrl etc).
-    int keymod = 0;
+    //int keymod = 0;
     while(g_GAME_STATE == MODE_TUTORIAL)
     {
         events = getEvents();
@@ -1122,7 +1122,7 @@ void sandbox(universe &uni)
     vec2 pos = {0.0f, 0.0f};
     for(auto &ship : g_ship_templates)
     {
-        button temp (ship.getIdentifier(), {0, 255, 255, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+        button temp (ship.getIdentifier(), {{0, 255, 255, 200}}, {{255, 255, 255, 255}}, pos, vec2(128.0f, 64.0f), 0.75f);
         ships.add(temp);
 
         if(pos.m_y < g_WIN_HEIGHT - 64.0f)
@@ -1136,7 +1136,7 @@ void sandbox(universe &uni)
         }
     }
 
-    button temp ("CLEAR", {255, 0, 0, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+    button temp ("CLEAR", {{255, 0, 0, 200}}, {{255, 255, 255, 255}}, pos, vec2(128.0f, 64.0f), 0.75f);
     if(pos.m_y < g_WIN_HEIGHT - 64.0f)
     {
         pos.m_y += 80.0f;
@@ -1146,7 +1146,7 @@ void sandbox(universe &uni)
         pos.m_y = 0.0f;
         pos.m_x += 140.0f;
     }
-    button exit ("MAIN MENU", {255, 0, 0, 200}, {255, 255, 255, 255}, pos, {128.0f, 64.0f}, 0.75f);
+    button exit ("MAIN MENU", {{255, 0, 0, 200}}, {{255, 255, 255, 255}}, pos, vec2(128.0f, 64.0f), 0.75f);
 
     ships.add(temp);
     ships.add(exit);
@@ -1157,7 +1157,7 @@ void sandbox(universe &uni)
     sim_time clock(120.0f);
     //Keypress modifiers (shift, ctrl etc).
     std::vector<SDL_Event> events;
-    int keymod = 0;
+    //int keymod = 0;
     while(g_GAME_STATE == MODE_SANDBOX)
     {
         events = getEvents();

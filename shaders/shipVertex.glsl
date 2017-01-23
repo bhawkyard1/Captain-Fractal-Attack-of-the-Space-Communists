@@ -1,4 +1,4 @@
-#version 430 core
+#version 410 core
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file shipVertex.glsl
@@ -19,7 +19,7 @@ out vec3 normal;
 out vec4 position;
 
 uniform mat4 MVP;
-uniform mat4 transform;
+uniform mat4 M;
 
 void main()
 {

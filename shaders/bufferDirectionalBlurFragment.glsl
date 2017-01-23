@@ -1,4 +1,4 @@
-#version 430 core
+#version 410 core
 
 #define DIRECTIONAL_STEP_SIZE 0.01
 #define BOX_STEP_SIZE 0.0005

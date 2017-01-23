@@ -24,11 +24,11 @@ enemy::enemy(
     m_tPos = getPos();
 }
 
-void enemy::targetAcquisition(player &_ply, slotMap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
+void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
 {
     debug("target acquisition start");
     ship * curTarget = m_target;
-    uniqueID curTargetID = m_targetID;
+    slot curTargetID = m_targetID;
     m_target = nullptr;
 
     enemy * lastAttacker = _enemies.getByID( getLastAttacker() );

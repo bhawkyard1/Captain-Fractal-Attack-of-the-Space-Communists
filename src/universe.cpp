@@ -61,14 +61,14 @@ universe::universe()
 
     m_contextShip = {0, -1};
 
-    std::array<int, 4> btncol = {20, 200, 255, 220};
-    std::array<int, 4> quitcol = {255, 5, 30, 220};
-    std::array<int, 4> white = {255, 255, 255, 255};
-    button resume ("RESUME", btncol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f}, {200.0f, 80.0f});
-    button sGame ("SAVE GAME", btncol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f}, {200.0f, 80.0f});
-    button lGame ("LOAD GAME", btncol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f}, {200.0f, 80.0f});
-    button mm ("MAIN MENU", quitcol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y}, {200.0f, 80.0f});
-    button quit ("QUIT", quitcol, white, {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f}, {200.0f, 80.0f});
+    std::array<int, 4> btncol = {{20, 200, 255, 220}};
+    std::array<int, 4> quitcol = {{255, 5, 30, 220}};
+    std::array<int, 4> white = {{255, 255, 255, 255}};
+    button resume ("RESUME", btncol, white, vec2(g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 300.0f), vec2(200.0f, 80.0f));
+    button sGame ("SAVE GAME", btncol, white, vec2(g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 200.0f), vec2(200.0f, 80.0f));
+    button lGame ("LOAD GAME", btncol, white, vec2(g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 100.0f), vec2(200.0f, 80.0f));
+    button mm ("MAIN MENU", quitcol, white, vec2(g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y), vec2(200.0f, 80.0f));
+    button quit ("QUIT", quitcol, white, vec2(g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y + 100.0f), vec2(200.0f, 80.0f));
 
     m_escMenuSelection.add(resume);
     m_escMenuSelection.add(sGame);
@@ -83,7 +83,7 @@ void universe::addShot(
         const float _angle,
         std::array<float, WEAPS_W> _weap,
         const aiTeam _team,
-        uniqueID _owner,
+        slot _owner,
         const float _xpModifier
         )
 {
@@ -213,7 +213,7 @@ void universe::update(float _dt)
         {
             vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
             pos += m_ply.getPos();
-            addpfx(pos, m_ply.getVel(), rand()%50 + 20, rand()%50 + 8, {255, 200, 20, 255});
+            addpfx(pos, m_ply.getVel(), rand()%50 + 20, rand()%50 + 8, {{255, 200, 20, 255}});
         }
         m_ply.setMaxHealth(0, true);
         m_ply.setMaxEnergy(0, true);
@@ -282,7 +282,7 @@ void universe::update(float _dt)
                 {
                     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
                     pos += m_missiles[i].getPos();
-                    addpfx(pos, m_missiles[i].getVel(), rand()%50 + 50, rand()%50 + 8, {255, 200, 20, 255});
+                    addpfx(pos, m_missiles[i].getVel(), rand()%50 + 50, rand()%50 + 8, {{255, 200, 20, 255}});
                 }
 
                 for(size_t j = 0; j < m_agents.size(); j++)
@@ -333,7 +333,7 @@ void universe::update(float _dt)
                 {
                     vec3 pos = randVec3(16.0f);
                     pos += m_asteroids[i].getPos();
-                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2, {2, 2, 2, 0});
+                    addpfx(pos, m_asteroids[i].getVel(), rand()%20 + 50, rand()%30 + 2, {{2, 2, 2, 0}});
                     for(int q = 0; q < 50; ++q) addParticleSprite(pos, m_asteroids[i].getVel() + m_vel + tovec3(randVec2(1.0f)), m_asteroids[i].getRadius() * 2.0f, "SMOKE");
                 }
 
@@ -513,8 +513,8 @@ void universe::update(float _dt)
 
         m_passiveSprites[i].updateSprite(_dt);
 
-        int w = 32;
-        int h = 32;
+        /*int w = 32;
+        int h = 32;*/
 
         if(alph <= 0.1f or m_passiveSprites[i].getDim() <= 0.0f)
         {
@@ -881,7 +881,7 @@ void universe::draw(float _dt)
         if(i->getIdentifier() != "SMOKE") continue;
         vec3 ipos = i->getInterpolatedPosition(_dt);
         vec2 idim = {i->getDim(), i->getDim()};
-        std::array<float, 4> col = {i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)};
+        std::array<float, 4> col = {{i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)}};
         col = col255to1(col);
         //col[3] *= 255.0f;
         m_drawer.addRect(ipos, idim, 0.0f, col);
@@ -900,9 +900,9 @@ void universe::draw(float _dt)
     {
         m_drawer.drawFlames(
                     pos,
-        {m_ply.getRadius() * 0.85f, stat},
+                    vec2(m_ply.getRadius() * 0.85f, stat),
                     m_ply.getAng(),
-        {0.1f, 0.4f, 1.0f, 1.0f},
+        {{0.1f, 0.4f, 1.0f, 1.0f}},
                     m_time_elapsed,
                     m_ply.getAlphaStats()[0] * m_ply.getEnginePower()
                 );
@@ -939,9 +939,9 @@ void universe::draw(float _dt)
         {
             m_drawer.drawFlames(
                         i.getInterpolatedPosition(_dt) + tovec3(back(rad(i.getAng()))) * (i.getRadius() + stat),
-            {i.getRadius(), stat},
+                        vec2(i.getRadius(), stat),
                         i.getAng(),
-            {0.1f, 0.4f, 1.0f, 1.0f},
+            {{0.1f, 0.4f, 1.0f, 1.0f}},
                         m_time_elapsed,
                         i.getAlphaStats()[0] * i.getEnginePower()
                     );
@@ -963,16 +963,16 @@ void universe::draw(float _dt)
     }
     for(auto &i : m_asteroids)
     {
-        m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+        m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {{0.0f, 0.0f, 0.0f, 0.0f}});
     }
     for(auto &i : m_resources)
     {
-        m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+        m_drawer.drawShip(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {{0.0f, 0.0f, 0.0f, 0.0f}});
     }
     for(auto &i : m_selectedItems)
     {
         vec3 pos = tovec3( toWorldSpace( getMousePos() ) ) ;
-        m_drawer.drawShip(pos, i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+        m_drawer.drawShip(pos, i.getAng(), i.getIdentifier(), {{0.0f, 0.0f, 0.0f, 0.0f}});
     }
 
     vec2 dpos = toWorldSpace( getMousePos() ) ;
@@ -998,7 +998,8 @@ void universe::draw(float _dt)
 
     m_drawer.disableDepthSorting();
 
-    if(m_ply.getShieldGlow() > 1 and !g_GAME_OVER) m_drawer.drawShield(m_ply.getInterpolatedPosition(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), m_ply.getShieldGlow() / 255.0f, {0.1f, 0.4f, 1.0f, 1.0f});
+    if(m_ply.getShieldGlow() > 1 and !g_GAME_OVER)
+        m_drawer.drawShield(m_ply.getInterpolatedPosition(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), m_ply.getShieldGlow() / 255.0f, {{0.1f, 0.4f, 1.0f, 1.0f}});
     for(auto &i : m_agents.m_objects)
     {
         if(i.getShieldGlow() <= 1) continue;
@@ -1007,7 +1008,7 @@ void universe::draw(float _dt)
     for(auto &i : m_missiles)
     {
         if(i.getShieldGlow() <= 1) continue;
-        m_drawer.drawShield(i.getInterpolatedPosition(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldGlow() / 255.0f, {0.1f, 0.4f, 1.0f, 1.0f});
+        m_drawer.drawShield(i.getInterpolatedPosition(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldGlow() / 255.0f, {{0.1f, 0.4f, 1.0f, 1.0f}});
     }
 
     m_drawer.clearVectors();
@@ -1038,7 +1039,7 @@ void universe::draw(float _dt)
 
     for(auto &i : m_particles)
     {
-        std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), i.getCol(3)};
+        std::array<float, 4> col = i.getCol();
         col = col255to1(col);
         vec3 ipos = i.getInterpolatedPosition(_dt);
         float idim = i.getForce() * 20.0f;
@@ -1057,7 +1058,8 @@ void universe::draw(float _dt)
     {
         for(auto &i : m_particles)
         {
-            std::array<float, 4> col = {i.getCol(0), i.getCol(1), i.getCol(2), 1.0f};
+            std::array<float, 4> col = i.getCol();
+            col[3] = 1.0f;
             col = col255to1(col);
             int k = 0;
             for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
@@ -1088,35 +1090,18 @@ void universe::draw(float _dt)
     //Adding light.
     m_drawer.resetLights();
     size_t lightCount = 0;
-    //From explosions
-    /*if(m_ply.getEngineGlow() > 0.0f)
-                                                                    {
-                                                                        vec3 pos = m_ply.getPos() + tovec3(back(rad(m_ply.getAng())) * 10.0f) +  + vec3(0.0f, 0.0f, 10.0f);
-                                                                        std::array<float, 4> col = m_ply.getCurWeapCol();
-                                                                        //for(int j = 0; j < 3; ++j) col[j] *= m_ply.getEnginePower() * m_ply.getEngineGlow() * 1024.0f;
-                                                                        std::cout << "light col " << col[0] << ", " << col[1] << ", " << col[2] << '\n';
-                                                                        m_drawer.addLight({pos, vec3(col[0], col[1], col[2])}, lightCount);
-                                                                        lightCount++;
-                                                                    }*/
-    /*for(size_t e = 0; e < m_agents.size() and lightCount < MAX_LIGHTS; ++e)
-                                                                    {
-                                                                        vec3 pos = m_agents[e].getPos() + tovec3(back(rad(m_agents[e].getAng())) * m_agents[e].getRadius()) + vec3(0.0f, 0.0f, 10.0f);
-                                                                        if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) and m_agents[e].getEngineGlow() > 0.0f)
-                                                                        {
-                                                                            std::array<float, 4> col = m_agents[e].getCurWeapCol();
-                                                                            for(int j = 0; j < 3; ++j) col[j] *= m_agents[e].getEnginePower() * m_agents[e].getEngineGlow() * 4024.0f;
-                                                                            std::cout << "light col " << col[0] << ", " << col[1] << ", " << col[2] << '\n';
-                                                                            m_drawer.addLight({pos, vec3(col[0], col[1], col[2])}, lightCount);
-                                                                            lightCount++;
-                                                                        }
-                                                                    }*/
+
     for(size_t i = 0; i < m_particles.size() and lightCount < MAX_LIGHTS; ++i)
     {
         vec3 pos = m_particles[i].getPos();
         if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) or m_particles[i].getForce() < 5.0f) continue;
         std::array<float, 4> col = col255to1(m_particles[i].getCol());
-        for(int j = 0; j < 3; ++j) col[j] *= col[3] * clamp(1.0f - m_particles[i].normalisedLifetime(), 0.0f, 1.0f);
-        m_drawer.addLight({pos, vec3(col[0], col[1], col[2])}, lightCount);
+        pointLight l (
+                    pos,
+                    vec3(col[0], col[1], col[2]),
+                col[3]
+                );
+        m_drawer.addLight(l);
         lightCount++;
     }
     //From lasers
@@ -1126,7 +1111,12 @@ void universe::draw(float _dt)
         //pos.m_z = 1.0f;
         if(isOffScreen(pos, g_WIN_WIDTH * 2.0f)) continue;
         std::array<float, 4> col = m_shots[i].getCol();
-        m_drawer.addLight({pos, vec3(col[0], col[1], col[2])}, lightCount);
+        pointLight l (
+                    pos,
+                    vec3(col[0], col[1], col[2]),
+                col[3]
+                );
+        m_drawer.addLight(l);
         lightCount++;
     }
     m_drawer.useAttachments({GL_COLOR_ATTACHMENT0});
@@ -1209,27 +1199,27 @@ void universe::drawUI(const float _dt)
             csp.m_y += 32.0f;
 
             //Health base
-            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.4f, 0.08f, 0.08f, 0.5f});
+            m_drawer.addRect(csp, vec2(128.0f, 16.0f), 0.0f, {{0.4f, 0.08f, 0.08f, 0.5f}});
             //Health
-            m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y, 0.0f}, {health, 16.0f}, 0.0f, {0.9f, 0.2f, 0.2f, 0.5f});
+            m_drawer.addRect({csp.m_x - 64.0f + health / 2.0f, csp.m_y, 0.0f}, {health, 16.0f}, 0.0f, {{0.9f, 0.2f, 0.2f, 0.5f}});
 
             csp.m_y += 16.0f;
             //Shield base
-            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.1f, 0.1f, 0.4f, 0.5f});
+            m_drawer.addRect(csp, vec2(128.0f, 16.0f), 0.0f, {{0.1f, 0.1f, 0.4f, 0.5f}});
             //Shield
-            m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y, 0.0f}, {shield, 16.0f}, 0.0f, {0.2f, 0.2f, 0.9f, 0.5f});
+            m_drawer.addRect({csp.m_x - 64.0f + shield / 2.0f, csp.m_y, 0.0f}, {shield, 16.0f}, 0.0f, {{0.2f, 0.2f, 0.9f, 0.5f}});
 
             csp.m_y += 16.0f;
             //Energy base
-            m_drawer.addRect(csp, {128.0f, 16.0f}, 0.0f, {0.08f, 0.4f, 0.08f, 0.5f});
+            m_drawer.addRect(csp, vec2(128.0f, 16.0f), 0.0f, {{0.08f, 0.4f, 0.08f, 0.5f}});
             //Energy
-            m_drawer.addRect({csp.m_x - 64.0f + energy / 2.0f, csp.m_y, 0.0f}, {energy, 16.0f}, 0.0f, {0.2f, 0.9f, 0.2f, 0.5f});
+            m_drawer.addRect(vec3(csp.m_x - 64.0f + energy / 2.0f, csp.m_y, 0.0f), vec2(energy, 16.0f), 0.0f, {{0.2f, 0.9f, 0.2f, 0.5f}});
 
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
 
             csp.m_y += 24.0f;
-            m_drawer.addRect(csp, {128.0f, 24.0f}, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f});
+            m_drawer.addRect(csp, vec2(128.0f, 24.0f), 0.0f, {{1.0f, 0.0f, 0.0f, 1.0f}});
             m_drawer.drawXP( contextPtr->getXP() );
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
@@ -1237,13 +1227,13 @@ void universe::drawUI(const float _dt)
             if(g_DEV_MODE)
             {
                 m_drawer.useShader("plain");
-                m_drawer.addLine(contextPtr->getPos(), contextPtr->getTPos(), 1.0f, {1.0f, 1.0f, 1.0f, 1.0f});
+                m_drawer.addLine(contextPtr->getPos(), contextPtr->getTPos(), 1.0f, {{1.0f, 1.0f, 1.0f, 1.0f}});
 
                 squad * sq = getSquadFromID( contextPtr->getTeam(), contextPtr->getSquadID() );
                 if(sq != nullptr)
                 {
-                    m_drawer.addLine(contextPtr->getPos(), sq->m_averagePos, 1.0f, {1.0f, 0.0f, 0.0f, 1.0f});
-                    m_drawer.addLine(sq->m_averagePos, sq->m_targetPos, 1.0f, {0.0f, 0.0f, 1.0f, 1.0f});
+                    m_drawer.addLine(contextPtr->getPos(), sq->m_averagePos, 1.0f, {{1.0f, 0.0f, 0.0f, 1.0f}});
+                    m_drawer.addLine(sq->m_averagePos, sq->m_targetPos, 1.0f, {{0.0f, 0.0f, 1.0f, 1.0f}});
                 }
 
                 m_drawer.drawLines(2.0f);
@@ -1263,7 +1253,7 @@ void universe::drawUI(const float _dt)
             m_drawer.useShader("plain");
             vec2 dim = contextPtr->getCargo()->getDim();
             //std::cout << "drawing cargo!!" << dim.m_x << ", " << dim.m_y << '\n';
-            m_drawer.addRect(contextPtr->getInterpolatedPosition(_dt), dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
+            m_drawer.addRect(contextPtr->getInterpolatedPosition(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
             m_drawer.drawRects(true);
             m_drawer.clearVectors();
 
@@ -1272,7 +1262,7 @@ void universe::drawUI(const float _dt)
             for(auto &i : contextPtr->getCargo()->getItems()->m_objects)
             {
                 //std::cout <<  "pre\n" << i.getIdentifier() << "\npost\n";
-                m_drawer.drawShip(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+                m_drawer.drawShip(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {{0.0f, 0.0f, 0.0f, 0.0f}});
                 //std::cout << "draw post\n";
             }
             m_drawer.useShader("plain");
@@ -1285,7 +1275,7 @@ void universe::drawUI(const float _dt)
         m_drawer.useShader("plain");
 
         vec2 dim = m_ply.getCargo()->getDim();
-        m_drawer.addRect(m_ply.getInterpolatedPosition(_dt), dim, 0.0f, {0.8f, 0.8f, 0.8f, 0.8f});
+        m_drawer.addRect(m_ply.getInterpolatedPosition(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
         m_drawer.drawRects(true);
         m_drawer.clearVectors();
 
@@ -1293,7 +1283,7 @@ void universe::drawUI(const float _dt)
         //CRASH HERE
         for(auto &i : m_ply.getCargo()->getItems()->m_objects)
         {
-            m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {0.0f, 0.0f, 0.0f, 0.0f});
+            m_drawer.drawShip(m_ply.getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier(), {{0.0f, 0.0f, 0.0f, 0.0f}});
         }
     }
 
@@ -1444,7 +1434,7 @@ void universe::checkCollisions()
             vec3 sv = m_partitions[p].m_lasers[l]->getVel() * 5.0f;
             vec3 spv = sp + sv * 1.5;
             float stop = m_partitions[p].m_lasers[l]->getStop();
-            uniqueID so = m_partitions[p].m_lasers[l]->getOwner();
+            slot so = m_partitions[p].m_lasers[l]->getOwner();
             float sd = m_partitions[p].m_lasers[l]->getDmg();
 
             vec3 ep;
@@ -1486,7 +1476,7 @@ void universe::checkCollisions()
                     float xp = clamp( calcAICost(m_partitions[p].m_ships[s]->getClassification()) * harm * 0.00005f, 0.0f, 0.5f);
 
                     if(lastAttacker != nullptr) lastAttacker->addXP( xp );
-                    else if(so == uniqueID(0, -2))
+                    else if(so == slot(0, -2))
                         m_ply.addXP(xp);
 
                     float realDamage = m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
@@ -1509,7 +1499,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(contact, ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {2, 2, 2, 0});
+                    addpfx(contact, ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), {{2, 2, 2, 0}});
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er * 2.0f, "SMOKE");
                     harm = sd;
 
@@ -1540,7 +1530,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(contact, ev, randNum(3.0f, 8.0f), sd * randNum(1.0f, 3.0f), {255, 200, 20, 255});
+                    addpfx(contact, ev, randNum(3.0f, 8.0f), sd * randNum(1.0f, 3.0f), {{255, 200, 20, 255}});
 
                     harm = sd;
 
@@ -1651,7 +1641,7 @@ void universe::checkCollisions()
         for(int i = m_partitions[p].m_resources.size() - 1; i >= 0; --i)
         {
             debris * resource = m_partitions[p].m_resources[i];
-            for(int j = 0; j < m_partitions[p].m_ships.size(); ++j)
+            for(size_t j = 0; j < m_partitions[p].m_ships.size(); ++j)
             {
                 ship * agent = m_partitions[p].m_ships[j];
                 if(circleIntersectCircle(tovec2(resource->getPos()), resource->getRadius(), tovec2(agent->getPos()), agent->getRadius()))
@@ -1690,7 +1680,7 @@ void universe::checkCollisions()
     }
 }
 
-void universe::resolveCollision(uniqueID _a, uniqueID _b)
+void universe::resolveCollision(slot _a, slot _b)
 {
     if(_a != _b) return;
     ship * a = m_agents.getByID(_a);
@@ -1791,9 +1781,11 @@ void universe::addParticleSprite(
         const std::string _tex
         )
 {
-    float col;
-    if( _tex == "SMOKE" ) col = randNum(200.0f, 220.0f);
-    else if( _tex == "EXPLOSION" ) col = 255.0f;
+    float col = 0.0f;
+    if( _tex == "SMOKE" )
+        col = randNum(200.0f, 220.0f);
+    else if( _tex == "EXPLOSION" )
+        col = 255.0f;
 
     stardust_sprite sm (_tex, col, _dim, _dim);
     sm.setPos(_p);
@@ -1946,7 +1938,7 @@ void universe::spawnShip(
 
 void universe::addToSquad(
         enemy *_e,
-        uniqueID _s
+        slot _s
         )
 {
     squad * sq = m_factions[_e->getTeam()].getSquad(_s);
@@ -1994,7 +1986,7 @@ void universe::spawnSquad(
         )
 {
     vec3 p = tovec3(randVec2(_min, _max));
-    for(int i = 0; i < _ships.size(); ++i)
+    for(size_t i = 0; i < _ships.size(); ++i)
     {
         for(size_t j = 0; j < _ships[i]; ++j)
         {
@@ -2169,7 +2161,7 @@ void universe::reload(const bool _newGame)
     setScore(16);
 
     int rep = rand() % 4 + 1;
-    std::vector<float> degs = {60.0f, 90.0f, 180.0f};
+    std::vector<float> degs = {{60.0f, 90.0f, 180.0f}};
     size_t range = m_factions[ALLIANCE].getStructures().second - m_factions[ALLIANCE].getStructures().first;
     for(int i = 0; i < 3; ++i)
     {
@@ -2228,7 +2220,7 @@ void universe::addBuild(
 
     m_agents.push_back(newShip);
 
-    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {0.2f, 0.2f, 0.3f, 1.0f});
+    addpfx(_p, {0.0f, 0.0f, 0.0f}, rand()%20 + 50, newShip.getRadius() * randNum(0.3f, 0.5f), {{0.2f, 0.2f, 0.3f, 1.0f}});
     for(int q = 0; q < 50; ++q) addParticleSprite(_p, tovec3(randVec2(1.0f)), 128.0f, "SMOKE");
     m_sounds.playSnd(PLACE_SND, _p, 1.0f);
     m_sounds.playSnd(CLUNK_SND, _p, 1.0f);
@@ -2244,11 +2236,11 @@ void universe::initUI()
     selection info_menu;
     info_menu.setVisible(false);
     info_menu.setInWorldSpace(true);
-    button name("", {0,0,0,0}, {255,255,255,255}, {-32.0f, 0.0f}, {128.0f,32.0f});
-    button kills("KILLS: ", {0,0,0,0}, {255,255,255,255}, {-32.0f, 96.0f}, {128.0f,32.0f});
-    button distance("DISTANCE: ", {0,0,0,0}, {255,255,255,255}, {-32.0f, 112.0f}, {128.0f,32.0f});
-    button trade("TRADE", {100,100,100,255}, {255,255,255,255}, {0.0f, 144.0f}, {64.0f,32.0f});
-    button close("CLOSE", {255,10,20,255}, {255,255,255,255}, {64.0f, 144.0f}, {64.0f,32.0f});
+    button name("", {{0,0,0,0}}, {{255,255,255,255}}, vec2(-32.0f, 0.0f), vec2(128.0f,32.0f));
+    button kills("KILLS: ", {{0,0,0,0}}, {{255,255,255,255}}, vec2(-32.0f, 96.0f), vec2(128.0f,32.0f));
+    button distance("DISTANCE: ", {{0,0,0,0}}, {{255,255,255,255}}, vec2(-32.0f, 112.0f), vec2(128.0f,32.0f));
+    button trade("TRADE", {{100,100,100,255}}, {{255,255,255,255}}, vec2(0.0f, 144.0f), vec2(64.0f,32.0f));
+    button close("CLOSE", {{255,10,20,255}}, {{255,255,255,255}}, vec2(64.0f, 144.0f), vec2(64.0f,32.0f));
     info_menu.add(name);
     info_menu.add(kills);
     info_menu.add(distance);
@@ -2350,41 +2342,41 @@ void universe::upgradeSetLabels(
 
 void universe::createFactions()
 {
-    faction player("Player Team", {0, 255, 0, 255}, TEAM_PLAYER, {PLAYER_HUNTER, PLAYER_CAPITAL}, {PLAYER_MINER_DROID, PLAYER_MINER_DROID}, {PLAYER_TURRET, PLAYER_STATION}, false );
+    faction player("Player Team", {{0, 255, 0, 255}}, TEAM_PLAYER, {PLAYER_HUNTER, PLAYER_CAPITAL}, {PLAYER_MINER_DROID, PLAYER_MINER_DROID}, {PLAYER_TURRET, PLAYER_STATION}, false );
     player.setRelations( {DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY} );
     player.setWealth( 16.0f );
     m_factions.push_back(player);
 
-    faction galactic_fed("Galactic Federation", {165, 14, 226, 255}, GALACTIC_FEDERATION, {FEDERATION_MKI, FEDERATION_CAPITAL}, {SHIPS_END, SHIPS_END}, {FEDERATION_TURRET, FEDERATION_TURRET}, true );
+    faction galactic_fed("Galactic Federation", {{165, 14, 226, 255}}, GALACTIC_FEDERATION, {FEDERATION_MKI, FEDERATION_CAPITAL}, {SHIPS_END, SHIPS_END}, {FEDERATION_TURRET, FEDERATION_TURRET}, true );
     galactic_fed.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     galactic_fed.setWealth( randNum(10000.0f, 16000.0f) );
     m_factions.push_back(galactic_fed);
 
-    faction spooky_pirates("Spooky Space Pirates", {240, 211, 10, 255}, SPOOKY_SPACE_PIRATES, {PIRATE_GNAT, PIRATE_CAPITAL}, {SHIPS_END, SHIPS_END}, {PIRATE_TURRET, PIRATE_TURRET}, true );
+    faction spooky_pirates("Spooky Space Pirates", {{240, 211, 10, 255}}, SPOOKY_SPACE_PIRATES, {PIRATE_GNAT, PIRATE_CAPITAL}, {SHIPS_END, SHIPS_END}, {PIRATE_TURRET, PIRATE_TURRET}, true );
     spooky_pirates.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     spooky_pirates.setWealth( randNum(30000.0f, 32000.0f) );
     m_factions.push_back(spooky_pirates);
 
-    faction space_communists("Space Communists", {255, 0, 0, 255}, SPACE_COMMUNISTS, {COMMUNIST_1, COMMUNIST_CAPITAL}, {SHIPS_END, SHIPS_END}, {COMMUNIST_TURRET, COMMUNIST_TURRET}, true );
+    faction space_communists("Space Communists", {{255, 0, 0, 255}}, SPACE_COMMUNISTS, {COMMUNIST_1, COMMUNIST_CAPITAL}, {SHIPS_END, SHIPS_END}, {COMMUNIST_TURRET, COMMUNIST_TURRET}, true );
     space_communists.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     space_communists.setWealth( randNum(24000.0f, 32000.0f) );
     m_factions.push_back(space_communists);
 
-    faction alliance("Alliance", {0, 255, 255, 255}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_STATION}, true );
+    faction alliance("Alliance", {{0, 255, 255, 255}}, ALLIANCE, {ALLIANCE_SCOUT, ALLIANCE_GUNSHIP}, {SHIPS_END, SHIPS_END}, {ALLIANCE_TURRET, ALLIANCE_STATION}, true );
     alliance.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_SELF, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     alliance.setWealth( randNum(30000.0f, 35000.0f) );
     m_factions.push_back(alliance);
 
-    faction neutral("Neutral", {200, 200, 200, 255}, NEUTRAL, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, false );
+    faction neutral("Neutral", {{200, 200, 200, 255}}, NEUTRAL, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, false );
     neutral.setRelations( {DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL, DIPLOMACY_NEUTRAL} );
     m_factions.push_back(neutral);
 
-    faction none("Unaffiliated", {0, 0, 0, 255}, NONE, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, false );
+    faction none("Unaffiliated", {{0, 0, 0, 255}}, NONE, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, {SHIPS_END, SHIPS_END}, false );
     none.setRelations( {DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY, DIPLOMACY_ENEMY} );
     m_factions.push_back(none);
 }
 
-squad * universe::getSquadFromID(aiTeam _t, uniqueID _id)
+squad * universe::getSquadFromID(aiTeam _t, slot _id)
 {
     return m_factions[_t].getSquad(_id);
 }
@@ -2562,13 +2554,13 @@ void universe::conductTrade(enemy &_buyer, enemy &_seller)
     }
 
     //The items the buyer wants will be placed in this vector.
-    std::vector<uniqueID> itemsToBuy;
+    std::vector<slot> itemsToBuy;
 
     float totalEconomy = m_factions[_buyer.getTeam()].getEconomicalStrength() +
             m_factions[_seller.getTeam()].getEconomicalStrength();
     float sellerRatio = m_factions[_seller.getTeam()].getEconomicalStrength() / totalEconomy;
 
-    slotMap<debris> * src = _seller.getCargo()->getItems();
+    slotmap<debris> * src = _seller.getCargo()->getItems();
     for(size_t i = 0; i < src->size(); ++i)
     {
         resourceType type = src->m_objects[i].getResourceType();
@@ -2606,7 +2598,7 @@ void universe::conductTrade(enemy &_buyer, enemy &_seller)
                                                                     return nullptr;
                                                                 }*/
 
-void universe::addFrag(uniqueID _i)
+void universe::addFrag(slot _i)
 {
     ship * killer = m_agents.getByID(_i);
     if(killer != nullptr) killer->addKill();
@@ -2632,7 +2624,7 @@ void universe::destroyAgent(size_t _i)
     float xp = clamp(calcAICost(m_agents[_i].getClassification()) * 0.005f, 0.0f, 5.0f);
 
     if(lastAttacker != nullptr) lastAttacker->addXP( xp );
-    else if(m_agents[_i].getLastAttacker() == uniqueID(0, -2))
+    else if(m_agents[_i].getLastAttacker() == slot(0, -2))
     {
         g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE - m_ply.getXP() * 0.01f, 0.2f, 1.0f);
         m_ply.addXP(xp);

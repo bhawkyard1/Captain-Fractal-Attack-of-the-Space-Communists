@@ -376,7 +376,7 @@ float ship::damage(float _d, const vec3 _v)
     return ret;
 }
 
-float ship::damage(float _d, const vec3 _v, uniqueID _id)
+float ship::damage(float _d, const vec3 _v, slot _id)
 {
     float ret = 0.0f;
     //Shots to the rear do more damage.
@@ -487,23 +487,27 @@ void ship::setCooldown(const float _f)
 
 std::array<float, 4> ship::getCurWeapCol() const
 {
-    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, 1.0f};
-    return {0.0f, 0.0f, 0.0f, 0.0f};
+    if(m_canShoot)
+        return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, 1.0f}};
+    return {{0.0f, 0.0f, 0.0f, 0.0f}};
 }
 
 std::array<float, 4> ship::getShieldCol() const
 {
-    if(m_canShoot) return {getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow()};
-    return {0.1f, 0.4f, 1.0f, 1.0f};
+    //This is weird. Maybe I should add a m_hasShield sometime?
+    if(m_canShoot)
+        return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow()}};
+    return {{0.1f, 0.4f, 1.0f, 1.0f}};
 }
 
 float ship::getCurWeapStat(WEAPON_STAT _ws) const
 {
-    if(m_canShoot) return m_weapons[m_curWeap][_ws];
+    if(m_canShoot)
+        return m_weapons[m_curWeap][_ws];
     return 0.0f;
 }
 
-void ship::setParent(uniqueID _p)
+void ship::setParent(slot _p)
 {
     m_parent = _p;
     if(_p.m_version != -1)
@@ -525,7 +529,7 @@ float ship::calcAICost()
     return (m_maxHealth + m_maxShield) * 0.5f;
 }
 
-void ship::transferCargo(ship *_target, uniqueID _item)
+void ship::transferCargo(ship *_target, slot _item)
 {
     debris item = *(m_cargo.getItems()->getByID(_item));
     m_cargo.removeItem(_item.m_id);
