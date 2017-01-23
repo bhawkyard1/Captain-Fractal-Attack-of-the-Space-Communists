@@ -1186,9 +1186,9 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
 
     GLuint id = slib->getProgramID("bufferLight");
     GLuint lightBlockIndex = glGetUniformBlockIndex( id, "lightBuffer" );
-    GLuint index = 1;
-    glBindBufferBase(GL_UNIFORM_BUFFER, index, m_lightbuffer);
-    glUniformBlockBinding(id, lightBlockIndex, index);
+		GLuint index = 1;
+		glBindBufferBase(GL_UNIFORM_BUFFER, index, m_lightbuffer);
+		glUniformBlockBinding(id, lightBlockIndex, index);
 
     glBindVertexArray(m_screenQuadVAO);
 

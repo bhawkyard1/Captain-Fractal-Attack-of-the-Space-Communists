@@ -25,6 +25,6 @@ void main()
 {
     gl_Position = MVP * inPosition;
     UV = inUV;
-    normal = (transform * vec4(inNormal.xyz, 0.0)).xyz;
-    position = transform * inPosition;
+    normal = (M * vec4(inNormal.xyz, 0.0)).xyz;
+    position = M * inPosition;
 }

@@ -1090,8 +1090,7 @@ void universe::draw(float _dt)
     //Adding light.
     m_drawer.resetLights();
     size_t lightCount = 0;
-
-    for(size_t i = 0; i < m_particles.size() and lightCount < MAX_LIGHTS; ++i)
+		for(size_t i = 0; i < m_particles.size() and lightCount < MAX_LIGHTS; ++i)
     {
         vec3 pos = m_particles[i].getPos();
         if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) or m_particles[i].getForce() < 5.0f) continue;
@@ -1103,7 +1102,7 @@ void universe::draw(float _dt)
                 );
         m_drawer.addLight(l);
         lightCount++;
-    }
+		}
     //From lasers
     for(size_t i = 0; i < m_shots.size() and lightCount < MAX_LIGHTS; ++i)
     {

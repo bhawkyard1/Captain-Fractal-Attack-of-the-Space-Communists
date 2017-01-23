@@ -17,7 +17,7 @@ uniform float lightMul;
 
 struct light
 {
-    vec3 pos;
+    vec4 pos;
     vec3 col;
     float lum;
 };
@@ -63,14 +63,14 @@ vec3 calcDiffuseSpec(vec3 _fragPos, vec3 _fragNorm, vec3 _lightPos, vec3 _lightC
 
     //Diffuse
     //vec3 lightCol = /*_lightBrightness * _lightCol*/ vec3(dotLight(lightVec, _fragNorm)) / attenuation;//Avoid negative backlights, divide by attn then mul by col.
-    vec3 lightCol = vec3(dotLight(lightVec, _fragNorm)) / attenuation;
+    vec3 lightCol = _lightBrightness * _lightCol * vec3(dotLight(lightVec, _fragNorm)) / attenuation;
 
     //Spec
-    /*vec3 incidenceVec = -lightVec;//
+    vec3 incidenceVec = -lightVec;//
     vec3 reflectionVec = reflect(incidenceVec, _fragNorm);//
     float angMul = clamp( dot(vec3(0.0, 0.0, 1.0), reflectionVec), 0.0, 1.0 );
     float specCf = pow(angMul, 200.0);
-    lightCol += _lightCol * (specCf * _smul) / attenuation;*/
+    lightCol += _lightBrightness * _lightCol * (specCf * _smul) / attenuation;
 
     return lightCol;
 }
@@ -94,9 +94,9 @@ void main()
 
     for(int i = 0; i < ACTIVE_LIGHTS; i++)
     {
-        lightCol += calcDiffuseSpec(fragPosition, fragNormal, lbuf.buf[i].pos, lbuf.buf[i].col.xyz, lbuf.buf[i].lum, 0.0001, 1.0, 1.0);
+        lightCol += calcDiffuseSpec(fragPosition, fragNormal, lbuf.buf[i].pos.xyz, lbuf.buf[i].col, lbuf.buf[i].lum, 2.0, 0.25, 1.0);
     }
-    /*for(int i = 0; i < ambientSteps.x; i++)
+    for(int i = 0; i < ambientSteps.x; i++)
     {
         for(float j = 0; j < ambientSteps.y; j++)
         {
@@ -108,7 +108,7 @@ void main()
             ambientPos.z = -400.0 + 5.0 * sin(iGlobalTime + coord.x) + 0.001 * length(ambientCol);
             lightCol += calcDiffuseSpec(fragPosition, fragNormal, ambientPos.xyz, ambientCol, lightMul, 0.00025, 0.5, 1.0);
         }
-    }*/
+    }
 
     fragColour.xyz *= lightCol;
 
