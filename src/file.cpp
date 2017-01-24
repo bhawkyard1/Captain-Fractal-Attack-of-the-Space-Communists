@@ -80,10 +80,8 @@ void writeVectorFaction(std::ostream &_file, std::vector<faction> *_f)
     for(auto &i : *_f)
     {
         std::string name = i.getIdentifier();
-        for(size_t i = 0; i < name.length(); ++i)
-        {
-            if(name[i] == ' ') name[i] = '_';
-        }
+				for(size_t n = 0; n < name.length(); ++n)
+						if(name[n] == ' ') name[n] = '_';
         _file << "/|" << name << "|"
               << i.getTeam() << "|"
               << i.getCol(0) << "," << i.getCol(1) << "," << i.getCol(2) << "," << i.getCol(3) << "|";

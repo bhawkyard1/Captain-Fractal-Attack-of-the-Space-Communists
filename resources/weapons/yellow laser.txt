@@ -4,7 +4,7 @@ damage 2000.0
 speed 100.0
 red 255.0
 green 210.0
-blue 0.0
+blue 2.0
 cost 0.0
 cooldown 0.02
 power 0.1

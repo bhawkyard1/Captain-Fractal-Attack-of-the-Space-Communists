@@ -11,7 +11,7 @@ in float variation_seed;
 in float explosion_seed;
 in float duration;
 
-layout (location = 0) out vec4 fragColour;
+layout (location = 1) out vec4 fragColour;
 
 const int ITERATIONS = 30;
 const float STEP = 0.01;

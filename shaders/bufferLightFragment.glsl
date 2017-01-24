@@ -90,7 +90,7 @@ void main()
     vec3 fragNormal = texture(normal, uv).xyz;
     vec3 fragPosition = texture(position, uv).xyz;
 
-    vec3 lightCol = vec3(0.0);
+    vec3 lightCol = vec3(0.2);
 
     for(int i = 0; i < ACTIVE_LIGHTS; i++)
     {

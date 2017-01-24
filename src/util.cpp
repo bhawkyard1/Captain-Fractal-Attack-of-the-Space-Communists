@@ -257,3 +257,8 @@ bool prob(const int _r)
     return !(rand() % _r);
 }
 
+void errorExit(const std::string &_msg)
+{
+		std::cerr << &_msg << '\n';
+		exit(EXIT_FAILURE);
+}

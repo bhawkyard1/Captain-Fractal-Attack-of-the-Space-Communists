@@ -26,19 +26,4 @@ void main()
     fragColour = texture( diffuse, UV );
     fragNormal = vec4(normalize(normal), 1.0);
     fragPosition = position;
-    //fragPosition = gl_FragCoord;
-
-    //Ambient diffuse
-    /*fragColour.rgb *= dot(normal, ambientLightPos) * 0.5;
-
-    //Shooting diffuse
-    fragColour += dot(normal, shootingLightPos) * vec4(shootingLightCol.rgb * shootingLightCol.a, shootingLightCol.a) * 0.2;
-
-    //Ambient Spec
-    fragColour += pow( vec4(0.5) * dot(normal, reflect(-ambientLightPos, normal)), vec4(10.0));
-
-    //Shooting Spec
-    fragColour += pow( shootingLightCol * dot(normal, reflect(-shootingLightPos, normal)), vec4(1.0)) * shootingLightCol.a;
-
-    fragColour.a *= alpha;*/
 }

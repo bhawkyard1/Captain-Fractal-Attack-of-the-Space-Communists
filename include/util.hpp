@@ -355,4 +355,6 @@ std::vector<SDL_Event> getEvents();
 
 bool prob(const int _r);
 
+void errorExit(const std::string &_msg);
+
 #endif

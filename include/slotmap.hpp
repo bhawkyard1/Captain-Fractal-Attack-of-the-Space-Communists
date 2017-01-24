@@ -67,7 +67,7 @@ public:
             long freeid = m_freeList.back();
             long ver = m_indirection[ freeid ].m_version;
 
-            m_indirection[ freeid ].m_id = m_objects.size();
+						m_indirection[ freeid ].m_id = static_cast<long>(m_objects.size());
             m_ids.push_back( {freeid, ver} );
             m_freeList.pop_back();
 

@@ -10,7 +10,7 @@
 #include "common.hpp"
 #include "enemy.hpp"
 #include "faction.hpp"
-//#include "framebuffer.hpp"
+#include "framebuffer.hpp"
 #include "laser.hpp"
 #include "missile.hpp"
 #include "player.hpp"
@@ -182,10 +182,10 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Clears the window
-    //----------------------------------------------------------------------------------------------------------------------
-    void clear();
+		//----------------------------------------------------------------------------------------------------------------------
+		/// \brief Clears the window
+		//----------------------------------------------------------------------------------------------------------------------
+		void clear();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Exits the program, prints and error message
@@ -233,15 +233,6 @@ public:
     /// \param _col colour tint
     //----------------------------------------------------------------------------------------------------------------------
     void drawShield(const vec3 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col);
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Draws a ship
-    /// \param _p position
-    /// \param _ang asset angle
-    /// \param _asset asset key in m_objects
-    /// \param _col colour of muzzle flash
-    //----------------------------------------------------------------------------------------------------------------------
-    void drawShip(const vec3 _p, const float _ang, const std::string _asset, const std::array<float, 4> _lCol);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them with a laser shader
@@ -356,18 +347,20 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Enables depth-based fragment culling
     //----------------------------------------------------------------------------------------------------------------------
-    void enableDepthSorting();
+		void enableDepthTesting();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Disables depth-based fragment culling
     //----------------------------------------------------------------------------------------------------------------------
-    void disableDepthSorting();
+		void disableDepthTesting();
 
     slot getFocus() {return m_focus;}
 
     camera * getCamera() {return &m_camera;}
 
-    void useAttachments(const std::vector<GLenum> _bufs) {glDrawBuffers(_bufs.size(), &_bufs[0]);}
+		void drawingDeferredElements();
+		void lightingDeferredElements();
+		void drawingNonLitElements();
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The window the game will be drawn in
@@ -382,19 +375,22 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Framebuffer stuff
     //----------------------------------------------------------------------------------------------------------------------
-    GLuint m_framebuffer;
+		framebuffer m_dataFB;
+		framebuffer m_nonlitFB;
+		framebuffer m_litFB;
+		framebuffer m_smallBackgroundFB;
 
-    GLuint m_bufferBackgroundDiffuse;
+		/*GLuint m_bufferBackgroundDiffuse;
     GLuint m_bufferBackgroundDepth;
     GLuint m_bufferLitDiffuse;
     GLuint m_bufferLitNormal;
     GLuint m_bufferLitPosition;
-    GLuint m_bufferEffectsDiffuse;
+		GLuint m_bufferEffectsDiffuse;*/
 
-    GLuint m_tinyFramebuffer;
+		/*GLuint m_tinyFramebuffer;
     GLuint m_bufferDownscaledBackgroundDiffuse;
 
-    GLuint genTexture(int _width, int _height, GLint _format, GLint _internalFormat);
+		GLuint genTexture(int _width, int _height, GLint _format, GLint _internalFormat);*/
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container of letter sprites, can be used to draw text

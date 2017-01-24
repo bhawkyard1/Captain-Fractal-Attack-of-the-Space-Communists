@@ -1,33 +1,43 @@
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// This file contains work developed as a part of
+// my Computing for Animation 2 project, but used
+// here. This code should not be marked here.
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 #ifndef FRAMEBUFFER_HPP
 #define FRAMEBUFFER_HPP
 
-#include <vector>
+#include <ngl/Types.h>
 
-#include <ngl/NGLInit.h>
+#include <unordered_map>
+#include <vector>
 
 class framebuffer
 {
 public:
-    ~framebuffer();
-    void init();
-    void addTexture(int _width, int _height, bool _colour, bool _normal, bool _position, bool _depth);
-    void bindForReading();
-    void bindForWriting();
-    GLuint getBuffer() {return m_framebuffer;}
-    size_t size() {return m_colourTargets.size();}
-
-    GLuint getPos(size_t _i) {return m_positionTargets[_i];}
-    GLuint getCol(size_t _i) {return m_colourTargets[_i];}
-    GLuint getNorm(size_t _i) {return m_normalTargets[_i];}
-    GLuint getDepth(size_t _i) {return m_depthTargets[_i];}
+	~framebuffer();
+	void initialise(int _w, int _h);
+	void activeColourAttachments();
+	void activeColourAttachments(const std::vector<GLenum> _bufs);
+	void addTexture(const std::string &_identifier, GLenum _format, GLenum _iformat, GLenum _attachment);
+	void addDepthAttachment(const std::string &_identifier);
+	void bind();
+	void bindTexture(const GLint _shaderID, const std::string &_tex, const char *_uniform, int _target);
+	bool checkComplete();
+	void clear();
+	void unbind();
+	GLuint get(const std::string _id) {return m_textures[_id];}
 private:
-    GLuint m_framebuffer;
-    std::vector<GLuint> m_positionTargets;
-    std::vector<GLuint> m_colourTargets;
-    std::vector<GLuint> m_normalTargets;
-    std::vector<GLuint> m_depthTargets;
-
-    GLuint genTexture(int _width, int _height, GLint _format);
+	GLuint genTexture(int _width, int _height, GLint _format, GLint _internalFormat);
+	//Keeps track of textures.
+	std::unordered_map< std::string, GLuint > m_textures;
+	//Keeps track of the colour attachments that each texture uses.
+	std::unordered_map< std::string, GLenum > m_attachments;
+	GLuint m_framebuffer;
+	int m_h;
+	GLenum m_maxColourTarget;
+	int m_w;
+	std::vector<GLenum> m_colorAttachments;
 };
 
 #endif

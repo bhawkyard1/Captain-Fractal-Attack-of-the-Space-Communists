@@ -31,7 +31,7 @@ struct faction
 public:
     faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shipBounds _fighters, shipBounds _utility, shipBounds _structures, bool _organised);
     void updateEconomy(const float _dt);
-    void updateDeployment(const float _dt, const std::vector<faction> &_rivals);
+		void updateDeployment(const std::vector<faction> &_rivals);
     void updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships);
 
     void addReserve();

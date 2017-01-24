@@ -2,7 +2,7 @@ lasers 1.0
 spread 1.5
 damage 8.0
 speed 15.0
-red 0.0
+red 2.0
 green 200.0
 blue 255.0
 cost 3.0

@@ -1,96 +1,121 @@
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// This file contains work developed as a part of
+// my Computing for Animation 2 project, but used
+// here. This code should not be marked here.
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 #include <iostream>
+#include <string>
 
 #include "framebuffer.hpp"
+#include "util.hpp"
 
 framebuffer::~framebuffer()
-{    
-    if(m_colourTargets.size() > 0) glDeleteTextures(m_colourTargets.size(), &m_colourTargets[0]);
-    if(m_normalTargets.size() > 0) glDeleteTextures(m_normalTargets.size(), &m_normalTargets[0]);
-
-    if(m_depthTargets.size() > 0) glDeleteFramebuffers(m_depthTargets.size(), &m_depthTargets[0]);
+{
+	glDeleteFramebuffers(1, &m_framebuffer);
 }
 
-void framebuffer::init()
+void framebuffer::initialise(int _w, int _h)
 {
-    glGenFramebuffers(1, &m_framebuffer);
+	m_w = _w;
+	m_h = _h;
+
+	glGenFramebuffers(1, &m_framebuffer);
+	bind();
+
+	GLint numColAttachments = 0;
+	glGetIntegerv( GL_MAX_COLOR_ATTACHMENTS, &numColAttachments );
+	m_maxColourTarget = numColAttachments + GL_COLOR_ATTACHMENT0;
 }
 
-void framebuffer::addTexture(int _width, int _height, bool _colour, bool _normal, bool _position, bool _depth)
+void framebuffer::activeColourAttachments()
 {
-    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, m_framebuffer);
-
-    GLuint diffuseTex = 0;
-    GLuint normalTex = 0;
-    GLuint positionTex = 0;
-    GLuint depthTex = 0;
-
-    //Colour texture will be bound at index, normals at index + 1, position at index + 2 and depth at index + 3.
-    size_t index = size() * 4;
-
-    if(_colour)
-    {
-        diffuseTex = genTexture(_width, _height, GL_RGBA);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, diffuseTex, 0);
-    }
-
-    if(_normal)
-    {
-        normalTex = genTexture(_width, _height, GL_RGB);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index + 1, GL_TEXTURE_2D, normalTex, 0);
-    }
-
-    if(_position)
-    {
-        positionTex = genTexture(_width, _height, GL_RGB);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index + 2, GL_TEXTURE_2D, positionTex, 0);
-    }
-
-    if(_depth)
-    {
-        glGenTextures(1, &depthTex);
-        glBindTexture(GL_TEXTURE_2D, depthTex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, _width, _height, 0, GL_DEPTH_COMPONENT, GL_FLOAT,0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
-    }
-
-    //Tell the framebuffers which attachments we will use for colour.
-    std::vector<GLenum> drawBuffers;
-    for(int i = 0; i < m_colourTargets.size(); ++i)
-    {
-        int i4 = i * 4;
-        drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i4);
-        drawBuffers.push_back(GL_COLOR_ATTACHMENT1 + i4);
-        drawBuffers.push_back(GL_COLOR_ATTACHMENT2 + i4);
-        drawBuffers.push_back(GL_COLOR_ATTACHMENT3 + i4);
-    }
-
-    glDrawBuffers(drawBuffers.size(), &drawBuffers[0]);
-
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-
-        std::cerr << "Error! Framebuffer add target failed!\n";
-        exit(EXIT_FAILURE);
-    }
-
-    m_colourTargets.push_back(diffuseTex);
-    m_normalTargets.push_back(normalTex);
-    m_positionTargets.push_back(positionTex);
-    m_depthTargets.push_back(depthTex);
-
-    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER, 0);
+	for(auto &buf : m_colorAttachments)
+	{
+		if(buf > m_maxColourTarget)
+			errorExit( "Error! Attempting to use colour target " + std::to_string((int)buf) + "that is not available on this system (max is " + std::to_string((int)m_maxColourTarget) + ").\n");
+	}
+	glDrawBuffers(m_colorAttachments.size(), &m_colorAttachments[0]);
 }
 
-GLuint framebuffer::genTexture(int _width, int _height, GLint _format)
+void framebuffer::activeColourAttachments(const std::vector<GLenum> _bufs)
 {
-    GLuint tex;
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
+	for(auto &buf : _bufs)
+	{
+		if(buf > m_maxColourTarget)
+			errorExit( "Error! Attempting to use colour target " + std::to_string((int)buf) + "that is not available on this system (max is " + std::to_string((int)m_maxColourTarget) + ").\n");
+	}
+	glDrawBuffers(_bufs.size(), &_bufs[0]);
+}
 
-    glTexImage2D(GL_TEXTURE_2D, 0, _format, _width, _height, 0, _format, GL_UNSIGNED_BYTE, 0);
+void framebuffer::addDepthAttachment(const std::string &_identifier)
+{
+	GLuint depth;
+	glGenRenderbuffers(1, &depth);
+	glBindRenderbuffer(GL_RENDERBUFFER, depth);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, m_w, m_h);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
 
-    return tex;
+	std::pair<std::string, GLuint> tex ( _identifier, depth );
+	m_textures.insert( tex );
+}
+
+void framebuffer::addTexture(const std::string &_identifier, GLenum _format, GLenum _iformat , GLenum _attachment)
+{
+	//Create texture.
+	std::pair<std::string, GLuint> tex ( _identifier, genTexture(m_w, m_h, _format, _iformat) );
+	m_textures.insert( tex );
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, _attachment, GL_TEXTURE_2D, m_textures[ _identifier ], 0);
+
+	m_colorAttachments.push_back( _attachment );
+}
+
+void framebuffer::bind()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+}
+
+void framebuffer::bindTexture(const GLint _shaderID, const std::string &_tex, const char *_uniform, int _target)
+{
+	GLint loc = glGetUniformLocation(_shaderID, _uniform);
+
+	if(loc == -1)
+		std::cerr << "Uh oh! Invalid uniform location in framebuffer::bindTexture!! " << _uniform << '\n';
+
+	glUniform1i(loc, _target);
+
+	glActiveTexture(GL_TEXTURE0 + _target);
+	glBindTexture(GL_TEXTURE_2D, m_textures[_tex]);
+}
+
+bool framebuffer::checkComplete()
+{
+	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+}
+
+void framebuffer::clear()
+{
+	activeColourAttachments( m_colorAttachments );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+GLuint framebuffer::genTexture(int _width, int _height, GLint _format, GLint _internalFormat)
+{
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _width, _height, 0, _format, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	return tex;
+}
+
+void framebuffer::unbind()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
