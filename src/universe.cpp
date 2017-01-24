@@ -126,11 +126,8 @@ void universe::addMissile(
 
 void universe::update(float _dt)
 {
-    //std::cout << "MOUSE POS IS " << getMousePos().m_x << ", " << getMousePos().m_y << '\n';
     if(g_PLAYER_MOVEMENT_LOCKED) m_ply.setVel(vec3());
     if(m_paused) _dt = 0.0f;
-
-    //_dt *= 0.5f;
 
     g_VELOCITY_TIME_SCALE = 1.0f - (clamp(mag(m_vel) * 80.0f, 0.0f, static_cast<float>(LIGHTSPEED)) / LIGHTSPEED);
     g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE + _dt * 0.25f, 0.0f, 1.0f);
@@ -142,14 +139,9 @@ void universe::update(float _dt)
 
     processInputMap();
 
-    /*if(!g_GAME_OVER)
-    {
-        m_ply.ctrlUpdate();
-    }*/
     m_ply.updatePos(_dt);
     m_ply.ctrlUpdate();
     m_ply.update(_dt);
-
 
     //If m_paused, we do not update the game.
     if(m_paused) return;
@@ -207,6 +199,7 @@ void universe::update(float _dt)
         m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
     }
 
+    //Explode player if dead.
     if(!g_DEV_MODE and m_ply.getHealth() <= 0.0f and !g_GAME_OVER)
     {
         for(int p = 0; p < rand()%5 + 10; ++p)
@@ -228,7 +221,7 @@ void universe::update(float _dt)
         g_GAME_OVER = true;
     }
 
-		for(int i = static_cast<int>(m_shots.size()) - 1; i >= 0; i--)
+    for(int i = static_cast<int>(m_shots.size()) - 1; i >= 0; i--)
     {
         if(m_shots[i].getPower() < 0.0f)
         {
@@ -270,7 +263,7 @@ void universe::update(float _dt)
     debug("checkCol");
     checkCollisions();
 
-		for(int i = static_cast<int>(m_missiles.size()) - 1; i >= 0; i--)
+    for(int i = static_cast<int>(m_missiles.size()) - 1; i >= 0; i--)
     {
         m_missiles[i].updatePos(_dt);
         bool ofscr = isOffScreen(m_missiles[i].getPos(), 80000.0f);
@@ -318,7 +311,7 @@ void universe::update(float _dt)
         }
     }
 
-		for(int i = static_cast<int>(m_asteroids.size()) - 1; i >= 0; i--)
+    for(int i = static_cast<int>(m_asteroids.size()) - 1; i >= 0; i--)
     {
         m_asteroids[i].updatePos(_dt);
         vec3 p = m_asteroids[i].getPos();
@@ -370,7 +363,7 @@ void universe::update(float _dt)
         }
     }
 
-		for(int i = static_cast<int>(m_resources.size()) - 1; i >= 0; --i)
+    for(int i = static_cast<int>(m_resources.size()) - 1; i >= 0; --i)
     {
         if((isOffScreen(m_resources[i].getPos(),60000.0f)))
         {
@@ -499,7 +492,7 @@ void universe::update(float _dt)
     }
     debug("ships end");
     //Ship spawning functions.
-		for(int i = static_cast<int>(m_particles.size()) - 1; i >= 0; i--)
+    for(int i = static_cast<int>(m_particles.size()) - 1; i >= 0; i--)
     {
         m_particles[i].setWVel(m_vel);
         m_particles[i].update(_dt);
@@ -507,9 +500,9 @@ void universe::update(float _dt)
 
     }
 
-		for(int i = static_cast<int>(m_passiveSprites.size()) - 1; i >= 0; --i)
+    for(int i = static_cast<int>(m_passiveSprites.size()) - 1; i >= 0; --i)
     {
-        float alph = m_passiveSprites[i].getCol(3);
+        float alph = m_passiveSprites[i].getAlph();
 
         m_passiveSprites[i].updateSprite(_dt);
 
@@ -524,12 +517,12 @@ void universe::update(float _dt)
         }
         alph *= 0.9f;
         alph -= 0.02f;
-        m_passiveSprites[i].setCol(3, alph);
+        m_passiveSprites[i].setAlph(alph);
         m_passiveSprites[i].incrDim(_dt);
         m_passiveSprites[i].setWVel(m_vel);
     }
 
-		for(int i = static_cast<int>(m_popups.size()) - 1; i >= 0; --i)
+    for(int i = static_cast<int>(m_popups.size()) - 1; i >= 0; --i)
     {
         if(m_popups[i].getCol(3) <= 0.0f)
         {
@@ -559,7 +552,7 @@ void universe::update(float _dt)
         i.setWVel(m_vel);
 
         i.updateEconomy(_dt);
-				i.updateDeployment(m_factions);
+        i.updateDeployment(m_factions);
         i.updateTactics(_dt, m_factions, m_agents.m_objects);
 
         spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed());
@@ -620,7 +613,7 @@ void universe::update(float _dt)
 
 void universe::cullAgents()
 {
-		for(int i = static_cast<int>(m_agents.size()) - 1; i >= 0; i--)
+    for(int i = static_cast<int>(m_agents.size()) - 1; i >= 0; i--)
     {
         vec3 p = m_agents[i].getPos();
 
@@ -869,17 +862,19 @@ void universe::processInputMap()
 void universe::draw(float _dt)
 {
     debug("draw start");
-    /*vec3 focusPos = vec3();
-                                                                    m_drawer.update(_dt, focusPos);*/
+
+    m_drawer.disableDepthTesting();
     m_drawer.drawBackground(m_time_elapsed, tovec2(m_pos + m_drawer.getShake()), tovec2(m_vel), m_cCol);
-		m_drawer.enableDepthTesting();
-		m_drawer.drawingNonLitElements();
+    m_drawer.enableDepthTesting();
+
+    m_drawer.drawingNonLitElements();
+    m_drawer.activeColourAttachments({GL_COLOR_ATTACHMENT1});
     for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
     {
         if(i->getIdentifier() != "SMOKE") continue;
         vec3 ipos = i->getInterpolatedPosition(_dt);
         vec2 idim = {i->getDim(), i->getDim()};
-        std::array<float, 4> col = {{i->getCol(0), i->getCol(1), i->getCol(2), i->getCol(3)}};
+        std::array<float, 4> col = {{i->getCol(0), i->getCol(1), i->getCol(2), i->getAlph()}};
         col = col255to1(col);
         //col[3] *= 255.0f;
         m_drawer.addRect(ipos, idim, 0.0f, col);
@@ -893,7 +888,6 @@ void universe::draw(float _dt)
     vec3 backwards = tovec3(back(rad(m_ply.getAng())));
     vec3 pos = m_ply.getInterpolatedPosition(_dt) + backwards * m_ply.getRadius() + backwards * stat;
 
-    //std::cout << m_ply.getAlphaStats()[0] << " " << stat << std::endl;
     if(stat > 0.05f and !g_GAME_OVER)
     {
         m_drawer.drawFlames(
@@ -946,42 +940,43 @@ void universe::draw(float _dt)
         }
     }
 
-		m_drawer.drawingDeferredElements();
-		//m_drawer.enableDepthTesting();
+    m_drawer.drawingDeferredElements();
+    //m_drawer.enableDepthTesting();
     m_drawer.useShader("ship");
-		if(!g_GAME_OVER) m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier());
+    if(!g_GAME_OVER) m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier());
     for(auto &i : m_agents.m_objects)
     {
-				m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+        m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
     }
-
     for(auto &i : m_missiles)
     {
-				m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+        m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
     }
     for(auto &i : m_asteroids)
     {
-				m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+        m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
     }
     for(auto &i : m_resources)
     {
-				m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+        m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
     }
     for(auto &i : m_selectedItems)
     {
         vec3 pos = tovec3( toWorldSpace( getMousePos() ) ) ;
-				m_drawer.drawAsset(pos, i.getAng(), i.getIdentifier());
+        m_drawer.drawAsset(pos, i.getAng(), i.getIdentifier());
     }
 
     vec2 dpos = toWorldSpace( getMousePos() ) ;
 
     if(m_mouse_state != -1) m_drawer.drawAsset(dpos, 0.0f, g_ship_templates[m_mouse_state].getIdentifier(), 0.5f);
 
-		m_drawer.drawingNonLitElements();
+    m_drawer.drawingNonLitElements();
+    m_drawer.activeColourAttachments({GL_COLOR_ATTACHMENT1});
+
     m_drawer.useShader("laser");
     for(auto &i : m_shots)
     {
-				vec3 ipos = i.getInterpolatedPosition(_dt);
+        vec3 ipos = i.getInterpolatedPosition(_dt);
         vec3 ivel = (i.getVel() + i.getWVel()) * 8.0f;
         std::array<float, 4> icol = i.getCol();
 
@@ -993,48 +988,46 @@ void universe::draw(float _dt)
     m_drawer.drawLasers(m_time_elapsed);
 
     m_drawer.clearVectors();
-		for(auto &i : m_particles)
-		{
-				std::array<float, 4> col = i.getCol();
-				col = col255to1(col);
-				vec3 ipos = i.getInterpolatedPosition(_dt);
-				float idim = i.getForce() * 20.0f;
+    for(auto &i : m_particles)
+    {
+        std::array<float, 4> col = i.getCol();
+        col = col255to1(col);
+        vec3 ipos = i.getInterpolatedPosition(_dt);
+        float idim = i.getForce() * 20.0f;
 
-				if(i.normalisedLifetime() < 1.0f)
-				{
-						m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
-						m_drawer.packExtraData( i.getShaderData() );
-				}
-		}
-		m_drawer.useShader("explosion");
-		m_drawer.drawExplosions( );
-		m_drawer.clearVectors( );
+        if(i.normalisedLifetime() < 1.0f)
+        {
+            m_drawer.addRect(ipos, {idim, idim}, 0.0f, col);
+            m_drawer.packExtraData( i.getShaderData() );
+        }
+    }
+    m_drawer.useShader("explosion");
+    m_drawer.drawExplosions( );
+    m_drawer.clearVectors( );
 
-		if(g_GRAPHICAL_DETAIL > 1)
-		{
-				for(auto &i : m_particles)
-				{
-						std::array<float, 4> col = i.getCol();
-						col[3] = 1.0f;
-						col = col255to1(col);
-						int k = 0;
-						for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
-						{
-								vec3 jpos = j->getInterpolatedPosition(_dt);
-								vec3 jvel = j->getVel() * 2.0f;
-								col[3] = i.getAlpha(k) / 255.0f;
+    if(g_GRAPHICAL_DETAIL > 1)
+    {
+        for(auto &i : m_particles)
+        {
+            std::array<float, 4> col = i.getCol();
+            col[3] = 1.0f;
+            col = col255to1(col);
+            int k = 0;
+            for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
+            {
+                vec3 jpos = j->getInterpolatedPosition(_dt);
+                vec3 jvel = j->getVel() * 2.0f;
+                col[3] = i.getAlpha(k) / 255.0f;
 
-								m_drawer.addLine(jpos, jpos + (jvel + m_vel) * 1.0f, 4.0f * col[3], col);
-								++k;
-						}
-				}
-				m_drawer.useShader("sparks");
-				m_drawer.drawLines(1.0f);
-		}
+                m_drawer.addLine(jpos, jpos + (jvel + m_vel) * 1.0f, 4.0f * col[3], col);
+                ++k;
+            }
+        }
+        m_drawer.useShader("sparks");
+        m_drawer.drawLines(1.0f);
+    }
 
-		m_drawer.disableDepthTesting();
-
-		//Shields
+    //Shields
     if(m_ply.getShieldGlow() > 1 and !g_GAME_OVER)
         m_drawer.drawShield(m_ply.getInterpolatedPosition(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), m_ply.getShieldGlow() / 255.0f, {{0.1f, 0.4f, 1.0f, 1.0f}});
     for(auto &i : m_agents.m_objects)
@@ -1042,7 +1035,11 @@ void universe::draw(float _dt)
         if(i.getShieldGlow() <= 1) continue;
         m_drawer.drawShield(i.getInterpolatedPosition(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldGlow() / 255.0f, i.getShieldCol());
     }
-    for(auto &i : m_missiles)
+    //for(auto &i : m_missiles)
+
+    m_drawer.disableDepthTesting();
+
+    m_drawer.drawingUI();
 
     debug("draw ui");
     if(showUI)
@@ -1058,7 +1055,7 @@ void universe::draw(float _dt)
     //Adding light.
     m_drawer.resetLights();
     size_t lightCount = 0;
-		for(size_t i = 0; i < m_particles.size() and lightCount < MAX_LIGHTS; ++i)
+    for(size_t i = 0; i < m_particles.size() and lightCount < MAX_LIGHTS; ++i)
     {
         vec3 pos = m_particles[i].getPos();
         if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) or m_particles[i].getForce() < 5.0f) continue;
@@ -1070,7 +1067,7 @@ void universe::draw(float _dt)
                 );
         m_drawer.addLight(l);
         lightCount++;
-		}
+    }
     //From lasers
     for(size_t i = 0; i < m_shots.size() and lightCount < MAX_LIGHTS; ++i)
     {
@@ -1228,7 +1225,7 @@ void universe::drawUI(const float _dt)
             for(auto &i : contextPtr->getCargo()->getItems()->m_objects)
             {
                 //std::cout <<  "pre\n" << i.getIdentifier() << "\npost\n";
-								m_drawer.drawAsset(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+                m_drawer.drawAsset(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
                 //std::cout << "draw post\n";
             }
             m_drawer.useShader("plain");
@@ -1249,7 +1246,7 @@ void universe::drawUI(const float _dt)
         //CRASH HERE
         for(auto &i : m_ply.getCargo()->getItems()->m_objects)
         {
-						m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+            m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
         }
     }
 
@@ -1310,7 +1307,7 @@ void universe::detectCollisions(
     //Check through all input vectors.
     for(auto& i: _ships)
     {
-        if( circleIntersectRect(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim ) )
+        if( circleIntersectRectRough(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim ) )
         {
             pships.push_back(i);
             count++;
@@ -1319,7 +1316,7 @@ void universe::detectCollisions(
 
     for(auto &i : _rockets)
     {
-        if( circleIntersectRect(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim ) )
+        if( circleIntersectRectRough(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim ) )
         {
             prockets.push_back(i);
             count++;
@@ -1328,7 +1325,7 @@ void universe::detectCollisions(
 
     for(auto &i : _rocks)
     {
-        if( circleIntersectRect(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim ) )
+        if( circleIntersectRectRough(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim ) )
         {
             procks.push_back(i);
             count++;
@@ -1350,7 +1347,7 @@ void universe::detectCollisions(
 
     for(auto &i : _resources)
     {
-        if( circleIntersectRect(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim) )
+        if( circleIntersectRectRough(tovec2(i->getPos()), i->getRadius(), boxPos, boxDim) )
         {
             presources.push_back(i);
             count++;
@@ -1358,7 +1355,7 @@ void universe::detectCollisions(
     }
 
     //Return if count is too low, or nothing can interact.
-    if(count < 16 or _lvl > 8)
+    if(count < 16 or _lvl > 5)
     {
         m_partitions.push_back({
                                    pships,
@@ -1753,12 +1750,11 @@ void universe::addParticleSprite(
     else if( _tex == "EXPLOSION" )
         col = 255.0f;
 
-    stardust_sprite sm (_tex, col, _dim, _dim);
+    sprite sm (_tex, col, _dim, _dim);
     sm.setPos(_p);
     sm.setPPos(_p);
     if( _tex == "SMOKE" ) sm.setVel(_v + tovec3(randVec2(1.0f)));
     else if( _tex == "EXPLOSION" ) sm.setVel(_v);
-    sm.setZ(1.0f);
     m_passiveSprites.push_back(sm);
 }
 
@@ -1779,7 +1775,7 @@ ship_spec universe::getRandomShipType(const aiTeam _t)
 {
     int prob = rand()%1000;
 
-    ship_spec type;
+    ship_spec type = SHIPS_END;
 
     if( _t == SPACE_COMMUNISTS )
     {
@@ -2126,7 +2122,6 @@ void universe::reload(const bool _newGame)
     m_ply.setMissiles(3);
     setScore(16);
 
-    int rep = rand() % 4 + 1;
     std::vector<float> degs = {{60.0f, 90.0f, 180.0f}};
     size_t range = m_factions[ALLIANCE].getStructures().second - m_factions[ALLIANCE].getStructures().first;
     for(int i = 0; i < 3; ++i)
@@ -2553,16 +2548,6 @@ void universe::conductTrade(enemy &_buyer, enemy &_seller)
         _seller.transferCargo(&_buyer, i);
     }
 }
-
-/*ship * universe::getByID(const unsigned long _i)
-                                                                {
-                                                                    for(auto &i : m_agents.m_objects)
-                                                                    {
-                                                                        if(i.getUniqueID() == _i)
-                                                                            return &i;
-                                                                    }
-                                                                    return nullptr;
-                                                                }*/
 
 void universe::addFrag(slot _i)
 {

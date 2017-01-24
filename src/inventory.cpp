@@ -61,7 +61,6 @@ void inventory::update(const float _dt)
         vec3 pos = i.getPos();
         vec3 vel = i.getVel();
         vec2 dim = m_dim / 2.0f;
-        float radius = i.getRadius();
         float COR = 0.6f;
 
         if(pos.m_x < -dim.m_x)

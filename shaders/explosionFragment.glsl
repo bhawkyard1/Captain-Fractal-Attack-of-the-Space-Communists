@@ -17,7 +17,7 @@ in vec4 vertCol;
 
 //uniform vec4 inColour;
 
-layout (location = 1) out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 void main()
 {    

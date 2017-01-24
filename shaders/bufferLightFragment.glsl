@@ -31,7 +31,6 @@ uniform vec2 iResolution;
 uniform float iGlobalTime;
 
 layout (location = 0) out vec4 fragColour;
-//layout (location = 1) out float fragDepth;
 
 float max3(vec3 _vec)
 {
@@ -95,7 +94,7 @@ void main()
 
     for(int i = 0; i < ACTIVE_LIGHTS; i++)
     {
-        lightCol += calcDiffuseSpec(fragPosition, fragNormal, lbuf.buf[i].pos.xyz, lbuf.buf[i].col, lbuf.buf[i].lum, 2.0, 0.25, 1.0);
+        lightCol += calcDiffuseSpec(fragPosition, fragNormal, lbuf.buf[i].pos.xyz, lbuf.buf[i].col, lbuf.buf[i].lum, 2.0, 0.15, 0.5);
     }
     for(int i = 0; i < ambientSteps.x; i++)
     {
@@ -112,7 +111,6 @@ void main()
     }
 
     fragColour.xyz *= lightCol;
-    //fragDepth = distance(uv, vec2(0.5));
 
     //fragColour.xyz = texture(position, uv).xyz;
 }

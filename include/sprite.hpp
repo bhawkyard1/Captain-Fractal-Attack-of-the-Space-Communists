@@ -1,30 +1,30 @@
-#ifndef STARDUST_SPRITE_HPP
-#define STARDUST_SPRITE_HPP
+#ifndef SPRITE_HPP
+#define SPRITE_HPP
 
 #include <array>
 #include <string>
-#include "stardust.hpp"
+#include "base.hpp"
 
-class stardust_sprite: public stardust
+class sprite: public base
 {
 public:
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief ctor for the stardust_sprite class.
+    /// \brief ctor for the sprite class.
     /// \param _identifier string identifier for the sprite
     /// \param _col colour of the sprite
     /// \param _w width of the sprite
     /// \param _h height of the sprite
     //----------------------------------------------------------------------------------------------------------------------
-    stardust_sprite(const std::string _identifier, const std::array<float, 3> _col, const int _w, const int _h);
+    sprite(const std::string _identifier, const vec3 _col, const int _w, const int _h);
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief ctor for the stardust_sprite class.
+    /// \brief ctor for the sprite class.
     /// \param _identifier string identifier for the sprite
     /// \param _alph alpha of the sprite
     /// \param _w width of the sprite
     /// \param _h height of the sprite
     //----------------------------------------------------------------------------------------------------------------------
-    stardust_sprite(const std::string _identifier, const float _alph, const int _w, const int _h);
+    sprite(const std::string _identifier, const float _alph, const int _w, const int _h);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Regenerates stardust sprite attributes.
@@ -61,6 +61,10 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     std::string getIdentifier() {return m_identifier;}
 
+    vec3 getCol() const {return m_col;}
+    float getCol(int _i) {return *(&m_col.m_x + _i);}
+    float getAlph() const {return m_alph;}
+    void setAlph(const float _alph) {m_alph = _alph;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Texture key of the sprite.
@@ -81,6 +85,9 @@ private:
     /// \brief The dimensions.
     //----------------------------------------------------------------------------------------------------------------------
     float m_dim;
+
+    vec3 m_col;
+    float m_alph;
 };
 
 #endif

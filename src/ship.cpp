@@ -496,7 +496,7 @@ std::array<float, 4> ship::getShieldCol() const
 {
     //This is weird. Maybe I should add a m_hasShield sometime?
     if(m_canShoot)
-        return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow()}};
+        return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, static_cast<float>(getShieldGlow())}};
     return {{0.1f, 0.4f, 1.0f, 1.0f}};
 }
 

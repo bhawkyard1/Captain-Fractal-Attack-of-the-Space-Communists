@@ -308,7 +308,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for m_upgrades.
     //----------------------------------------------------------------------------------------------------------------------
-		size_t getUpgrade(const int _index) {if(_index < UPGRADES_LEN) return m_upgrades[_index]; return -1;}
+    size_t getUpgrade(const int _index) {if(_index < UPGRADES_LEN) return m_upgrades[_index]; return -1;}
     void setGradeArr(const int _i, const int _v) {m_upgrades[_i] = _v;}
     void setGrade(const int _i, const int _v);
 
@@ -392,7 +392,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for m_shieldGlow.
     //----------------------------------------------------------------------------------------------------------------------
-		size_t getShieldGlow() const {return m_shieldGlow;}
+    size_t getShieldGlow() const {return m_shieldGlow;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter for m_drawShot, converts it to the range 0-1.

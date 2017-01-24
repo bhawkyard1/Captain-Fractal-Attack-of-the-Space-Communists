@@ -20,8 +20,7 @@
 #include "ship.hpp"
 #include "slotmap.hpp"
 #include "squad.hpp"
-#include "stardust.hpp"
-#include "stardust_sprite.hpp"
+#include "sprite.hpp"
 #include "ui/user_interface.hpp"
 #include "weapons.hpp"
 
@@ -508,7 +507,7 @@ private:
     /// \brief Container for all particle sprites in the game (in the NGL version, these actually use
     /// procedural shaders, rather than bitmaps).
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<stardust_sprite> m_passiveSprites;
+    std::vector<sprite> m_passiveSprites;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all squads.
@@ -625,7 +624,6 @@ private:
     int m_minerCount;
     int m_wingmenCount;
 
-    bool m_selectedItemOwner;
     std::vector<debris> m_selectedItems;
 
     //----------------------------------------------------------------------------------------------------------------------

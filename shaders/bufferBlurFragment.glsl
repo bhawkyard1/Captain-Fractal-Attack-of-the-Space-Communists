@@ -4,8 +4,9 @@
 //http://devlog-martinsh.blogspot.co.uk/2011/11/glsl-depth-of-field-with-bokeh-v21.html
 
 uniform sampler2D diffuse;
-uniform sampler2D depthTex;
 uniform vec2 bgl_dim;
+uniform vec2 mousePos;
+uniform float vel;
 
 #define PI  3.14159265
 
@@ -16,18 +17,13 @@ float height = bgl_dim.y; //texture height
 
 vec2 texel = vec2(1.0/width,1.0/height);
 
-float focalDepth = 350.0;  //external focal point value, but you may use autofocus option below
-
 //------------------------------------------
 //user variables
 
 int samples = 16; //samples on the first ring
 int rings = 5; //ring count
 
-bool autofocus = false; //use autofocus in shader? disable if you use external focalDepth value
-vec2 focus = vec2(0.5,0.5); // autofocus point on screen (0.0,0.0 - left lower corner, 1.0,1.0 - upper right)
-float range = 128.0; //focal range
-float maxblur = 1.0; //clamp value of max blur
+float maxblur = 4.0; //clamp value of max blur
 
 float threshold = 0.4; //highlight threshold;
 float gain = 10.0; //highlight gain;
@@ -37,9 +33,6 @@ float fringe = 0.5; //bokeh chromatic aberration/fringing
 
 bool noise = true; //use noise instead of pattern for sample dithering
 float namount = 0.000001; //dither amount
-
-bool depthblur = true; //blur the depth buffer?
-float dbsize = 2.0; //depthblursize
 
 /*
 next part is experimental
@@ -88,41 +81,6 @@ float penta(vec2 coords) //pentagonal shape
     return clamp( inorout, 0.0, 1.0 );
 }
 
-float bdepth(vec2 coords) //blurring depth
-{
-    float d = 0.0;
-    float kernel[9];
-    vec2 offset[9];
-
-    vec2 wh = vec2(texel.x, texel.y) * dbsize;
-
-    offset[0] = vec2(-wh.x,-wh.y);
-    offset[1] = vec2( 0.0, -wh.y);
-    offset[2] = vec2( wh.x -wh.y);
-
-    offset[3] = vec2(-wh.x,  0.0);
-    offset[4] = vec2( 0.0,   0.0);
-    offset[5] = vec2( wh.x,  0.0);
-
-    offset[6] = vec2(-wh.x, wh.y);
-    offset[7] = vec2( 0.0,  wh.y);
-    offset[8] = vec2( wh.x, wh.y);
-
-    kernel[0] = 1.0/16.0;   kernel[1] = 2.0/16.0;   kernel[2] = 1.0/16.0;
-    kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;
-    kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;
-
-
-    for( int i=0; i<9; i++ )
-    {
-        float tmp = texture(depthTex, coords + offset[i]).r;
-        d += tmp * kernel[i];
-    }
-
-    return d;
-}
-
-
 vec3 color(vec2 coords,float blur) //processing the sample
 {
     vec3 col = vec3(0.0);
@@ -154,27 +112,9 @@ void main()
 {
     vec2 uv = gl_FragCoord.xy / bgl_dim;
 
-    float depth = texture(depthTex,uv).r;
+    float depth = distance(uv, mousePos);
 
-    float blur = 0.0;
-
-    if (depthblur)
-    {
-        depth = bdepth(uv);
-    }
-
-    /*if(depth > 200)
-    {
-        fragColour = vec4(0.0, 0.0, 1.0, 1.0);
-        return;
-    }*/
-    blur = clamp((abs(depth - focalDepth) / range), 0.1, maxblur);
-
-    if (autofocus)
-    {
-        float fDepth = texture(depthTex,focus).r;
-        blur = clamp((abs(depth - fDepth)/range) * 100.0,-maxblur,maxblur);
-    }
+    float blur = depth * (vel / 500.0) + 0.001;
 
     vec2 noise = rand(uv)*namount*blur;
 
@@ -217,5 +157,6 @@ void main()
     //fragColour.rgb = vec3(depth);
     fragColour.a = 1.0;
 
-    fragColour = texture(diffuse, uv);
+    //fragColour = texture(diffuse, uv);
+    //fragColour.rgb = vec3(uv.x, uv.y, 1.0);
 }

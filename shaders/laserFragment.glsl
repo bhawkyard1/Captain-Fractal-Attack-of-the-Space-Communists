@@ -16,7 +16,7 @@ in vec4 gl_FragCoord;
 in vec4 vertColour;
 in vec2 UV;
 
-layout (location = 1) out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 /*void main()
 {
@@ -142,4 +142,5 @@ void main()
     fragColour.rgb = mix(vec3(1.0, 1.0, 1.0), vertColour.rgb, dist);
     fragColour.a = mix(alpha, 0.0, dist * 2.0);
     fragColour.a *= vertColour.a;
+    fragColour.a = clamp(fragColour.a, 0.0, 1.0);
 }

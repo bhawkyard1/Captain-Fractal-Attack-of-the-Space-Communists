@@ -17,7 +17,7 @@ in vec4 vertColour;
 
 //uniform vec4 inColour;
 
-layout (location = 1) out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 void main()
 {    
@@ -28,4 +28,5 @@ void main()
     //fragColour.a *= vertColour.a;
     //fragColour.a = 1.0;
     //fragColour = vec4(1.0, 1.0, 1.0, 1.0);
+    fragColour.a = clamp(fragColour.a, 0.0, 1.0);
 }

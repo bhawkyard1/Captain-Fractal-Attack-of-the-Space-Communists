@@ -39,8 +39,8 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point);
 /// \param _min minimum point of the AABB
 /// \param _dim dimensions of the AABB
 //----------------------------------------------------------------------------------------------------------------------
+bool circleIntersectRectRough(vec2 _pos, float _r, vec2 _min, vec2 _dim);
 bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim);
-
 bool circleIntersectCircle(vec2 _pos1, float _r1, vec2 _pos2, float _r2);
 
 //----------------------------------------------------------------------------------------------------------------------

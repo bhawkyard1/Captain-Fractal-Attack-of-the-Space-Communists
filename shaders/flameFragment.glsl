@@ -14,7 +14,7 @@
 in vec4 gl_FragCoord;
 in vec2 UV;
 
-layout (location = 1) out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 uniform float iGlobalTime;
 uniform vec4 flameCol;
@@ -83,7 +83,8 @@ void main()
 
     float a = c * ( 1.0 - pow(UV.y,3.0) );
 
-    fragColour = mix(vec4(col.rgb,0.0),vec4(col,1.0), a * (1.0 - UV.y));
+    fragColour = mix(vec4(col, 0.0),vec4(col, 1.0), a * (1.0 - UV.y));
     fragColour.rgb *= 2.0;
+    fragColour.a = clamp(fragColour.a, 0.0, 1.0);
     //fragColour = vec4(1.0, 0.0, 0.0, 1.0);
 }

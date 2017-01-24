@@ -19,6 +19,16 @@ bool pointOnLine(vec2 _start, vec2 _end, vec2 _point)
     return (fabs(cp) <= 0.01f) and (abs(startToPoint.m_x) <= abs(startToEnd.m_x));
 }
 
+bool circleIntersectRectRough(vec2 _pos, float _r, vec2 _min, vec2 _dim)
+{
+    vec2 max = _min + _dim;
+    return
+            _pos.m_x + _r > _min.m_x and
+            _pos.m_x - _r < max.m_x and
+            _pos.m_y + _r > _min.m_y and
+            _pos.m_y - _r < max.m_y;
+}
+
 bool circleIntersectRect(vec2 _pos, float _r, vec2 _min, vec2 _dim)
 {
     vec2 closest = _min;

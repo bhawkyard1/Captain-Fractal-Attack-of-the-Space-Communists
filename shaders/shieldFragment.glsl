@@ -19,7 +19,7 @@ uniform float iGlobalTime;
 uniform float alpha;
 uniform vec4 inColour;
 
-layout (location = 1) out vec4 fragColour;
+layout (location = 0) out vec4 fragColour;
 
 void main()
 {
@@ -70,4 +70,5 @@ void main()
 
     float dist = distance(UV, vec2(0.5)) * 2.0;
     fragColour.a *= mix(fragColour.a, 0.0, dist);
+    fragColour.a *= alpha;
 }

@@ -83,6 +83,7 @@ public:
     /// \param _shader name of the shader program
     //----------------------------------------------------------------------------------------------------------------------
     void useShader(const std::string _shader) {ngl::ShaderLib * slib = ngl::ShaderLib::instance(); slib->use(_shader);}
+    void activeColourAttachments(const std::vector<GLenum> _bufs);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Creates a VAO, returns the id
@@ -182,10 +183,10 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void makeCurrent() const { SDL_GL_MakeCurrent(m_window, m_gl_context); }
 
-		//----------------------------------------------------------------------------------------------------------------------
-		/// \brief Clears the window
-		//----------------------------------------------------------------------------------------------------------------------
-		void clear();
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Clears the window
+    //----------------------------------------------------------------------------------------------------------------------
+    void clear();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Exits the program, prints and error message
@@ -347,20 +348,20 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Enables depth-based fragment culling
     //----------------------------------------------------------------------------------------------------------------------
-		void enableDepthTesting();
+    void enableDepthTesting();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Disables depth-based fragment culling
     //----------------------------------------------------------------------------------------------------------------------
-		void disableDepthTesting();
+    void disableDepthTesting();
 
     slot getFocus() {return m_focus;}
 
     camera * getCamera() {return &m_camera;}
 
-		void drawingDeferredElements();
-		void lightingDeferredElements();
-		void drawingNonLitElements();
+    void drawingDeferredElements();
+    void drawingNonLitElements();
+    void drawingUI();
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The window the game will be drawn in
@@ -375,22 +376,23 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Framebuffer stuff
     //----------------------------------------------------------------------------------------------------------------------
-		framebuffer m_dataFB;
-		framebuffer m_nonlitFB;
-		framebuffer m_litFB;
-		framebuffer m_smallBackgroundFB;
+    framebuffer m_dataFB;
+    framebuffer m_nonlitFB;
+    std::array<framebuffer, 3>  m_postFB;
+    framebuffer m_smallBackgroundFB;
+    framebuffer m_uiFB;
 
-		/*GLuint m_bufferBackgroundDiffuse;
+    /*GLuint m_bufferBackgroundDiffuse;
     GLuint m_bufferBackgroundDepth;
     GLuint m_bufferLitDiffuse;
     GLuint m_bufferLitNormal;
     GLuint m_bufferLitPosition;
-		GLuint m_bufferEffectsDiffuse;*/
+        GLuint m_bufferEffectsDiffuse;*/
 
-		/*GLuint m_tinyFramebuffer;
+    /*GLuint m_tinyFramebuffer;
     GLuint m_bufferDownscaledBackgroundDiffuse;
 
-		GLuint genTexture(int _width, int _height, GLint _format, GLint _internalFormat);*/
+        GLuint genTexture(int _width, int _height, GLint _format, GLint _internalFormat);*/
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container of letter sprites, can be used to draw text

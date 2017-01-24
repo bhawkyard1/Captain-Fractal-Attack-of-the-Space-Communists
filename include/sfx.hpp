@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "observer.hpp"
+#include "vectors.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file sfx.hpp
