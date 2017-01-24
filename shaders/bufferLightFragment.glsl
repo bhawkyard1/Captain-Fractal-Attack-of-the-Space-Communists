@@ -31,6 +31,7 @@ uniform vec2 iResolution;
 uniform float iGlobalTime;
 
 layout (location = 0) out vec4 fragColour;
+//layout (location = 1) out float fragDepth;
 
 float max3(vec3 _vec)
 {
@@ -111,6 +112,7 @@ void main()
     }
 
     fragColour.xyz *= lightCol;
+    //fragDepth = distance(uv, vec2(0.5));
 
     //fragColour.xyz = texture(position, uv).xyz;
 }

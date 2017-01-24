@@ -3,8 +3,8 @@
 //Stolen from
 //http://devlog-martinsh.blogspot.co.uk/2011/11/glsl-depth-of-field-with-bokeh-v21.html
 
-uniform sampler2D bgl_RenderedTexture;
-uniform sampler2D bgl_DepthTexture;
+uniform sampler2D diffuse;
+uniform sampler2D depthTex;
 uniform vec2 bgl_dim;
 
 #define PI  3.14159265
@@ -115,7 +115,7 @@ float bdepth(vec2 coords) //blurring depth
 
     for( int i=0; i<9; i++ )
     {
-        float tmp = texture(bgl_DepthTexture, coords + offset[i]).r;
+        float tmp = texture(depthTex, coords + offset[i]).r;
         d += tmp * kernel[i];
     }
 
@@ -127,9 +127,9 @@ vec3 color(vec2 coords,float blur) //processing the sample
 {
     vec3 col = vec3(0.0);
 
-    col.r = texture(bgl_RenderedTexture,coords + vec2(0.0,1.0)*texel*fringe*blur).r;
-    col.g = texture(bgl_RenderedTexture,coords + vec2(-0.866,-0.5)*texel*fringe*blur).g;
-    col.b = texture(bgl_RenderedTexture,coords + vec2(0.866,-0.5)*texel*fringe*blur).b;
+    col.r = texture(diffuse,coords + vec2(0.0,1.0)*texel*fringe*blur).r;
+    col.g = texture(diffuse,coords + vec2(-0.866,-0.5)*texel*fringe*blur).g;
+    col.b = texture(diffuse,coords + vec2(0.866,-0.5)*texel*fringe*blur).b;
 
     vec3 lumcoeff = vec3(0.299,0.587,0.114);
     float lum = dot(col.rgb, lumcoeff);
@@ -154,7 +154,7 @@ void main()
 {
     vec2 uv = gl_FragCoord.xy / bgl_dim;
 
-    float depth = texture(bgl_DepthTexture,uv).r;
+    float depth = texture(depthTex,uv).r;
 
     float blur = 0.0;
 
@@ -172,7 +172,7 @@ void main()
 
     if (autofocus)
     {
-        float fDepth = texture(bgl_DepthTexture,focus).r;
+        float fDepth = texture(depthTex,focus).r;
         blur = clamp((abs(depth - fDepth)/range) * 100.0,-maxblur,maxblur);
     }
 
@@ -181,7 +181,7 @@ void main()
     float w = (1.0/width)*blur+noise.x;
     float h = (1.0/height)*blur+noise.y;
 
-    vec3 col = texture(bgl_RenderedTexture, uv).rgb;
+    vec3 col = texture(diffuse, uv).rgb;
     float s = 1.0;
 
     int ringsamples;
@@ -205,7 +205,6 @@ void main()
         }
     }
 
-
     col /= s;
 
     fragColour.rgb = col;
@@ -217,4 +216,6 @@ void main()
 
     //fragColour.rgb = vec3(depth);
     fragColour.a = 1.0;
+
+    fragColour = texture(diffuse, uv);
 }

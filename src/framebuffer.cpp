@@ -97,7 +97,7 @@ bool framebuffer::checkComplete()
 
 void framebuffer::clear()
 {
-	activeColourAttachments( m_colorAttachments );
+	activeColourAttachments( );
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

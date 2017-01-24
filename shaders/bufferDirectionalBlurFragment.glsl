@@ -13,6 +13,7 @@ uniform vec2 vel;
 uniform vec4 used;
 
 layout (location = 0) out vec4 fragColour;
+//layout (location = 1) out float fragDepth;
 
 /*float gaussian(float _x)
 {
@@ -44,23 +45,5 @@ void main()
         fragColour = max(texture(diffuse, samplePos), fragColour);
     }
 
-    //Gaussian style blur thing around edges to hide seams because I am lazy
-    //Distance to center, blur will be stronger at the edges, and when player goes fast.
-    /*float uvdist = distance(uv, vec2(0.5, 0.5));
-    //Step size is dictated by uvdist and speed, as both approach zero step size increases (effectively reducing size of kernel)
-
-    len = length(vel) * uvdist * 0.00001;
-    //len = 0.2 * uvdist * len;
-    int steps = 1;
-    vec4 col = vec4(0.0);
-    for(float x = -len / 2.0; x < len / 2.0; x += BOX_STEP_SIZE)
-    {
-        for(float y = -len / 2.0; y < len / 2.0; y += BOX_STEP_SIZE)
-        {
-            col += texture(diffuse, uv + vec2(x, y));
-            steps++;
-        }
-    }
-    col /= (steps - 1);
-    fragColour = max(fragColour, col);*/
+    //fragDepth = 0.1 + distance(uv, vec2(0.5));
 }

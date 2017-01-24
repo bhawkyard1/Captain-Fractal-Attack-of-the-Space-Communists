@@ -214,6 +214,7 @@ renderer_ngl::renderer_ngl()
 	ngl::ShaderLib * slib = ngl::ShaderLib::instance();
 
 	createShaderProgram("bufferCopy", "backgroundVertex", "bufferCopyFragment");
+	createShaderProgram("bufferCopyDepthDiffuse", "backgroundVertex", "bufferCopyDiffAndDepthFragment");
 	createShaderProgram("bufferDirectionalBlur", "backgroundVertex", "bufferDirectionalBlurFragment");
 	createShaderProgram("bufferBlur", "backgroundVertex", "bufferBlurFragment");
 	createShaderProgram("bufferLight", "backgroundVertex", "bufferLightFragment");
@@ -243,6 +244,9 @@ renderer_ngl::renderer_ngl()
 
 	slib->use("bufferCopy");
 	slib->setRegisteredUniform("iResolution", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
+
+	slib->use("bufferBlur");
+	slib->setRegisteredUniform("bgl_dim", ngl::Vec2(static_cast<float>(g_WIN_WIDTH), static_cast<float>(g_WIN_HEIGHT)));
 
 	std::cout << "loading ships starting!\n";
 	loadShips();
@@ -1214,7 +1218,8 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
 	glBindBufferBase(GL_UNIFORM_BUFFER, index, m_lightbuffer);
 	glUniformBlockBinding(id, lightBlockIndex, index);
 
-	glBindVertexArray(m_screenQuadVAO);
+	//m_litFB.bind();
+	m_litFB.activeColourAttachments({GL_COLOR_ATTACHMENT0});
 
 	//Background draw
 	slib->use("bufferDirectionalBlur");
@@ -1223,7 +1228,8 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
 	m_nonlitFB.bindTexture(id, "background", "diffuse", 0);
 	slib->setRegisteredUniform("vel", ngl::Vec2(_vel.m_x, _vel.m_y));
 
-	//glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+	glBindVertexArray(m_screenQuadVAO);
+	glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
 	//Lighting draw.
 	slib->use("bufferLight");
@@ -1244,12 +1250,21 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
 	glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
 	//Effects draw.
-	slib->use("bufferCopy");
+	slib->use("bufferCopyDepthDiffuse");
 
-	id = slib->getProgramID("bufferCopy");
+	id = slib->getProgramID("bufferCopyDepthDiffuse");
 	m_nonlitFB.bindTexture(id, "effects", "diffuse", 0);
 
 	glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+
+	/*m_litFB.unbind();
+
+	slib->use("bufferBlur");
+	id = slib->getProgramID("bufferBlur");
+	m_nonlitFB.bindTexture(id, "diffuse", "diffuse", 0);
+	//m_nonlitFB.bindTexture(id, "depthTex", "depthTex", 1);
+
+	glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);*/
 
 	glBindVertexArray(0);
 	glActiveTexture(GL_TEXTURE0);
