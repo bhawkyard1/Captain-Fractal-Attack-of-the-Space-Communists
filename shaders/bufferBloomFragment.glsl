@@ -14,5 +14,6 @@ void main()
 {
     vec2 uv = UV + vec2(0.5);
     fragColour = texture(diffuse, uv) + texture(bloom, UV);
+    fragColour.rgb = clamp(fragColour.rgb, vec3(0.0), vec3(1.0));
     fragColour.a = 1.0;
 }

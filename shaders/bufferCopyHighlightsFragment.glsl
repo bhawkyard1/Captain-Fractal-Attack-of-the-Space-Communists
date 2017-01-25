@@ -16,6 +16,6 @@ void main()
 
     vec4 col = texture(diffuse, uv);
     col.xyz -= vec3(1.0);
-    col.xyz = clamp(col.xyz, vec3(0.0), vec3(1.0));
+    col.xyz = max(col.xyz, vec3(0.0));
     fragColour = col;
 }

@@ -551,8 +551,11 @@ void universe::update(float _dt)
         //std::cout << i.getIdentifier() << ", " << i.getWealth() << '\n';
         i.setWVel(m_vel);
 
+        debug("economy");
         i.updateEconomy(_dt);
+        debug("deployment");
         i.updateDeployment(m_factions);
+        debug("tactics");
         i.updateTactics(_dt, m_factions, m_agents.m_objects);
 
         spawnSquad(i.getTeam(), 20000.0f, 60000.0f, i.getDeployed());
@@ -1002,7 +1005,7 @@ void universe::draw(float _dt)
         }
     }
     m_drawer.useShader("explosion");
-    m_drawer.drawExplosions( );
+    //m_drawer.drawExplosions( );
     m_drawer.clearVectors( );
 
     if(g_GRAPHICAL_DETAIL > 1)
@@ -1029,11 +1032,11 @@ void universe::draw(float _dt)
 
     //Shields
     if(m_ply.getShieldGlow() > 1 and !g_GAME_OVER)
-        m_drawer.drawShield(m_ply.getInterpolatedPosition(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), m_ply.getShieldGlow() / 255.0f, {{0.1f, 0.4f, 1.0f, 1.0f}});
+        m_drawer.drawShield(m_ply.getInterpolatedPosition(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), {{0.1f, 0.4f, 1.0f, m_ply.getShieldGlow() / 255.0f}});
     for(auto &i : m_agents.m_objects)
     {
         if(i.getShieldGlow() <= 1) continue;
-        m_drawer.drawShield(i.getInterpolatedPosition(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldGlow() / 255.0f, i.getShieldCol());
+        m_drawer.drawShield(i.getInterpolatedPosition(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldCol());
     }
     //for(auto &i : m_missiles)
 

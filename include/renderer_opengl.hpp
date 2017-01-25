@@ -233,7 +233,7 @@ public:
     /// \param _alpha transparency
     /// \param _col colour tint
     //----------------------------------------------------------------------------------------------------------------------
-    void drawShield(const vec3 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col);
+    void drawShield(const vec3 _p, const float _r, const float _dt, const std::array<float, 4> _col);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them with a laser shader

@@ -16,7 +16,6 @@ in vec2 UV;
 in vec3 normal;
 
 uniform float iGlobalTime;
-uniform float alpha;
 uniform vec4 inColour;
 
 layout (location = 0) out vec4 fragColour;
@@ -65,10 +64,13 @@ void main()
     colour *= colour * 3.0;
     colour *= 1.0 - v;
 
+    colour.rgb = clamp(colour.rgb, vec3(0.0), vec3(1.0));
+
     //output final colour
     fragColour = colour;
 
     float dist = distance(UV, vec2(0.5)) * 2.0;
-    fragColour.a *= mix(fragColour.a, 0.0, dist);
-    fragColour.a *= alpha;
+    fragColour.a = mix(0.0, fragColour.a, dist);
+    fragColour.a *= inColour.a;
+    fragColour.a = clamp(fragColour.a, 0.0, 1.0);
 }

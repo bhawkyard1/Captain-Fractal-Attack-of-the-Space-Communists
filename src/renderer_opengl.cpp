@@ -536,7 +536,7 @@ void renderer_ngl::drawLines(const float _width)
         glLineWidth(1.0f);
 }*/
 
-void renderer_ngl::drawShield(const vec3 _p, const float _r, const float _dt, const float _alpha, const std::array<float, 4> _col)
+void renderer_ngl::drawShield(const vec3 _p, const float _r, const float _dt, const std::array<float, 4> _col)
 {
     ngl::ShaderLib * slib = ngl::ShaderLib::instance();
 
@@ -546,7 +546,6 @@ void renderer_ngl::drawShield(const vec3 _p, const float _r, const float _dt, co
 
     slib->use("shield");
     slib->setRegisteredUniform("iGlobalTime", _dt);
-    slib->setRegisteredUniform("alpha", _alpha);
     slib->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
     loadMatricesToShader();
 
@@ -1172,8 +1171,8 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     glBindBufferBase(GL_UNIFORM_BUFFER, index, m_lightbuffer);
     glUniformBlockBinding(id, lightBlockIndex, index);
 
-    m_postFB[0].bind();
-    m_postFB[0].activeColourAttachments();
+    m_postFB[2].bind();
+    m_postFB[2].activeColourAttachments();
 
     //Background draw
     slib->use("bufferDirectionalBlur");
@@ -1212,9 +1211,9 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
     //Post effect blur
-		m_postFB[0].unbind();
+    m_postFB[2].unbind();
 
-		/*slib->use("bufferBlur");
+    /*slib->use("bufferBlur");
     id = slib->getProgramID("bufferBlur");
     m_postFB[0].bindTexture(id, "diffuse", "diffuse", 0);
 
@@ -1223,11 +1222,13 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     SDL_GetMouseState(&x, &y);
     slib->setRegisteredUniform( "mousePos", ngl::Vec2(x / (float)m_w, (m_h - y) / (float)m_h));
     slib->setRegisteredUniform( "vel", mag(_vel) );
+    */
 
     //Draw into our last posteffect buffer
-    m_postFB[2].bind();
+    /*m_postFB[2].bind();
+    m_postFB[0].bindTexture(id, "diffuse", "diffuse", 0);
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
-    m_postFB[2].unbind();
+    m_postFB[2].unbind();*/
 
     //Copy that image into the first posteffect buffer.
     slib->use("bufferCopyHighlights");
@@ -1259,13 +1260,13 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     m_postFB[2].bindTexture(id, "diffuse", "diffuse", 0);
     m_postFB[static_cast<size_t>(horizontal)].bindTexture(id, "diffuse", "bloom", 1);
 
-		glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);*/
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
-		slib->use("bufferCopy");
-		id = slib->getProgramID("bufferCopy");
-		m_postFB[0].bindTexture(id, "diffuse", "diffuse", 0);
+    /*slib->use("bufferCopy");
+    id = slib->getProgramID("bufferCopy");
+    m_postFB[0].bindTexture(id, "diffuse", "diffuse", 0);
 
-		glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);*/
 
     //Comp UI
     slib->use("bufferCopy");
