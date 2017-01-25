@@ -1212,9 +1212,9 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
     //Post effect blur
-    m_postFB[0].unbind();
+		m_postFB[0].unbind();
 
-    slib->use("bufferBlur");
+		/*slib->use("bufferBlur");
     id = slib->getProgramID("bufferBlur");
     m_postFB[0].bindTexture(id, "diffuse", "diffuse", 0);
 
@@ -1259,7 +1259,13 @@ void renderer_ngl::drawCustomBuffers(const float _t, const vec2 _vel)
     m_postFB[2].bindTexture(id, "diffuse", "diffuse", 0);
     m_postFB[static_cast<size_t>(horizontal)].bindTexture(id, "diffuse", "bloom", 1);
 
-    glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
+		glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);*/
+
+		slib->use("bufferCopy");
+		id = slib->getProgramID("bufferCopy");
+		m_postFB[0].bindTexture(id, "diffuse", "diffuse", 0);
+
+		glDrawArraysEXT(GL_TRIANGLE_FAN, 0, 4);
 
     //Comp UI
     slib->use("bufferCopy");
