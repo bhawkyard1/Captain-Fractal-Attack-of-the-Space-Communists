@@ -22,7 +22,6 @@ void inputMap::update(const std::vector<SDL_Event> &_events)
         switch( event.type )
         {
         case SDL_KEYDOWN:
-            std::cout << "key down! " << '\n';
             m_keys[SDL_GetScancodeFromKey( event.key.keysym.sym )] = true;
             m_keyEvents[SDL_GetScancodeFromKey( event.key.keysym.sym )] = INPUT_EVENT_PRESS;
             break;
