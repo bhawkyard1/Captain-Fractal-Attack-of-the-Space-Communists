@@ -65,6 +65,7 @@ OTHER_FILES += readme.md \
             += ./resources/menus/*.txt \
             += ./resources/ships/*.txt \
             += ./resources/weapons/*.txt \
+            += ./resources/config.txt
 
 CONFIG += console
 

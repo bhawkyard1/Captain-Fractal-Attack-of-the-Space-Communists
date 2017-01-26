@@ -35,6 +35,7 @@ button::button(const std::string _txt,
 	m_cost = -1;
 
 	m_dcol = col255to1(m_col);
+    m_interpolate = false;
 }
 
 button::button(const std::string _txt,
@@ -63,6 +64,7 @@ button::button(const std::string _txt,
 	m_cost = -1;
 
 	m_dcol = col255to1(m_col);
+    m_interpolate = false;
 }
 
 button::button(
@@ -93,17 +95,19 @@ button::button(
 	m_cost = _pcost;
 
 	m_dcol = col255to1(m_col);
+    m_interpolate = false;
 }
 
 void button::update(const int _pts, const vec2 _mouse, const float _interp)
 {
-	if(m_label == "TRADE")
-		std::cout << m_pos.m_x << ", " << m_pos.m_y << " vs " << _mouse.m_x << ", " << _mouse.m_y << '\n';
-
 	for(int i = 0; i < 4; ++i) m_dcol[i] = static_cast<float>(m_col[i]);
 
-	m_pos = _interp * m_end + (1.0f - _interp) * m_start;
+    if(m_interpolate)
+        m_pos = _interp * m_end + (1.0f - _interp) * m_start;
 
+    /*if(m_label == "TRADE")
+        std::cout << m_pos.m_x << ", " << m_pos.m_y << " vs " << _mouse.m_x << ", " << _mouse.m_y << " int " << pointInRect(_mouse, m_pos, m_dim) << '\n';
+*/
 	if(_pts >= m_cost)
 	{
 		m_state = BUTTON_STATE_DEFAULT;

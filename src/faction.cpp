@@ -414,4 +414,15 @@ void faction::resetSquads()
 	}
 }
 
+/*squad * faction::getSquad(size_t _i)
+{
+    if(m_squads.size() > _i)
+        return &m_squads[_i];
+    else
+    {
+        addSquad( squad() );
+        return &m_squads.back();
+    }
+}*/
+
 #endif

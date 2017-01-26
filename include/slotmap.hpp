@@ -41,6 +41,9 @@ struct slot
 bool operator ==(const slot &_lhs, const slot &_rhs);
 bool operator !=(const slot &_lhs, const slot &_rhs);
 
+template<class T>
+struct slotID;
+
 template<class t>
 class slotmap
 {
@@ -142,6 +145,7 @@ public:
     size_t size() const {return m_objects.size();}
 
     slot getID(size_t _i) const {return m_ids[_i];}
+    slotID<t> getSlotID(size_t _i) const {return slotID<t>(m_ids[_i].m_id, m_ids[_i].m_version, this);}
     size_t getIndex(slot _id) const {return m_indirection[ _id.m_id ].m_id;}
 
     t operator [](size_t _i) const {return m_objects[_i];}
@@ -188,7 +192,16 @@ struct slotID : public slot
         m_address = _src;
     }
 
+    slotID(slot _s, slotmap<T> * _src) : slot(_s.m_id, _s.m_version)
+    {
+        m_address = _src;
+    }
+
+    slotID(const slotID &_other) = default;
+
     slotmap<T> * m_address;
+
+    T * get() {return m_address->getByID( slot(m_id, m_version) );}
 };
 
 #endif

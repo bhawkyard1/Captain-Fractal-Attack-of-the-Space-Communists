@@ -16,7 +16,7 @@ enemy::enemy(
     m_stopDist = randNum(200.0f,600.0f);
     m_aggroRadius = randNum(2000.0f, 2200.0f);
     if(_type == PLAYER_MINER_DROID) m_stopDist = randNum(20.0f, 60.0f);
-    m_target = nullptr;
+    m_target = aiTarget();
     m_curGoal = GOAL_IDLE;
     m_team = _team;
     m_confidence = randNum(5.0f, 20.0f);
@@ -24,18 +24,18 @@ enemy::enemy(
     m_tPos = getPos();
 }
 
-void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
+void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
 {
     debug("target acquisition start");
-    ship * curTarget = m_target;
-    slot curTargetID = m_targetID;
-    m_target = nullptr;
+    aiTarget curTarget = m_target;
+    m_target = aiTarget();
 
     enemy * lastAttacker = _enemies.getByID( getLastAttacker() );
 
     if(getType() != SHIP_TYPE_MINER)
     {
         //Lowest weight wins.
+        //Enemy targeting.
         float bestWeight = F_INF;
         for(size_t i = 0; i < _enemies.m_objects.size(); ++i)
         {
@@ -55,18 +55,21 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std:
             //Do not target enemies shooting by sideways.
             //weight /= clamp( dotProdUnit(getVel(), _enemies[i].getVel()), 0.001f, 1.0f );
             //If this is the agent's current target, prioritise.
-            if(curTarget != nullptr and curTargetID == _enemies.getID(i)) weight /= 3.0f;
+            if(curTarget.get() != nullptr and  curTarget.get() == &_enemies[i] )
+                weight /= 3.0f;
             //Pursue last attacker.
-            if( lastAttacker != nullptr and lastAttacker == &_enemies[i] ) weight /= 2.0f;
+            if( lastAttacker != nullptr and lastAttacker == &_enemies[i] )
+                weight /= 2.0f;
 
             if(weight < bestWeight)
             {
                 bestWeight = weight;
-                m_target = (ship*)&_enemies[i];
+                m_target.setAgent( slotID<ship>(  _enemies.getID(i), reinterpret_cast<slotmap<ship>*>(&_enemies) ) );
                 setGoal(GOAL_ATTACK);
             }
         }
 
+        //Player targeting
         if( _factions[getTeam()].isEnemy(TEAM_PLAYER) and !g_GAME_OVER )
         {
             float weight = magns(getPos() - _ply.getPos());
@@ -86,22 +89,24 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std:
                 if(weight < bestWeight)
                 {
                     bestWeight = weight;
-                    m_target = (ship*)&_ply;
+                    m_target.setPlayer( (ship*)&_ply );
                     setGoal(GOAL_ATTACK);
                 }
             }
         }
+
+
     }
     else
     {
         float bestDist = F_INF;
         //Find the closest asteroid.
-        for(auto &k : _asteroids)
+        for(size_t i = 0; i < _asteroids.size(); ++i)
         {
-            float nd = magns(getPos() - k.getPos());
+            float nd = magns(getPos() - _asteroids[i].getPos());
             if(nd < bestDist)
             {
-                setTarget( (ship*)&k );
+                m_target.setAsteroid( _asteroids.getID( i ) );
                 setGoal(GOAL_ATTACK);
                 bestDist = nd;
             }
@@ -170,6 +175,24 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std:
                     best = temp;
                     setTarget(&i);
                     setGoal(GOAL_TRADE);
+                }
+            }
+        }
+    }
+
+    //If fleeing, look for a place to conduct repairs.
+    if(m_curGoal == GOAL_FLEE)
+    {
+        float m = F_INF;
+        for(auto &e : _enemies)
+        {
+            if( e.canStoreShips() )
+            {
+                float d = magns( e.getPos() - getPos() );
+                if(d < m)
+                {
+                    m = d;
+                    setGoal
                 }
             }
         }

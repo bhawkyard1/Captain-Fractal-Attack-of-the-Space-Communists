@@ -129,10 +129,10 @@ void readVectorEnemy(std::string _str, universe * _u)
         type = std::stof(stat[0]);
         team = std::stof(stat[1]);
 
-        slot id, parentID;
         stat = split(stats[2], ',');
-        id = {std::stoi(stat[0]), std::stoi(stat[1])};
-        parentID = {std::stoi(stat[2]), std::stoi(stat[3])};
+        slotmap<ship> * container = reinterpret_cast< slotmap<ship> *>(_u->getAgents());
+        slotID<ship> id  (std::stoi(stat[0]), std::stoi(stat[1]), container);
+        slotID<ship> parentID (std::stoi(stat[2]), std::stoi(stat[3]), container);
 
         vec3 parentOffset;
         stat = split(stats[3], ',');

@@ -52,7 +52,7 @@ public:
     /// \brief Returns whether a click at a specific point has selected a button.
     /// \param _p position of mouse.
     //----------------------------------------------------------------------------------------------------------------------
-    bool click(vec2 _p);
+    bool click(vec2 _mouse);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns a pointer to the button at a specific index.

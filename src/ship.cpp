@@ -2,28 +2,7 @@
 #include "weapons.hpp"
 #include "vectors.hpp"
 
-std::vector<tinfo> g_texture_keys = {
-    {"COMMUNIST_1", 32}, {"COMMUNIST_2", 32}, {"COMMUNIST_CAPITAL", 1024},
-    {"COMMUNIST_TURRET", 16},
-    {"FEDERATION_MKI", 32}, {"FEDERATION_MKII", 32}, {"FEDERATION_MKIII", 32}, {"FEDERATION_MKIV", 32}, {"FEDERATION_GUNSHIP", 64}, {"FEDERATION_CAPITAL", 1024},
-    {"FEDERATION_TURRET", 16},
-    {"PIRATE_GNAT", 32}, {"PIRATE_CRUISER", 32}, {"PIRATE_WRANGLER", 40}, {"PIRATE_MARAUDER", 40}, {"PIRATE_GUNSHIP", 64}, {"PIRATE_CAPITAL", 1024},
-    {"PIRATE_TURRET", 16},
-    {"ALLIANCE_SCOUT", 32}, {"ALLIANCE_TRACKER", 32}, {"ALLIANCE_PHOENIX", 35}, {"ALLIANCE_DRAGON", 45}, {"ALLIANCE_GUNSHIP", 64},
-    {"ALLIANCE_TRADER", 64},
-    {"ALLIANCE_TURRET", 16}, {"ALLIANCE_GRAVWELL", 128}, {"ALLIANCE_BARRACKS", 512}, {"ALLIANCE_STATION", 2048},
-    {"PLAYER_HUNTER", 32}, {"PLAYER_DEFENDER", 32}, {"PLAYER_DESTROYER", 32}, {"PLAYER_GUNSHIP", 64}, {"PLAYER_CAPITAL", 1024},
-    {"PLAYER_MINER_DROID", 16},
-    {"PLAYER_TURRET", 16}, {"PLAYER_GRAVWELL", 256}, {"PLAYER_BARRACKS", 512}, {"PLAYER_STATION", 1024},
-    {"PLAYER_SHIP", 32},
-    {"ION_MISSILE_MKI", 16},
-    {"ASTEROID_SMALL", 32}, {"ASTEROID_MID", 64}, {"ASTEROID_LARGE", 128},
-    {"SHIPS_END", 1}
-};
-
 std::vector<ship> g_ship_templates;
-
-std::string getTextureKey(ship_spec _s) {return g_texture_keys[_s].m_name;}
 
 ship::ship()
 {
@@ -50,7 +29,7 @@ ship::ship()
     m_weaponRange = {0, 0};
 
     m_hasParent = false;
-    m_parent = {0, -1};
+    m_parent = slotID<ship>();
     m_parentOffset = {0.0f, 0.0f, 0.0f};
 
     for(short unsigned int i = 0; i < UPGRADES_LEN; i++) m_upgrades[i] = 0;
@@ -73,14 +52,6 @@ ship::ship()
 
     m_angVelRange = {0, 0};
     m_angVel = 0.0f;
-    /*if(m_type == SHIP_TYPE_NONE)
-    {
-        m_angVel = randNum(-1.0f, 1.0f);
-    }
-    else if(m_type == SHIP_TYPE_STRUCTURE)
-    {
-        m_angVel = randNum(-10.0f, 10.0f);
-    }*/
 
     m_priority = PRIORITY_NONE;
 
@@ -90,6 +61,9 @@ ship::ship()
 
     m_kills = 0;
     m_experience = 0.0f;
+
+    m_docked = false;
+    m_maxShipStorage = 0;
 }
 
 ship::ship(
@@ -157,6 +131,9 @@ ship::ship(
 
     m_kills = 0;
     m_experience = 0.0f;
+
+    m_docked = false;
+    m_maxShipStorage = _src.m_maxShipStorage;
 }
 
 void ship::accelerate(const float _mult)
@@ -244,6 +221,21 @@ void ship::decelerate()
     setAccelerating(true);
 }
 
+void ship::damage(float _d)
+{
+    if(getShield() - _d > 0.0f) m_shieldGlow = 255.0f;
+
+    float shieldDmg = clamp(_d, 0.0f, getShield());
+    _d -= shieldDmg;
+    setShield(getShield() - shieldDmg);
+
+    float healthDmg = clamp(_d, 0.0f, getHealth());
+    _d -= healthDmg;
+    setHealth(getHealth()-healthDmg);
+
+    m_damageTimer = 10.0f;
+}
+
 void ship::dodge(const float _side)
 {
     float energyLoss = 0.2, accelMult = 1;
@@ -263,6 +255,72 @@ void ship::dodge(const float _side)
     vec2 avec = vec(getAng());
     addForce( vec3(avec.m_x, avec.m_y, 0.0f) * _side * accelMult * m_inertia * m_enginePower );
     m_energy -= energyLoss * fabs(_side);
+}
+
+void ship::setFiring(const bool _v)
+{
+    m_shooting = _v;
+    if(_v)
+    {
+        m_damageTimer = 3.0f;
+    }
+}
+
+float ship::damage(float _d, const vec3 _v)
+{
+    float ret = 0.0f;
+    //Shots to the rear do more damage.
+    if(m_canMove)
+    {
+        _d *= (dotProd( tovec3(vec(m_angle + 90.0f)), unit(_v) ) / 2.0f) + 1.5f;
+        vec3 add = {_v.m_x, _v.m_y, 0.0f};
+        addForce(add * m_inertia);
+    }
+
+    ret = _d;
+
+    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
+
+    float shieldDmg = clamp(_d, 0.0f, getShield());
+    _d -= shieldDmg;
+    setShield(getShield() - shieldDmg);
+
+    float healthDmg = clamp(_d, 0.0f, getHealth());
+    _d -= healthDmg;
+    setHealth(getHealth()-healthDmg);
+
+    m_damageTimer = 10.0f;
+
+    return ret;
+}
+
+float ship::damage(float _d, const vec3 _v, slot _id)
+{
+    float ret = 0.0f;
+    //Shots to the rear do more damage.
+    if(m_canMove)
+    {
+        _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
+        vec3 add = {_v.m_x, _v.m_y, 0.0f};
+        addForce(add * m_inertia);
+    }
+
+    ret = _d;
+
+    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
+
+    float shieldDmg = clamp(_d, 0.0f, getShield());
+    _d -= shieldDmg;
+    setShield(getShield() - shieldDmg);
+
+    float healthDmg = clamp(_d, 0.0f, getHealth());
+    _d -= healthDmg;
+    setHealth(getHealth()-healthDmg);
+
+    m_damageTimer = 10.0f;
+    m_lastAttacker = _id;
+
+    return ret;
 }
 
 void ship::update(const float _dt)
@@ -324,85 +382,22 @@ void ship::update(const float _dt)
     if(m_cargo.isVisible()) m_cargo.update(_dt);
 }
 
-void ship::setFiring(const bool _v)
+void ship::setGrade(
+        const int _i,
+        const int _v
+        )
 {
-    m_shooting = _v;
-    if(_v)
-    {
-        m_damageTimer = 3.0f;
-    }
+    for(int k = 0; k < _v; ++k) upgrade(_i);
 }
 
-void ship::damage(float _d)
-{           
-    if(getShield() - _d > 0.0f) m_shieldGlow = 255.0f;
-
-    float shieldDmg = clamp(_d, 0.0f, getShield());
-    _d -= shieldDmg;
-    setShield(getShield() - shieldDmg);
-
-    float healthDmg = clamp(_d, 0.0f, getHealth());
-    _d -= healthDmg;
-    setHealth(getHealth()-healthDmg);
-
-    m_damageTimer = 10.0f;
-}
-
-float ship::damage(float _d, const vec3 _v)
+void ship::store(slotID<ship> _dockee)
 {
-    float ret = 0.0f;
-    //Shots to the rear do more damage.
-    if(m_canMove)
-    {
-        _d *= (dotProd( tovec3(vec(m_angle + 90.0f)), unit(_v) ) / 2.0f) + 1.5f;
-        vec3 add = {_v.m_x, _v.m_y, 0.0f};
-        addForce(add * m_inertia);
-    }
+    if(!canStoreShips())
+        return;
 
-    ret = _d;
-
-    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
-
-    float shieldDmg = clamp(_d, 0.0f, getShield());
-    _d -= shieldDmg;
-    setShield(getShield() - shieldDmg);
-
-    float healthDmg = clamp(_d, 0.0f, getHealth());
-    _d -= healthDmg;
-    setHealth(getHealth()-healthDmg);
-
-    m_damageTimer = 10.0f;
-
-    return ret;
-}
-
-float ship::damage(float _d, const vec3 _v, slot _id)
-{
-    float ret = 0.0f;
-    //Shots to the rear do more damage.
-    if(m_canMove)
-    {
-        _d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
-        vec3 add = {_v.m_x, _v.m_y, 0.0f};
-        addForce(add * m_inertia);
-    }
-
-    ret = _d;
-
-    if(getShield() - _d > 0) m_shieldGlow = 255.0f;
-
-    float shieldDmg = clamp(_d, 0.0f, getShield());
-    _d -= shieldDmg;
-    setShield(getShield() - shieldDmg);
-
-    float healthDmg = clamp(_d, 0.0f, getHealth());
-    _d -= healthDmg;
-    setHealth(getHealth()-healthDmg);
-
-    m_damageTimer = 10.0f;
-    m_lastAttacker = _id;
-
-    return ret;
+    m_dockedShips.push_back( _dockee );
+    _dockee.get()->setDocked(true);
+    //_dockee.get()->setParent(  );
 }
 
 int ship::upgrade(const int _i)
@@ -466,14 +461,6 @@ int ship::upgrade(const int _i)
     return m_upgrades[_i];
 }
 
-void ship::setGrade(
-        const int _i,
-        const int _v
-        )
-{
-    for(int k = 0; k < _v; ++k) upgrade(_i);
-}
-
 int ship::getScore() const
 {
     return static_cast<int>((m_maxHealth + m_maxShield + m_maxEnergy) / 100.0f);
@@ -507,7 +494,7 @@ float ship::getCurWeapStat(WEAPON_STAT _ws) const
     return 0.0f;
 }
 
-void ship::setParent(slot _p)
+void ship::setParent(slotID<ship> _p)
 {
     m_parent = _p;
     if(_p.m_version != -1)

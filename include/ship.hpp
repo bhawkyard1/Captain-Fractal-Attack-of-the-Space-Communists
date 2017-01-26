@@ -87,22 +87,6 @@ struct tinfo
 };
 
 //----------------------------------------------------------------------------------------------------------------------
-/// \brief A global long unsigned int, increments on each ship creation, gives a new ID to use.
-//----------------------------------------------------------------------------------------------------------------------
-//extern long unsigned int g_shipIDCounter;
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief A global vector, containing texture identifiers and their radii.
-//----------------------------------------------------------------------------------------------------------------------
-extern std::vector<tinfo> g_texture_keys;
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief Returns an identifier from a ship type, which we can look up the radius for in g_texture_keys.
-/// \param _s ship type
-//----------------------------------------------------------------------------------------------------------------------
-std::string getTextureKey(ship_spec _s);
-
-//----------------------------------------------------------------------------------------------------------------------
 /// \class ship
 /// \brief Inherits from ship, contains data such as weapon type, engine power, shield strength. It does not, however, contain any functionality to behave autonomously.
 //----------------------------------------------------------------------------------------------------------------------
@@ -405,8 +389,8 @@ public:
     /// \brief Getters and setters for parents.
     //----------------------------------------------------------------------------------------------------------------------
     bool hasParent() const {return m_hasParent;}
-    slot getParent() const {return m_parent;}
-    void setParent(slot _p);
+    slotID<ship> getParent() const {return m_parent;}
+    void setParent(slotID<ship> _p);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for parent offsets.
@@ -445,6 +429,14 @@ public:
 
     void setAttachmentPoints(std::vector<vec3> _pts) {m_attachmentPoints = _pts;}
     std::vector<vec3> getAttachmentPoints() const {return m_attachmentPoints;}
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief A given ship inside this one.
+    //----------------------------------------------------------------------------------------------------------------------
+    void store(slotID<ship> _dockee);
+    bool canStoreShips() const {return m_maxShipStorage > 0 and m_dockedShips.size() < m_maxShipStorage;}
+    void setDocked(const bool _docked) {m_docked = _docked;}
+    bool getDocked() const {return m_docked;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.
@@ -613,12 +605,19 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The parent ships unique ID.
     //----------------------------------------------------------------------------------------------------------------------
-    slot m_parent;
+    slotID<ship> m_parent;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Attachment points, for turrets.
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<vec3> m_attachmentPoints;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    /// \brief Ships docked inside this one.
+    //----------------------------------------------------------------------------------------------------------------------
+    size_t m_maxShipStorage;
+    std::vector<slotID<ship>> m_dockedShips;
+    bool m_docked;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The offset from the parent ship.

@@ -135,8 +135,9 @@ void universe::update(float _dt)
 
 	debug("updates start");
 
+    //Rollovers and stuff.
 	m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
-
+    //Clicking and buttons.
 	processInputMap();
 
 	m_ply.updatePos(_dt);
@@ -472,6 +473,12 @@ void universe::update(float _dt)
 			removeFromSquad(&m_agents[e]);
 			m_agents[e].setGoal(GOAL_FLEE);
 		}
+
+        if(m_agents[e].getGoal() == GOAL_FLEE and m_agents[e].getHealth() > m_agents[e].getConfidence())
+        {
+            addToSquad( &m_agents[e], m_factions[m_agents[e].getTeam()].getBackSquad() );
+            m_agents[e].setGoal( GOAL_IDLE );
+        }
 
 		debug("shooting");
 		if(m_agents[e].isFiring() and m_agents[e].getCooldown() <= 0)
@@ -830,6 +837,7 @@ void universe::processInputMap()
 	}
 	else if(!m_inputs.key(SDLK_LCTRL))
 	{
+        //Make the player shoot if lmb + !ctrl
 		m_ply.setFiring(m_inputs.lmb());
 
 		if(m_inputs.rmb() and m_ply.getMissiles() > 0)
@@ -1131,7 +1139,7 @@ void universe::drawUI(const float _dt)
 		if(contextPtr != nullptr)
 		{
 			vec3 csp = contextPtr->getPos();
-			//csp = tovec3(toWorldSpace(tovec2(csp)));
+            //csp = tovec3(toWorldSpace(tovec2(csp)));
 
 			//Clamp this position to the screen.
 			vec2 offset = {256.0f, 256.0f};
@@ -1152,7 +1160,7 @@ void universe::drawUI(const float _dt)
 			infoCard->setPos(tovec2(csp));
 			for(auto &i : *(infoCard->getButtons()))
 			{
-				vec2 pos = i.getPos();
+                vec2 pos = i.getStart();
 				pos += tovec2( csp );
 				i.setPos( pos );
 				//m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
@@ -1219,12 +1227,10 @@ void universe::drawUI(const float _dt)
 			infoCard->setVisible(false);
 		}
 
-		//std::cout << "draw cargo\n";
 		if(contextPtr != nullptr and contextPtr->getCargo()->isVisible())
 		{
 			m_drawer.useShader("plain");
 			vec2 dim = contextPtr->getCargo()->getDim();
-			//std::cout << "drawing cargo!!" << dim.m_x << ", " << dim.m_y << '\n';
 			m_drawer.addRect(contextPtr->getInterpolatedPosition(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
 			m_drawer.drawRects(true);
 			m_drawer.clearVectors();
@@ -1233,13 +1239,10 @@ void universe::drawUI(const float _dt)
 			//CRASH HERE
 			for(auto &i : contextPtr->getCargo()->getItems()->m_objects)
 			{
-				//std::cout <<  "pre\n" << i.getIdentifier() << "\npost\n";
 				m_drawer.drawAsset(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
-				//std::cout << "draw post\n";
 			}
 			m_drawer.useShader("plain");
 		}
-		//std::cout << "draw cargo end\n";
 	}
 
 	if(m_ply.getCargo()->isVisible())
@@ -1262,7 +1265,7 @@ void universe::drawUI(const float _dt)
 	for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
 	{
 		if(!i->isVisible()) continue;
-		m_drawer.addRect( tovec3(i->getPos() + i->getDim() * 0.5f), i->getDim(), 0.0f, {{1, 0, 0, .5f}} );
+        //m_drawer.addRect( tovec3(i->getPos() + i->getDim() * 0.5f), i->getDim(), 0.0f, {{1, 0, 0, .5f}} );
 		for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
 		{
 			std::array<float, 4> col = j->getDrawCol();
@@ -2354,7 +2357,9 @@ squad * universe::getSquadFromID(aiTeam _t, slot _id)
 
 void universe::shipAddParent(size_t _index, ship * _child, vec3 _offset)
 {
-	_child->setParent( m_agents.getID(_index) );
+    slot s = m_agents.getID(_index);
+    slotmap<ship> * ptr = reinterpret_cast<slotmap<ship> *> (&m_agents);
+    _child->setParent( slotID<ship>(s.m_id, s.m_version, ptr)  );
 	_child->setParentOffset(_offset);
 }
 
@@ -2404,10 +2409,9 @@ selectionReturn universe::handleMouseDownInput(vec2 _mouse)
 	enemy * contextShip = m_agents.getByID(m_contextShip);
 	if(contextShip != nullptr)
 	{
+
 		//If the context ship exists and its inventory is open, test against it.
-		//If the test fails, deselect context ship.
-		if(contextShip->getCargo()->isVisible() and
-			 !contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems))
+        if(!contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems))
 			m_contextShip = {0, -1};
 	}
 	else

@@ -1,6 +1,7 @@
 #ifndef ENEMY_HPP
 #define ENEMY_HPP
 
+#include "aiTarget.hpp"
 #include "aiTypes.hpp"
 #include "faction.hpp"
 #include "player.hpp"
@@ -37,7 +38,7 @@ public:
   void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
 
-  void targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const std::vector<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
+  void targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Updates the behaviour of the agent, based on any target it has, and its relative position
@@ -59,8 +60,7 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter and setter for the target
   //----------------------------------------------------------------------------------------------------------------------
-  ship * getTarget() const {return m_target;}
-  void setTarget(ship * _t) {m_target = _t;}
+  ship * getTarget() {return m_target.get();}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getters and setters for confidence
@@ -100,8 +100,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief A reference to the current target. Since the target need not be another enemy, it is of type ship
   //----------------------------------------------------------------------------------------------------------------------
-  ship * m_target;
-  slot m_targetID;
+  aiTarget m_target;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The distance this agent will attempt to hold around its target

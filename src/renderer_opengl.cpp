@@ -63,7 +63,7 @@ renderer_ngl::renderer_ngl()
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 0, 0,
                                 m_w, m_h,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_FULLSCREEN*/ );
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN );
 
     if(!m_window)
     {

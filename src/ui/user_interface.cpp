@@ -16,16 +16,8 @@ selectionReturn userInterface::handleInput(vec2 _pos)
 	button * b = nullptr;
 
 	for(size_t i = 0; i < m_elements.size(); ++i)
-	{
-		vec2 t = _pos;
-		if(m_elements[i].inWorldSpace())
-		{
-			//t = toWorldSpace( _pos );
-			std::cout << "ws click at " << i << " : " << t.m_x << ", " << t.m_y << " vs " <<
-									 m_elements[i].getPos().m_x << ", " << m_elements[i].getPos().m_y << '\n';
-		}
-
-		if(!m_elements[i].click( t ))
+	{        
+        if(!m_elements[i].click( _pos ))
 			continue;
 
 		for(size_t j = 0; j < m_elements[i].getButtons()->size(); ++j)
@@ -82,5 +74,6 @@ void userInterface::reset()
 
 void userInterface::update(const float _s, const vec2 _mouse)
 {
-	for(auto &i : m_elements) i.update(_s, _mouse);
+    for(auto &i : m_elements)
+        i.update(_s, _mouse);
 }

@@ -292,12 +292,6 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void addLine(const vec3 _start, const vec3 _end, const float _width, const std::array<float, 4> _lCol);
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Gets the radius of a ship
-    /// \param _type the type of ship (types defined in ship header)
-    //----------------------------------------------------------------------------------------------------------------------
-    float getTextureRadius(ship_spec _type) {return g_texture_keys[(_type)].m_radius;}
-
     //UI drawing
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Draws the minimap

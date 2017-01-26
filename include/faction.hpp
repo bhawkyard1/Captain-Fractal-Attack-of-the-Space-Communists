@@ -98,6 +98,7 @@ public:
     slot addSquad(const squad _s) {return m_squads.push_back(_s);}
     squad * getSquad(slot _id) {return m_squads.getByID(_id);}
     slot getBackSquad() {return m_squads.backID();}
+    squad * getSquad(size_t _id);
     const std::vector<squad> & getSquads() const {return m_squads.m_objects;}
 
     void resetSquads();
@@ -165,6 +166,7 @@ private:
 
     slotmap<squad> m_squads;
 
+    //We need this to update squad target positions. It isn't entirely me being an idiot.
     vec3 m_wvel;
 
     std::array<float, RESOURCE_NULL> m_resourceDemand;

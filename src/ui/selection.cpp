@@ -1,3 +1,4 @@
+#include "common.hpp"
 #include "util.hpp"
 #include "ui/selection.hpp"
 
@@ -22,9 +23,13 @@ selection::selection(selectionType _type)
 	m_worldSpace = false;
 }
 
-bool selection::click(vec2 _p)
+bool selection::click(vec2 _mouse)
 {
-	if(!m_visible or !pointInRect(_p, m_pos, m_dim))
+    vec2 t = _mouse;
+    if(m_worldSpace)
+        t = toWorldSpace( t );
+
+    if(!m_visible or !pointInRect(t, m_pos, m_dim))
 	{
 		for(auto &i : m_buttons)
 			i.set(false);
@@ -36,7 +41,7 @@ bool selection::click(vec2 _p)
 	{
 		if(i.isDark())
 			continue;
-		if(pointInRect(_p, i.getPos(), i.getDim()))
+        if(pointInRect(t, i.getPos(), i.getDim()))
 		{
 			any = true;
 		}
@@ -48,7 +53,7 @@ bool selection::click(vec2 _p)
 	{
 		m_buttons[i].set(false);
 		if(m_buttons[i].isDark()) continue;
-		if(pointInRect(_p, m_buttons[i].getPos(), m_buttons[i].getDim()))
+        if(pointInRect(t, m_buttons[i].getPos(), m_buttons[i].getDim()))
 		{
 			m_buttons[i].set(true);
 			m_selected = i;
@@ -65,8 +70,9 @@ void selection::reset()
 void selection::update(const float _s, const vec2 _mouse)
 {
 	vec2 t = _mouse;
-	if(m_worldSpace)
-		t = toWorldSpace( t );
+    //If the menu is in world space, convert the mouse position to world space.
+    if(m_worldSpace)
+        t = toWorldSpace( t );
 
 	if(m_type = SELECTION_ROLLOUT)
 	{

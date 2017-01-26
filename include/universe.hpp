@@ -272,7 +272,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the asteroid vector. Mostly used for saving and loading the game.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<ship>* getAsteroids() {return &m_asteroids;}
+    slotmap * getAsteroids() {return &m_asteroids;}
 
     std::vector<faction>* getFactions() {return &m_factions;}
 
@@ -501,7 +501,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all asteroids in the game.
     //----------------------------------------------------------------------------------------------------------------------
-    std::vector<ship> m_asteroids;
+    slotmap<ship> m_asteroids;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Container for all particle sprites in the game (in the NGL version, these actually use

@@ -95,7 +95,7 @@ void inventory::update(const float _dt)
 bool inventory::handleInput(const vec2 _mouse, std::vector<debris> * _fill)
 {
     vec2 hdim = m_dim / 2.0f;
-    if(!pointInRect( _mouse, -hdim, m_dim))
+    if(!pointInRect( _mouse, -hdim, m_dim) or !m_visible)
         return false;
 
     std::cout << "pickup check " << _mouse.m_x << ", " << _mouse.m_y << '\n';
