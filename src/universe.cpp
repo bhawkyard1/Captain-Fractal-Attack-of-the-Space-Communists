@@ -1131,6 +1131,7 @@ void universe::drawUI(const float _dt)
 		if(contextPtr != nullptr)
 		{
 			vec3 csp = contextPtr->getPos();
+			//csp = tovec3(toWorldSpace(tovec2(csp)));
 
 			//Clamp this position to the screen.
 			vec2 offset = {256.0f, 256.0f};

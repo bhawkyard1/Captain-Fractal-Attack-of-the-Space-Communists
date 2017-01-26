@@ -20,7 +20,7 @@ selectionReturn userInterface::handleInput(vec2 _pos)
 		vec2 t = _pos;
 		if(m_elements[i].inWorldSpace())
 		{
-			t = toWorldSpace( _pos );
+			//t = toWorldSpace( _pos );
 			std::cout << "ws click at " << i << " : " << t.m_x << ", " << t.m_y << " vs " <<
 									 m_elements[i].getPos().m_x << ", " << m_elements[i].getPos().m_y << '\n';
 		}

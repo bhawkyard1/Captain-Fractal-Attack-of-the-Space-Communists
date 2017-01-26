@@ -64,11 +64,15 @@ void selection::reset()
 
 void selection::update(const float _s, const vec2 _mouse)
 {
+	vec2 t = _mouse;
+	if(m_worldSpace)
+		t = toWorldSpace( t );
+
 	if(m_type = SELECTION_ROLLOUT)
 	{
 		float tempInterp = m_interpolant;
 
-		if(pointInRect(_mouse, m_pos, m_dim)) m_interpolant += 0.025f;
+		if(pointInRect(t, m_pos, m_dim)) m_interpolant += 0.025f;
 		else m_interpolant -= 0.025f;
 		m_interpolant = clamp(m_interpolant, 0.0f, 1.0f);
 
@@ -100,7 +104,7 @@ void selection::update(const float _s, const vec2 _mouse)
 	{
 		if(!m_saveSelected)
 			i.set(false);
-		i.update(_s, _mouse, m_interpolant);
+		i.update(_s, t, m_interpolant);
 	}
 }
 
