@@ -1681,6 +1681,19 @@ void universe::checkCollisions()
 				resource->addForce(add);
 			}
 		}
+
+		//AVOIDANCE
+		for(auto &rock : m_partitions[p].m_rocks)
+		{
+			for(auto &ship : m_partitions[p].m_ships)
+			{
+				vec3 v = ship->getPos() - rock->getPos();
+				float d = mag(v);
+				v /= d;
+				if(ship->getCanMove())
+					ship->addForce( v / d );
+			}
+		}
 	}
 }
 

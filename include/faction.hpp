@@ -71,6 +71,7 @@ public:
     aiTeam getTeam() const {return m_team;}
 
     std::vector<size_t> getDeployed() {return m_deploy;}
+		void setDeployed(const std::vector<size_t> &_deploy) {m_deploy = _deploy;}
     void clearDeployed() {for(auto &i : m_deploy) i = 0;}
 
     ship_spec getShittiestShip() const {return m_combatShips.first;}

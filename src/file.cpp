@@ -258,7 +258,7 @@ void readVectorFaction(std::string _str, universe *_u)
         std::vector<diplomaticStatus> relations;
         stat = split(stats[4], ',');
         for(auto &i : stat)
-            relations.push_back( static_cast<diplomaticStatus>(std::stoi(i)) );
+						relations.push_back( static_cast<diplomaticStatus>( std::stoi(i)) );
 
 
         stat = split(stats[5], ',');
@@ -307,6 +307,9 @@ void readVectorFaction(std::string _str, universe *_u)
         f.setOldWealth(oldWealth);
         f.setEconomicalStrength(economy);
         f.setAggression(aggression);
+				f.setActive( active );
+				f.setDeployed( deployed );
+				f.setReserves( reserves );
 
         _u->getFactions()->push_back(f);
     }
