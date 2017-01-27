@@ -32,7 +32,7 @@ void saveGame(universe * uni)
 
     save << '\n'
          << "asteroids ";
-    writeVectorAsteroid(save, uni->getAsteroids());
+		writeVectorAsteroid(save, &uni->getAsteroids()->m_objects);
 
     save << '\n'
          << "factions ";

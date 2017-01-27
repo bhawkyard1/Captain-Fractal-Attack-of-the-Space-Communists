@@ -65,17 +65,17 @@ void faction::updateEconomy(const float _dt)
 
 	bool losingWealthTooFast = m_wealthDT < m_oldWealth / (m_aggression - 0.35f) * 0.000000001f;
 
-	/*if(m_organised)
+	if(m_organised)
 	{
-		std::cout << m_identifier << " ES : " << m_economy << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n';// <<
+		//std::cout << m_identifier << " ES : " << m_economy << " Wealth : " << m_wealth << " Aggression : " << m_aggression << '\n';// <<
 		//"Reserves : \n";
 
 		/*for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
 												std::cout << g_ship_templates[i].getIdentifier() << ") " << m_reserves[i] << ", " << m_active[i] << '\n';*/
 
 		/*std::cout << "WDT : " << m_wealthDT << " WTHS : " << (m_oldWealth / (m_aggression - 0.35f) * 0.00000001f) << " Crisis : " << losingWealthTooFast << '\n';
-				std::cout << std::endl;
-	}*/
+				std::cout << std::endl;*/
+	}
 
 	//std::cout << "aggression " << m_aggression << '\n';
 	//If the faction is too poor / not aggressive enough / already has enough ships, invest money.
@@ -116,7 +116,7 @@ void faction::updateEconomy(const float _dt)
 		}
 	}
 
-	m_aggression *= clamp(0.999999f + m_wealthDT, 0.0f, 1.00001f);
+	m_aggression *= clamp(0.9999f + m_wealthDT / 128.0f, 0.0f, 1.00001f);
 	if(prob(10000)) m_aggression = randNum(0.0f, 1.0f);
 	float rec = m_economy / 2.0f;
 	if(prob(20000)) m_economy = clamp(m_economy + randNum(-rec, rec), 0.0f, 1.0f);
@@ -134,7 +134,7 @@ void faction::updateDeployment(const std::vector<faction> &_rivals)
 	}
 
 	//Enemies, neutrals, and friends
-	std::array<float, 3> powerBalance = {{0.0f, 0.0f, 0.0f}};
+	m_powerBalance = {{0.0f, 0.0f, 0.0f}};
 	for(size_t f = 0; f < _rivals.size(); ++f)
 	{
 		aiTeam curTeam = static_cast<aiTeam>(f);
@@ -146,30 +146,31 @@ void faction::updateDeployment(const std::vector<faction> &_rivals)
 
 		for(size_t slot = 0; slot < _rivals[f].m_active.size(); ++slot)
 		{
-			powerBalance[index] += calcAIPower( /*_rivals[curTeam].getShittiestShip() +*/ static_cast<ship_spec>(slot) ) * _rivals[curTeam].m_active[slot];
+			m_powerBalance[index] += calcAIPower( /*_rivals[curTeam].getShittiestShip() +*/ static_cast<ship_spec>(slot) ) * _rivals[curTeam].m_active[slot];
 		}
 	}
 
 	//Power of all ships in reserve. What is the point of deploying if the faction has shit reserve power?
-	float reservesPower = 0.0f;
-	for(size_t r = 0; r < m_reserves.size(); ++r) reservesPower += calcAIPower(/*getShittiestShip() +*/ static_cast<ship_spec>(r)) * m_reserves[r];
+	m_reservesPower = 0.0f;
+	for(size_t r = 0; r < m_reserves.size(); ++r) m_reservesPower += calcAIPower(/*getShittiestShip() +*/ static_cast<ship_spec>(r)) * m_reserves[r];
 
-	float targetPower = powerBalance[0] * (m_aggression + 0.25f);
-	//std::cout << "ENEMY POWER: " << powerBalance[0] << " RESERVES POWER: " << reservesPower << " TARGET POWER: " << targetPower << "\n\n";
+	m_targetPower = m_powerBalance[0] * (m_aggression + 0.25f);
+	//std::cout << "ENEMY POWER: " << m_powerBalance[0] << " RESERVES POWER: " << m_reservesPower << " TARGET POWER: " << targetPower << "\n\n";
 
-	/*std::cout << m_identifier << " POWER BALANCES: F " << powerBalance[2] << ", N " << powerBalance[1] << ", E " << powerBalance[0] <<
-														 "\n RP " << reservesPower << ", TP " << targetPower << "\n\n";*/
+	/*std::cout << m_identifier << " POWER BALANCES: F " << m_powerBalance[2] << ", N " << m_powerBalance[1] << ", E " << m_powerBalance[0] <<
+														 "\n RP " << m_reservesPower << ", TP " << targetPower << "\n\n";*/
 
 	//Deploy ships if there are too few in the field, enough in the reserves, and aggression is high enough.
 	int p = 512 / g_DIFFICULTY;
 	if(
 		 prob(p) and
-		 powerBalance[2] < targetPower and //More friendlies needed
-		 reservesPower > targetPower - powerBalance[2] //Enough reserves to make deploying worthwhile.
+		 m_powerBalance[2] < m_targetPower and //More friendlies needed
+		 m_reservesPower > m_targetPower - m_powerBalance[2] //Enough reserves to make deploying worthwhile.
 		 )
 	{
 		//std::cout << "Deploying!\n";
-		int num = static_cast<int>(sumVec(m_reserves) * m_aggression);
+		int num = static_cast<int>(sumVec(m_reserves) * m_aggression * 10.0f);
+		std::cout << getIdentifier() << " is deploying " << num << '\n';
 		deploy( randNum( num / 2, num ) );
 	}
 }
@@ -224,11 +225,11 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 					//if(b) std::cout << "  targeting squad at " << target.m_averagePos.m_x << ", " << target.m_averagePos.m_y << " belonging to faction " << target.m_team << " of size " << target.m_size << '\n';
 					bestDistance = dist;
 					s.m_targetPos = target.m_averagePos;
-					done = true;
+					//done = true;
 				}
 			}
 			//if(b) std::cout << "targeting enemies\n";
-			if( done ) continue;
+			//if( done ) continue;
 
 			//Targeting of player.
 			float dist = magns(s.m_averagePos);
@@ -371,10 +372,11 @@ void faction::deploy(size_t _num)
 	//debug( "    DEPLOY" );
 	for(size_t i = 0; i < m_reserves.size(); ++i)
 	{
-		size_t pop = std::min(static_cast<size_t>(randNum(static_cast<int>(0), static_cast<int>(m_reserves[i] * m_aggression))), m_reserves.at(i));
+		size_t pop = std::min(static_cast<size_t>(randNum((size_t)0, _num)), m_reserves.at(i));
 
 		m_reserves.at(i) -= pop;
 		m_deploy.at(i) += pop;
+		_num -= pop;
 	}
 }
 

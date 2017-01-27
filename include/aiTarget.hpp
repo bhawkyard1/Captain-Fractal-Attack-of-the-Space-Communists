@@ -16,30 +16,33 @@
 /// \brief Wraps up the stuff a ship can target into one object (the player, another agent, or an asteroid).
 //----------------------------------------------------------------------------------------------------------------------
 
-union targetUnion
+struct targetContainer
 {
-    targetUnion()
-    {
-        m_player = nullptr;
-    }
+	targetContainer()
+	{
+		m_player = nullptr;
+		m_agent = slotID<ship>();
+		m_asteroid = slotID<ship>();
+	}
 
-    ship * m_player;
-    slotID<ship> m_agent;
-    slotID<ship> m_asteroid;
+	ship * m_player;
+	slotID<ship> m_agent;
+	slotID<ship> m_asteroid;
 };
 
 class aiTarget
 {
 public:
-    aiTarget();
-    ship * get();
-    void unset() {m_targetFlag = -1;}
-    void setPlayer( ship * _player );
-    void setAgent( slotID<ship> _agent );
-    void setAsteroid( slotID<ship> _asteroid );
+	aiTarget();
+	ship * get();
+	void unset() {m_targetFlag = -1;}
+	void setPlayer( ship * _player );
+	void setAgent( slotID<ship> _agent );
+	void setAsteroid( slotID<ship> _asteroid );
+	int getFlag() const {return m_targetFlag;}
 private:
-    targetUnion m_target;
-    int m_targetFlag;
+	targetContainer m_target;
+	int m_targetFlag;
 };
 
 #endif

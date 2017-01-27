@@ -135,9 +135,9 @@ void universe::update(float _dt)
 
 	debug("updates start");
 
-    //Rollovers and stuff.
+	//Rollovers and stuff.
 	m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
-    //Clicking and buttons.
+	//Clicking and buttons.
 	processInputMap();
 
 	m_ply.updatePos(_dt);
@@ -246,13 +246,13 @@ void universe::update(float _dt)
 	std::vector<missile*> init_missile;
 	for(auto &i : m_missiles) init_missile.push_back(&i);
 	std::vector<ship*> init_asteroid;
-	for(auto &i : m_asteroids) init_asteroid.push_back(&i);
+	for(auto &i : m_asteroids.m_objects) init_asteroid.push_back(&i);
 	std::vector<debris*> init_resources;
 	for(auto &i : m_resources) init_resources.push_back(&i);
 
 	std::vector<SDL_Rect> testRects;
 	if(m_agents.size() > 0) testRects.push_back(enclose(m_agents.m_objects));
-	if(m_asteroids.size() > 0) testRects.push_back(enclose(m_asteroids));
+	if(m_asteroids.size() > 0) testRects.push_back(enclose(m_asteroids.m_objects));
 	if(m_shots.size() > 0) testRects.push_back(enclose(m_shots));
 	if(m_resources.size() > 0) testRects.push_back(enclose(m_resources));
 	testRects.push_back( {static_cast<int>(m_ply.getPos().m_x), static_cast<int>(m_ply.getPos().m_y), 0, 0} );
@@ -355,7 +355,7 @@ void universe::update(float _dt)
 				playSnd(EXPLOSION_SND, m_asteroids[i].getPos(), 1.0f);
 				m_drawer.addShake(12000.0f / (1.0f + mag(m_asteroids[i].getPos() - m_ply.getPos())));
 			}
-			swapnpop(&m_asteroids, i);
+			m_asteroids.free( i );
 		}
 		else
 		{
@@ -406,7 +406,8 @@ void universe::update(float _dt)
 		}
 		else if(m_agents[e].hasParent())
 		{
-			ship * parent = m_agents.getByID( m_agents[e].getParent() );
+			slotID<ship> parentID = m_agents[e].getParent();
+			ship * parent = m_agents.getByID( slot(parentID.m_id, parentID.m_version) );
 
 			if(parent == nullptr)
 			{
@@ -431,7 +432,8 @@ void universe::update(float _dt)
 		vec3 p = m_agents[e].getPos();
 
 		//If the agent is damaged, add smoke.
-		if(m_agents[e].getHealth() < m_agents[e].getMaxHealth()) addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius() * 4.0f, "SMOKE");
+		if(m_agents[e].getHealth() < m_agents[e].getMaxHealth())
+			addParticleSprite(p, m_agents[e].getVel(), m_agents[e].getRadius() * 4.0f, "SMOKE");
 
 		debug("special actions");
 		//The stuff here is ships affecting other stuff easily accessible within the universe class, but not so easily dealt with inside enemy.cpp
@@ -440,7 +442,7 @@ void universe::update(float _dt)
 			 ) //Gravwell attraction
 		{
 			//Attract m_asteroids based on distancm_agents[e].
-			for(auto &k : m_asteroids)
+			for(auto &k : m_asteroids.m_objects)
 			{
 				vec3 incr = p - k.getPos();
 				float dist = magns( incr );
@@ -453,7 +455,8 @@ void universe::update(float _dt)
 		else if(m_agents[e].getType() == SHIP_TYPE_BARRACKS)
 		{
 			//Spawn wingman.
-			if(rand() % 2048 == 0 and m_wingmenCount < 20) spawnShip(getRandomShipType(m_agents[e].getTeam()), m_agents[e].getTeam(), p);
+			if(rand() % 2048 == 0 and m_wingmenCount < 20)
+				spawnShip(getRandomShipType(m_agents[e].getTeam()), m_agents[e].getTeam(), p);
 		}
 
 		if(m_agents[e].getGoal() == GOAL_TRADE
@@ -474,11 +477,11 @@ void universe::update(float _dt)
 			m_agents[e].setGoal(GOAL_FLEE);
 		}
 
-        if(m_agents[e].getGoal() == GOAL_FLEE and m_agents[e].getHealth() > m_agents[e].getConfidence())
-        {
-            addToSquad( &m_agents[e], m_factions[m_agents[e].getTeam()].getBackSquad() );
-            m_agents[e].setGoal( GOAL_IDLE );
-        }
+		/*if(m_agents[e].getGoal() == GOAL_FLEE and m_agents[e].getHealth() > m_agents[e].getConfidence())
+		{
+			addToSquad( &m_agents[e], m_factions[m_agents[e].getTeam()].getBackSquad() );
+			m_agents[e].setGoal( GOAL_IDLE );
+		}*/
 
 		debug("shooting");
 		if(m_agents[e].isFiring() and m_agents[e].getCooldown() <= 0)
@@ -837,7 +840,7 @@ void universe::processInputMap()
 	}
 	else if(!m_inputs.key(SDLK_LCTRL))
 	{
-        //Make the player shoot if lmb + !ctrl
+		//Make the player shoot if lmb + !ctrl
 		m_ply.setFiring(m_inputs.lmb());
 
 		if(m_inputs.rmb() and m_ply.getMissiles() > 0)
@@ -964,7 +967,7 @@ void universe::draw(float _dt)
 	{
 		m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
 	}
-	for(auto &i : m_asteroids)
+	for(auto &i : m_asteroids.m_objects)
 	{
 		m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
 	}
@@ -1061,6 +1064,7 @@ void universe::draw(float _dt)
 			m_drawer.drawText(i.getLabel(), "pix", tovec2(i.getPos()), true, i.getSize(), col255to1(i.getCol()));
 		}
 		drawUI(_dt);
+		drawDebugUI();
 	}
 	debug("draw end");
 
@@ -1108,7 +1112,7 @@ void universe::drawUI(const float _dt)
 
 		m_drawer.statusBars(&m_ply);
 		m_drawer.drawWeaponStats(&m_ply);
-		m_drawer.drawMap(&m_missiles, &m_agents.m_objects, &m_asteroids, &m_shots, &m_factions, m_mapExpanded);
+		m_drawer.drawMap(&m_missiles, &m_agents.m_objects, &m_asteroids.m_objects, &m_shots, &m_factions, m_mapExpanded);
 
 		m_drawer.clearVectors();
 		float cumulative = 0.0f;
@@ -1139,7 +1143,7 @@ void universe::drawUI(const float _dt)
 		if(contextPtr != nullptr)
 		{
 			vec3 csp = contextPtr->getPos();
-            //csp = tovec3(toWorldSpace(tovec2(csp)));
+			//csp = tovec3(toWorldSpace(tovec2(csp)));
 
 			//Clamp this position to the screen.
 			vec2 offset = {256.0f, 256.0f};
@@ -1160,7 +1164,7 @@ void universe::drawUI(const float _dt)
 			infoCard->setPos(tovec2(csp));
 			for(auto &i : *(infoCard->getButtons()))
 			{
-                vec2 pos = i.getStart();
+				vec2 pos = i.getStart();
 				pos += tovec2( csp );
 				i.setPos( pos );
 				//m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
@@ -1265,7 +1269,7 @@ void universe::drawUI(const float _dt)
 	for(auto i = m_ui.getElements()->begin(); i != m_ui.getElements()->end(); ++i)
 	{
 		if(!i->isVisible()) continue;
-        //m_drawer.addRect( tovec3(i->getPos() + i->getDim() * 0.5f), i->getDim(), 0.0f, {{1, 0, 0, .5f}} );
+		//m_drawer.addRect( tovec3(i->getPos() + i->getDim() * 0.5f), i->getDim(), 0.0f, {{1, 0, 0, .5f}} );
 		for(auto j = i->getButtons()->begin(); j != i->getButtons()->end(); ++j)
 		{
 			std::array<float, 4> col = j->getDrawCol();
@@ -1293,6 +1297,30 @@ void universe::drawUI(const float _dt)
 			kpos.m_y += kdim.m_y * 0.5f;
 
 			m_drawer.drawText(k->getLabel(), "pix", kpos, i->inWorldSpace(), k->getTextSizeMul(), col);
+		}
+	}
+}
+
+void universe::drawDebugUI()
+{
+	m_drawer.clearVectors();
+	size_t i = 0;
+	for(auto &f : m_factions)
+	{
+		if(f.isOrganised())
+		{
+			std::array<float, 3> pb = f.getPowerBalance();
+			float x = i * 256.0f + 256.0f;
+			float y = 128.0f;
+			m_drawer.drawText( f.getIdentifier(), "pix", vec2(x, y), false, 1.0f, col255to1(f.getColour()) ); y += 20.0f;
+			m_drawer.drawText( "WEALTH : " + std::to_string(static_cast<int>(std::round(f.getWealth()))), "pix", vec2(x, y), false, 1.0f, {{1.0f, 0.9f, 0.0f, 1.0f}} ); y += 20.0f;
+			m_drawer.drawText( "WEALTH-DT : " + std::to_string(f.getWealthDT()), "pix", vec2(x, y), false, 1.0f, {{1.0f, 1.0f, 0.5f, 1.0f}} ); y += 20.0f;
+			m_drawer.drawText( "RESERVES POWER : " + std::to_string(static_cast<int>(std::round(f.getReservesPower()))), "pix", vec2(x, y), false, 1.0f ); y += 20.0f;
+			m_drawer.drawText( "FRIENDLY POWER : " + std::to_string(static_cast<int>(std::round(pb[2]))), "pix", vec2(x, y), false, 1.0f ); y += 20.0f;
+			m_drawer.drawText( "TARGET POWER : " + std::to_string( static_cast<int>(std::round(f.getTargetPower())) ), "pix", vec2(x, y), false, 1.0f); y += 20.0f;
+			m_drawer.drawText( "ENEMY POWER : " + std::to_string(static_cast<int>(std::round(pb[0]))), "pix", vec2(x, y), false, 1.0f ); y += 20.0f;
+
+			++i;
 		}
 	}
 }
@@ -2357,9 +2385,9 @@ squad * universe::getSquadFromID(aiTeam _t, slot _id)
 
 void universe::shipAddParent(size_t _index, ship * _child, vec3 _offset)
 {
-    slot s = m_agents.getID(_index);
-    slotmap<ship> * ptr = reinterpret_cast<slotmap<ship> *> (&m_agents);
-    _child->setParent( slotID<ship>(s.m_id, s.m_version, ptr)  );
+	slot s = m_agents.getID(_index);
+	slotmap<ship> * ptr = reinterpret_cast<slotmap<ship> *> (&m_agents);
+	_child->setParent( slotID<ship>(s.m_id, s.m_version, ptr)  );
 	_child->setParentOffset(_offset);
 }
 
@@ -2411,7 +2439,7 @@ selectionReturn universe::handleMouseDownInput(vec2 _mouse)
 	{
 
 		//If the context ship exists and its inventory is open, test against it.
-        if(!contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems))
+		if(!contextShip->getCargo()->handleInput(_mouse - tovec2(contextShip->getPos()), &m_selectedItems))
 			m_contextShip = {0, -1};
 	}
 	else
@@ -2498,6 +2526,7 @@ void universe::processUIInput(selectionReturn _sel)
 			break;
 		case 2:
 			reload(true);
+			m_factions.clear();
 			loadGame(this);
 			break;
 		case 3:

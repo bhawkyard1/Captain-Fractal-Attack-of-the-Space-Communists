@@ -59,6 +59,7 @@ public:
     void setColour(const std::array<float, 4> _colour) {m_colour = _colour;}
 
     float getWealth() const {return m_wealth;}
+		float getWealthDT() const {return m_wealthDT;}
     void setWealth(const float _wealth) {m_wealth = _wealth;}
     void addWealth(const float _wealth) {m_wealth += _wealth;}
     float * getWealthPt() {return &m_wealth;}
@@ -107,6 +108,10 @@ public:
     vec3 getWVel() const {return m_wvel;}
 
     float getResourceDemand(const resourceType _type) const {return m_resourceDemand[_type];}
+
+		float getReservesPower() const {return m_reservesPower;}
+		float getTargetPower() const {return m_targetPower;}
+		std::array<float, 3> getPowerBalance() const {return m_powerBalance;}
 private:
     bool m_organised;
     //----------------------------------------------------------------------------------------------------------------------
@@ -142,6 +147,9 @@ private:
     /// \brief Number of ships this faction can deploy
     //----------------------------------------------------------------------------------------------------------------------
     std::vector<size_t> m_reserves;
+		float m_reservesPower;
+		float m_targetPower;
+		std::array<float, 3> m_powerBalance;
 
     std::vector<size_t> m_deploy;
 

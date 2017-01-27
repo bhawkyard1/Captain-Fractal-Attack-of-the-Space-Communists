@@ -6,5 +6,5 @@ health 10
 shield 10
 energy 1000
 inertia 0.1
-enginepower 6
+enginepower 3
 canshoot 0

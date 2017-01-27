@@ -217,6 +217,7 @@ public:
     /// \brief Draws the user interface to the screen. Does not handle user input.
     //----------------------------------------------------------------------------------------------------------------------
     void drawUI(const float _dt);
+		void drawDebugUI();
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the renderer.
@@ -272,7 +273,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gets a pointer to the asteroid vector. Mostly used for saving and loading the game.
     //----------------------------------------------------------------------------------------------------------------------
-    slotmap * getAsteroids() {return &m_asteroids;}
+		slotmap<ship> * getAsteroids() {return &m_asteroids;}
 
     std::vector<faction>* getFactions() {return &m_factions;}
 

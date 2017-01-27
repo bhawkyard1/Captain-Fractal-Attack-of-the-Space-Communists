@@ -38,7 +38,7 @@ public:
   void setGoal(aiGoal _g) {m_curGoal = _g;}
   aiGoal getGoal() {return m_curGoal;}
 
-  void targetAcquisition(player &_ply, slotmap<enemy> &_enemies, const slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
+	void targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Updates the behaviour of the agent, based on any target it has, and its relative position
