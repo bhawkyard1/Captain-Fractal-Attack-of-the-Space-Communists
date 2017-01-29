@@ -56,6 +56,12 @@ bool lineIntersectSphere(vec3 _start, vec3 _end, vec3 _pos, float _radius, vec3 
     return (sqr(_radius) > magns(cd));
 }
 
+bool sphereIntersectSphere(vec3 _pos1, float _r1, vec3 _pos2, float _r2)
+{
+	float d = magns(_pos2 - _pos1);
+	return d < sqr(_r1 + _r2);
+}
+
 /*bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
 {
     //Do cross product of start->end vs start->point, then check dx, dy are smaller for start->point.

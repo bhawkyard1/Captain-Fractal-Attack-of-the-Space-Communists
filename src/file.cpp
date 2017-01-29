@@ -629,6 +629,7 @@ ship loadShip(const std::string &_path, std::string * _asset, int _classificatio
                 }
                 ret.setAttachmentPoints(attachmentPoints);
             }
+						else if(s[i] == "dockslots") ret.setMaxShipStorage( stoi(s[i + 1]) );
         }
     }
 

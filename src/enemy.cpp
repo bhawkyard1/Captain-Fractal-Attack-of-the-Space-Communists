@@ -17,14 +17,16 @@ enemy::enemy(
 	m_aggroRadius = randNum(2000.0f, 2200.0f);
 	if(_type == PLAYER_MINER_DROID) m_stopDist = randNum(20.0f, 60.0f);
 	m_target = aiTarget();
+	m_lastAttacker = aiTarget();
 	m_curGoal = GOAL_IDLE;
 	m_team = _team;
-	m_confidence = randNum(5.0f, 20.0f);
+	m_baseConfidence = randNum(getMaxHealth() * 0.5f, getMaxHealth() * 0.8f) + getXP() * 0.01f;
+	m_confidence = m_baseConfidence;//-1.0f;
 	m_squadID = {0, -1};
 	m_tPos = getPos();
 }
 
-void enemy::targetAcquisition(player &_ply, slotmap<enemy>  &_enemies, slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
+void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
 {
 	debug("target acquisition start");
 	//std::cout << "Enemies address is " << &_enemies << '\n';
@@ -33,7 +35,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy>  &_enemies, slotmap<s
 
 	//std::cout << getIdentifier() << " : targetAcquisition start, flag is " << m_target.getFlag() << '\n';
 
-	enemy * lastAttacker = _enemies.getByID( getLastAttacker() );
+	ship * lastAttacker = m_lastAttacker.get();
 
 	if(getType() != SHIP_TYPE_MINER)
 	{
@@ -58,6 +60,9 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy>  &_enemies, slotmap<s
 			//Do not target enemies shooting by sideways.
 			//weight /= clamp( dotProdUnit(getVel(), _enemies[i].getVel()), 0.001f, 1.0f );
 			//If this is the agent's current target, prioritise.
+			if(_enemies[i].getGoal() == GOAL_FLEE_FROM)
+				weight *= 2.0f;
+
 			if(curTarget.get() != nullptr and  curTarget.get() == &_enemies[i] )
 				weight /= 3.0f;
 			//Pursue last attacker.
@@ -87,9 +92,8 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy>  &_enemies, slotmap<s
 				//Do not target enemies shooting by sideways.
 				//weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
 				//Pursue last attacker.
-				if( getLastAttacker().m_id == 0
-						and getLastAttacker().m_version == -2
-						) weight /= 2.0f;
+				if( lastAttacker = &_ply )
+					weight /= 2.0f;
 
 				if(weight < bestWeight)
 				{
@@ -192,22 +196,24 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy>  &_enemies, slotmap<s
 
 	//std::cout << "targetAcquisition end, flag is " << m_target.getFlag() << '\n';
 	//If fleeing, look for a place to conduct repairs.
-	/*if(m_curGoal == GOAL_FLEE)
+	if(m_curGoal == GOAL_FLEE_FROM)
 	{
 		float m = F_INF;
-		for(auto &e : _enemies.m_objects)
+		for(size_t e = 0; e < _enemies.size(); ++e)
 		{
-			if( e.canStoreShips() )
+			if( _enemies[e].canStoreShips() and _enemies[e].getTeam() == m_team )
 			{
-				float d = magns( e.getPos() - getPos() );
+				float d = magns( _enemies[e].getPos() - getPos() );
 				if(d < m)
 				{
 					m = d;
-					//setGoal
+					setGoal( GOAL_FLEE_TO );
+					m_target.setAgent( slotID<ship>( _enemies.getID(e), reinterpret_cast< slotmap<ship> *>(&_enemies) ) );
+					std::cout << "FLEEING TO DOCK\n";
 				}
 			}
 		}
-	}*/
+	}
 
 	debug("target acquisition end");
 }
@@ -215,10 +221,18 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy>  &_enemies, slotmap<s
 void enemy::behvrUpdate(float _dt)
 {
 	//Setting energy priorities----------------------------------------------------------------------------//
-	if(getHealth() < getConfidence()) setEnergyPriority(2);
+	if(getConfidence() < getMaxHealth() * 0.25f) setEnergyPriority(2);
 	else if(getHealth() < getMaxHealth() * 0.75f) setEnergyPriority(1);
 	else setEnergyPriority(0);
 	//-----------------------------------------------------------------------------------------------------//
+
+	m_baseConfidence = randNum(getMaxHealth() * 0.5f, getMaxHealth() * 0.8f) + getXP() * 0.01f;
+
+	//Recover confidence slower when fleeing.
+	if(m_curGoal == GOAL_FLEE_FROM)
+		m_confidence = std::min(m_confidence + _dt * 0.0f, m_baseConfidence);
+	else
+		m_confidence = std::min(m_confidence + _dt * 0.0f, m_baseConfidence);
 
 	ship * t = m_target.get();
 	if(t != nullptr)
@@ -230,7 +244,7 @@ void enemy::behvrUpdate(float _dt)
 		m_tVel = t->getVel();
 	}
 
-	if(m_curGoal == GOAL_FLEE)
+	if(m_curGoal == GOAL_FLEE_FROM)
 	{
 		if(t != nullptr)
 		{
@@ -415,4 +429,10 @@ void enemy::steering()
 		if(vecMulSide < 0) dodge( dv );
 		else if(vecMulSide > 0) dodge( -dv );
 	}
+}
+
+float enemy::aiDamage(const float _d, const vec3 _v, aiTarget _attacker)
+{
+	m_lastAttacker = _attacker;
+	return ship::damage(_d, _v);
 }

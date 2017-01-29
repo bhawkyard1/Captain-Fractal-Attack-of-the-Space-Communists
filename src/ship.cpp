@@ -37,8 +37,6 @@ ship::ship()
 	m_shieldMul = 1.0f;
 	m_generatorMul = 1.0f;
 
-	m_lastAttacker = {0, -1};
-
 	m_cargo.setDim(vec2());
 
 	m_type = SHIP_TYPE_FIGHTER;
@@ -65,6 +63,7 @@ ship::ship()
 
 	m_docked = false;
 	m_maxShipStorage = 0;
+	m_storedShips = 0;
 }
 
 ship::ship(
@@ -118,8 +117,6 @@ ship::ship(
 	m_parent = _src.getParent();
 	m_parentOffset = _src.m_parentOffset;
 
-	m_lastAttacker = _src.m_lastAttacker;
-
 	m_cargo = _src.m_cargo;
 
 	m_type = _src.m_type;
@@ -136,6 +133,7 @@ ship::ship(
 
 	m_docked = false;
 	m_maxShipStorage = _src.m_maxShipStorage;
+	m_storedShips = _src.m_storedShips;
 }
 
 void ship::accelerate(const float _mult)
@@ -190,7 +188,7 @@ void ship::accelerate(
 	addForce(_dir * accelMult);
 	m_energy -= energyLoss;
 	m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult, 0.0f, 255.0f);
-	m_engineTemp += m_enginePower;
+	m_engineTemp += clamp( m_engineTemp + m_enginePower, 0.0f, 500.0f );
 
 	setAccelerating(true);
 }
@@ -224,7 +222,7 @@ void ship::decelerate()
 	addForce(add);
 	m_energy -= energyLoss;
 	m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult, 0.0f, 255.0f);
-	m_engineTemp += m_enginePower;
+	m_engineTemp += clamp( m_engineTemp + m_enginePower, 0.0f, 500.0f );
 
 	setAccelerating(true);
 }
@@ -302,35 +300,6 @@ float ship::damage(float _d, const vec3 _v)
 	return ret;
 }
 
-float ship::damage(float _d, const vec3 _v, slot _id)
-{
-	float ret = 0.0f;
-	//Shots to the rear do more damage.
-	if(m_canMove)
-	{
-		_d *= (dotProd( tovec3(vec(m_angle + 90)), unit(_v) ) / 2.0f) + 1.5f;
-		vec3 add = {_v.m_x, _v.m_y, 0.0f};
-		addForce(add * m_inertia);
-	}
-
-	ret = _d;
-
-	if(getShield() - _d > 0) m_shieldGlow = 255.0f;
-
-	float shieldDmg = clamp(_d, 0.0f, getShield());
-	_d -= shieldDmg;
-	setShield(getShield() - shieldDmg);
-
-	float healthDmg = clamp(_d, 0.0f, getHealth());
-	_d -= healthDmg;
-	setHealth(getHealth()-healthDmg);
-
-	m_damageTimer = 10.0f;
-	m_lastAttacker = _id;
-
-	return ret;
-}
-
 void ship::update(const float _dt)
 {
 	float spd = mag(getVel()) / 100.0f;
@@ -373,7 +342,9 @@ void ship::update(const float _dt)
 
 	m_energy = clamp(m_energy + m_generatorMul * _dt * 5.0f, 0.0f, m_maxEnergy);
 
+	//Repairs
 	if(rand() % 999 == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
+	if(m_docked and rand() % 64) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
 	m_shieldGlow = clamp(m_shieldGlow - 200.0f * _dt, 0.0f, 255.0f);
 	if(!m_accelerating)
@@ -402,14 +373,26 @@ void ship::setGrade(
 	for(int k = 0; k < _v; ++k) upgrade(_i);
 }
 
-void ship::store(slotID<ship> _dockee)
+void ship::dock(slotID<ship> _parent)
 {
-	if(!canStoreShips())
-		return;
+	m_docked = true;
+	m_dockParent = _parent;
 
-	m_dockedShips.push_back( _dockee );
+	m_canMove = false;
+	m_canShoot = false;
+
+	/*m_dockedShips.push_back( _dockee );
 	_dockee.get()->setDocked(true);
-	//_dockee.get()->setParent(  );
+	_dockee.get()->setParent(  );*/
+}
+
+void ship::undock()
+{
+	m_docked = false;
+	m_dockParent = slotID<ship>();
+
+	m_canMove = true;
+	m_canShoot = true;
 }
 
 int ship::upgrade(const int _i)

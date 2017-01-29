@@ -62,12 +62,15 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   ship * getTarget() {return m_target.get();}
 
+	ship * getLastAttacker() {return m_lastAttacker.get();}
+
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getters and setters for confidence
   //----------------------------------------------------------------------------------------------------------------------
   float getConfidence() {return m_confidence;}
   void setConfidence(float c) {m_confidence = c;}
   void decrConfidence(float d) {m_confidence -= d;}
+	float getBaseConfidence() const {return m_baseConfidence;}
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter and setter for squad id
@@ -81,6 +84,8 @@ public:
   void setTPos(vec3 _tPos) {m_tPos = _tPos;}
   vec3 getTPos() const {return m_tPos;}
   void setTVel(vec3 _tVel) {m_tVel = _tVel;}
+
+	float aiDamage(const float _d, const vec3 _v, aiTarget _attacker);
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The target position
@@ -102,6 +107,8 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   aiTarget m_target;
 
+	aiTarget m_lastAttacker;
+
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The distance this agent will attempt to hold around its target
   //----------------------------------------------------------------------------------------------------------------------
@@ -110,7 +117,8 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The confidence. If this drops too low, the enemy will flee
   //----------------------------------------------------------------------------------------------------------------------
-  float m_confidence;
+	float m_baseConfidence;
+	float m_confidence;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The team of the ship

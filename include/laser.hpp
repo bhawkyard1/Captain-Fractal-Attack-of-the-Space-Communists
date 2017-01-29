@@ -1,6 +1,7 @@
 #ifndef LASER_HPP
 #define LASER_HPP
 
+#include "aiTarget.hpp"
 #include "base.hpp"
 #include "enemy.hpp"
 #include "slotmap.hpp"
@@ -29,7 +30,7 @@ public:
   /// \param _data copied from weapons.hpp
   /// \param _team the lasers' team
   //----------------------------------------------------------------------------------------------------------------------
-  laser(vec3 _p, vec3 _v, float _ang, std::array<float, WEAPS_W> _data, aiTeam _team, slot _parent);
+	laser(vec3 _p, vec3 _v, float _ang, std::array<float, WEAPS_W> _data, aiTeam _team, aiTarget _parent);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief returns damage
@@ -76,7 +77,7 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Getter for the owner.
   //----------------------------------------------------------------------------------------------------------------------
-  slot getOwner() {return m_ownerID;}
+	aiTarget getOwner() {return m_ownerID;}
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief Damage the laser deals.
@@ -116,7 +117,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// \brief The unique id of the owner.
   //----------------------------------------------------------------------------------------------------------------------
-  slot m_ownerID;
+	aiTarget m_ownerID;
 };
 
 #endif

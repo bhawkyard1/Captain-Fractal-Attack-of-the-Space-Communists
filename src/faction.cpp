@@ -36,7 +36,7 @@ faction::faction(std::string _name, std::array<float, 4> _col, aiTeam _team, shi
 	m_aggression = randNum(0.0f, 1.0f);
 	//m_aggression = 10.0f;
 
-	m_economy = randNum(0.00001f, 0.0005f);
+	m_economy = randNum(0.0001f, 0.00075f);
 	//m_economy = randNum(0.01f, 0.05f);
 
 	m_organised = _organised;
@@ -154,7 +154,7 @@ void faction::updateDeployment(const std::vector<faction> &_rivals)
 	m_reservesPower = 0.0f;
 	for(size_t r = 0; r < m_reserves.size(); ++r) m_reservesPower += calcAIPower(/*getShittiestShip() +*/ static_cast<ship_spec>(r)) * m_reserves[r];
 
-	m_targetPower = m_powerBalance[0] * (m_aggression + 0.25f);
+	m_targetPower = m_powerBalance[0] * (m_aggression);
 	//std::cout << "ENEMY POWER: " << m_powerBalance[0] << " RESERVES POWER: " << m_reservesPower << " TARGET POWER: " << targetPower << "\n\n";
 
 	/*std::cout << m_identifier << " POWER BALANCES: F " << m_powerBalance[2] << ", N " << m_powerBalance[1] << ", E " << m_powerBalance[0] <<

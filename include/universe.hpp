@@ -104,7 +104,7 @@ public:
     /// \param _weap array of data such as damage
     /// \param _team source of the shot
     //----------------------------------------------------------------------------------------------------------------------
-    void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, slot _owner, const float _xpModifier);
+		void addShot(const vec3 _p, const vec3 _v, const float _angle, const std::array<float, WEAPS_W> _weap, const aiTeam _team, aiTarget _owner, const float _xpModifier);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Adds a raw resource to the universe.
@@ -384,9 +384,10 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for UI visibility.
     //----------------------------------------------------------------------------------------------------------------------
-    bool UIVisible() const {return showUI;}
-    void setUIVisible(const bool _b) {showUI = _b;}
-    void toggleUIVisible() {showUI = !showUI;}
+		bool UIVisible() const {return m_showUI;}
+		void setUIVisible(const bool _b) {m_showUI = _b;}
+		void toggleUIVisible() {m_showUI = !m_showUI;}
+		void toggleDebugUI() {m_showDebugUI = !m_showDebugUI;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Gives a ship a parent, and an offset from said parent.
@@ -444,12 +445,14 @@ public:
     vec3 getPos() const {return m_pos;}
 
     //ship * getByID(const unsigned long _i);
-    void addFrag(slot _i);
+		void addFrag(ship * _i);
 
     vec3 getCameraPosition() {return m_drawer.getCamera()->getPos();}
     void setCameraPosition(const vec3 _pos) {m_drawer.getCamera()->setPos(_pos);}
 
     void conductTrade(enemy &_buyer, enemy &_seller);
+		void dock(int _pidx, ship &_parent, ship &_child);
+		void undock(ship &_s);
 
     void debug_lockPlayer() {g_PLAYER_MOVEMENT_LOCKED = !g_PLAYER_MOVEMENT_LOCKED;}
 
@@ -458,11 +461,14 @@ public:
     float getTime() {return m_time_elapsed;}
 
     void updateInputs(const std::vector<SDL_Event> &_events) {m_inputs.update(_events);}
+
+		void movePlayer(const vec3 _position) {m_positioning = -_position; m_pos += m_positioning;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief If this is true, the UI will be displayed.
     //----------------------------------------------------------------------------------------------------------------------
-    bool showUI;
+		bool m_showUI;
+		bool m_showDebugUI;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Contains all of the data for the user interface.
@@ -530,6 +536,12 @@ private:
     /// player's engines do not move the ship, they move the universe.
     //----------------------------------------------------------------------------------------------------------------------
     vec3 m_vel;
+
+		//----------------------------------------------------------------------------------------------------------------------
+		/// \brief This vector is used in conjunction with m_vel. It is zeroed out each frame, so we can use it to move the
+		/// player
+		//----------------------------------------------------------------------------------------------------------------------
+		vec3 m_positioning;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief For the opengl background shader, I must track the position of the universe, even though

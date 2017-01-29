@@ -284,12 +284,6 @@ public:
     float damage(const float _d, const vec3 _v);
 
     //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Damages the ship.
-    /// \param _d damage, _v knockback vector (laser velocity), _id attacker id
-    //----------------------------------------------------------------------------------------------------------------------
-    float damage(const float _d, const vec3 _v, slot _id);
-
-    //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getters and setters for m_upgrades.
     //----------------------------------------------------------------------------------------------------------------------
     size_t getUpgrade(const int _index) {if(_index < UPGRADES_LEN) return m_upgrades[_index]; return -1;}
@@ -398,12 +392,6 @@ public:
     vec3 getParentOffset() const {return m_parentOffset;}
     void setParentOffset(vec3 _v) {m_parentOffset = _v;}
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Getter and setter for last attacker.
-    //----------------------------------------------------------------------------------------------------------------------
-    slot getLastAttacker() {return m_lastAttacker;}
-    void setLastAttacker(slot _id) {m_lastAttacker = _id;}
-
     void toggleInventory() {m_cargo.toggleVisible();}
     void showInventory(const bool _v) {m_cargo.setVisible(_v);}
     bool isInventoryVisible() {return m_cargo.isVisible();}
@@ -433,10 +421,16 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A given ship inside this one.
     //----------------------------------------------------------------------------------------------------------------------
-    void store(slotID<ship> _dockee);
-    bool canStoreShips() const {return m_maxShipStorage > 0 and m_dockedShips.size() < m_maxShipStorage;}
+		void dock(slotID<ship> _parent);
+		void undock();
+		bool canStoreShips() const {return m_maxShipStorage > 0 and m_storedShips < m_maxShipStorage;}
+		void incrStoredShips(const int _i) {m_storedShips = static_cast<int>(m_storedShips) + _i;}
+		size_t getStoredShips() const {return m_storedShips;}
+		size_t getMaxShipStorage() const {return m_maxShipStorage;}
+		void setMaxShipStorage(const size_t _maxShipStorage) {m_maxShipStorage = _maxShipStorage;}
     void setDocked(const bool _docked) {m_docked = _docked;}
-    bool getDocked() const {return m_docked;}
+		bool isDocked() const {return m_docked;}
+		slotID<ship> getDockParent() {return m_dockParent;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.
@@ -617,18 +611,14 @@ private:
     /// \brief Ships docked inside this one.
     //----------------------------------------------------------------------------------------------------------------------
     size_t m_maxShipStorage;
-    std::vector<slotID<ship>> m_dockedShips;
+		size_t m_storedShips;
+		slotID<ship> m_dockParent;
     bool m_docked;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The offset from the parent ship.
     //----------------------------------------------------------------------------------------------------------------------
     vec3 m_parentOffset;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief The id of the ship which last damaged this ship.
-    //----------------------------------------------------------------------------------------------------------------------
-    slot m_lastAttacker;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The inventory of the ship.

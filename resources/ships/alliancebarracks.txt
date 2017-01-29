@@ -9,3 +9,4 @@ holdspace 512.0 512.0
 canmove 0
 canshoot 0
 angvelrange -10.0 10.0
+dockslots 20
