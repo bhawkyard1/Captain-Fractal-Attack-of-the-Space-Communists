@@ -171,7 +171,6 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 	//Dump resources at base.
 	if(!getCargo()->canAddMoreItems())
 	{
-		std::cout << "cargo bay full!!!\n";
 		float best = F_INF;
 		for(size_t i = 0; i < _enemies.size(); ++i)
 		{

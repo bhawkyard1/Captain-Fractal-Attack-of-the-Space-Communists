@@ -63,7 +63,7 @@ renderer_ngl::renderer_ngl()
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 0, 0,
                                 m_w, m_h,
-																SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_FULLSCREEN*/ );
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_FULLSCREEN*/ );
 
     if(!m_window)
     {
@@ -181,9 +181,9 @@ renderer_ngl::renderer_ngl()
     createShaderProgram("plain", "DiffuseVertex", "DiffuseFragment");
     createShaderProgram("xp", "MVPUVVert", "XPFragment");
     createShaderProgram("ship", "shipVertex", "shipFragment");
-    createShaderProgram("explosion", "explosionVertex", "explosion3");
-    createShaderProgram("flame", "explosionVertex", "flameFragment");
-    createShaderProgram("smoke", "explosionVertex", "smokeFragment");
+    createShaderProgram("explosion", "MVPUVNVertDistort", "explosionFrag");
+    createShaderProgram("flame", "rectVert", "flameFragment");
+    createShaderProgram("smoke", "rectVert", "smokeFragment");
     createShaderProgram("shield", "MVPUVNVert", "shieldFragment");
     createShaderProgram("text", "MVPUVVert", "textureFragment");
     createShaderProgram("debug", "MVPVert", "debugFragment");
@@ -286,9 +286,10 @@ renderer_ngl::renderer_ngl()
 
     resetLights();
 
-    std::cout << "p1\n";
     m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
-    std::cout << "p2\n";
+
+    ngl::VAOPrimitives * prim = ngl::VAOPrimitives::instance();
+    prim->createSphere( "explosion", 1.0f, 16 );
 
     m_pointLights.reserve(MAX_LIGHTS);
     glGenBuffers(1, &m_lightbuffer);
@@ -893,6 +894,16 @@ void renderer_ngl::addRect(const vec3 _p, const vec2 _d, const float _ang, const
     }
 }
 
+void renderer_ngl::addPoint(const vec3 _point)
+{
+    m_verts.push_back( _point );
+}
+
+void renderer_ngl::addColour(const std::array<float, 4> _col)
+{
+    m_colours.push_back( _col );
+}
+
 void renderer_ngl::drawRect(const vec3 _p, const vec2 _d, const float _ang, const bool _ws)
 {
     glBindVertexArray(m_unit_square_vao);
@@ -986,80 +997,30 @@ void renderer_ngl::drawCircle(const vec3 _p, const float _d, const bool _ws)
     glPointSize(1.0f);
 }
 
-/*
-void renderer_ngl::drawLine(
-                const vec2 _start,
-                const vec2 _end,
-                const std::array<float, 4> _lCol
-                )
-{ 
-        glBindVertexArray(m_vao);
-
-        std::array<ngl::Vec3, 2> line = {
-                ngl::Vec3(_start.m_x, _start.m_y,10.0f),
-                ngl::Vec3(_end.m_x,  _end.m_y,  10.0f)
-        };
-
-        std::array<ngl::Vec4, 2> vertCol = {
-                ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3] / 255.0f),
-                ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], _lCol[3] / 255.0f)
-        };
-
-        //Generate a VBO
-        //GLuint vertBuffer;
-        //glGenBuffers(1, &vertBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                                 sizeof(ngl::Vec3) * line.size(),
-                                 &line[0].m_x,
-                        GL_STATIC_DRAW
-                        );
-
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-
-
-        //GLuint colourBuffer;
-        //glGenBuffers(1, &colourBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                                 sizeof(ngl::Vec4) * vertCol.size(),
-                                 &vertCol[0].m_x,
-                        GL_STATIC_DRAW
-                        );
-
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
-        glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
-
-        glLineWidth(2.0f * g_ZOOM_LEVEL);
-        loadMatricesToShader();
-        glDrawArraysEXT(GL_LINES, 0, 2);
-
-        glBindVertexArray(0);
-
-        glLineWidth(1.0f);
-}*/
-
 void renderer_ngl::drawExplosions()
 {
-    return;
-    //clearVectors();
-
-    /*addRect(
-                                vec3(),
-                                vec2(1024.0f, 1024.0f),
-                                0.0f,
-        {0.0f, 0.0f, 0.0f, 0.0f}
-                                );
-
-        packExtraData(
-        {50.0f, 0.0f, 0.0f, 100.0f}
-                                );*/
-
-
+    ngl::VAOPrimitives * prim = ngl::VAOPrimitives::instance();
     ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+
+    for(size_t i = 0; i < m_verts.size(); ++i)
+    {
+        ngl::Vec3 pos = ngl::Vec3(m_verts[i].m_x, m_verts[i].m_y, m_verts[i].m_z);
+        float s = pow(m_genericData[i][0], 4.0f) / 64.0f;
+        ngl::Vec4 col = ngl::Vec4( m_colours[i][0], m_colours[i][1], m_colours[i][2], m_colours[i][3] );
+
+        m_transform.setPosition( pos );
+        m_transform.setScale( ngl::Vec3(s, s, s) );
+        m_transform.setRotation(0.0f, 0.0f, 0.0f);
+
+        slib->setRegisteredUniform("power", s);
+        slib->setRegisteredUniform("colour", col);
+
+        loadMatricesToShader();
+
+        prim->draw("explosion");
+    }
+
+    /*ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     GLuint id = slib->getProgramID("explosion");
     bindTextureToSampler(id, m_noise512, "noiseTex", 0);
     glActiveTexture(GL_TEXTURE0);
@@ -1082,7 +1043,9 @@ void renderer_ngl::drawExplosions()
     drawRects(true);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);*/
+
+    m_transform.reset();
 }
 
 void renderer_ngl::drawSmoke(const float _dt)

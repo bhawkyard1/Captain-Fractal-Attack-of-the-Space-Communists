@@ -23,6 +23,7 @@
 #include <ngl/Transformation.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/Obj.h>
+#include <ngl/VAOPrimitives.h>
 
 #define MAX_LIGHTS 512
 #define AMBIENT_RESOLUTION_DIVIDER 256
@@ -145,7 +146,9 @@ public:
     /// \param _cCol colour of the universe
     //----------------------------------------------------------------------------------------------------------------------
     void addRect(const vec3 _p, const vec2 _d, const float _ang, const std::array<float, 4> _col);
-    void packExtraData(const std::array<float, 4> _data) {for(int i = 0; i < 6; ++i) m_genericData.push_back(_data);}
+    void addPoint(const vec3 _point);
+    void addColour(const std::array<float, 4> _col);
+    void packExtraData(const std::array<float, 4> _data, int _num) {for(int i = 0; i < _num; ++i) m_genericData.push_back(_data);}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Takes the vert attribute vectors, treats them as rectangles, and draw them.

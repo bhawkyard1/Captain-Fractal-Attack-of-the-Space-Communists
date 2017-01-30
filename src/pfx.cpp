@@ -3,19 +3,16 @@
 #include "util.hpp"
 #include "common.hpp"
 
-pfx::pfx(
-        const vec3 _p,
+pfx::pfx(const vec3 _p,
         const vec3 _v,
         const vec3 _wv,
         const size_t _no,
         const float _force,
-        const std::string _identifier,
+        const bool _drawExplosion,
         const std::array<float, 4> _col
         )
 {
     m_elapsed = 0.0f;
-    m_seed_position = static_cast<float>(rand());
-    m_seed_explosion = static_cast<float>(rand());
 
     m_duration = _force / 12.0f;
 
@@ -27,7 +24,7 @@ pfx::pfx(
 
     m_col = _col;
 
-    m_identifier = _identifier;
+    m_drawExplosion = _drawExplosion;
 
     for(size_t i = 0; i < _no; i++)
     {

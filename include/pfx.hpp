@@ -31,7 +31,7 @@ public:
     /// \param _force velocity multiplier of children
     /// \param _identifier type of effect, such as "SMOKE", "EXPLOSION" etc
     //----------------------------------------------------------------------------------------------------------------------
-    pfx(const vec3 _p, const vec3 _v, const vec3 _wv, const size_t _no, const float _force, const std::string _identifier, const std::array<float, 4> _col);
+    pfx(const vec3 _p, const vec3 _v, const vec3 _wv, const size_t _no, const float _force, const bool _drawExplosion, const std::array<float, 4> _col);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the system
@@ -51,12 +51,12 @@ public:
     float getCol(int i) const {return m_col[i];}
 
     float getAlpha(const int _i) {return m_alphas[_i];}
-    std::array<float, 4> getShaderData() const {return {{m_elapsed, m_seed_position, m_seed_explosion, m_duration}};}
+    std::array<float, 4> getShaderData() const {return {{(1.0f - normalisedLifetime()) * m_force, 0.0f, 0.0f, 0.0f}};}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Identifier getter
     //----------------------------------------------------------------------------------------------------------------------
-    std::string getIdentifier() const {return m_identifier;}
+    bool drawExplosion() const {return m_drawExplosion;}
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns the child particle vector
@@ -68,7 +68,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     float getForce() {return m_force;}
 
-    float normalisedLifetime() {return m_elapsed / m_duration;}
+    float normalisedLifetime() const {return m_elapsed / m_duration;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of 'base' (glorified points), representing particles
@@ -84,14 +84,12 @@ private:
     /// \brief Data for the explosion shader
     //----------------------------------------------------------------------------------------------------------------------
     float m_elapsed;
-    float m_seed_position;
-    float m_seed_explosion;
     float m_duration;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The string id of the particle system
     //----------------------------------------------------------------------------------------------------------------------
-    std::string m_identifier;
+    bool m_drawExplosion;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The colour tint of the particle system
