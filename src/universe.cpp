@@ -1203,10 +1203,16 @@ void universe::drawUI(const float _dt)
 				//m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
 			}
 
+			//If we are too far away, or the ship cannot store others, disable dock button.
+			if(!contextPtr->canStoreShips() or magns(contextPtr->getPos()) > sqr(contextPtr->getRadius()))
+				infoCard->getAt(3)->setDark(true);
+
+			infoCard->getAt(3)->setDark(true);
+
 			if(neutralityCheck(contextPtr->getTeam(), TEAM_PLAYER))
-				infoCard->getAt(3)->setDark(true);
+				infoCard->getAt(4)->setDark(true);
 			else
-				infoCard->getAt(3)->setDark(true);
+				infoCard->getAt(4)->setDark(true);
 
 			csp.m_x += 64.0f;
 			csp.m_y += 32.0f;
@@ -2559,6 +2565,7 @@ void universe::processUIInput(selectionReturn _sel)
 			std::cout << "dock!\n";
 			ship * con = m_agents.getByID(m_contextShip);
 			movePlayer( con->getPos() );
+			m_vel = vec3();
 			dock( m_contextShip.m_id, *con, m_ply );
 			break;
 		}
