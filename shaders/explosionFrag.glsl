@@ -23,4 +23,5 @@ void main()
     fragColour = colour;
     fragColour.rgb *= power;
     fragColour.a *= dot(normal, vec3(0.0,0.0,1.0));
+    fragColour.a = clamp(fragColour.a, 0.0, 1.0);
 }

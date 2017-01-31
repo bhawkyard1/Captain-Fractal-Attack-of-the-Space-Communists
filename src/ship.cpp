@@ -265,8 +265,8 @@ void ship::dodge(const float _side)
 
 void ship::setFiring(const bool _v)
 {
-    if(!m_canShoot)
-        return;
+	if(!m_canShoot)
+		return;
 
 	m_shooting = _v;
 	if(_v)
@@ -346,8 +346,10 @@ void ship::update(const float _dt)
 	m_energy = clamp(m_energy + m_generatorMul * _dt * 5.0f, 0.0f, m_maxEnergy);
 
 	//Repairs
-    if(prob(2000) == 0) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
-    if(m_docked and prob(200)) m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
+	if(prob(8000))
+		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
+	if(m_docked and prob(1000))
+		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
 	m_shieldGlow = clamp(m_shieldGlow - 200.0f * _dt, 0.0f, 255.0f);
 	if(!m_accelerating)
@@ -481,7 +483,7 @@ std::array<float, 4> ship::getShieldCol() const
 {
 	//This is weird. Maybe I should add a m_hasShield sometime?
 	if(m_canShoot)
-		return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, static_cast<float>(getShieldGlow())}};
+		return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow() / 255.0f}};
 	return {{0.1f, 0.4f, 1.0f, 1.0f}};
 }
 

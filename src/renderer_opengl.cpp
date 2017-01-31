@@ -1006,13 +1006,15 @@ void renderer_ngl::drawExplosions()
     {
         ngl::Vec3 pos = ngl::Vec3(m_verts[i].m_x, m_verts[i].m_y, m_verts[i].m_z);
         float s = pow(m_genericData[i][0], 4.0f) / 64.0f;
+				float power = m_genericData[i][1];
         ngl::Vec4 col = ngl::Vec4( m_colours[i][0], m_colours[i][1], m_colours[i][2], m_colours[i][3] );
 
         m_transform.setPosition( pos );
         m_transform.setScale( ngl::Vec3(s, s, s) );
         m_transform.setRotation(0.0f, 0.0f, 0.0f);
 
-        slib->setRegisteredUniform("power", s);
+				slib->setRegisteredUniform("power", power);
+				slib->setRegisteredUniform("s", s);
         slib->setRegisteredUniform("colour", col);
 
         loadMatricesToShader();
