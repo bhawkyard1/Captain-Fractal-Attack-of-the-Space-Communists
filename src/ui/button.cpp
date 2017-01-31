@@ -100,9 +100,6 @@ button::button(
 
 void button::update(const int _pts, const vec2 _mouse, const float _interp)
 {
-    if(m_label == "DOCK")
-        std::cout << "Start update, state " << m_state << '\n';
-
     for(int i = 0; i < 4; ++i)
         m_dcol[i] = static_cast<float>(m_col[i]);
 
@@ -110,8 +107,7 @@ void button::update(const int _pts, const vec2 _mouse, const float _interp)
         m_pos = _interp * m_end + (1.0f - _interp) * m_start;
 
     //Enable if we have enough points, disable if we don't OR it is a non-cost button and it is already disabled.
-    if((m_cost > -1 and _pts >= m_cost) or
-            (m_cost == -1 and m_state != BUTTON_STATE_DISABLED))
+    if(m_cost == -1 or _pts >= m_cost)
     {
         m_state = BUTTON_STATE_DEFAULT;
 
@@ -137,9 +133,6 @@ void button::update(const int _pts, const vec2 _mouse, const float _interp)
     }
 
     for(auto & i : m_dcol) i /= 255.0f;
-
-    if(m_label == "DOCK")
-        std::cout << "End update, state " << m_state << '\n';
 }
 
 void button::updateText(std::string _str)
@@ -167,8 +160,17 @@ void button::reset()
 
 void button::setDark(bool b)
 {
+    for(int i = 0; i < 4; ++i)
+        m_dcol[i] = static_cast<float>(m_col[i]);
+
     if(b)
         m_state = BUTTON_STATE_DISABLED;
     else
+    {
         m_state = BUTTON_STATE_DEFAULT;
+        for(auto & i : m_dcol)
+            i /= 2.0f;
+    }
+
+    for(auto & i : m_dcol) i /= 255.0f;
 }

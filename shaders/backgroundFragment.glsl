@@ -22,7 +22,7 @@
 //Higher= brigwhter/less faded.
 #define distfading 0.45
 
-#define saturation 0.9
+#define saturation 0.8
 
 in vec4 gl_FragCoord;
 in vec2 UV;
@@ -101,7 +101,7 @@ void main()
         fade *= distfading; // distance fading
         s += stepsize + 0.0001 * zoom;
     }
-    v = mix( vec3(length(v)), v, saturation); //color adjust
+    //v = mix( vec3(length(v)), v, saturation); //color adjust
 
     fragColour = vec4(v * 0.015, 1.0);
 }

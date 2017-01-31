@@ -1,4 +1,4 @@
-resolution NULL NULL
+resolution 1920 1080
 graphical_detail 2
 devmode 1
 beastmode 0

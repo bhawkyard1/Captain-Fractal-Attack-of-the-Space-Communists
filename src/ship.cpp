@@ -346,9 +346,9 @@ void ship::update(const float _dt)
 	m_energy = clamp(m_energy + m_generatorMul * _dt * 5.0f, 0.0f, m_maxEnergy);
 
 	//Repairs
-	if(prob(8000))
+    if(prob(2048))
 		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
-	if(m_docked and prob(1000))
+    if(m_docked and prob(32))
 		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
 	m_shieldGlow = clamp(m_shieldGlow - 200.0f * _dt, 0.0f, 255.0f);

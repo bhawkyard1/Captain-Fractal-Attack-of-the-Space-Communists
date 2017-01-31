@@ -138,10 +138,8 @@ void universe::update(float _dt)
 
 	updateUI();
 
-	std::cout << "Pre process\n";
 	//Clicking and buttons.
 	processInputMap();
-	std::cout << "Post process\n";
 
 	m_ply.updatePos(_dt);
 	m_ply.ctrlUpdate();
@@ -295,7 +293,6 @@ void universe::update(float _dt)
 
 					dmg = 1/mag(mp - ep) * 30000;
 					m_agents[j].damage(dmg);
-					m_agents[j].decrConfidence(dmg);
 					addDamagePopup(dmg, m_agents[j].getTeam(), ep, m_agents[i].getVel() + randVec3(2.0f));
 				}
 
@@ -499,13 +496,13 @@ void universe::update(float _dt)
 
 		//Fleeing handling
 		debug("fleeing");
-		if( m_agents[e].getConfidence() < 0.0f and m_agents[e].getCanMove() and m_agents[e].getSquadID().m_id != 0 and m_agents[e].getSquadID().m_version != -1 )
+        if( m_agents[e].getConfidence() < 0.0f and m_agents[e].getCanMove() /*and m_agents[e].getSquadID().m_version != -1*/ )
 		{
 			//If the enemy can move and is scared, runs away.
-			removeFromSquad(&m_agents[e]);
+            if(m_agents[e].getSquadID().m_version > -1)
+                removeFromSquad(&m_agents[e]);
 			m_agents[e].setGoal(GOAL_FLEE_FROM);
 		}
-
 		//Fleeing recovering
 		else if(m_agents[e].getGoal() == GOAL_FLEE_FROM and m_agents[e].getConfidence() > 0.0f)
 		{
@@ -646,48 +643,50 @@ void universe::update(float _dt)
 
 void universe::updateUI()
 {
-	//DRAWING CONTEXT-SELECTED SHIP STATS
-	selection &infoCard = m_ui.getElements()->at(3);
-
-	enemy * contextPtr = m_agents.getByID(m_contextShip);
-
-	if(contextPtr != nullptr)
-	{
-		vec3 csp = contextPtr->getPos();
-
-		infoCard.setVisible(true);
-
-		infoCard.getAt(0)->setLabel(contextPtr->getIdentifier());
-		infoCard.getAt(1)->setLabel("KILLS: " + std::to_string(contextPtr->getKills()));
-		infoCard.getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) /*/ g_PIXEL_UNIT_CONVERSION*/)) + " m");
-
-		infoCard.setPos(tovec2(csp));
-		for(auto &i : *(infoCard.getButtons()))
-		{
-			vec2 pos = i.getStart();
-			pos += tovec2( csp );
-			i.setPos( pos );
-			//m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
-		}
-
-		//If we are too far away, or the ship cannot store others, disable dock button.
-		if(!contextPtr->canStoreShips() or magns(contextPtr->getPos()) > sqr(contextPtr->getRadius()))
-			infoCard.getAt(3)->setDark(true);
-		else
-			infoCard.getAt(3)->setDark(false);
-
-		if(neutralityCheck(contextPtr->getTeam(), TEAM_PLAYER))
-			infoCard.getAt(4)->setDark(false);
-		else
-			infoCard.getAt(4)->setDark(true);
-	}
-	else
-	{
-		infoCard.setVisible(false);
-	}
-
 	//Rollovers and stuff.
 	m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
+
+    //DRAWING CONTEXT-SELECTED SHIP STATS
+    selection &infoCard = m_ui.getElements()->at(3);
+
+    enemy * contextPtr = m_agents.getByID(m_contextShip);
+
+    if(contextPtr != nullptr)
+    {
+        std::cout << "Base confidence is " << contextPtr->getBaseConfidence() << ". Actual is " << contextPtr->getConfidence() << ". Goal is " << contextPtr->getGoal() << '\n';
+        std::cout << "Squad is " << contextPtr->getSquadID().m_id << ", " << contextPtr->getSquadID().m_version << '\n';
+        vec3 csp = contextPtr->getPos();
+
+        infoCard.setVisible(true);
+
+        infoCard.getAt(0)->setLabel(contextPtr->getIdentifier());
+        infoCard.getAt(1)->setLabel("KILLS: " + std::to_string(contextPtr->getKills()));
+        infoCard.getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) /*/ g_PIXEL_UNIT_CONVERSION*/)) + " m");
+
+        infoCard.setPos(tovec2(csp));
+        for(auto &i : *(infoCard.getButtons()))
+        {
+            vec2 pos = i.getStart();
+            pos += tovec2( csp );
+            i.setPos( pos );
+            //m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
+        }
+
+        //If we are too far away, or the ship cannot store others, disable dock button.
+        if(!contextPtr->canStoreShips() or magns(contextPtr->getPos()) > sqr(contextPtr->getRadius()))
+            infoCard.getAt(3)->setDark(true);
+        else
+            infoCard.getAt(3)->setDark(false);
+
+        if(neutralityCheck(contextPtr->getTeam(), TEAM_PLAYER))
+            infoCard.getAt(4)->setDark(false);
+        else
+            infoCard.getAt(4)->setDark(true);
+    }
+    else
+    {
+        infoCard.setVisible(false);
+    }
 }
 
 void universe::cullAgents()
@@ -1536,8 +1535,7 @@ void universe::checkCollisions()
 					else if(so.get() == &m_ply)
 						m_ply.addXP(xp);
 
-					float realDamage = m_partitions[p].m_ships[s]->aiDamage(harm, d_dir * stop, so);
-					m_partitions[p].m_ships[s]->decrConfidence( realDamage );
+                    float realDamage = m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
 					addDamagePopup(realDamage, m_partitions[p].m_ships[s]->getTeam(), ep, m_partitions[p].m_ships[s]->getVel() + randVec3(2.0f));
 					break;
 				}

@@ -20,7 +20,7 @@ enemy::enemy(
 	m_lastAttacker = aiTarget();
 	m_curGoal = GOAL_IDLE;
 	m_team = _team;
-	m_baseConfidence = randNum(getMaxHealth() * 0.5f, getMaxHealth() * 0.8f) + getXP() * 0.01f;
+    m_baseConfidence = randNum(getMaxHealth() * 0.8f, getMaxHealth() * 1.2f);
 	m_confidence = m_baseConfidence;//-1.0f;
 	m_squadID = {0, -1};
 	m_tPos = getPos();
@@ -37,7 +37,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 
 	ship * lastAttacker = m_lastAttacker.get();
 
-	if(getType() != SHIP_TYPE_MINER)
+    if(getType() != SHIP_TYPE_MINER and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_FLEE_TO)
 	{
 		//Lowest weight wins.
 		//Enemy hostile targeting.
@@ -92,7 +92,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 				//Do not target enemies shooting by sideways.
 				//weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
 				//Pursue last attacker.
-				if( lastAttacker = &_ply )
+                if( lastAttacker == &_ply )
 					weight /= 2.0f;
 
 				if(weight < bestWeight)
@@ -105,7 +105,8 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 			}
 		}
 	}
-	else
+    //Miner targeting
+    else if(getType() == SHIP_TYPE_MINER)
 	{
 		float bestDist = F_INF;
 		//Find the closest asteroid.
@@ -145,7 +146,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 		m_target.setPlayer( dynamic_cast<ship*>(&_ply) );
 		setGoal( GOAL_CONGREGATE );
 	}
-	else if( getTarget() == nullptr and m_curGoal != GOAL_GOTO )
+    else if( getTarget() == nullptr and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_GOTO )
 	{
 		//If the agent has no m_target, it becomes idle.
 		setGoal( GOAL_WANDER );
@@ -195,7 +196,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 
 	//std::cout << "targetAcquisition end, flag is " << m_target.getFlag() << '\n';
 	//If fleeing, look for a place to conduct repairs.
-	if(m_curGoal == GOAL_FLEE_FROM)
+    if(m_curGoal == GOAL_FLEE_FROM)
 	{
 		float m = F_INF;
 		for(size_t e = 0; e < _enemies.size(); ++e)
@@ -208,11 +209,10 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 					m = d;
 					setGoal( GOAL_FLEE_TO );
 					m_target.setAgent( slotID<ship>( _enemies.getID(e), reinterpret_cast< slotmap<ship> *>(&_enemies) ) );
-					std::cout << "FLEEING TO DOCK\n";
 				}
 			}
 		}
-	}
+    }
 
 	debug("target acquisition end");
 }
@@ -225,13 +225,11 @@ void enemy::behvrUpdate(float _dt)
 	else setEnergyPriority(0);
 	//-----------------------------------------------------------------------------------------------------//
 
-	m_baseConfidence = randNum(getMaxHealth() * 0.5f, getMaxHealth() * 0.8f) + getXP() * 0.01f;
-
 	//Recover confidence slower when fleeing.
-	if(m_curGoal == GOAL_FLEE_FROM)
-		m_confidence = std::min(m_confidence + _dt * 0.0f, m_baseConfidence);
+    if(m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO)
+        m_confidence = std::min(m_confidence + _dt * 0.5f, m_baseConfidence);
 	else
-		m_confidence = std::min(m_confidence + _dt * 0.0f, m_baseConfidence);
+        m_confidence = std::min(m_confidence + _dt, m_baseConfidence);
 
 	ship * t = m_target.get();
 	if(t != nullptr)
@@ -239,7 +237,8 @@ void enemy::behvrUpdate(float _dt)
 		float dist = mag(getPos() - t->getPos());
 		vec3 diff = (t->getPos() - getPos()) / dist;
 		m_tPos = t->getPos();
-		if(m_curGoal == GOAL_ATTACK) m_tPos -= diff * fmin(t->getRadius(), dist);
+        if(m_curGoal == GOAL_ATTACK)
+            m_tPos -= diff * fmin(t->getRadius(), dist);
 		m_tVel = t->getVel();
 	}
 
@@ -298,9 +297,7 @@ void enemy::steering()
 	float radius = 0.0f;
 	ship * t = m_target.get();
 	if(t != nullptr)
-	{
 		radius = t->getRadius();
-	}
 
 	//Reverse if too close.
 	if(dist < getRadius() and getCanMove()) accelerate(-1.0f);
@@ -331,20 +328,15 @@ void enemy::steering()
 	//This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
 	float accelMul;
 
-	if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE) accelMul = dist - stoppingDistance;
-	else accelMul = dist - stoppingDistance - m_stopDist - radius ;
+    if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE)
+        accelMul = dist - stoppingDistance;
+    else
+        accelMul = dist - stoppingDistance - m_stopDist - radius ;
 	accelMul = clamp(accelMul / 50.0f, -1.0f, 0.5f);
-
-	//std::cout << "diff " << diff.m_x << ", " << diff.m_y << ", " << diff.m_z << ", mag " << dist << '\n';
-	//std::cout << this << " accelMul " << accelMul << "\n\n";
-	//This varies between 1 (ship facing m_target) 0 (ship parallel to m_target) and -1 (ship facing away from m_target).
-	//It does this by taking the ship's angle and its m_target angle, and determining the angle between them.
-	//float angleMul = 1.0f;//(static_cast<float>(shortestAngle(getAng(), getTAng())) + 90.0f ) / 90.0f;
 
 	//We need to compare the distance to the closing speed. If the two points are converging rapidly, the ship must slow down.
 	//cSpd will be subtracted from dist once per frame. Ships can accelerate at max 1au per frame.
 	//Therefore, frames until collision: f = dist/cSpd
-	//if dist - factorial(cSpd) < 0, ship will overshoot. > 0, is will undershoot, and = 0, it will arrive at the correct position.
 
 	//vec2 linePos = closest(m_tPos,unit(normal(v)),p);
 
@@ -430,8 +422,16 @@ void enemy::steering()
 	}
 }
 
-float enemy::aiDamage(const float _d, const vec3 _v, aiTarget _attacker)
+void enemy::damage(const float _d)
+{
+    ship::damage(_d);
+    decrConfidence(_d);
+}
+
+float enemy::damage(const float _d, const vec3 _v, aiTarget _attacker)
 {
 	m_lastAttacker = _attacker;
-	return ship::damage(_d, _v);
+    float f = ship::damage(_d, _v);
+    decrConfidence(f);
+    return f;
 }
