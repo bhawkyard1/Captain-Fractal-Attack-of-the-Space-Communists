@@ -25,8 +25,9 @@ uniform mat4 M;
 uniform mat4 MVP;
 uniform mat3 normalMat;
 
-uniform float iGlobalTime;
+uniform float lifetime;
 uniform float s;
+
 
 // Noise related functions go here ..
 
@@ -137,10 +138,9 @@ float surface3 ( vec3 coord ) {
 
 void main()
 {
-    float n = surface3(vec3(inPosition.xy, s + iGlobalTime + inPosition.z));
-    n *= n;
+    float n = surface3(vec3(inPosition.xy / 4.0, lifetime * 2.0f + inPosition.z));
+    //n *= n;
     n /= 16.0;
-    n -= n / 2.0;
     vec4 p = inPosition + power * vec4(n * inNormal, 0.0);
     gl_Position = MVP * p;
     UV = inUV;

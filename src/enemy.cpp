@@ -232,7 +232,7 @@ void enemy::behvrUpdate(float _dt)
 	if(m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO)
 		m_confidence = std::min( std::min(m_confidence + _dt * 0.5f, getHealth()), m_baseConfidence );
 	else
-		m_confidence = std::min( std::min(m_confidence + _dt, getHealth()), m_baseConfidence );
+        m_confidence = std::min( std::min(m_confidence + _dt * 1.5f, getHealth()), m_baseConfidence );
 
 	ship * t = m_target.get();
 	if(t != nullptr)

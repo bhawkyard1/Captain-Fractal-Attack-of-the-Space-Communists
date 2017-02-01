@@ -14,7 +14,7 @@ pfx::pfx(const vec3 _p,
 {
     m_elapsed = 0.0f;
 
-    m_duration = _force / 12.0f;
+    m_duration = _force / 32.0f;
 
     m_active = true;
 
