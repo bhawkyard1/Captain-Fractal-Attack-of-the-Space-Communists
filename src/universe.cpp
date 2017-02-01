@@ -496,11 +496,11 @@ void universe::update(float _dt)
 
 		//Fleeing handling
 		debug("fleeing");
-        if( m_agents[e].getConfidence() < 0.0f and m_agents[e].getCanMove() /*and m_agents[e].getSquadID().m_version != -1*/ )
+		if( m_agents[e].getConfidence() < 0.0f and m_agents[e].getCanMove() /*and m_agents[e].getSquadID().m_version != -1*/ )
 		{
 			//If the enemy can move and is scared, runs away.
-            if(m_agents[e].getSquadID().m_version > -1)
-                removeFromSquad(&m_agents[e]);
+			if(m_agents[e].getSquadID().m_version > -1)
+				removeFromSquad(&m_agents[e]);
 			m_agents[e].setGoal(GOAL_FLEE_FROM);
 		}
 		//Fleeing recovering
@@ -646,47 +646,50 @@ void universe::updateUI()
 	//Rollovers and stuff.
 	m_ui.update(m_factions[TEAM_PLAYER].getWealth(), getMousePos());
 
-    //DRAWING CONTEXT-SELECTED SHIP STATS
-    selection &infoCard = m_ui.getElements()->at(3);
+	//DRAWING CONTEXT-SELECTED SHIP STATS
+	if(m_ui.getElements()->size() < 3)
+		return;
 
-    enemy * contextPtr = m_agents.getByID(m_contextShip);
+	selection &infoCard = m_ui.getElements()->at(3);
 
-    if(contextPtr != nullptr)
-    {
-        std::cout << "Base confidence is " << contextPtr->getBaseConfidence() << ". Actual is " << contextPtr->getConfidence() << ". Goal is " << contextPtr->getGoal() << '\n';
-        std::cout << "Squad is " << contextPtr->getSquadID().m_id << ", " << contextPtr->getSquadID().m_version << '\n';
-        vec3 csp = contextPtr->getPos();
+	enemy * contextPtr = m_agents.getByID(m_contextShip);
 
-        infoCard.setVisible(true);
+	if(contextPtr != nullptr)
+	{
+		std::cout << "Base confidence is " << contextPtr->getBaseConfidence() << ". Actual is " << contextPtr->getConfidence() << ". Goal is " << contextPtr->getGoal() << '\n';
+		std::cout << "Squad is " << contextPtr->getSquadID().m_id << ", " << contextPtr->getSquadID().m_version << '\n';
+		vec3 csp = contextPtr->getPos();
 
-        infoCard.getAt(0)->setLabel(contextPtr->getIdentifier());
-        infoCard.getAt(1)->setLabel("KILLS: " + std::to_string(contextPtr->getKills()));
-        infoCard.getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) /*/ g_PIXEL_UNIT_CONVERSION*/)) + " m");
+		infoCard.setVisible(true);
 
-        infoCard.setPos(tovec2(csp));
-        for(auto &i : *(infoCard.getButtons()))
-        {
-            vec2 pos = i.getStart();
-            pos += tovec2( csp );
-            i.setPos( pos );
-            //m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
-        }
+		infoCard.getAt(0)->setLabel(contextPtr->getIdentifier());
+		infoCard.getAt(1)->setLabel("KILLS: " + std::to_string(contextPtr->getKills()));
+		infoCard.getAt(2)->setLabel("DISTANCE: " + std::to_string(static_cast<int>(mag(contextPtr->getPos()) /*/ g_PIXEL_UNIT_CONVERSION*/)) + " m");
 
-        //If we are too far away, or the ship cannot store others, disable dock button.
-        if(!contextPtr->canStoreShips() or magns(contextPtr->getPos()) > sqr(contextPtr->getRadius()))
-            infoCard.getAt(3)->setDark(true);
-        else
-            infoCard.getAt(3)->setDark(false);
+		infoCard.setPos(tovec2(csp));
+		for(auto &i : *(infoCard.getButtons()))
+		{
+			vec2 pos = i.getStart();
+			pos += tovec2( csp );
+			i.setPos( pos );
+			//m_drawer.addRect( tovec3(pos), i.getDim(), 0.0f, {255,0,0,255} );
+		}
 
-        if(neutralityCheck(contextPtr->getTeam(), TEAM_PLAYER))
-            infoCard.getAt(4)->setDark(false);
-        else
-            infoCard.getAt(4)->setDark(true);
-    }
-    else
-    {
-        infoCard.setVisible(false);
-    }
+		//If we are too far away, or the ship cannot store others, disable dock button.
+		if(!contextPtr->canStoreShips() or magns(contextPtr->getPos()) > sqr(contextPtr->getRadius()))
+			infoCard.getAt(3)->setDark(true);
+		else
+			infoCard.getAt(3)->setDark(false);
+
+		if(neutralityCheck(contextPtr->getTeam(), TEAM_PLAYER))
+			infoCard.getAt(4)->setDark(false);
+		else
+			infoCard.getAt(4)->setDark(true);
+	}
+	else
+	{
+		infoCard.setVisible(false);
+	}
 }
 
 void universe::cullAgents()
@@ -1535,7 +1538,7 @@ void universe::checkCollisions()
 					else if(so.get() == &m_ply)
 						m_ply.addXP(xp);
 
-                    float realDamage = m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
+					float realDamage = m_partitions[p].m_ships[s]->damage(harm, d_dir * stop, so);
 					addDamagePopup(realDamage, m_partitions[p].m_ships[s]->getTeam(), ep, m_partitions[p].m_ships[s]->getVel() + randVec3(2.0f));
 					break;
 				}
@@ -1780,8 +1783,8 @@ void universe::resolveCollision(ship *_a, ship *_b)
 	normal.m_z = 0.0f;
 
 	//Spooky boolean math here we go
-	float ainvmass = _a->getInertia() * _a->getCanMove();
-	float binvmass = _b->getInertia() * _b->getCanMove();
+	float ainvmass = _a->getInertia() * static_cast<int>(_a->getCanMove());
+	float binvmass = _b->getInertia() * static_cast<int>(_b->getCanMove());
 	float cinvmass = ainvmass + binvmass;
 
 	//Static objects do not collide.

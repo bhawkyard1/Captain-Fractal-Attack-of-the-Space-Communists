@@ -332,7 +332,44 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 void faction::addReserve()
 {
 	//Here a faction decides which ship to buy.
-	float maxCost = 0.0f;
+
+	float runningTotal = 0.0f;
+	std::vector<float> probabilities;
+	probabilities.reserve(m_combatShips.second - m_combatShips.first);
+	for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
+	{
+		float cost = pow(calcAICost(i), 0.8f);
+		if(cost < m_wealth)
+		{
+			//The cheaper a ship, the more likely to be bought.
+			float rcost = 1.0f / pow(calcAICost(i), 0.8f);
+			//Push back running total + rcost.
+			probabilities.push_back( rcost + runningTotal );
+			//Increment for next iteration.
+			runningTotal += rcost;
+		}
+		else
+			break;
+	}
+
+	//Too poor.
+	if(probabilities.size() == 0)
+		return;
+
+	float prob = randNum(0.0f, runningTotal);
+
+	int offset = 0;
+	for(int i = 0; i < static_cast<int>(probabilities.size()); ++i)
+	{
+		if(prob > probabilities[i])
+			offset = i;
+		else
+			break;
+	}
+
+	m_reserves.at(m_combatShips.first + offset) += 1;
+
+	/*float maxCost = 0.0f;
 	std::vector<float> rcosts;
 	rcosts.push_back(0.0f);
 	std::vector<float> costs;
@@ -363,8 +400,8 @@ void faction::addReserve()
 			break;
 	}
 	//std::cout << "type " << g_ship_templates[offset + m_combatShips.first].getIdentifier() << " offset " << offset << ", m_reserves size " << m_reserves.size() << '\n';
-	m_reserves.at(m_combatShips.first + offset)++;
-	//m_wealth -= costs.at(offset);
+	m_reserves.at(m_combatShips.first + offset) += 1;
+	//m_wealth -= costs.at(offset);*/
 }
 
 void faction::deploy(size_t _num)

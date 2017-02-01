@@ -87,6 +87,8 @@ public:
 
     float damage(const float _d, const vec3 _v, aiTarget _attacker);
     void damage(const float _d);
+
+		bool isFleeing() const {return m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target position

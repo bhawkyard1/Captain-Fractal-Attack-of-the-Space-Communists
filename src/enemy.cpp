@@ -20,7 +20,7 @@ enemy::enemy(
 	m_lastAttacker = aiTarget();
 	m_curGoal = GOAL_IDLE;
 	m_team = _team;
-    m_baseConfidence = randNum(getMaxHealth() * 0.8f, getMaxHealth() * 1.2f);
+	m_baseConfidence = randNum(getMaxHealth() * 0.8f, getMaxHealth() * 1.2f);
 	m_confidence = m_baseConfidence;//-1.0f;
 	m_squadID = {0, -1};
 	m_tPos = getPos();
@@ -37,7 +37,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 
 	ship * lastAttacker = m_lastAttacker.get();
 
-    if(getType() != SHIP_TYPE_MINER and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_FLEE_TO)
+	if(getType() != SHIP_TYPE_MINER)
 	{
 		//Lowest weight wins.
 		//Enemy hostile targeting.
@@ -75,7 +75,9 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 				slotmap<ship> * pt = reinterpret_cast<slotmap<ship>*>(&_enemies);
 				m_target.setAgent( slotID<ship>( _enemies.getID(i), pt ) );
 				//std::cout << "	set target to " << _enemies[i].getIdentifier() << "deriving from address " << &_enemies << " which was converted to " << pt << ", flag is " << m_target.getFlag() << '\n';
-				setGoal(GOAL_ATTACK);
+
+				if(!isFleeing())
+					setGoal(GOAL_ATTACK);
 			}
 		}
 
@@ -92,7 +94,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 				//Do not target enemies shooting by sideways.
 				//weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
 				//Pursue last attacker.
-                if( lastAttacker == &_ply )
+				if( lastAttacker == &_ply )
 					weight /= 2.0f;
 
 				if(weight < bestWeight)
@@ -100,13 +102,14 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 					bestWeight = weight;
 					m_target.setPlayer( dynamic_cast<ship*>(&_ply) );
 					//std::cout << "	set target to " << m_target.get()->getIdentifier() << ", flag is " << m_target.getFlag() << '\n';
-					setGoal(GOAL_ATTACK);
+					if(!isFleeing())
+						setGoal(GOAL_ATTACK);
 				}
 			}
 		}
 	}
-    //Miner targeting
-    else if(getType() == SHIP_TYPE_MINER)
+	//Miner targeting
+	else if(getType() == SHIP_TYPE_MINER)
 	{
 		float bestDist = F_INF;
 		//Find the closest asteroid.
@@ -146,7 +149,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 		m_target.setPlayer( dynamic_cast<ship*>(&_ply) );
 		setGoal( GOAL_CONGREGATE );
 	}
-    else if( getTarget() == nullptr and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_GOTO )
+	else if( getTarget() == nullptr and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_GOTO )
 	{
 		//If the agent has no m_target, it becomes idle.
 		setGoal( GOAL_WANDER );
@@ -196,7 +199,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 
 	//std::cout << "targetAcquisition end, flag is " << m_target.getFlag() << '\n';
 	//If fleeing, look for a place to conduct repairs.
-    if(m_curGoal == GOAL_FLEE_FROM)
+	if(m_curGoal == GOAL_FLEE_FROM)
 	{
 		float m = F_INF;
 		for(size_t e = 0; e < _enemies.size(); ++e)
@@ -212,7 +215,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 				}
 			}
 		}
-    }
+	}
 
 	debug("target acquisition end");
 }
@@ -226,10 +229,10 @@ void enemy::behvrUpdate(float _dt)
 	//-----------------------------------------------------------------------------------------------------//
 
 	//Recover confidence slower when fleeing.
-    if(m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO)
-        m_confidence = std::min(m_confidence + _dt * 0.5f, m_baseConfidence);
+	if(m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO)
+		m_confidence = std::min( std::min(m_confidence + _dt * 0.5f, getHealth()), m_baseConfidence );
 	else
-        m_confidence = std::min(m_confidence + _dt, m_baseConfidence);
+		m_confidence = std::min( std::min(m_confidence + _dt, getHealth()), m_baseConfidence );
 
 	ship * t = m_target.get();
 	if(t != nullptr)
@@ -237,8 +240,8 @@ void enemy::behvrUpdate(float _dt)
 		float dist = mag(getPos() - t->getPos());
 		vec3 diff = (t->getPos() - getPos()) / dist;
 		m_tPos = t->getPos();
-        if(m_curGoal == GOAL_ATTACK)
-            m_tPos -= diff * fmin(t->getRadius(), dist);
+		if(m_curGoal == GOAL_ATTACK)
+			m_tPos -= diff * fmin(t->getRadius(), dist);
 		m_tVel = t->getVel();
 	}
 
@@ -328,10 +331,10 @@ void enemy::steering()
 	//This controls how much the ship is to accelerate. It depends on the closing speed between the ship and its m_target, their distance apart, and whether the ship is moving towards the m_target, or away.
 	float accelMul;
 
-    if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE)
-        accelMul = dist - stoppingDistance;
-    else
-        accelMul = dist - stoppingDistance - m_stopDist - radius ;
+	if(m_curGoal == GOAL_GOTO or m_curGoal == GOAL_TRADE)
+		accelMul = dist - stoppingDistance;
+	else
+		accelMul = dist - stoppingDistance - m_stopDist - radius ;
 	accelMul = clamp(accelMul / 50.0f, -1.0f, 0.5f);
 
 	//We need to compare the distance to the closing speed. If the two points are converging rapidly, the ship must slow down.
@@ -424,14 +427,14 @@ void enemy::steering()
 
 void enemy::damage(const float _d)
 {
-    ship::damage(_d);
-    decrConfidence(_d);
+	ship::damage(_d);
+	decrConfidence(_d);
 }
 
 float enemy::damage(const float _d, const vec3 _v, aiTarget _attacker)
 {
 	m_lastAttacker = _attacker;
-    float f = ship::damage(_d, _v);
-    decrConfidence(f);
-    return f;
+	float f = ship::damage(_d, _v);
+	decrConfidence(f);
+	return f;
 }
