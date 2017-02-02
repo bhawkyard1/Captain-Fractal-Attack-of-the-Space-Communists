@@ -138,9 +138,9 @@ float surface3 ( vec3 coord ) {
 
 void main()
 {
-    float n = surface3(vec3(inPosition.xy / 4.0, lifetime * 2.0f + inPosition.z));
+    float n = surface3(vec3(inPosition.xy / 8.0, lifetime));
     //n *= n;
-    n /= 16.0;
+    n /= 32.0;
     vec4 p = inPosition + power * vec4(n * inNormal, 0.0);
     gl_Position = MVP * p;
     UV = inUV;

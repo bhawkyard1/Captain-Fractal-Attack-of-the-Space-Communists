@@ -615,7 +615,7 @@ void universe::update(float _dt)
         i.clearDeployed();
     }
 
-    if(rand() % 1500 == 0 and m_asteroids.size() < 10)
+		if(prob(256) and m_asteroids.size() < 256)
     {
         ship_spec size = ASTEROID_MID;
         int prob = rand() % 100;
@@ -623,12 +623,8 @@ void universe::update(float _dt)
         if(prob > 50 and prob <= 80) size = ASTEROID_SMALL;
         else if(prob > 80 and prob <= 99) size = ASTEROID_LARGE;
 
-        vec3 ppos;
-        int side = rand() %4 ;
-        if(side == 0) ppos = {randNum(-20000.0f,20000.0f), -20000.0f, 0.0f};
-        else if(side == 1) ppos = {randNum(-20000.0f,20000.0f), 20000.0f, 0.0f};
-        else if(side == 2) ppos = {-20000.0f, randNum(-20000.0f,20000.0f), 0.0f};
-        else if(side == 3) ppos = {20000.0f, randNum(-20000.0f,20000.0f), 0.0f};
+				vec3 ppos = tovec3( randVec2(20000.0f, 55000.0f) );
+
         ship a( g_ship_templates[size] );
         a.setVel( tovec3(randVec2(64.0f)) );
         a.setPos( ppos );
@@ -1518,7 +1514,7 @@ void universe::checkCollisions()
                 vec3 contact;
                 if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(contact, ev, sd * randNum(1.0f, 3.0f), stop * randNum(16.0f, 32.0f), true, sc);
+										addpfx(contact, ev, sd * randNum(1.0f, 3.0f), stop * randNum(32.0f, 64.0f), true, sc);
                     harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -1558,7 +1554,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(contact, ev, sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), true, {{2, 2, 2, 0}});
+										addpfx(contact, ev, sd * randNum(1.0f, 3.0f), stop * randNum(32.0f, 64.0f), true, {{2, 2, 2, 0}});
                     for(int q = 0; q < 20; ++q) addParticleSprite(ep, ev + tovec3(randVec2(1.0f)), er * 2.0f, "SMOKE");
                     harm = sd;
 
@@ -1591,7 +1587,7 @@ void universe::checkCollisions()
                 //if(lineIntersectCircle(tovec2(sp), tovec2(spv), tovec2(ep), er))
                 if(lineIntersectSphere(sp, spv, ep, er, &contact))
                 {
-                    addpfx(contact, ev, randNum(3.0f, 8.0f), sd * randNum(1.0f, 3.0f), true, {{255, 200, 20, 255}});
+										addpfx(contact, ev, randNum(3.0f, 8.0f), stop * randNum(32.0f, 64.0f), true, {{255, 200, 20, 255}});
 
                     harm = sd;
 
@@ -1626,7 +1622,7 @@ void universe::checkCollisions()
                 {
                     playUISnd(RICOCHET_SND);
                     m_drawer.addShake(5.0f);
-                    addpfx(contact, m_ply.getVel(), sd * randNum(1.0f, 3.0f), randNum(3.0f, 8.0f), true, sc);
+										addpfx(contact, m_ply.getVel(), stop * randNum(32.0f, 64.0f), randNum(3.0f, 8.0f), true, sc);
                     harm = sd;
 
                     d_dir = m_partitions[p].m_lasers[l]->getVel();
@@ -2730,7 +2726,7 @@ void universe::destroyAgent(size_t _i)
 
     vec3 pos = {randNum(-16.0f,16.0f), randNum(-16.0f,16.0f), 0.0f};
     pos += m_agents[_i].getPos();
-    addpfx(pos, m_agents[_i].getVel(), randNum(5.0, 7.0), m_agents[_i].getRadius() * randNum(0.9f, 0.95f), true, col1to255(m_agents[_i].getCurWeapCol()));
+		addpfx(pos, m_agents[_i].getVel(), randNum(5.0, 7.0), m_agents[_i].getRadius() * randNum(1.0f, 1.25f), true, col1to255(m_agents[_i].getCurWeapCol()));
 
     //Dump inventory.
     for(auto &d : m_agents[_i].getCargo()->getItems()->m_objects)
