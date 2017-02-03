@@ -48,9 +48,7 @@ void pfx::update(float _dt)
     bool elapsed = false;
 
     for(auto &i : m_particles)
-    {
         i.setWVel( getWVel() );
-    }
 
     for(size_t i = 0; i < m_alphas.size(); ++i)
     {
@@ -59,7 +57,7 @@ void pfx::update(float _dt)
 
         if(m_alphas[i] > 0.0f)
         {
-            m_alphas[i] -= 1.0f;
+						m_alphas[i] -= _dt * 20.0f;
             alphas = false;
         }
     }

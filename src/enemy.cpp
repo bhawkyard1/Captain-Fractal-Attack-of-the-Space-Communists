@@ -100,7 +100,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 				if(weight < bestWeight)
 				{
 					bestWeight = weight;
-					m_target.setPlayer( dynamic_cast<ship*>(&_ply) );
+					m_target.setPlayer( static_cast<ship*>(&_ply) );
 					//std::cout << "	set target to " << m_target.get()->getIdentifier() << ", flag is " << m_target.getFlag() << '\n';
 					if(!isFleeing())
 						setGoal(GOAL_ATTACK);
@@ -220,6 +220,12 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 	debug("target acquisition end");
 }
 
+void enemy::addXP(const float _xp)
+{
+	m_baseConfidence += _xp;
+	ship::addXP(_xp);
+}
+
 void enemy::behvrUpdate(float _dt)
 {
 	//Setting energy priorities----------------------------------------------------------------------------//
@@ -228,11 +234,13 @@ void enemy::behvrUpdate(float _dt)
 	else setEnergyPriority(0);
 	//-----------------------------------------------------------------------------------------------------//
 
+	float hp = getHealth() / getMaxHealth();
+
 	//Recover confidence slower when fleeing.
 	if(m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO)
-		m_confidence = std::min( std::min(m_confidence + _dt * 0.5f, getHealth()), m_baseConfidence );
+		m_confidence = std::min( m_confidence + _dt * 0.5f, hp * m_baseConfidence );
 	else
-        m_confidence = std::min( std::min(m_confidence + _dt * 1.5f, getHealth()), m_baseConfidence );
+		m_confidence = std::min( m_confidence + _dt * 1.5f, hp * m_baseConfidence );
 
 	ship * t = m_target.get();
 	if(t != nullptr)

@@ -63,7 +63,7 @@ renderer_ngl::renderer_ngl()
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 0, 0,
                                 m_w, m_h,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_FULLSCREEN*/ );
+																SDL_WINDOW_OPENGL /*| SDL_WINDOW_BORDERLESS*/ | SDL_WINDOW_FULLSCREEN );
 
     if(!m_window)
     {
@@ -289,7 +289,7 @@ renderer_ngl::renderer_ngl()
     m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
 
     ngl::VAOPrimitives * prim = ngl::VAOPrimitives::instance();
-    prim->createSphere( "explosion", 1.0f, 16 );
+		prim->createSphere( "explosion", 1.0f, 48 );
 
     m_pointLights.reserve(MAX_LIGHTS);
     glGenBuffers(1, &m_lightbuffer);

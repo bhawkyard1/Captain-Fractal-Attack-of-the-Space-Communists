@@ -189,7 +189,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 		if(_rivals[f].getRelations(m_team) < DIPLOMACY_NEUTRAL and getRelations(curTeam) < DIPLOMACY_NEUTRAL)
 		{
 			//if(b) std::cout << "ADDING SQUADS FROM TEAM " << _rivals[f].getIdentifier() << '\n';
-			enemySquads.reserve(enemySquads.size() + _rivals[f].getSquads().size());
+			//enemySquads.reserve(enemySquads.size() + _rivals[f].getSquads().size());
 			//Append rival factions squads to enemy squads.
 			enemySquads.insert(
 						enemySquads.end(),
@@ -216,16 +216,16 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 			for(auto &target : enemySquads)
 			{
 				//if(b) std::cout << "target : " << target.m_size << ", " << target.m_team << '\n';
-				float dist = magns(s.m_averagePos - target.m_targetPos);
+				float dist = magns(s.m_averagePos - target.m_averagePos);
 				if(
 					 dist < bestDistance and
-					 s.m_strength * m_aggression > target.m_strength
+					 s.m_strength * (1.0f + m_aggression) > target.m_strength
 					 )
 				{
 					//if(b) std::cout << "  targeting squad at " << target.m_averagePos.m_x << ", " << target.m_averagePos.m_y << " belonging to faction " << target.m_team << " of size " << target.m_size << '\n';
 					bestDistance = dist;
 					s.m_targetPos = target.m_averagePos;
-					//done = true;
+					done = true;
 				}
 			}
 			//if(b) std::cout << "targeting enemies\n";
@@ -250,18 +250,20 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 				done = true;
 			}
 			//if(b) std::cout << "targeting player\n";
-			if( done ) continue;
+			if( done )
+				continue;
 
 			//Reinforcing of squads within the SAME faction.
 			//To do: I expect this is causing ships to hang around forever, because they reinforce rather than withdrawing...?
 			for(auto &ally : m_squads.m_objects)
 			{
-				if(&s == &ally) continue;
+				if(&s == &ally)
+					continue;
 
 				float dist = magns(s.m_averagePos - ally.m_targetPos);
 				if(
 					 dist < bestDistance and
-					 ally.m_strength < s.m_strength
+					 ally.m_strength < s.m_strength * 0.5f
 					 )
 				{
 					bestDistance = dist;
@@ -289,8 +291,12 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 			if( done ) continue;
 			//std::cout << "p5\n";
 			//If no targets, withdraw.
-			s.m_targetPos = s.m_averagePos * 2.0f;
+			s.m_targetPos = s.m_averagePos * 32.0f;
 			//if(b) std::cout << "withdrawing\n";
+		}
+		else
+		{
+			s.m_targetPos = s.m_averagePos;
 		}
 	}
 }
@@ -334,15 +340,17 @@ void faction::addReserve()
 	//Here a faction decides which ship to buy.
 
 	float runningTotal = 0.0f;
-	std::vector<float> probabilities;
+	std::vector<float> probabilities = {0.0f};
 	probabilities.reserve(m_combatShips.second - m_combatShips.first);
 	for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
 	{
-		float cost = pow(calcAICost(i), 0.8f);
+		float cost = pow(calcAICost(i), 0.3f);
+		/*if(i == m_combatShips.second)
+			std::cout << "Cost of " << i << " is " << cost << '\n';*/
 		if(cost < m_wealth)
 		{
 			//The cheaper a ship, the more likely to be bought.
-			float rcost = 1.0f / pow(calcAICost(i), 0.8f);
+			float rcost = 64.0f / cost;
 			//Push back running total + rcost.
 			probabilities.push_back( rcost + runningTotal );
 			//Increment for next iteration.
@@ -351,6 +359,10 @@ void faction::addReserve()
 		else
 			break;
 	}
+
+	for(auto &p : probabilities)
+		std::cout << "P : " << p << '\n';
+	std::cout << "\n\n";
 
 	//Too poor.
 	if(probabilities.size() == 0)
@@ -409,6 +421,7 @@ void faction::deploy(size_t _num)
 	//debug( "    DEPLOY" );
 	for(size_t i = 0; i < m_reserves.size(); ++i)
 	{
+		//std::cout << m_identifier << " " << i << " : " << m_reserves[i] << '\n';
 		size_t pop = std::min(static_cast<size_t>(randNum((size_t)0, _num)), m_reserves.at(i));
 
 		m_reserves.at(i) -= pop;
@@ -426,7 +439,7 @@ void faction::unitDestroyed(const ship_spec _spec)
 void faction::unitWithdrawn(const ship_spec _spec)
 {
 	addActive(_spec, -1);
-	m_reserves[_spec - m_combatShips.first]++;
+	m_reserves[_spec]++;
 }
 
 void faction::addAggression(const float _mult)

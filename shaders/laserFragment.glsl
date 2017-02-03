@@ -139,7 +139,7 @@ void main()
     alpha *= 1.8;
     alpha = pow(alpha, 4.0);
 
-    fragColour.rgb = mix(vec3(1.0, 1.0, 1.0), vertColour.rgb, dist);
+    fragColour.rgb = mix(vec3(1.0) + vertColour.rgb, vertColour.rgb, dist);
     fragColour.a = mix(alpha, 0.0, dist * 2.0);
     fragColour.a *= vertColour.a;
     fragColour.a = clamp(fragColour.a, 0.0, 1.0);

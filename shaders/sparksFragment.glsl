@@ -23,7 +23,7 @@ void main()
 {    
     float dist = length(vec2(0.5, 0.5) - UV);
     fragColour = mix(vec4(1.0), vec4(vertColour.rgb, 0.0), dist * 2.0);
-    fragColour *= 1.25;
+    fragColour.rgb *= 2.0;
     fragColour = pow(fragColour, vec4(1.0 - vertColour.a));
     //fragColour.a *= vertColour.a;
     //fragColour.a = 1.0;
