@@ -63,7 +63,7 @@ renderer_ngl::renderer_ngl()
     m_window = SDL_CreateWindow("Captain Fractal: Attack of the Space Communists",
                                 0, 0,
                                 m_w, m_h,
-																SDL_WINDOW_OPENGL /*| SDL_WINDOW_BORDERLESS*/ | SDL_WINDOW_FULLSCREEN );
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS /*| SDL_WINDOW_FULLSCREEN*/ );
 
     if(!m_window)
     {
@@ -148,8 +148,8 @@ renderer_ngl::renderer_ngl()
                 g_HALFWIN.m_x * divz + m_cameraShakeOffset.m_x,
                 g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
                 -g_HALFWIN.m_y * divz + m_cameraShakeOffset.m_y,
-                -2048.0,
-                2048.0
+                -4096.0,
+                4096.0
                 );
 
     m_uiProject = ngl::ortho(
@@ -289,7 +289,7 @@ renderer_ngl::renderer_ngl()
     m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
 
     ngl::VAOPrimitives * prim = ngl::VAOPrimitives::instance();
-		prim->createSphere( "explosion", 1.0f, 48 );
+    prim->createSphere( "explosion", 1.0f, 48 );
 
     m_pointLights.reserve(MAX_LIGHTS);
     glGenBuffers(1, &m_lightbuffer);
@@ -648,8 +648,8 @@ void renderer_ngl::update(float _dt, base * _focus)
                 g_HALFWIN.m_x * divz + offset.m_x,
                 g_HALFWIN.m_y  * divz + offset.m_y,
                 -g_HALFWIN.m_y * divz + offset.m_y,
-                -2048.0,
-                2048.0
+                -4096.0,
+                4096.0
                 );
 
     m_VP = m_view * m_project;
@@ -1256,6 +1256,7 @@ void renderer_ngl::loadMatricesToShader()
 {
     ngl::ShaderLib * slib = ngl::ShaderLib::instance();
     ngl::Mat4 MVP = m_transform.getMatrix() * m_VP;
+    slib->setRegisteredUniform("M", m_transform.getMatrix());
     slib->setRegisteredUniform("MVP", MVP);
 }
 

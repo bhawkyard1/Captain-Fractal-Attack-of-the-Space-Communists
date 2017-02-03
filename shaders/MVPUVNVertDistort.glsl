@@ -142,7 +142,9 @@ void main()
     //n *= n;
     n /= 32.0;
     vec4 p = inPosition + power * vec4(n * inNormal, 0.0);
+    p.w = 1.0;
     gl_Position = MVP * p;
+    position = p;
     UV = inUV;
     normal = /*normalMat */ inNormal;
 }
