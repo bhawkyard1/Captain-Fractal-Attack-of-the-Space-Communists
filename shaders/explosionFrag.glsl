@@ -28,11 +28,11 @@ void main()
 
     fragColour = col;
 
-    float t =  distance(vec3(0.0), position.xyz) / (power / 16384.0);
+    float t =  distance(vec3(0.0), position.xyz / power);
     t = clamp(t, 0.0, 1.0);
-    fragColour = mix( col, vec4(0.5), t );
+    fragColour = mix( col, vec4(0.5, 0.5, 0.5, 0.9), t );
 
-    fragColour = position;
+    //fragColour = position;
     fragColour.a = mix(fragColour.a, 0.0, lifetime);
 
     fragColour.a = clamp(fragColour.a, 0.0, 1.0);

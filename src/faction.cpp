@@ -360,9 +360,9 @@ void faction::addReserve()
 			break;
 	}
 
-	for(auto &p : probabilities)
+	/*for(auto &p : probabilities)
 		std::cout << "P : " << p << '\n';
-	std::cout << "\n\n";
+	std::cout << "\n\n";*/
 
 	//Too poor.
 	if(probabilities.size() == 0)
