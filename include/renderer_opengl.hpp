@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "assetStore.hpp"
 #include "camera.hpp"
 #include "common.hpp"
 #include "enemy.hpp"
@@ -197,52 +198,24 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     void errorExit(const std::string &_msg);
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Loads an obj file and texture, returns a pointer to the ngl::Obj
-    /// \param _path path of the model
-    /// \param _append for other parts of the mesh, ie loadObj("ship_1", "_base") would load ship_1_base.obj (useful for objects with multiple meshes)
-    //----------------------------------------------------------------------------------------------------------------------
-    ngl::Obj * loadObj(const std::string _path, const std::string _append);
+    void resetTransform() {m_transform.reset();}
+    void setTransform(const vec3 _p) {m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z);}
+    void setTransform(const vec3 _p, const float _a) {m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z); m_transform.setRotation(0.0f, 0.0f, _a);}
+    void setTransform(const float _a) {m_transform.setRotation(0.0f, 0.0f, _a);}
 
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Loads an obj and texture file, stores it in m_models
-    /// \param _key stores it in the unordered map with this key
-    /// \param _path path to the asset files
-    //----------------------------------------------------------------------------------------------------------------------
-    void loadAsset(const std::string _key, const std::string _path);
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Draws an textured model
-    /// \param _p position
-    /// \param _ang asset angle
-    /// \param _asset asset key in m_objects
-    //----------------------------------------------------------------------------------------------------------------------
-    void drawAsset(const vec3 _p, const float _ang, const std::string _asset);
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Draws an textured model, but with a supplied alpha
-    /// \param _p position
-    /// \param _ang asset angle
-    /// \param _asset asset key in m_objects
-    /// \param _alpha transparency
-    //----------------------------------------------------------------------------------------------------------------------
-    void drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha);
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief Draws an shield of a given radius, with a fancy shader
-    /// \param _p position
-    /// \param _r radius
-    /// \param _dt global time for shader
-    /// \param _alpha transparency
-    /// \param _col colour tint
-    //----------------------------------------------------------------------------------------------------------------------
-    void drawShield(const vec3 _p, const float _r, const float _dt, const std::array<float, 4> _col);
+    void bindTextureToShader(const std::string &_shaderID, const GLuint _tex, const char *_uniform, int _target, GLenum _type = GL_TEXTURE_2D);
+    ///
+    /// @brief Draws a specified asset with a texture and shader.
+    /// @param _model, The string id of the model, from the asset store.
+    /// @param _texture, The string id of the texture, from the asset store.
+    /// @param _shader, The string id of the shader.
+    ///
+    void drawAsset(const std::string &_model, const std::string &_texture, const std::string &_shader);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them with a laser shader
     //----------------------------------------------------------------------------------------------------------------------
     void drawLasers(const float _globalTime);
-
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Treats the entries in the vertex attribute vectors as lines, and draws them
@@ -424,12 +397,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A container of models and textures
     //----------------------------------------------------------------------------------------------------------------------
-    std::unordered_map<std::string, std::vector<ngl::Obj*>> m_models;
-
-    //----------------------------------------------------------------------------------------------------------------------
-    /// \brief A generic half-sphere, used to draw shields for all of the ships in-game
-    //----------------------------------------------------------------------------------------------------------------------
-    ngl::Obj * m_shield;
+    assetStore m_assets;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The openGL context
