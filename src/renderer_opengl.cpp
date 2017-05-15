@@ -5,6 +5,7 @@
 #include <utility>
 #include <fstream>
 
+#include "assetStore.hpp"
 #include "camera.hpp"
 #include "common.hpp"
 #include "file.hpp"
@@ -208,7 +209,8 @@ renderer_ngl::renderer_ngl()
     loadShips();
     std::cout << "loading ships complete!\n";
 
-    loadAsset("RESOURCE_IRON_ROCK",  "resource_iron_rock");
+    m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock");
+    m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock");
 
     loadFontSpriteSheet("pix", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 20);
     loadFontSpriteSheet("minimal", g_GRAPHICAL_RESOURCE_LOC + "fonts/minimal.otf", 20);
@@ -281,8 +283,7 @@ renderer_ngl::renderer_ngl()
 
     m_pointVAO = createVAO({ngl::Vec3(0.0f, 0.0f, 0.0f)});
 
-    m_shield = new ngl::Obj(g_GRAPHICAL_RESOURCE_LOC + "models/shield.obj");
-    m_shield->createVAO();
+    m_assets.loadMesh("shield", "models/shield.obj");
 
     resetLights();
 
@@ -317,90 +318,56 @@ void renderer_ngl::loadShips()
         std::cout << "Loading ship from " << (g_RESOURCE_LOC + "ships/" + cur) << '\n';
         std::string asset = "";
         ship temp = loadShip(g_RESOURCE_LOC + "ships/" + cur, &asset, spec);
-        loadAsset(temp.getIdentifier(), asset);
+        m_assets.loadMesh(temp.getIdentifier(), g_RESOURCE_LOC + "ships/" + asset);
         g_ship_templates.push_back(temp);
         spec++;
     }
-    /*for(int i = 0; i <= SHIPS_END; ++i)
+}
+
+void renderer_ngl::drawAsset(const std::string &_model, const std::string &_texture, const std::string &_shader)
+{
+    if(_shader != "")
+    {
+        ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+        slib->use( _shader );
+    }
+
+    ngl::Obj * m = m_assets.getModel(_model);
+    if(m == nullptr)
+    {
+        std::cerr << "Error! Mesh " << _model << " doesn't exist!\n";
+        return;
+    }
+
+    if(_texture != "")
+    {
+        GLuint t = m_assets.getTexture( _texture );
+        if(t == 0)
         {
-                ship insert = loadShip("");
-                g_ship_templates.push_back(insert);
+            std::cerr << "Error! Texture " << _texture << " doesn't exist!\n";
+            return;
         }
-        std::cout << "No of ship types: " << g_ship_templates.size() << std::endl;*/
-
-}
-
-void renderer_ngl::loadAsset(const std::string _key, const std::string _path)
-{
-    std::cout << "LOADING ASSET: " << _path << '\n';
-    std::vector<ngl::Obj*> models;
-    models.push_back( loadObj(_path, "") );
-    models.push_back( loadObj(_path, "_static") );
-    m_models.insert({_key, models});
-    std::cout << "ASSET LOADED!\n";
-}
-
-ngl::Obj * renderer_ngl::loadObj(const std::string _path, const std::string _append)
-{
-    std::string full = _path + _append;
-    if(std::ifstream(g_GRAPHICAL_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj"))
-    {
-        ngl::Obj * tempObj = new ngl::Obj(g_GRAPHICAL_RESOURCE_LOC + "models/" + _path + "/" + full + ".obj", g_GRAPHICAL_RESOURCE_LOC + "textures/" + _path + "/" + full + ".png");
-        tempObj->createVAO();
-        return tempObj;
+        bindTextureToShader(_shader, t, "diffuse", 0);
     }
-    return nullptr;
+
+    loadMatricesToShader();
+    m->draw();
 }
 
-void renderer_ngl::drawAsset(const vec2 _p, const float _ang, const std::string _asset, const float _alpha)
+void renderer_ngl::bindTextureToShader(const std::string &_shaderID, const GLuint _tex, const char *_uniform, int _target, GLenum _type)
 {
     ngl::ShaderLib * slib = ngl::ShaderLib::instance();
-    slib->setRegisteredUniform("alpha", _alpha);
-
-    m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
-    m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
-    loadMatricesToShader();
-
-    size_t modlen = m_models[_asset].size();
-    for(size_t i = 0; i < modlen - 1; ++i)
+    GLint spid = slib->getProgramID( _shaderID );
+    GLint loc = glGetUniformLocation(spid, _uniform);
+    if(loc == -1)
     {
-        if(m_models[_asset][i] != nullptr) m_models[_asset][i]->draw();
+        std::cerr << "Uh oh! Invalid uniform location in Scene::bindTextureToShader!! " << _uniform << '\n';
+        return;
     }
+    glUniform1i(loc, _target);
 
-    m_transform.setRotation(90.0f, 0.0f, 0.0f);
-    loadMatricesToShader();
-
-    if(m_models[_asset][modlen - 1] != nullptr) m_models[_asset][modlen - 1]->draw();
-
-    m_transform.reset();
-}
-
-void renderer_ngl::drawAsset(const vec3 _p, const float _ang, const std::string _asset)
-{
-    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
-
-    m_transform.reset();
-
-    slib->setRegisteredUniform("alpha", 1.0f);
-
-    m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, _p.m_z));
-    m_transform.setRotation(90.0f, 0.0f, 180.0f + _ang);
-    slib->setRegisteredUniform("M", m_transform.getMatrix());
-    loadMatricesToShader();
-
-    size_t modlen = m_models[_asset].size();
-    for(size_t i = 0; i < modlen - 1; ++i)
-    {
-        if(m_models[_asset][i] != nullptr) m_models[_asset][i]->draw();
-    }
-
-    m_transform.setRotation(90.0f, 0.0f, 0.0f);
-    slib->setRegisteredUniform("transform", m_transform.getMatrix());
-    loadMatricesToShader();
-
-    if(m_models[_asset][modlen - 1] != nullptr) m_models[_asset][modlen - 1]->draw();
-
-    m_transform.reset();
+    glActiveTexture(GL_TEXTURE0 + _target);
+    glBindTexture(_type, _tex);
 }
 
 void renderer_ngl::addLine(const vec3 _start, const vec3 _end, const float _width, const std::array<float, 4> _lCol)
@@ -474,103 +441,9 @@ void renderer_ngl::drawLines(const float _width)
     glLineWidth(1.0f);
 }
 
-/*void renderer_ngl::drawLaser(const vec2 _start, const vec2 _end, const std::array<float, 4> _lCol)
-{
-        vec2 fstart = {_start.m_x, -_start.m_y};
-        vec2 fend = {_end.m_x, -_end.m_y};
-        fstart *= g_ZOOM_LEVEL;
-        fend *= g_ZOOM_LEVEL;
-        fstart += g_HALFWIN + m_cameraShakeOffset;
-        fend += g_HALFWIN + m_cameraShakeOffset;
-
-        slib->setRegisteredUniform("fstart", ngl::Vec2(fstart.m_x, fstart.m_y));
-        slib->setRegisteredUniform("fend", ngl::Vec2(fend.m_x, fend.m_y));
-
-        //std::cout << "TRANSLATE " << fstart.m_x << ", " << fstart.m_y << std::endl;
-
-        glBindVertexArray(m_vao);
-
-        std::array<ngl::Vec3, 2> line = {
-                ngl::Vec3(_start.m_x, _start.m_y,10.0f),
-                ngl::Vec3(_end.m_x,  _end.m_y,  10.0f)
-        };
-
-        std::array<ngl::Vec4, 2> vertCol = {
-                ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], 0.0f),
-                ngl::Vec4(_lCol[0], _lCol[1], _lCol[2], 1.0f)
-        };
-
-        //Generate a VBO
-        //GLuint vertBuffer;
-        //glGenBuffers(1, &vertBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                                 sizeof(ngl::Vec3) * line.size(),
-                                 &line[0].m_x,
-                        GL_STATIC_DRAW
-                        );
-
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertBuffer);
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-
-
-        //GLuint colourBuffer;
-        //glGenBuffers(1, &colourBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                                 sizeof(ngl::Vec4) * vertCol.size(),
-                                 &vertCol[0].m_x,
-                        GL_STATIC_DRAW
-                        );
-
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, m_colourBuffer);
-        glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, 0, 0 );
-
-        glLineWidth(5.0f * g_ZOOM_LEVEL);
-        loadMatricesToShader();
-        glDrawArraysEXT(GL_LINES, 0, 2);
-
-        glBindVertexArray(0);
-
-        glLineWidth(1.0f);
-}*/
-
-void renderer_ngl::drawShield(const vec3 _p, const float _r, const float _dt, const std::array<float, 4> _col)
-{
-    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
-
-    m_transform.setPosition(ngl::Vec3(_p.m_x, _p.m_y, 0.0f));
-    m_transform.setRotation(90.0f, 0.0f, 0.0f);
-    m_transform.setScale(_r, _r, _r);
-
-    slib->use("shield");
-    slib->setRegisteredUniform("iGlobalTime", _dt);
-    slib->setRegisteredUniform("inColour", ngl::Vec4(_col[0], _col[1], _col[2], _col[3]));
-    loadMatricesToShader();
-
-    m_shield->draw();
-
-    m_transform.reset();
-}
-
 renderer_ngl::~renderer_ngl()
 {
     SDL_DestroyWindow( m_window );
-
-    for(auto &i : m_models)
-    {
-        for(auto &j : i.second)
-        {
-            delete j;
-            j = nullptr;
-        }
-        i.second.clear();
-    }
-
-    delete m_shield;
-    m_shield = nullptr;
 }
 
 int renderer_ngl::init()

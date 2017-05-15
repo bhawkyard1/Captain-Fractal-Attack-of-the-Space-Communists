@@ -421,16 +421,16 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief A given ship inside this one.
     //----------------------------------------------------------------------------------------------------------------------
-		void dock(slotID<ship> _parent);
-		void undock();
-		bool canStoreShips() const {return m_maxShipStorage > 0 and m_storedShips < m_maxShipStorage;}
-		void incrStoredShips(const int _i) {m_storedShips = static_cast<int>(m_storedShips) + _i;}
-		size_t getStoredShips() const {return m_storedShips;}
-		size_t getMaxShipStorage() const {return m_maxShipStorage;}
-		void setMaxShipStorage(const size_t _maxShipStorage) {m_maxShipStorage = _maxShipStorage;}
+    void dock(slotID<ship> _parent);
+    void undock();
+    bool canStoreShips() const {return m_maxShipStorage > 0 and m_storedShips < m_maxShipStorage;}
+    void incrStoredShips(const int _i) {m_storedShips = static_cast<int>(m_storedShips) + _i;}
+    size_t getStoredShips() const {return m_storedShips;}
+    size_t getMaxShipStorage() const {return m_maxShipStorage;}
+    void setMaxShipStorage(const size_t _maxShipStorage) {m_maxShipStorage = _maxShipStorage;}
     void setDocked(const bool _docked) {m_docked = _docked;}
-		bool isDocked() const {return m_docked;}
-		slotID<ship> getDockParent() {return m_dockParent;}
+    bool isDocked() const {return m_docked;}
+    slotID<ship> getDockParent() {return m_dockParent;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target angle of the ship.
@@ -565,7 +565,7 @@ private:
     /// \brief Glowing of the engines.
     //----------------------------------------------------------------------------------------------------------------------
     float m_engineGlow;
-		float m_engineTemp;
+    float m_engineTemp;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Muzzle flash.
@@ -611,8 +611,8 @@ private:
     /// \brief Ships docked inside this one.
     //----------------------------------------------------------------------------------------------------------------------
     size_t m_maxShipStorage;
-		size_t m_storedShips;
-		slotID<ship> m_dockParent;
+    size_t m_storedShips;
+    slotID<ship> m_dockParent;
     bool m_docked;
 
     //----------------------------------------------------------------------------------------------------------------------

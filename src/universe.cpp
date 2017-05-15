@@ -955,20 +955,33 @@ void universe::processInputMap()
 void universe::draw(float _dt)
 {
 	debug("draw start");
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    vec3 mpos = tovec3( toWorldSpace( getMousePos() ) );
 
+    //Draw the background
 	m_drawer.disableDepthTesting();
 	m_drawer.drawBackground(m_time_elapsed, tovec2(m_pos + m_drawer.getShake()), tovec2(m_vel), m_cCol);
 	m_drawer.enableDepthTesting();
 
+    //Draw into the deferred lighting buffer.
 	m_drawer.drawingDeferredElements();
-	//m_drawer.enableDepthTesting();
 	m_drawer.useShader("ship");
-	if(!g_GAME_OVER and !m_ply.isDocked()) m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt), m_ply.getAng(), m_ply.getIdentifier());
+    //Draw the player if they are alive and not docked.
+    if(!g_GAME_OVER and !m_ply.isDocked())
+    {
+        m_drawer.setTransform(m_ply.getIPos(_dt), m_ply.getAng());
+        m_drawer.drawAsset(m_ply.getIdentifier(), m_ply.getIdentifier(), "");
+    }
+    //Draw each agent.
 	for(auto &i : m_agents.m_objects)
 	{
+        //Draw if not docked.
 		if(!i.isDocked())
-			m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
-
+        {
+            m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+            m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
+        }
+        //Draw debug lines if enabled.
 		if(m_showDebugUI)
 		{
 			squad * sq = getSquadFromID( i.getTeam(), i.getSquadID() );
@@ -976,50 +989,66 @@ void universe::draw(float _dt)
 				m_drawer.addLine(i.getPos(), sq->m_targetPos, 1.0f, {{1.0f, 0.0f, 0.0f, 1.0f}});
 		}
 	}
+    //Draw all missiles.
 	for(auto &i : m_missiles)
-	{
-		m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
-	}
+    {
+        m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+        m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
+    }
+    //Draw all asteroids.
 	for(auto &i : m_asteroids.m_objects)
-	{
-		m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
-	}
+    {
+        m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+        m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
+    }
+    //Draw all resources.
 	for(auto &i : m_resources)
-	{
-		m_drawer.drawAsset(i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
-	}
+    {
+        m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+        m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
+    }
+    //Draw all resources.
 	for(auto &i : m_selectedItems)
 	{
-		vec3 pos = tovec3( toWorldSpace( getMousePos() ) ) ;
-		m_drawer.drawAsset(pos, i.getAng(), i.getIdentifier());
+        m_drawer.setTransform(mpos, i.getAng());
+        m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
 	}
 
-	vec2 dpos = toWorldSpace( getMousePos() ) ;
+    //Draw an asset if the play is placing a structure.
+    if(m_mouse_state != -1)
+    {
+        m_drawer.setTransform(mpos, 0.0f);
+        m_drawer.drawAsset(g_ship_templates[m_mouse_state].getIdentifier(), g_ship_templates[m_mouse_state].getIdentifier(), "");
+    }
 
-	if(m_mouse_state != -1) m_drawer.drawAsset(dpos, 0.0f, g_ship_templates[m_mouse_state].getIdentifier(), 0.5f);
-
+    //Now drawing self-illuminating elements.
 	m_drawer.drawingNonLitElements();
+
+    //Draw all buffered lines if debug mode enabled.
 	if(m_showDebugUI)
 		m_drawer.drawLines(2.0f);
+
+
 	m_drawer.activeColourAttachments({GL_COLOR_ATTACHMENT1});
 
+    //Draw smoke.
 	for(auto i = m_passiveSprites.begin(); i != m_passiveSprites.end(); ++i)
 	{
 		if(i->getIdentifier() != "SMOKE") continue;
-		vec3 ipos = i->getInterpolatedPosition(_dt);
+        vec3 ipos = i->getIPos(_dt);
 		vec2 idim = {i->getDim(), i->getDim()};
 		std::array<float, 4> col = {{i->getCol(0), i->getCol(1), i->getCol(2), i->getAlph()}};
 		col = col255to1(col);
-		//col[3] *= 255.0f;
 		m_drawer.addRect(ipos, idim, 0.0f, col);
 	}
-	//m_drawer.drawSmoke(m_time_elapsed);
+    m_drawer.drawSmoke(m_time_elapsed);
 	m_drawer.clearVectors();
 
-	m_drawer.useShader("flame");
+    //Draw thruster flames.
+    slib->use("flame");
 	float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 32.0f;
 	vec3 backwards = tovec3(back(rad(m_ply.getAng())));
-	vec3 pos = m_ply.getInterpolatedPosition(_dt) + backwards * m_ply.getRadius() + backwards * stat;
+    vec3 pos = m_ply.getIPos(_dt) + backwards * m_ply.getRadius() + backwards * stat;
 
 	if(stat > 0.05f and !g_GAME_OVER)
 	{
@@ -1039,7 +1068,7 @@ void universe::draw(float _dt)
 	{
 		float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 32.0f;
 		vec3 backwards = tovec3(back(rad(i.getAng())));
-		vec3 pos = i.getInterpolatedPosition(_dt) + backwards * i.getRadius() + backwards * stat;
+        vec3 pos = i.getIPos(_dt) + backwards * i.getRadius() + backwards * stat;
 		std::array<float, 4> col = i.getCurWeapCol();
 		col[3] = 1.0f;
 
@@ -1063,7 +1092,7 @@ void universe::draw(float _dt)
 		if(stat > 0.05f)
 		{
 			m_drawer.drawFlames(
-						i.getInterpolatedPosition(_dt) + tovec3(back(rad(i.getAng()))) * (i.getRadius() + stat),
+                        i.getIPos(_dt) + tovec3(back(rad(i.getAng()))) * (i.getRadius() + stat),
 						vec2(i.getRadius(), stat),
 						i.getAng(),
 			{{0.1f, 0.4f, 1.0f, 1.0f}},
@@ -1076,7 +1105,7 @@ void universe::draw(float _dt)
 	m_drawer.useShader("laser");
 	for(auto &i : m_shots)
 	{
-		vec3 ipos = i.getInterpolatedPosition(_dt);
+        vec3 ipos = i.getIPos(_dt);
 		vec3 ivel = (i.getVel() + i.getWVel()) * 8.0f;
 		std::array<float, 4> icol = i.getCol();
 
@@ -1095,7 +1124,7 @@ void universe::draw(float _dt)
 
 		std::array<float, 4> col = i.getCol();
 		col = col255to1(col);
-		vec3 ipos = i.getInterpolatedPosition(_dt);
+        vec3 ipos = i.getIPos(_dt);
 
 		if(i.normalisedLifetime() < 1.0f)
 		{
@@ -1118,7 +1147,7 @@ void universe::draw(float _dt)
 			int k = 0;
 			for(auto j = i.getParticles()->begin(); j != i.getParticles()->end(); ++j)
 			{
-				vec3 jpos = j->getInterpolatedPosition(_dt);
+                vec3 jpos = j->getIPos(_dt);
 				vec3 jvel = j->getVel() * 2.0f;
 				col[3] = i.getAlpha(k) / 255.0f;
 
@@ -1132,15 +1161,21 @@ void universe::draw(float _dt)
 
 	//Shields
 	if(m_ply.getShieldGlow() > 0 and !g_GAME_OVER)
-		m_drawer.drawShield(m_ply.getInterpolatedPosition(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), {{0.1f, 0.4f, 1.0f, m_ply.getShieldGlow() / 255.0f}});
+        m_drawer.drawShield(m_ply.getIPos(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), {{0.1f, 0.4f, 1.0f, m_ply.getShieldGlow() / 255.0f}});
 	for(auto &i : m_agents.m_objects)
 	{
 		if(i.getShieldGlow() > 0)
-			m_drawer.drawShield(i.getInterpolatedPosition(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldCol());
+            m_drawer.drawShield(i.getIPos(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldCol());
 	}
 	//for(auto &i : m_missiles)
 
 	m_drawer.disableDepthTesting();
+
+    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
+    slib->use("debug");
+    slib->setRegisteredUniform("inColour", ngl::Vec4(1.0, 0.0, 0.0, 1.0));
+    for(auto &i : m_agents.m_objects)
+        m_drawer.drawCircle(i.getPos(), i.getRadius(), true);
 
 	m_drawer.drawingUI();
 
@@ -1294,7 +1329,7 @@ void universe::drawUI(const float _dt)
 		{
 			m_drawer.useShader("plain");
 			vec2 dim = contextPtr->getCargo()->getDim();
-			m_drawer.addRect(contextPtr->getInterpolatedPosition(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
+            m_drawer.addRect(contextPtr->getIPos(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
 			m_drawer.drawRects(true);
 			m_drawer.clearVectors();
 
@@ -1302,7 +1337,7 @@ void universe::drawUI(const float _dt)
 			//CRASH HERE
 			for(auto &i : contextPtr->getCargo()->getItems()->m_objects)
 			{
-				m_drawer.drawAsset(contextPtr->getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+                m_drawer.drawAsset(contextPtr->getIPos(_dt) + i.getIPos(_dt), i.getAng(), i.getIdentifier());
 			}
 			m_drawer.useShader("plain");
 		}
@@ -1313,7 +1348,7 @@ void universe::drawUI(const float _dt)
 		m_drawer.useShader("plain");
 
 		vec2 dim = m_ply.getCargo()->getDim();
-		m_drawer.addRect(m_ply.getInterpolatedPosition(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
+        m_drawer.addRect(m_ply.getIPos(_dt), dim, 0.0f, {{0.8f, 0.8f, 0.8f, 0.8f}});
 		m_drawer.drawRects(true);
 		m_drawer.clearVectors();
 
@@ -1321,7 +1356,7 @@ void universe::drawUI(const float _dt)
 		//CRASH HERE
 		for(auto &i : m_ply.getCargo()->getItems()->m_objects)
 		{
-			m_drawer.drawAsset(m_ply.getInterpolatedPosition(_dt) + i.getInterpolatedPosition(_dt), i.getAng(), i.getIdentifier());
+            m_drawer.drawAsset(m_ply.getIPos(_dt) + i.getIPos(_dt), i.getAng(), i.getIdentifier());
 		}
 	}
 

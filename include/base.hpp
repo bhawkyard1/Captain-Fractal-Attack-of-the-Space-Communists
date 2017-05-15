@@ -63,7 +63,12 @@ public:
     /// \brief Returns a vec2 interpolated between current and previous position
     /// \param _dt interpolant
     //----------------------------------------------------------------------------------------------------------------------
-    vec3 getInterpolatedPosition(const float _dt);
+    vec3 getIPos(const float _dt);
+
+    vec3 forwards() const;
+    vec3 backwards() const;
+    vec3 left() const;
+    vec3 right() const;
 
 private:
     //----------------------------------------------------------------------------------------------------------------------
@@ -90,6 +95,8 @@ private:
     /// \brief The current velocity of the object, relative to the player
     //----------------------------------------------------------------------------------------------------------------------
     vec3 m_wvel;
+
+    ang3 m_angle;
 };
 
 #endif
