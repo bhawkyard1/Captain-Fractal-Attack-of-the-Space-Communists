@@ -399,11 +399,12 @@ void universe::update(float _dt)
 	calcSquadPositions();
 
 	debug("updates");
+
+	if(prob(20000 / std::min(20, (int)m_agents.size()))) playUISnd(RADIO_CHATTER_SND);
+
 	//Update live m_agents.
 	for(size_t e = 0; e < m_agents.size(); ++e)
 	{
-		if(!rand()) playUISnd(RADIO_CHATTER_SND);
-
 		debug("parenting");
 		if(!m_agents[e].hasParent())
 		{
@@ -1164,12 +1165,12 @@ void universe::draw(float _dt)
 	for(size_t i = 0; i < m_particles.size() and lightCount < MAX_LIGHTS; ++i)
 	{
 		vec3 pos = m_particles[i].getPos();
-		if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) or m_particles[i].getForce() < 5.0f) continue;
+		if(isOffScreen(pos, g_WIN_WIDTH * 2.0f) or m_particles[i].getForce() < 1.0f) continue;
 		std::array<float, 4> col = col255to1(m_particles[i].getCol());
 		pointLight l (
 					pos,
 					vec3(col[0], col[1], col[2]),
-				col[3]
+				m_particles[i].getShaderData()[1] * (1.0f - m_particles[i].getShaderData()[0]) * 4096.0f
 				);
 		m_drawer.addLight(l);
 		lightCount++;
@@ -1813,7 +1814,7 @@ void universe::resolveCollision(ship *_a, ship *_b)
 
 	//Positional correction.
 	float diff = _a->getRadius() + _b->getRadius() - dist;
-	vec3 correction = (std::max(diff - 0.05f, 0.0f) / cinvmass) * 0.2f * normal;
+	vec3 correction = (std::max(diff - 0.05f, 0.0f) / cinvmass) * 0.02f * normal;
 	correction.m_z = 0.0f;
 
 	_a->addPos( -correction * ainvmass );
@@ -2767,7 +2768,7 @@ void universe::destroyAgent(size_t _i)
 		lastAttacker->addXP( xp );
 	else if(lastAttacker == &m_ply)
 	{
-		g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE - m_ply.getXP() * 0.01f, 0.2f, 1.0f);
+		g_KILL_TIME_SCALE = clamp(g_KILL_TIME_SCALE - m_ply.getXP() * 0.001f, 0.2f, 1.0f);
 		m_ply.addXP(xp);
 	}
 

@@ -47,7 +47,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Colour getters
     //----------------------------------------------------------------------------------------------------------------------
-    std::array<float, 4> getCol() const {return m_col;}
+		std::array<float, 4> getCol() const {return {m_col[0], m_col[1], m_col[2], m_col[3]};}
     float getCol(int i) const {return m_col[i];}
 
     float getAlpha(const int _i) {return m_alphas[_i];}
@@ -68,7 +68,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     float getForce() {return m_force;}
 
-    float normalisedLifetime() const {return m_elapsed / m_duration;}
+		float normalisedLifetime() const {return std::min(m_elapsed / m_duration, 1.0f);}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Vector of 'base' (glorified points), representing particles

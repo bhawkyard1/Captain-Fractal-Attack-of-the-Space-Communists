@@ -344,7 +344,7 @@ void faction::addReserve()
 	probabilities.reserve(m_combatShips.second - m_combatShips.first);
 	for(ship_spec i = m_combatShips.first; i <= m_combatShips.second; ++i)
 	{
-		float cost = pow(calcAICost(i), 0.3f);
+		float cost = pow(calcAICost(i), 0.5f);
 		/*if(i == m_combatShips.second)
 			std::cout << "Cost of " << i << " is " << cost << '\n';*/
 		if(cost < m_wealth)
