@@ -3,11 +3,13 @@
 std::ostream& operator<<(std::ostream& os, const vec2 &_v)
 {
     os << "[ " << _v.m_x << ", " << _v.m_y << " ]\n";
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const vec3 &_v)
 {
     os << "[ " << _v.m_x << ", " << _v.m_y << ", " << _v.m_z << " ]\n";
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const mat2 &_v)
@@ -20,6 +22,7 @@ std::ostream& operator<<(std::ostream& os, const mat2 &_v)
         }
         os << '\n';
     }
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const mat3 &_v)
@@ -32,4 +35,5 @@ std::ostream& operator<<(std::ostream& os, const mat3 &_v)
         }
         os << '\n';
     }
+    return os;
 }

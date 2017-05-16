@@ -1,7 +1,10 @@
 #ifndef VEC3_HPP
 #define VEC3_HPP
 
-#include "geometry.hpp"
+#include <math.h>
+
+#include "math/geometry.hpp"
+#include "math/vec2.hpp"
 
 struct vec2;
 
@@ -126,7 +129,8 @@ vec3 closest(const vec3 p1, const vec3 m1, const vec3 p2);
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Converts a 2d vector to 3d and vice versa.
 //----------------------------------------------------------------------------------------------------------------------
-vec2 tovec2(const vec3 vec);
+vec2 tovec2(const vec3 _vec);
+vec3 tovec3(const vec2 _vec);
 
 
 #endif

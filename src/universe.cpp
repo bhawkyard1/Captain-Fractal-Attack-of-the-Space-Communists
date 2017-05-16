@@ -2804,7 +2804,7 @@ void universe::destroyAgent(size_t _i)
 	//Dump inventory.
 	for(auto &d : m_agents[_i].getCargo()->getItems()->m_objects)
 	{
-		addDebris(m_agents[_i].getPos(), m_agents[_i].getVel() + tovec3(randVec2(1.0f)), RESOURCE_IRON);
+        addDebris(m_agents[_i].getPos(), m_agents[_i].getVel() + tovec3(randVec2(1.0f)), d.getResourceType());
 	}
 
 	addScore( m_agents[_i].getScore() );

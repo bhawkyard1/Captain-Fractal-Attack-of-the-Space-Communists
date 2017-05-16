@@ -288,6 +288,7 @@ renderer_ngl::renderer_ngl()
     resetLights();
 
     m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
+    m_assets.loadTexture("noise512", "util/noise512RGB.png");
 
     ngl::VAOPrimitives * prim = ngl::VAOPrimitives::instance();
     prim->createSphere( "explosion", 1.0f, 48 );
@@ -1274,22 +1275,6 @@ void renderer_ngl::loadFontSpriteSheet(
     TTF_CloseFont(fnt);
 
     m_letters.insert({_name, sheet});
-}
-
-GLuint renderer_ngl::loadTexture(const std::string &_path, const int _format)
-{
-    SDL_Surface * surf = IMG_Load(_path.c_str());
-    GLuint tex;
-    if(surf != nullptr)
-        tex = SDLSurfaceToGLTexture(surf, _format);
-    else
-    {
-        std::cerr << "Warning! Null surface. " << SDL_GetError() << '\n';
-        return 0;
-    }
-
-    SDL_FreeSurface(surf);
-    return tex;
 }
 
 GLuint renderer_ngl::SDLSurfaceToGLTexture(SDL_Surface * _s, int _format)

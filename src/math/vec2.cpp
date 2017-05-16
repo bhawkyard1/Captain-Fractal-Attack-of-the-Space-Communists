@@ -146,7 +146,7 @@ vec2 unit(vec2 vec)
     return {0,0};
 }
 
-vec2 clamp(const vec2 _in, vec2 _min, vec2 _max)
+vec2 clamp(vec2 _in, vec2 _min, vec2 _max)
 {
     vec2 ret;
     ret.m_x = clamp(_in.m_x, _min.m_x, _max.m_x);
@@ -190,7 +190,4 @@ vec2 closest(vec2 p1, vec2 m1, vec2 p2)
     return p1 + m1 * dot( p2 - p1, m1 );
 }
 
-vec2 tovec2(vec3 vec)
-{
-    return {vec.m_x, vec.m_y};
-}
+

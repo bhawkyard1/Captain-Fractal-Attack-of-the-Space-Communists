@@ -166,16 +166,6 @@ float shortestAngle(float _ang1, float _ang2);
 float sqr(float _arg);
 
 //----------------------------------------------------------------------------------------------------------------------
-/// \author Greg Walsh
-/// \brief Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed
-/// to Greg Walsh.
-/// \param _val function returns the inverse square root of this value.
-/// Modified From :-
-/// Hansen, P. C., 2012. 0x5f3759df. Hummus and Magnets. 15 September 2012. Available from: http://h14s.p5r.org/2012/09/0x5f3759df.html [Accessed 30 April 2016].
-//----------------------------------------------------------------------------------------------------------------------
-float fastInvSqrt(float _val);
-
-//----------------------------------------------------------------------------------------------------------------------
 /// \brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.
 /// \param _point point to test
 /// \param _pos corner of the rectangle

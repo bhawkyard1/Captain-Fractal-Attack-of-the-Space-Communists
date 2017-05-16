@@ -1,4 +1,4 @@
-#include "vec3.hpp"
+#include "math/vec3.hpp"
 
 vec3 operator +(const vec3 &lhs, const vec3 &rhs)
 {
@@ -175,4 +175,9 @@ vec3 closest(vec3 p1, vec3 m1, vec3 p2)
 vec3 tovec3(vec2 vec)
 {
     return {vec.m_x, vec.m_y, 0.0f};
+}
+
+vec2 tovec2(vec3 vec)
+{
+    return {vec.m_x, vec.m_y};
 }

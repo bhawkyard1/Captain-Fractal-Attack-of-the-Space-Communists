@@ -2,9 +2,8 @@
 #define VEC2_HPP
 
 #include <math.h>
-#include "geometry.hpp"
-
-struct vec3;
+#include "math/geometry.hpp"
+#include "math/vec2.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \struct A 2d vector, holds an x and y component, and has overloaded operators to make the syntax nicer.
@@ -89,7 +88,7 @@ float invMag(const vec2 vec);
 //----------------------------------------------------------------------------------------------------------------------
 vec2 unit(const vec2 vec);
 
-vec2 clamp(const vec2 _in, vec2 _min, vec2 _max);
+vec2 clamp(vec2 _in, vec2 _min, vec2 _max);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns the normal of a 2d vector.
@@ -106,11 +105,6 @@ float dot(const vec2 A, const vec2 B);
 /// \param _p1 line point, _m1 gradient, _p2 general point.
 //----------------------------------------------------------------------------------------------------------------------
 vec2 closest(const vec2 p1, const vec2 m1, const vec2 p2);
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief Converts a 2d vector to 3d and vice versa.
-//----------------------------------------------------------------------------------------------------------------------
-vec3 tovec3(const vec2 vec);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Converts an angle to a 2d vector.
