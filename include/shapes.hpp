@@ -2,7 +2,8 @@
 #define SHAPES_HPP
 
 #include "util.hpp"
-#include "vectors.hpp"
+#include "math/vec2.hpp"
+#include "math/vec3.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file shapes.hpp
@@ -82,7 +83,7 @@ void sphereSphereCollision(t * _a, t * _b)
 
     vec3 rv = _a->getVel() - _b->getVel();
     rv.m_z = 0.0f;
-    float separation = dotProd(rv, normal);
+    float separation = dot(rv, normal);
     if(separation < 0.0f) return;
 
     float force = -1.6f * separation;

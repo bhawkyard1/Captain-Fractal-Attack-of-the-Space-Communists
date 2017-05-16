@@ -30,6 +30,7 @@ ship * aiTarget::get()
 	case 2:
 		return m_target.m_asteroid.get();
 	}
+    return nullptr;
 }
 
 void aiTarget::setPlayer( ship * _player )

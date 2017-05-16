@@ -214,11 +214,11 @@ void readVectorAsteroid(std::string _str, universe * _u)
 
         float ang = std::stof(stats[4]);
 
-        float health, shield, energy;
+        float health/*, shield, energy*/;
         stat = split(stats[5], ',');
         health = std::stof(stat[0]);
-        shield = std::stof(stat[1]);
-        energy = std::stof(stat[1]);
+        //shield = std::stof(stat[1]);
+        //energy = std::stof(stat[1]);
 
         ship temp( g_ship_templates[id] );
         temp.setPos({pos.m_x, pos.m_y, 0.0f});
@@ -320,7 +320,7 @@ void loadGame(universe * uni)
     std::ifstream save(g_RESOURCE_LOC + "save.txt");
     std::string cur;
 
-    unsigned long tempIDCounter;
+    //unsigned long tempIDCounter;
 
     while(getlineSafe( save, cur ))
     {
@@ -334,7 +334,7 @@ void loadGame(universe * uni)
             else if(strings[i] == "mmc") uni->setMaxMinerCount( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "nm") uni->getPly()->setMissiles( stoi(strings[i+1], nullptr, 10) );
             else if(strings[i] == "d") g_DIFFICULTY = stoi(strings[i+1], nullptr, 10);
-            else if(strings[i] == "iudc") tempIDCounter = stoi(strings[i+1], nullptr, 10);
+            //else if(strings[i] == "iudc") tempIDCounter = stoi(strings[i+1], nullptr, 10);
             else if(strings[i] == "u")
             {
                 for(int j = 0; j < UPGRADES_LEN; ++j)

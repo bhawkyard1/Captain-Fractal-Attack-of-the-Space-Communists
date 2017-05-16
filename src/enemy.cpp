@@ -58,7 +58,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 			//Concentrate on active / unweakened combatants.
 			weight *= _enemies[i].getHealth() / _enemies[i].getMaxHealth() + 0.5f;
 			//Do not target enemies shooting by sideways.
-			//weight /= clamp( dotProdUnit(getVel(), _enemies[i].getVel()), 0.001f, 1.0f );
+			//weight /= clamp( udot(getVel(), _enemies[i].getVel()), 0.001f, 1.0f );
 			//If this is the agent's current target, prioritise.
 			if(_enemies[i].getGoal() == GOAL_FLEE_FROM)
 				weight *= 2.0f;
@@ -92,7 +92,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 				//Concentrate on active / unweakened combatants.
 				weight *= _ply.getHealth() / _ply.getMaxHealth() + 0.5f;
 				//Do not target enemies shooting by sideways.
-				//weight /= clamp( dotProdUnit(getVel(), _ply.getVel()), 0.001f, 1.0f );
+				//weight /= clamp( udot(getVel(), _ply.getVel()), 0.001f, 1.0f );
 				//Pursue last attacker.
 				if( lastAttacker == &_ply )
 					weight /= 2.0f;
@@ -316,11 +316,11 @@ void enemy::steering()
 	//This is the closing speed. Add player and ship vectors, find magnitude.
 	//Initially I didn't know whether the vectors were converging or diverging.
 	//I solved it by multiplying by the dot of the ship and m_target vectors.
-	float cSpd = mag( v - m_tVel );// * dotProd(utv, uv);
+	float cSpd = mag( v - m_tVel );// * dot(utv, uv);
 
 	//Whereas angleMul is all about the ships angle in relation to its m_target angle, this is about its vector in relation to its m_target angle.
 	//ie where the ship is going vs where is should be going.
-	float vecMul = dotProd(uv, utv);
+	float vecMul = dot(uv, utv);
 
 	/*
 				*The distance it will take the ship to stop, at max deceleration.
@@ -354,19 +354,19 @@ void enemy::steering()
 	//m_tPos -= unit(linePos - m_tPos) * cSpd * 3;
 
 	//Angle the ship towards its m_target.
-	setTAng(clampRoll(computeAngle(tovec2(p - (m_tPos + m_tVel))), -180.0f, 180.0f));
+    setTAng(clampRoll( ang( tovec2(p - (m_tPos + m_tVel) ) ), -180.0f, 180.0f));
 
 	//The proportion of the ships total energy it still has.
 	float energyProportion = getEnergy() / getMaxEnergy();
 	//Whether the ship is going towards or away from the target.
-	float towardsOrAway = dotProd(utv, uv);
+	float towardsOrAway = dot(utv, uv);
 	//When travelling towards target, can use energy until 25% is left. When travelling away, can use until 10% left.
 	bool canAccel =
 			(towardsOrAway <= 0.0f and energyProportion > 0.1f) or
 			(towardsOrAway > 0.0f and energyProportion > 0.25f);
 
 	//If we are angled towards the m_target...
-	float tvMul = dotProd(m_tVel, v);
+	float tvMul = dot(m_tVel, v);
 	if( ( tvMul < 0.8f or tvMul > 1.2f or dist > radius )
 			and ( canAccel /*or m_curGoal == GOAL_CONGREGATE*/ )
 			and getCanMove()
@@ -396,7 +396,7 @@ void enemy::steering()
 			int odds = static_cast<int>(64 * (1.0f + getCooldown()));
 			if(prob(odds) and
 				 t != nullptr and
-				 dotProd(vec(getAng()), vec(t->getAng())) < -0.8f
+				 dot(vec(getAng()), vec(t->getAng())) < -0.8f
 				 )
 			{
 				dodge(randNum(10.0f, 20.0f) * randNum(-1,1));
@@ -422,12 +422,12 @@ void enemy::steering()
 	}
 
 	//This variable represents the ships' direction versus its ideal direction.
-	float vecMulSide = dotProd(tovec2(uv), vec(getTAng()));
+	float vecMulSide = dot(tovec2(uv), vec(getTAng()));
 
 	if(fabs(vecMulSide) > 0.8f)
 	{
 		//closing speed * how sideways it is flying * its angle relative to velocity
-		float dv = clamp(cSpd * vecMulSide * dotProd(tovec2(uv), vec(getAng())), 0.0f, 1.0f);
+		float dv = clamp(cSpd * vecMulSide * dot(tovec2(uv), vec(getAng())), 0.0f, 1.0f);
 		if(vecMulSide < 0) dodge( dv );
 		else if(vecMulSide > 0) dodge( -dv );
 	}

@@ -201,7 +201,18 @@ public:
     void resetTransform() {m_transform.reset();}
     void setTransform(const vec3 _p) {m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z);}
     void setTransform(const vec3 _p, const float _a) {m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z); m_transform.setRotation(0.0f, 0.0f, _a);}
+    void setTransform(const vec3 _p, const float _a, const vec3 _s)
+    {
+        m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z);
+        m_transform.setRotation(0.0f, 0.0f, _a);
+        m_transform.setScale(_s.m_x, _s.m_y, _s.m_z);
+    }
     void setTransform(const float _a) {m_transform.setRotation(0.0f, 0.0f, _a);}
+    void setTransform(const vec3 _p, const vec3 _s)
+    {
+        m_transform.setPosition(_p.m_x, _p.m_y, _p.m_z);
+        m_transform.setScale(_s.m_x, _s.m_y, _s.m_z);
+    }
 
     void bindTextureToShader(const std::string &_shaderID, const GLuint _tex, const char *_uniform, int _target, GLenum _type = GL_TEXTURE_2D);
     ///

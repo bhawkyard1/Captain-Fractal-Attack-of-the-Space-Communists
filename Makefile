@@ -61,6 +61,7 @@ SOURCES       = main.cpp \
 		src/file.cpp \
 		src/frame.cpp \
 		src/framebuffer.cpp \
+		src/geometry.cpp \
 		src/inventory.cpp \
 		src/laser.cpp \
 		src/missile.cpp \
@@ -86,7 +87,14 @@ SOURCES       = main.cpp \
 		src/ui/selection.cpp \
 		src/ui/user_interface.cpp \
 		src/input/command.cpp \
-		src/input/inputMap.cpp 
+		src/input/inputMap.cpp \
+		src/math/ang3.cpp \
+		src/math/mat2.cpp \
+		src/math/mat3.cpp \
+		src/math/mat4.cpp \
+		src/math/mathstream.cpp \
+		src/math/vec2.cpp \
+		src/math/vec3.cpp 
 OBJECTS       = obj/main.o \
 		obj/aiTarget.o \
 		obj/assetStore.o \
@@ -100,6 +108,7 @@ OBJECTS       = obj/main.o \
 		obj/file.o \
 		obj/frame.o \
 		obj/framebuffer.o \
+		obj/geometry.o \
 		obj/inventory.o \
 		obj/laser.o \
 		obj/missile.o \
@@ -125,7 +134,14 @@ OBJECTS       = obj/main.o \
 		obj/selection.o \
 		obj/user_interface.o \
 		obj/command.o \
-		obj/inputMap.o
+		obj/inputMap.o \
+		obj/ang3.o \
+		obj/mat2.o \
+		obj/mat3.o \
+		obj/mat4.o \
+		obj/mathstream.o \
+		obj/vec2.o \
+		obj/vec3.o
 DIST          = resources/menus/buyMenu.txt \
 		.qmake.stash \
 		ed2.pro include/aiTarget.hpp \
@@ -141,6 +157,7 @@ DIST          = resources/menus/buyMenu.txt \
 		include/file.hpp \
 		include/frame.hpp \
 		include/framebuffer.hpp \
+		include/geometry.hpp \
 		include/inventory.hpp \
 		include/laser.hpp \
 		include/missile.hpp \
@@ -167,7 +184,14 @@ DIST          = resources/menus/buyMenu.txt \
 		include/ui/selection.hpp \
 		include/ui/user_interface.hpp \
 		include/input/command.hpp \
-		include/input/inputMap.hpp main.cpp \
+		include/input/inputMap.hpp \
+		include/math/ang3.hpp \
+		include/math/mat2.hpp \
+		include/math/mat3.hpp \
+		include/math/mat4.hpp \
+		include/math/mathstream.hpp \
+		include/math/vec2.hpp \
+		include/math/vec3.hpp main.cpp \
 		src/aiTarget.cpp \
 		src/assetStore.cpp \
 		src/base.cpp \
@@ -180,6 +204,7 @@ DIST          = resources/menus/buyMenu.txt \
 		src/file.cpp \
 		src/frame.cpp \
 		src/framebuffer.cpp \
+		src/geometry.cpp \
 		src/inventory.cpp \
 		src/laser.cpp \
 		src/missile.cpp \
@@ -205,7 +230,14 @@ DIST          = resources/menus/buyMenu.txt \
 		src/ui/selection.cpp \
 		src/ui/user_interface.cpp \
 		src/input/command.cpp \
-		src/input/inputMap.cpp
+		src/input/inputMap.cpp \
+		src/math/ang3.cpp \
+		src/math/mat2.cpp \
+		src/math/mat3.cpp \
+		src/math/mat4.cpp \
+		src/math/mathstream.cpp \
+		src/math/vec2.cpp \
+		src/math/vec3.cpp
 QMAKE_TARGET  = Captain\ Fractal-\ Attack\ of\ the\ Space\ Communists
 DESTDIR       = 
 TARGET        = Captain\ Fractal-\ Attack\ of\ the\ Space\ Communists
@@ -550,8 +582,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents include/aiTarget.hpp include/aiTypes.hpp include/assetStore.hpp include/base.hpp include/camera.hpp include/common.hpp include/debris.hpp include/enemy.hpp include/entity.hpp include/faction.hpp include/file.hpp include/frame.hpp include/framebuffer.hpp include/inventory.hpp include/laser.hpp include/missile.hpp include/pfx.hpp include/player.hpp include/pointLight.hpp include/popup.hpp include/renderer_opengl.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/sim_time.hpp include/slotmap.hpp include/sprite.hpp include/sprite_sheet.hpp include/sprite_sheet_opengl.hpp include/squad.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/selection.hpp include/ui/user_interface.hpp include/input/command.hpp include/input/inputMap.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp src/aiTarget.cpp src/assetStore.cpp src/base.cpp src/camera.cpp src/common.cpp src/debris.cpp src/enemy.cpp src/entity.cpp src/faction.cpp src/file.cpp src/frame.cpp src/framebuffer.cpp src/inventory.cpp src/laser.cpp src/missile.cpp src/pfx.cpp src/player.cpp src/pointLight.cpp src/popup.cpp src/renderer_opengl.cpp src/sfx.cpp src/shapes.cpp src/ship.cpp src/sim_time.cpp src/slotmap.cpp src/sprite_sheet.cpp src/sprite_sheet_opengl.cpp src/squad.cpp src/stardust_sprite.cpp src/universe.cpp src/util.cpp src/vectors.cpp src/weapons.cpp src/ui/button.cpp src/ui/selection.cpp src/ui/user_interface.cpp src/input/command.cpp src/input/inputMap.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents include/aiTarget.hpp include/aiTypes.hpp include/assetStore.hpp include/base.hpp include/camera.hpp include/common.hpp include/debris.hpp include/enemy.hpp include/entity.hpp include/faction.hpp include/file.hpp include/frame.hpp include/framebuffer.hpp include/geometry.hpp include/inventory.hpp include/laser.hpp include/missile.hpp include/pfx.hpp include/player.hpp include/pointLight.hpp include/popup.hpp include/renderer_opengl.hpp include/sfx.hpp include/shapes.hpp include/ship.hpp include/sim_time.hpp include/slotmap.hpp include/sprite.hpp include/sprite_sheet.hpp include/sprite_sheet_opengl.hpp include/squad.hpp include/universe.hpp include/user_input.hpp include/util.hpp include/vectors.hpp include/weapons.hpp include/ui/button.hpp include/ui/selection.hpp include/ui/user_interface.hpp include/input/command.hpp include/input/inputMap.hpp include/math/ang3.hpp include/math/mat2.hpp include/math/mat3.hpp include/math/mat4.hpp include/math/mathstream.hpp include/math/vec2.hpp include/math/vec3.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp src/aiTarget.cpp src/assetStore.cpp src/base.cpp src/camera.cpp src/common.cpp src/debris.cpp src/enemy.cpp src/entity.cpp src/faction.cpp src/file.cpp src/frame.cpp src/framebuffer.cpp src/geometry.cpp src/inventory.cpp src/laser.cpp src/missile.cpp src/pfx.cpp src/player.cpp src/pointLight.cpp src/popup.cpp src/renderer_opengl.cpp src/sfx.cpp src/shapes.cpp src/ship.cpp src/sim_time.cpp src/slotmap.cpp src/sprite_sheet.cpp src/sprite_sheet_opengl.cpp src/squad.cpp src/stardust_sprite.cpp src/universe.cpp src/util.cpp src/vectors.cpp src/weapons.cpp src/ui/button.cpp src/ui/selection.cpp src/ui/user_interface.cpp src/input/command.cpp src/input/inputMap.cpp src/math/ang3.cpp src/math/mat2.cpp src/math/mat3.cpp src/math/mat4.cpp src/math/mathstream.cpp src/math/vec2.cpp src/math/vec3.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -598,11 +630,17 @@ obj/main.o: main.cpp include/common.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/weapons.hpp \
 		include/file.hpp \
 		include/enemy.hpp \
@@ -767,10 +805,16 @@ obj/main.o: main.cpp include/common.hpp \
 obj/aiTarget.o: src/aiTarget.cpp include/aiTarget.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -911,7 +955,12 @@ obj/assetStore.o: src/assetStore.cpp include/assetStore.hpp \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/assetStore.o src/assetStore.cpp
 
 obj/base.o: src/base.cpp include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
@@ -920,11 +969,18 @@ obj/base.o: src/base.cpp include/base.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/base.o src/base.cpp
 
 obj/camera.o: src/camera.cpp include/camera.hpp \
 		include/base.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/vectors.hpp \
 		include/util.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/camera.o src/camera.cpp
@@ -934,28 +990,46 @@ obj/common.o: src/common.cpp include/common.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/common.o src/common.cpp
 
 obj/debris.o: src/debris.cpp include/debris.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
-		include/util.hpp
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
+		include/util.hpp \
+		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/debris.o src/debris.cpp
 
 obj/enemy.o: src/enemy.cpp include/enemy.hpp \
 		include/aiTarget.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -974,10 +1048,16 @@ obj/faction.o: src/faction.cpp include/enemy.hpp \
 		include/aiTarget.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -994,10 +1074,16 @@ obj/file.o: src/file.cpp include/file.hpp \
 		include/aiTarget.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1396,23 +1482,38 @@ obj/framebuffer.o: src/framebuffer.cpp include/framebuffer.hpp \
 		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/framebuffer.o src/framebuffer.cpp
 
+obj/geometry.o: src/geometry.cpp include/geometry.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/geometry.o src/geometry.cpp
+
 obj/inventory.o: src/inventory.cpp include/inventory.hpp \
 		include/debris.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/slotmap.hpp \
 		include/shapes.hpp \
-		include/util.hpp
+		include/util.hpp \
+		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/inventory.o src/inventory.cpp
 
 obj/laser.o: src/laser.cpp include/laser.hpp \
 		include/aiTarget.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1428,10 +1529,16 @@ obj/laser.o: src/laser.cpp include/laser.hpp \
 obj/missile.o: src/missile.cpp include/missile.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1447,8 +1554,14 @@ obj/missile.o: src/missile.cpp include/missile.hpp \
 
 obj/pfx.o: src/pfx.cpp include/pfx.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
@@ -1462,10 +1575,16 @@ obj/pfx.o: src/pfx.cpp include/pfx.hpp \
 obj/player.o: src/player.cpp include/player.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1478,6 +1597,12 @@ obj/pointLight.o: src/pointLight.cpp
 
 obj/popup.o: src/popup.cpp include/popup.hpp \
 		include/base.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/vectors.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/popup.o src/popup.cpp
 
@@ -1608,6 +1733,12 @@ obj/renderer_opengl.o: src/renderer_opengl.cpp include/assetStore.hpp \
 		/home/i7620560/NGL/include/ngl/NGLassert.h \
 		include/camera.hpp \
 		include/base.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/vectors.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
@@ -1658,6 +1789,12 @@ obj/sfx.o: src/sfx.cpp include/sfx.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1672,10 +1809,16 @@ obj/shapes.o: src/shapes.cpp include/shapes.hpp \
 
 obj/ship.o: src/ship.cpp include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1699,10 +1842,16 @@ obj/squad.o: src/squad.cpp include/squad.hpp \
 		include/aiTypes.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -1712,8 +1861,14 @@ obj/squad.o: src/squad.cpp include/squad.hpp \
 
 obj/stardust_sprite.o: src/stardust_sprite.cpp include/sprite.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
@@ -1729,11 +1884,17 @@ obj/universe.o: src/universe.cpp include/common.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/weapons.hpp \
 		include/file.hpp \
 		include/enemy.hpp \
@@ -1901,11 +2062,17 @@ obj/util.o: src/util.cpp include/common.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/util.o src/util.cpp
 
@@ -1918,10 +2085,16 @@ obj/weapons.o: src/weapons.cpp include/file.hpp \
 		include/aiTarget.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
 		include/input/inputMap.hpp \
 		include/input/command.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
@@ -2094,11 +2267,17 @@ obj/selection.o: src/ui/selection.cpp include/common.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
+		include/vectors.hpp \
 		include/weapons.hpp \
 		include/ui/selection.hpp \
 		include/ui/button.hpp
@@ -2118,14 +2297,58 @@ obj/inputMap.o: src/input/inputMap.cpp include/input/inputMap.hpp \
 		include/input/command.hpp \
 		include/ship.hpp \
 		include/base.hpp \
-		include/vectors.hpp \
+		include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
 		include/common.hpp \
+		include/vectors.hpp \
 		include/debris.hpp \
 		include/inventory.hpp \
 		include/slotmap.hpp \
 		include/util.hpp \
 		include/weapons.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/inputMap.o src/input/inputMap.cpp
+
+obj/ang3.o: src/math/ang3.cpp include/math/ang3.hpp \
+		include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/ang3.o src/math/ang3.cpp
+
+obj/mat2.o: src/math/mat2.cpp include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/mat2.o src/math/mat2.cpp
+
+obj/mat3.o: src/math/mat3.cpp include/math/mat3.hpp \
+		include/math/mat2.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/mat3.o src/math/mat3.cpp
+
+obj/mat4.o: src/math/mat4.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/mat4.o src/math/mat4.cpp
+
+obj/mathstream.o: src/math/mathstream.cpp include/math/mathstream.hpp \
+		include/math/vec2.hpp \
+		include/geometry.hpp \
+		include/math/vec3.hpp \
+		include/math/mat2.hpp \
+		include/math/mat3.hpp \
+		include/math/mat4.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/mathstream.o src/math/mathstream.cpp
+
+obj/vec2.o: src/math/vec2.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/vec2.o src/math/vec2.cpp
+
+obj/vec3.o: src/math/vec3.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/vec3.o src/math/vec3.cpp
 
 ####### Install
 

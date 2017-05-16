@@ -16,7 +16,7 @@ float shortestAngle(float _ang1, float _ang2)
     return fmod(_ang1 - _ang2 + 180, 360) - 180;
 }
 
-double dotProd(double x0, double y0, double x1, double y1)
+double dot(double x0, double y0, double x1, double y1)
 {
     return acos((x0*x1+y0*y1)/(sqrt(x0*x0+y0*y0)*sqrt(x1*x1+y1*y1)));
 }
@@ -216,6 +216,13 @@ std::istream& getlineSafe(std::istream& is, std::string& t)
             t += (char)c;
         }
     }
+}
+
+float clampRoll(float _v, float _m, float _M)
+{
+    float range = _M - _m;
+    float position = _v - _m;
+    return _m + (position - range * std::floor( position / range ));
 }
 
 void debug(const std::string _msg)

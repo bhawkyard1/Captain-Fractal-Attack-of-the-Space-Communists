@@ -29,7 +29,7 @@ void missile::steering()
         vec3 tPPos = m_target->getPos() + m_target->getVel() * frames;
         float tPPDist = mag(tPPos - getPos());
 
-        float vecMul = dotProd(unit(getVel()),tovec3(vec(getTAng() + 90)));
+        float vecMul = dot(unit(getVel()),tovec3(vec(getTAng() + 90)));
 
         float stoppingDistance = (cSpd*cSpd)/2;
         if(vecMul < 0) stoppingDistance *= -1;
@@ -38,7 +38,7 @@ void missile::steering()
 
         float angleMul = (shortestAngle(getAng(), getTAng())+90)/90.0;
 
-        setTAng(clampRoll(computeAngle(tovec2(getPos() - m_tPos)),-180.0f,180.0f));
+        setTAng(clampRoll( ang(tovec2(getPos() - m_tPos) ),-180.0f,180.0f));
 
         if(fabs(shortestAngle(getAng(), getTAng())) <= 2.0f)
         {

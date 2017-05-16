@@ -16,7 +16,7 @@
 #include <SDL.h>
 #include "SDL2/SDL_ttf.h"
 
-#include "vectors.hpp"
+#include "math/vec3.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Max and infinite values for floats. Useful when you want to loop through a bunch of values to find the highest/
@@ -51,12 +51,6 @@
 /// Revision History :
 /// This is an initial version used for the game
 //----------------------------------------------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief Given a 2d vector, converts it to an angle.
-/// \param _v vector to convert.
-//----------------------------------------------------------------------------------------------------------------------
-float computeAngle(vec2 _v);
 
 int gcd(int _a, int _b);
 
@@ -138,19 +132,7 @@ tt getRandomEntry(std::vector<tt> * _ref)
 /// \param _m minimum threshold
 /// \param _M maximum threshold
 //----------------------------------------------------------------------------------------------------------------------
-template<typename tt>
-tt clampRoll(tt _v, tt _m, tt _M)
-{
-    if(_v < _m)
-    {
-        return _M;
-    }
-    else if(_v > _M)
-    {
-        return _m;
-    }
-    return _v;
-}
+float clampRoll(float _v, float _m, float _M);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns whether a given value is between two others.

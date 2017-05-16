@@ -24,11 +24,13 @@ MOC_DIR = moc
 SOURCES += $$PWD/main.cpp \
            $$PWD/src/*.cpp \
            $$PWD/src/ui/*.cpp \
-           $$PWD/src/input/*.cpp
+           $$PWD/src/input/*.cpp \
+           $$PWD/src/math/*.cpp
 
 HEADERS += $$PWD/include/*.hpp \
            $$PWD/include/ui/*.hpp \
-           $$PWD/include/input/*.hpp
+           $$PWD/include/input/*.hpp \
+           $$PWD/include/math/*.hpp
 
 CONFIG += console
 

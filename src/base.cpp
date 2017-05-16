@@ -20,62 +20,32 @@ vec3 base::getIPos(const float _dt)
     return p;
 }
 
-vec3 base::forwards() const
+vec3 base::forward()
 {
-    ang3 ang = rad(m_angle);
-    return vec3(
-                cos(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_pitch)
-                );
+    return m_angle.forward();
 }
 
-vec3 base::backwards() const
+vec3 base::back()
 {
-    ang3 ang = rad(m_angle + ang3(0.0f, 180.0f, 0.0f));
-    return vec3(
-                cos(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_pitch)
-                );
+    return m_angle.back();
 }
 
-vec3 base::right() const
+vec3 base::right()
 {
-    ang3 ang = rad(m_angle + ang(0.0f, 90.0f, 0.0f));
-    return vec3(
-                cos(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_pitch)
-                );
+    return m_angle.right();
 }
 
-vec3 base::left() const
+vec3 base::left()
 {
-    ang3 ang = rad(m_angle + ang(0.0f, -90.0f, 0.0f));
-    return vec3(
-                cos(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_pitch)
-                );
+   return m_angle.left();
 }
 
-vec3 base::up() const
+vec3 base::up()
 {
-    ang3 ang = rad(m_angle + ang(90.0f, 0.0f, 0.0f));
-    return vec3(
-                cos(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_pitch)
-                );
+    return m_angle.up();
 }
 
-vec3 base::down() const
+vec3 base::down()
 {
-    ang3 ang = rad(m_angle + ang3(-90.0f, 0.0f, 0.0f));
-    return vec3(
-                cos(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_yaw) * cos(ang.m_pitch),
-                sin(ang.m_pitch)
-                );
+    return m_angle.down();
 }

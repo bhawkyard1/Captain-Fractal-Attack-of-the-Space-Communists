@@ -1,7 +1,8 @@
 #ifndef BASE_HPP
 #define BASE_HPP
 
-#include "vectors.hpp"
+#include "math/ang3.hpp"
+#include "math/vec3.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file base.hpp
@@ -65,10 +66,12 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     vec3 getIPos(const float _dt);
 
-    vec3 forwards() const;
-    vec3 backwards() const;
-    vec3 left() const;
-    vec3 right() const;
+    vec3 forward();
+    vec3 back();
+    vec3 left();
+    vec3 right();
+    vec3 up();
+    vec3 down();
 
 private:
     //----------------------------------------------------------------------------------------------------------------------
