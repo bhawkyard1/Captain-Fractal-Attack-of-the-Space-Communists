@@ -16,7 +16,7 @@ camera::camera()
 
 void camera::update(float _dt)
 {
-    vec3 diff = m_tPos - getPos();
+    //vec3 diff = m_tPos - getPos();
     //addPos( diff / 5.0f );
     setPos(m_tPos);
 

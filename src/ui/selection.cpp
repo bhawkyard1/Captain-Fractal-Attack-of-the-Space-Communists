@@ -74,7 +74,7 @@ void selection::update(const float _s, const vec2 _mouse)
     if(m_worldSpace)
         t = toWorldSpace( t );
 
-	if(m_type = SELECTION_ROLLOUT)
+    if(m_type == SELECTION_ROLLOUT)
 	{
 		float tempInterp = m_interpolant;
 

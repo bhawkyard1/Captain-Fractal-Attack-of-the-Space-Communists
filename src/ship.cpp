@@ -140,29 +140,6 @@ void ship::accelerate(const float _mult)
 {
 	vec2 add = vec(getAng() + 90.0f);
 	accelerate(tovec3(add), _mult);
-
-	/*float energyLoss = 0.6f * _mult;
-	float accelMult = 1.0f * _mult * m_inertia * m_enginePower;
-
-	if(m_priority == PRIORITY_ENGINES)
-	{
-		energyLoss *= 1.2f;
-		accelMult *= 2.0f;
-	}
-	else if(m_priority == PRIORITY_GUNS)
-	{
-		energyLoss *= 0.6f;
-		accelMult *= 0.8f;
-	}
-
-	if(m_energy <= energyLoss) return;
-	vec2 add = vec(getAng() + 90.0f) * accelMult;
-	addForce(vec3(add.m_x, add.m_y, 0.0f));
-	m_energy -= energyLoss;
-	m_engineGlow = clamp(m_engineGlow + 5.0f * (accelMult + 0.75f), 0.0f, 255.0f);
-	m_engineTemp += 1.0f;
-
-	setAccelerating(true);*/
 }
 
 void ship::accelerate(
@@ -187,7 +164,7 @@ void ship::accelerate(
 	if(m_energy <= energyLoss) return;
 	addForce(_dir * accelMult);
 	m_energy -= energyLoss;
-	m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult, 0.0f, 255.0f);
+    m_engineGlow = clamp(m_engineGlow + accelMult, 0.0f, 1.0f);
 	m_engineTemp += clamp( m_engineTemp + m_enginePower, 0.0f, 500.0f );
 
 	setAccelerating(true);
@@ -221,7 +198,7 @@ void ship::decelerate()
 
 	addForce(add);
 	m_energy -= energyLoss;
-	m_engineGlow = clamp(m_engineGlow + 40.0f * accelMult, 0.0f, 255.0f);
+    m_engineGlow = clamp(m_engineGlow + accelMult, 0.0f, 1.0f);
 	m_engineTemp += clamp( m_engineTemp + m_enginePower, 0.0f, 500.0f );
 
 	setAccelerating(true);
@@ -229,7 +206,7 @@ void ship::decelerate()
 
 void ship::damage(float _d)
 {
-	if(getShield() - _d > 0.0f) m_shieldGlow = 255.0f;
+    if(getShield() - _d > 0.0f) m_shieldGlow = 1.0f;
 
 	float shieldDmg = clamp(_d, 0.0f, getShield());
 	_d -= shieldDmg;
@@ -281,14 +258,14 @@ float ship::damage(float _d, const vec3 _v)
 	//Shots to the rear do more damage.
 	if(m_canMove)
 	{
-		_d *= (dotProd( tovec3(vec(m_angle + 90.0f)), unit(_v) ) / 2.0f) + 1.5f;
+		_d *= (dot( tovec3(vec(m_angle + 90.0f)), unit(_v) ) / 2.0f) + 1.5f;
 		vec3 add = {_v.m_x, _v.m_y, 0.0f};
 		addForce(add * m_inertia);
 	}
 
 	ret = _d;
 
-	if(getShield() - _d > 0) m_shieldGlow = 255.0f;
+    if(getShield() - _d > 0) m_shieldGlow = 1.0f;
 
 	float shieldDmg = clamp(_d, 0.0f, getShield());
 	_d -= shieldDmg;
@@ -329,7 +306,7 @@ void ship::update(const float _dt)
 	{
 		energy_loss = 3.0f;
 		shield_add = 4.0f;
-		if(m_shield >= 0.0f) m_shieldGlow = 255.0f;
+        if(m_shield >= 0.0f) m_shieldGlow = 1.0f;
 	}
 	else if(m_priority == PRIORITY_GUNS or m_priority == PRIORITY_ENGINES)
 	{
@@ -351,10 +328,10 @@ void ship::update(const float _dt)
     if(m_docked and prob(32))
 		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
-	m_shieldGlow = clamp(m_shieldGlow - 200.0f * _dt, 0.0f, 255.0f);
+    m_shieldGlow = clamp(m_shieldGlow - _dt, 0.0f, 1.0f);
 	if(!m_accelerating)
 	{
-		m_engineGlow = clamp(m_engineGlow - 500.0f * _dt, 0.0f, 255.0f);
+        m_engineGlow = clamp(m_engineGlow - _dt, 0.0f, 1.0f);
 		m_engineTemp = std::max( 0.0f, m_engineTemp - _dt );
 	}
 
@@ -483,7 +460,7 @@ std::array<float, 4> ship::getShieldCol() const
 {
 	//This is weird. Maybe I should add a m_hasShield sometime?
 	if(m_canShoot)
-		return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow() / 255.0f}};
+        return {{getCurWeapStat(COLOUR_RED) / 255.0f, getCurWeapStat(COLOUR_GREEN) / 255.0f, getCurWeapStat(COLOUR_BLUE) / 255.0f, getShieldGlow()}};
 	return {{0.1f, 0.4f, 1.0f, 1.0f}};
 }
 

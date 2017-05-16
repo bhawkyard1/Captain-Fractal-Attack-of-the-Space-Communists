@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "vectors.hpp"
+#include "math/vec3.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file sfx.hpp

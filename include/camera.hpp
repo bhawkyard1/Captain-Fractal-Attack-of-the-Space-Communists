@@ -2,7 +2,6 @@
 #define CAMERA_HPP
 
 #include "base.hpp"
-#include "vectors.hpp"
 
 class camera : public base
 {

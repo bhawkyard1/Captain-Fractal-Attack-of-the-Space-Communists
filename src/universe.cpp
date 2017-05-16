@@ -1162,21 +1162,33 @@ void universe::draw(float _dt)
 
 	//Shields
 	if(m_ply.getShieldGlow() > 0 and !g_GAME_OVER)
-        m_drawer.drawShield(m_ply.getIPos(_dt), m_ply.getRadius(), m_time_elapsed / m_ply.getRadius(), {{0.1f, 0.4f, 1.0f, m_ply.getShieldGlow() / 255.0f}});
+    {
+        m_drawer.setTransform(m_ply.getIPos(_dt), vec3(m_ply.getRadius()));
+        slib->use("shield");
+        slib->setRegisteredUniform1f("iGlobalTime", m_time_elapsed / m_ply.getRadius());
+        slib->setRegisteredUniform("inColour", ngl::Vec4(0.1f, 0.4f, 1.0f, m_ply.getShieldGlow()));
+        m_drawer.drawAsset("shield", "", "");
+    }
 	for(auto &i : m_agents.m_objects)
 	{
 		if(i.getShieldGlow() > 0)
-            m_drawer.drawShield(i.getIPos(_dt), i.getRadius(), m_time_elapsed / i.getRadius(), i.getShieldCol());
+        {
+            std::array<float, 4> c = i.getShieldCol();
+            m_drawer.setTransform(i.getIPos(_dt), vec3(i.getRadius()));
+            slib->use("shield");
+            slib->setRegisteredUniform1f("iGlobalTime", m_time_elapsed / i.getRadius());
+            slib->setRegisteredUniform("inColour", ngl::Vec4(c[0], c[1], c[2], c[3]));
+            m_drawer.drawAsset("shield", "", "");
+        }
 	}
 	//for(auto &i : m_missiles)
 
 	m_drawer.disableDepthTesting();
 
-    ngl::ShaderLib * slib = ngl::ShaderLib::instance();
-    slib->use("debug");
+    /*slib->use("debug");
     slib->setRegisteredUniform("inColour", ngl::Vec4(1.0, 0.0, 0.0, 1.0));
     for(auto &i : m_agents.m_objects)
-        m_drawer.drawCircle(i.getPos(), i.getRadius(), true);
+        m_drawer.drawCircle(i.getPos(), i.getRadius(), true);*/
 
 	m_drawer.drawingUI();
 
@@ -1338,7 +1350,8 @@ void universe::drawUI(const float _dt)
 			//CRASH HERE
 			for(auto &i : contextPtr->getCargo()->getItems()->m_objects)
 			{
-                m_drawer.drawAsset(contextPtr->getIPos(_dt) + i.getIPos(_dt), i.getAng(), i.getIdentifier());
+                m_drawer.setTransform(contextPtr->getIPos(_dt) + i.getIPos(_dt), i.getAng());
+                m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
 			}
 			m_drawer.useShader("plain");
 		}
@@ -1357,7 +1370,8 @@ void universe::drawUI(const float _dt)
 		//CRASH HERE
 		for(auto &i : m_ply.getCargo()->getItems()->m_objects)
 		{
-            m_drawer.drawAsset(m_ply.getIPos(_dt) + i.getIPos(_dt), i.getAng(), i.getIdentifier());
+            m_drawer.setTransform( m_ply.getIPos(_dt) + i.getIPos(_dt), i.getAng() );
+            m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "");
 		}
 	}
 
@@ -1857,7 +1871,7 @@ void universe::resolveCollision(ship *_a, ship *_b)
 
 	vec3 rv = _a->getVel() - _b->getVel();
 	rv.m_z = 0.0f;
-	float separation = dotProd(rv, normal);
+	float separation = dot(rv, normal);
 
 	if(separation < 0.0f) return;
 
@@ -2791,7 +2805,7 @@ void universe::destroyAgent(size_t _i)
 	//Dump inventory.
 	for(auto &d : m_agents[_i].getCargo()->getItems()->m_objects)
 	{
-		addDebris(m_agents[_i].getPos(), m_agents[_i].getVel() + tovec3(randVec2(1.0f)), RESOURCE_IRON);
+        addDebris(m_agents[_i].getPos(), m_agents[_i].getVel() + tovec3(randVec2(1.0f)), d.getResourceType());
 	}
 
 	addScore( m_agents[_i].getScore() );

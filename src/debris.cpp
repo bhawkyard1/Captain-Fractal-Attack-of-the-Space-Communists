@@ -31,6 +31,8 @@ debris::debris(const vec3 _pos, const vec3 _vel, const vec3 _wvel, const resourc
         break;
     case RESOURCE_GOLD:
         break;
+    case RESOURCE_NULL:
+        break;
     }
 }
 

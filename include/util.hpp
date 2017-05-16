@@ -16,7 +16,7 @@
 #include <SDL.h>
 #include "SDL2/SDL_ttf.h"
 
-#include "vectors.hpp"
+#include "math/vec3.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Max and infinite values for floats. Useful when you want to loop through a bunch of values to find the highest/
@@ -51,12 +51,6 @@
 /// Revision History :
 /// This is an initial version used for the game
 //----------------------------------------------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \brief Given a 2d vector, converts it to an angle.
-/// \param _v vector to convert.
-//----------------------------------------------------------------------------------------------------------------------
-float computeAngle(vec2 _v);
 
 int gcd(int _a, int _b);
 
@@ -138,19 +132,7 @@ tt getRandomEntry(std::vector<tt> * _ref)
 /// \param _m minimum threshold
 /// \param _M maximum threshold
 //----------------------------------------------------------------------------------------------------------------------
-template<typename tt>
-tt clampRoll(tt _v, tt _m, tt _M)
-{
-    if(_v < _m)
-    {
-        return _M;
-    }
-    else if(_v > _M)
-    {
-        return _m;
-    }
-    return _v;
-}
+float clampRoll(float _v, float _m, float _M);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns whether a given value is between two others.
@@ -182,16 +164,6 @@ float shortestAngle(float _ang1, float _ang2);
 /// \param _arg value to square.
 //----------------------------------------------------------------------------------------------------------------------
 float sqr(float _arg);
-
-//----------------------------------------------------------------------------------------------------------------------
-/// \author Greg Walsh
-/// \brief Performs an inverse square root on the given value. Discovered in the quake 3 source code, and widely attributed
-/// to Greg Walsh.
-/// \param _val function returns the inverse square root of this value.
-/// Modified From :-
-/// Hansen, P. C., 2012. 0x5f3759df. Hummus and Magnets. 15 September 2012. Available from: http://h14s.p5r.org/2012/09/0x5f3759df.html [Accessed 30 April 2016].
-//----------------------------------------------------------------------------------------------------------------------
-float fastInvSqrt(float _val);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Given a point and two vectors representing a rectangle, returns whether the point lies inside.

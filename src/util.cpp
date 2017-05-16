@@ -16,7 +16,7 @@ float shortestAngle(float _ang1, float _ang2)
     return fmod(_ang1 - _ang2 + 180, 360) - 180;
 }
 
-double dotProd(double x0, double y0, double x1, double y1)
+double dot(double x0, double y0, double x1, double y1)
 {
     return acos((x0*x1+y0*y1)/(sqrt(x0*x0+y0*y0)*sqrt(x1*x1+y1*y1)));
 }
@@ -31,17 +31,6 @@ int gcd(int _a, int _b)
     if(_b == 0)
         return _a;
     return gcd(_b, _a % _b);
-}
-
-float fastInvSqrt(float _val)
-{
-    //Fast inverse sqrt, discovered in quake 3 source, attributed to Greg Walsh.
-    float half = 0.5f * _val;
-    int i = *(int*)&_val; // get bits for floating value
-    i = 0x5f3759df - (i >> 1); // gives initial guess y0
-    _val = *(float*)&i; // convert bits back to float
-    _val = _val * (1.5f - half * _val * _val); // Newton step, repeating increases accuracy
-    return _val;
 }
 
 bool pointInRect(vec2 _point, vec2 _pos, vec2 _dim)
@@ -216,6 +205,13 @@ std::istream& getlineSafe(std::istream& is, std::string& t)
             t += (char)c;
         }
     }
+}
+
+float clampRoll(float _v, float _m, float _M)
+{
+    float range = _M - _m;
+    float position = _v - _m;
+    return _m + (position - range * std::floor( position / range ));
 }
 
 void debug(const std::string _msg)

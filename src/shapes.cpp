@@ -67,7 +67,7 @@ bool sphereIntersectSphere(vec3 _pos1, float _r1, vec3 _pos2, float _r2)
     //Do cross product of start->end vs start->point, then check dx, dy are smaller for start->point.
     vec3 startToPoint = _point - _start;
     vec3 startToEnd = _end - _start;
-    float dp = dotProdUnit(startToPoint, startToEnd);
+    float dp = udot(startToPoint, startToEnd);
 
     return pointInBox(_point, _start, _end) and (fabs(dp) > 0.99f and fabs(dp) < 1.01f);
 }*/
@@ -83,7 +83,7 @@ bool pointOnLine(vec3 _start, vec3 _end, vec3 _point)
     float startToEndLen = mag(startToEnd);
     startToEnd /= startToEndLen;
 
-    float dp = dotProd(startToPoint, startToEnd);
+    float dp = dot(startToPoint, startToEnd);
 
     return dp > 0.9f and dp < 1.1f and startToPointLen < startToEndLen;
 }

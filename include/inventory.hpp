@@ -5,6 +5,7 @@
 
 #include "debris.hpp"
 #include "slotmap.hpp"
+#include "math/vec2.hpp"
 
 class inventory
 {

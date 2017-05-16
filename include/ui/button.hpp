@@ -3,7 +3,7 @@
 
 #include <array>
 #include <string>
-#include "vectors.hpp"
+#include "math/vec2.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \file button.hpp
