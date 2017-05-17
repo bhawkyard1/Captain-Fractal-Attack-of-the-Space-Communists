@@ -210,7 +210,7 @@ renderer_ngl::renderer_ngl()
     std::cout << "loading ships complete!\n";
 
     m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock");
-    m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock");
+		m_assets.loadTexture("RESOURCE_IRON_ROCK", "resource_iron_rock");
 
     loadFontSpriteSheet("pix", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 20);
     loadFontSpriteSheet("minimal", g_GRAPHICAL_RESOURCE_LOC + "fonts/minimal.otf", 20);
@@ -287,7 +287,6 @@ renderer_ngl::renderer_ngl()
 
     resetLights();
 
-    m_noise512 = loadTexture(g_GRAPHICAL_RESOURCE_LOC + "textures/util/noise512RGB.png", GL_RGB);
     m_assets.loadTexture("noise512", "util/noise512RGB.png");
 
     ngl::VAOPrimitives * prim = ngl::VAOPrimitives::instance();
@@ -316,10 +315,14 @@ void renderer_ngl::loadShips()
     {
         if(cur.length() == 0)
             continue;
-        std::cout << "Loading ship from " << (g_RESOURCE_LOC + "ships/" + cur) << '\n';
+				std::cout << "Loading ship from " << (g_RESOURCE_LOC + "geometry/" + cur) << '\n';
         std::string asset = "";
+				//Load the ship itself.
         ship temp = loadShip(g_RESOURCE_LOC + "ships/" + cur, &asset, spec);
-        m_assets.loadMesh(temp.getIdentifier(), g_RESOURCE_LOC + "ships/" + asset);
+
+				m_assets.loadMesh(temp.getIdentifier(), asset + "/" + asset + ".obj");
+				m_assets.loadTexture(temp.getIdentifier(), asset + "/" + asset + ".png");
+
         g_ship_templates.push_back(temp);
         spec++;
     }
@@ -362,7 +365,7 @@ void renderer_ngl::bindTextureToShader(const std::string &_shaderID, const GLuin
     GLint loc = glGetUniformLocation(spid, _uniform);
     if(loc == -1)
     {
-        std::cerr << "Uh oh! Invalid uniform location in Scene::bindTextureToShader!! " << _uniform << '\n';
+				std::cerr << "Uh oh! Invalid uniform location in renderer_ngl::bindTextureToShader!! Cannot bind texture to " << _uniform << " in " << _shaderID << '\n';
         return;
     }
     glUniform1i(loc, _target);

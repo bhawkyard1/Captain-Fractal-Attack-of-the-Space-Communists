@@ -4,36 +4,66 @@ vec3 ang3::forward()
 {
     if(m_recalc)
         calculateMatrix();
+		return vec3(
+					m_transform.get(2, 0),
+					m_transform.get(2, 1),
+					m_transform.get(2, 2)
+					);
 }
 
 vec3 ang3::back()
 {
     if(m_recalc)
         calculateMatrix();
+		return vec3(
+					-m_transform.get(2, 0),
+					-m_transform.get(2, 1),
+					-m_transform.get(2, 2)
+					);
 }
 
 vec3 ang3::left()
 {
     if(m_recalc)
         calculateMatrix();
+		return vec3(
+					-m_transform.get(0, 0),
+					-m_transform.get(0, 1),
+					-m_transform.get(0, 2)
+					);
 }
 
 vec3 ang3::right()
 {
     if(m_recalc)
         calculateMatrix();
+		return vec3(
+					m_transform.get(0, 0),
+					m_transform.get(0, 1),
+					m_transform.get(0, 2)
+					);
 }
 
 vec3 ang3::up()
 {
     if(m_recalc)
         calculateMatrix();
+		return vec3(
+					m_transform.get(1, 0),
+					m_transform.get(1, 1),
+					m_transform.get(1, 2)
+					);
 }
 
 vec3 ang3::down()
 {
     if(m_recalc)
         calculateMatrix();
+		return vec3(
+					-m_transform.get(1, 0),
+					-m_transform.get(1, 1),
+					-m_transform.get(1, 2)
+					);
 }
 
 ang3 operator +(const ang3 &lhs, const ang3 &rhs)

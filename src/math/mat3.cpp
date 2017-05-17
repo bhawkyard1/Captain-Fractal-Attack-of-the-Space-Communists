@@ -83,6 +83,7 @@ mat3 transpose(const mat3 &_m)
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
             r.set(j, i, _m.get(i, j));
+		return r;
 }
 
 mat3 inverse(const mat3 &_m)
