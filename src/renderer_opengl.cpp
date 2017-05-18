@@ -212,9 +212,9 @@ renderer_ngl::renderer_ngl()
     m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock");
 		m_assets.loadTexture("RESOURCE_IRON_ROCK", "resource_iron_rock");
 
-    loadFontSpriteSheet("pix", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 20);
-    loadFontSpriteSheet("minimal", g_GRAPHICAL_RESOURCE_LOC + "fonts/minimal.otf", 20);
-    loadFontSpriteSheet("pix90", g_GRAPHICAL_RESOURCE_LOC + "fonts/pix.TTF", 60);
+    loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
+    loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 20);
+    loadFontSpriteSheet("pix90", g_RESOURCE_LOC + "fonts/pix.TTF", 60);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1238,8 +1238,9 @@ void renderer_ngl::loadFontSpriteSheet(
 
     if(!fnt)
     {
-        std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
         TTF_CloseFont(fnt);
+        errorExit( std::string("renderer_opengl::loadFontSpriteSheet : Font loading error! ")
+                   + std::string(SDL_GetError()) );
         return;
     }
 
@@ -1256,12 +1257,12 @@ void renderer_ngl::loadFontSpriteSheet(
         //We need to first render to a surface as that's what TTF_RenderText
         //returns, then load that surface into a texture
         SDL_Surface * surf = TTF_RenderGlyph_Blended(fnt, ascii[i], {255,255,255});
-        //SDL_Surface * surf = IMG_Load((g_GRAPHICAL_RESOURCE_LOC + "textures/player/player.png").c_str());
 
         if(!surf)
         {
-            std::cerr << "Font loading error! " << SDL_GetError() << std::endl;
             SDL_FreeSurface(surf);
+            errorExit( std::string("renderer_opengl::loadFontSpriteSheet : Surface conversion error! ")
+                       + std::string(SDL_GetError()) );
             return;
         }
 
@@ -1310,7 +1311,7 @@ void renderer_ngl::drawText(
 {
     ngl::ShaderLib * slib = ngl::ShaderLib::instance();
 
-    spriteSheet * tmp = &m_letters[_font];
+    spriteSheet * tmp = &m_letters.at( _font );
 
     slib->use("text");
     slib->setRegisteredUniform("inColour", ngl::Vec4(1.0f, 1.0f, 1.0f, 1.0f));

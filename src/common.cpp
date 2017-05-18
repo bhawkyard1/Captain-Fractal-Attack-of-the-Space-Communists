@@ -3,8 +3,6 @@
 
 game_mode g_GAME_STATE = MODE_MENU;
 
-std::string g_GRAPHICAL_RESOURCE_LOC = "./resources/NGL/";
-
 std::string g_RESOURCE_LOC = "./resources/";
 
 double g_GLOBAL_TIME = 0.0f;
