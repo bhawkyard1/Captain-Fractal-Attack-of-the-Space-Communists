@@ -1195,7 +1195,7 @@ void universe::draw(float _dt)
 	m_drawer.drawingUI();
 
 	debug("draw ui");
-	/*if(m_showUI)
+    if(m_showUI)
 	{
 		for(auto &i : m_popups)
 		{
@@ -1205,7 +1205,7 @@ void universe::draw(float _dt)
 
 		if(g_DEV_MODE and m_showDebugUI)
 			drawDebugUI();
-	}*/
+    }
 	debug("draw end");
 
 	//Adding light.
