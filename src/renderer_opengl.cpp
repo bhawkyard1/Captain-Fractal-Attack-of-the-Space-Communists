@@ -398,6 +398,7 @@ void renderer_ngl::drawLasers(const float _globalTime)
 void renderer_ngl::drawLines(const float _width)
 {
     if(m_verts.size() == 0 or m_colours.size() == 0) return;
+    m_transform.reset();
 
     glBindVertexArray(m_vao);
 

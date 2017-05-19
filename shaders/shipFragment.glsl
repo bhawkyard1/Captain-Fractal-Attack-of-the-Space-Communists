@@ -26,4 +26,5 @@ void main()
     fragColour = texture( diffuse, UV );
     fragNormal = vec4(normalize(normal), 1.0);
     fragPosition = position;
+    fragColour = vec4(1.0);
 }

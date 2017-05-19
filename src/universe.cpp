@@ -1109,7 +1109,7 @@ void universe::draw(float _dt)
 	for(auto &i : m_shots)
 	{
 		vec3 ipos = i.getIPos(_dt);
-		vec3 ivel = (i.getVel() + i.getWVel()) * 8.0f;
+        vec3 ivel = (i.getVel() + i.getWVel()) * 8.0f;
 		std::array<float, 4> icol = i.getCol();
 
 		icol = col255to1(icol);

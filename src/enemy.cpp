@@ -354,7 +354,9 @@ void enemy::steering()
 	//m_tPos -= unit(linePos - m_tPos) * cSpd * 3;
 
 	//Angle the ship towards its m_target.
-    setTAng(clampRoll( ang( tovec2(p - (m_tPos + m_tVel) ) ), -180.0f, 180.0f));
+    float ta = -deg( ang( tovec2(p - (m_tPos + m_tVel) ) ) );
+    setTAng(clampRoll( ta, -180.0f, 180.0f));
+     //std::cout << "TANG is " << getTAng() << '\n';
 
 	//The proportion of the ships total energy it still has.
 	float energyProportion = getEnergy() / getMaxEnergy();
@@ -370,8 +372,10 @@ void enemy::steering()
 	if( ( tvMul < 0.8f or tvMul > 1.2f or dist > radius )
 			and ( canAccel /*or m_curGoal == GOAL_CONGREGATE*/ )
 			and getCanMove()
+            and (getType() != SHIP_TYPE_CAPITAL)
 			)
 	{
+        //Bug where capital ships do this
 		accelerate(utv, accelMul);
 	}
 
