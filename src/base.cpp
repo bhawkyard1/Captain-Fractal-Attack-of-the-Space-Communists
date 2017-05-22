@@ -6,12 +6,14 @@ base::base()
     m_forces = vec3();
 }
 
-void base::updatePos(const float _dt)
+void base::updateTransform(const float _dt)
 {
     m_prevPos = m_pos;
     m_pos += (m_vel + m_wvel) * g_PIXEL_UNIT_CONVERSION * _dt;
     m_vel += m_forces * g_PIXEL_UNIT_CONVERSION * _dt;
     m_forces = vec3();
+
+    m_angle += m_angleVel * _dt;
 }
 
 vec3 base::getIPos(const float _dt)
@@ -22,12 +24,12 @@ vec3 base::getIPos(const float _dt)
 
 vec3 base::forward()
 {
-    return m_angle.forward();
+    return -m_angle.up();
 }
 
 vec3 base::back()
 {
-    return m_angle.back();
+    return m_angle.up();
 }
 
 vec3 base::right()
@@ -42,10 +44,10 @@ vec3 base::left()
 
 vec3 base::up()
 {
-    return m_angle.up();
+    return m_angle.forward();
 }
 
 vec3 base::down()
 {
-    return m_angle.down();
+    return m_angle.back();
 }

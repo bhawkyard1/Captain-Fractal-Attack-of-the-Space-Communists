@@ -1,173 +1,188 @@
 #include "math/ang3.hpp"
 
+
+//delete
+#include <iostream>
+
 vec3 ang3::forward()
 {
     if(m_recalc)
         calculateMatrix();
-		return vec3(
-					m_transform.get(2, 0),
-					m_transform.get(2, 1),
-					m_transform.get(2, 2)
-					);
+    return vec3(
+                m_transform.get(2, 0),
+                m_transform.get(2, 1),
+                m_transform.get(2, 2)
+                );
 }
 
 vec3 ang3::back()
 {
     if(m_recalc)
         calculateMatrix();
-		return vec3(
-					-m_transform.get(2, 0),
-					-m_transform.get(2, 1),
-					-m_transform.get(2, 2)
-					);
+    return vec3(
+                -m_transform.get(1, 0),
+                -m_transform.get(1, 1),
+                -m_transform.get(1, 2)
+                );
 }
 
 vec3 ang3::left()
 {
     if(m_recalc)
         calculateMatrix();
-		return vec3(
-					-m_transform.get(0, 0),
-					-m_transform.get(0, 1),
-					-m_transform.get(0, 2)
-					);
+    return vec3(
+                -m_transform.get(0, 0),
+                -m_transform.get(0, 1),
+                -m_transform.get(0, 2)
+                );
 }
 
 vec3 ang3::right()
 {
     if(m_recalc)
         calculateMatrix();
-		return vec3(
-					m_transform.get(0, 0),
-					m_transform.get(0, 1),
-					m_transform.get(0, 2)
-					);
+    return vec3(
+                m_transform.get(0, 0),
+                m_transform.get(0, 1),
+                m_transform.get(0, 2)
+                );
 }
 
 vec3 ang3::up()
 {
     if(m_recalc)
         calculateMatrix();
-		return vec3(
-					m_transform.get(1, 0),
-					m_transform.get(1, 1),
-					m_transform.get(1, 2)
-					);
+    return vec3(
+                m_transform.get(1, 0),
+                m_transform.get(1, 1),
+                m_transform.get(1, 2)
+                );
 }
 
 vec3 ang3::down()
 {
     if(m_recalc)
         calculateMatrix();
-		return vec3(
-					-m_transform.get(1, 0),
-					-m_transform.get(1, 1),
-					-m_transform.get(1, 2)
-					);
+    return vec3(
+                -m_transform.get(1, 0),
+                -m_transform.get(1, 1),
+                -m_transform.get(1, 2)
+                );
 }
 
 ang3 operator +(const ang3 &lhs, const ang3 &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch + rhs.m_pitch;
-    ret.m_yaw = lhs.m_yaw + rhs.m_yaw;
-    ret.m_roll = lhs.m_roll + rhs.m_roll;
+    ang3 ret (
+                lhs.getPitch() + rhs.getPitch(),
+                lhs.getYaw() + rhs.getYaw(),
+                lhs.getRoll() + rhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator +(const ang3 &lhs, const float &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch + rhs;
-    ret.m_yaw = lhs.m_yaw + rhs;
-    ret.m_roll = lhs.m_roll + rhs;
+    ang3 ret (
+                lhs.getPitch() + rhs,
+                lhs.getYaw() + rhs,
+                lhs.getRoll() + rhs
+                );
     return ret;
 }
 
 ang3 operator +(const float &lhs, const ang3 &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs + rhs.m_pitch;
-    ret.m_yaw = lhs + rhs.m_yaw;
-    ret.m_roll = lhs + rhs.m_roll;
+    ang3 ret (
+                lhs + rhs.getPitch(),
+                lhs + rhs.getYaw(),
+                lhs + rhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator -(const ang3 &lhs, const ang3 &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch - rhs.m_pitch;
-    ret.m_yaw = lhs.m_yaw - rhs.m_yaw;
-    ret.m_roll = lhs.m_roll - rhs.m_roll;
+    ang3 ret (
+                lhs.getPitch() - rhs.getPitch(),
+                lhs.getYaw() - rhs.getYaw(),
+                lhs.getRoll() - rhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator -(const ang3 &lhs)
 {
-    ang3 ret;
-    ret.m_pitch = -lhs.m_pitch;
-    ret.m_yaw = -lhs.m_yaw;
-    ret.m_roll = -lhs.m_roll;
+    ang3 ret (
+                -lhs.getPitch(),
+                -lhs.getYaw(),
+                -lhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator *(const ang3 &lhs, const ang3 &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch * rhs.m_pitch;
-    ret.m_yaw = lhs.m_yaw * rhs.m_yaw;
-    ret.m_roll = lhs.m_roll * rhs.m_roll;
+    ang3 ret (
+                lhs.getPitch() * rhs.getPitch(),
+                lhs.getYaw() * rhs.getYaw(),
+                lhs.getRoll() * rhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator *(const ang3 &lhs, const float &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch * rhs;
-    ret.m_yaw = lhs.m_yaw * rhs;
-    ret.m_roll = lhs.m_roll * rhs;
+    ang3 ret (
+                lhs.getPitch() * rhs,
+                lhs.getYaw() * rhs,
+                lhs.getRoll() * rhs
+                );
     return ret;
 }
 
 ang3 operator *(const float &lhs, const ang3 &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs * rhs.m_pitch;
-    ret.m_yaw = lhs * rhs.m_yaw;
-    ret.m_roll = lhs * rhs.m_roll;
+    ang3 ret (
+                lhs * rhs.getPitch(),
+                lhs * rhs.getYaw(),
+                lhs * rhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator /(const ang3 &lhs, const ang3 &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch / rhs.m_pitch;
-    ret.m_yaw = lhs.m_yaw / rhs.m_yaw;
-    ret.m_roll = lhs.m_roll / rhs.m_roll;
+    ang3 ret (
+                lhs.getPitch() / rhs.getPitch(),
+                lhs.getYaw() / rhs.getYaw(),
+                lhs.getRoll() / rhs.getRoll()
+                );
     return ret;
 }
 
 ang3 operator /(const ang3 &lhs, const float &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = lhs.m_pitch / rhs;
-    ret.m_yaw = lhs.m_yaw / rhs;
-    ret.m_roll = lhs.m_roll / rhs;
+    ang3 ret (
+                lhs.getPitch() / rhs,
+                lhs.getYaw() / rhs,
+                lhs.getRoll() / rhs
+                );
     return ret;
 }
 
 ang3 operator ^(const ang3 &lhs, const float &rhs)
 {
-    ang3 ret;
-    ret.m_pitch = pow(lhs.m_pitch, rhs);
-    ret.m_yaw = pow(lhs.m_yaw, rhs);
-    ret.m_roll = pow(lhs.m_roll, rhs);
+    ang3 ret (
+                pow(lhs.getPitch(), rhs),
+                pow(lhs.getYaw(), rhs),
+                pow(lhs.getRoll(), rhs)
+                );
     return ret;
 }
 
 bool operator ==(const ang3 &lhs, const ang3 &rhs)
 {
-    return (lhs.m_pitch == rhs.m_pitch) and (lhs.m_yaw == rhs.m_yaw) and (lhs.m_roll == rhs.m_roll);
+    return (lhs.getPitch() == rhs.getPitch()) and (lhs.getYaw() == rhs.getYaw()) and (lhs.getRoll() == rhs.getRoll());
 }
 
 void ang3::calculateMatrix()
@@ -199,11 +214,8 @@ void ang3::calculateMatrix()
     rm.set(8, -cosf(r));
 
     m_transform = pm * ym * rm;
-}
 
-vec3 vec(ang3 ang)
-{
-    return { static_cast<float> (atan2(ang.m_yaw, ang.m_pitch)), static_cast<float> (atan2(ang.m_roll, ang.m_pitch)), 0.0f };
+    m_recalc = false;
 }
 
 ang3 deg(ang3 ang)

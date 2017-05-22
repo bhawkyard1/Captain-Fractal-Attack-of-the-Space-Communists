@@ -14,14 +14,14 @@ ship::ship()
 
 	setVel(vec3());
 	setWVel(vec3());
-	m_angle = 0.0f;
+    setAngle(ang3());
 	m_targetAngle = 0.0f;
 
 	m_engineGlow = 0.0f;
 	m_engineTemp = 0.0f;
 	m_shieldGlow = 0.0f;
 	m_drawShot = 0.0f;
-	m_angVel = 0.0f;
+    setAngleVel(ang3());
 
 	m_canMove = true;
 	m_canShoot = true;
@@ -49,8 +49,7 @@ ship::ship()
 	m_enginePower = 0.0f;
 	//m_weapons.push_back( g_weapons[rand() % 2 + WEAPON_COMMUNIST_1] );
 
-	m_angVelRange = {0, 0};
-	m_angVel = 0.0f;
+    setAngleVel(ang3());
 
 	m_priority = PRIORITY_NONE;
 
@@ -79,7 +78,8 @@ ship::ship(
 
 	setVel({0.0f, 0.0f, 0.0f});
 	setWVel({0.0f, 0.0f, 0.0f});
-	m_angle = 0.0f;
+    setAngle(ang3());
+    setAngleVel(ang3());
 	m_targetAngle = 0.0f;
 
 	m_engineGlow = 0.0f;
@@ -96,8 +96,6 @@ ship::ship(
 
 	m_initInertia = _src.m_initInertia;
 	m_enginePower = _src.getEnginePower();
-	m_angVelRange = _src.m_angVelRange;
-	m_angVel = randNum(m_angVelRange.first, m_angVelRange.second);
 
 	m_identifier = _src.getIdentifier();
 
@@ -138,8 +136,7 @@ ship::ship(
 
 void ship::accelerate(const float _mult)
 {
-	vec2 add = vec(getAng() + 90.0f);
-	accelerate(tovec3(add), _mult);
+    accelerate(forward(), _mult);
 }
 
 void ship::accelerate(
@@ -235,8 +232,7 @@ void ship::dodge(const float _side)
 	}
 
 	if(m_energy <= energyLoss) return;
-	vec2 avec = vec(getAng());
-	addForce( vec3(avec.m_x, avec.m_y, 0.0f) * _side * accelMult * m_inertia * m_enginePower );
+    addForce( right() * _side * accelMult * m_inertia * m_enginePower );
 	m_energy -= energyLoss * fabs(_side);
 }
 
@@ -258,7 +254,7 @@ float ship::damage(float _d, const vec3 _v)
 	//Shots to the rear do more damage.
 	if(m_canMove)
 	{
-		_d *= (dot( tovec3(vec(m_angle + 90.0f)), unit(_v) ) / 2.0f) + 1.5f;
+        _d *= (dot( forward(), unit(_v) ) / 2.0f) + 1.5f;
 		vec3 add = {_v.m_x, _v.m_y, 0.0f};
 		addForce(add * m_inertia);
 	}
@@ -287,18 +283,9 @@ void ship::update(const float _dt)
 	if(spd > 0.5f) damage( spd );
 	m_inertia = 1.0f / (1.0f / m_initInertia + 1.0f / m_cargo.getInvMass());
 
-	float angDiff = clampRoll(m_targetAngle - m_angle, -180.0f, 180.0f);
-	float turnConst = 0.1f;
-
-	if(m_angVel != 0.0f) setAng( clampRoll( m_angle + m_angVel * _dt, -180.0f, 180.0f ) );
-	else if(angDiff < -0.5f)
-	{
-		setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, -90.0f, -0.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
-	}
-	else if(angDiff > 0.5f)
-	{
-		setAng(clampRoll(m_angle + clamp(angDiff * m_inertia * m_enginePower * turnConst, 0.0f, 90.0f) * _dt * g_PIXEL_UNIT_CONVERSION, -180.0f, 180.0f));
-	}
+    ang3 angle = getAngle();
+    ang3 angleDiff = ang3(m_targetAngle, 0.0f, 0.0f) - angle;
+    setAngle(angle + angleDiff * m_inertia);
 
 	float energy_loss = 0.5f, shield_add = 0.5f;
 
@@ -446,7 +433,7 @@ int ship::getScore() const
 void ship::setCooldown(const float _f)
 {
 	m_coolDown = _f;
-	addVelS(tovec3(-vec(m_angle + 90.0f) * getCurWeapStat(STOPPING_POWER)));
+    addVelS(getAngle().back() * getCurWeapStat(STOPPING_POWER));
 }
 
 std::array<float, 4> ship::getCurWeapCol() const

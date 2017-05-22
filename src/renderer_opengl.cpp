@@ -516,7 +516,7 @@ void renderer_ngl::update(float _dt, base * _focus)
     m_camera.setVel(_focus->getVel());
     m_camera.setTPos( _focus->getPos() );
     m_camera.update(_dt);
-    //m_camera.updatePos(_dt);
+    //m_camera.updateTransform(_dt);
     vec3 offset = m_camera.getCamPos();
 
     float divz = 1 / g_ZOOM_LEVEL;

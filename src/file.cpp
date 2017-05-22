@@ -53,7 +53,7 @@ void writeVectorEnemy(std::ostream &_file, slotmap<enemy> * _u)
               << cpy[i].getParentOffset().m_x << "," << cpy[i].getParentOffset().m_y << "|"
               << cpy[i].getPos().m_x << "," << cpy[i].getPos().m_y << "|"
               << cpy[i].getVel().m_x << "," << cpy[i].getVel().m_y << "|"
-              << cpy[i].getAng() << "|"
+              << cpy[i].getAngle().getPitch() << "|"
               << cpy[i].getHealth() << "," << cpy[i].getShield() << "," << cpy[i].getEnergy() << "|"
               << cpy[i].getMaxHealth() << "," << cpy[i].getMaxShield() << "," << cpy[i].getMaxEnergy() << "|"
               << cpy[i].getKills() <<"|"
@@ -69,7 +69,7 @@ void writeVectorAsteroid(std::ostream &_file, std::vector<ship> *_u)
         _file << "/|" << i.getClassification() << "|"
               << i.getPos().m_x << "," << i.getPos().m_y << "|"
               << i.getVel().m_x << "," << i.getVel().m_y << "|"
-              << i.getAng() << "|"
+              << i.getAngle().getPitch() << "|"
               << i.getHealth() << "," << i.getShield() << "," << i.getEnergy() << "|"
                  ;
     }
@@ -171,7 +171,7 @@ void readVectorEnemy(std::string _str, universe * _u)
         enemy temp(pos , vel, static_cast<ship_spec>(type), static_cast<aiTeam>(team));
         temp.setPos(pos);
 
-        temp.setAng(ang);
+        temp.setAngle(ang3(ang, 0.0f, 0.0f));
         temp.setMaxHealth(maxhealth, false);
         temp.setMaxShield(maxshield, false);
         temp.setMaxEnergy(maxenergy, false);
@@ -223,7 +223,7 @@ void readVectorAsteroid(std::string _str, universe * _u)
         ship temp( g_ship_templates[id] );
         temp.setPos({pos.m_x, pos.m_y, 0.0f});
 
-        temp.setAng(ang);
+        temp.setAngle(ang3(ang, 0.0f, 0.0f));
         temp.setHealth(health);
 
         _u->getAsteroids()->push_back(temp);
@@ -610,11 +610,9 @@ ship loadShip(const std::string &_path, std::string * _asset, int _classificatio
             else if(s[i] == "weapons")
                 for(size_t j = i + 1; j < s.size(); ++j)
                     ret.addWeap(stoi(s[j]));
-            else if(s[i] == "angvelrange") ret.setAngVelRange( stof(s[i + 1]), stof(s[i + 2]), true );
             else if(s[i] == "holdspace") ret.getCargo()->setDim( {stof(s[i + 1]), stof(s[i + 2])} );
             else if(s[i] == "canshoot") ret.setCanShoot( stoi(s[i + 1]) );
             else if(s[i] == "canmove") ret.setCanMove( stoi(s[i + 1]) );
-            else if(s[i] == "angvelrange") ret.setAngVelRange(stof(s[i + 1]), stof(s[i + 2]), true);
             else if(s[i] == "attachmentpoints")
             {
                 std::vector<vec3> attachmentPoints;

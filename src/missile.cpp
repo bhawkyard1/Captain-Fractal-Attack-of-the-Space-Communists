@@ -36,11 +36,11 @@ void missile::steering()
 
         float accelMul = clamp(((tPPDist-stoppingDistance)),-3.0f,1.5f);
 
-        float angleMul = (shortestAngle(getAng(), getTAng())+90)/90.0;
+        float angleMul = (shortestAngle(getAngle().getPitch(), getTAng())+90)/90.0;
 
         setTAng(clampRoll( ang(tovec2(getPos() - m_tPos) ),-180.0f,180.0f));
 
-        if(fabs(shortestAngle(getAng(), getTAng())) <= 2.0f)
+        if(fabs(shortestAngle(getAngle().getPitch(), getTAng())) <= 2.0f)
         {
             accelerate(accelMul*angleMul);
         }
@@ -52,6 +52,6 @@ void missile::steering()
     }
     else
     {
-        setTAng(getAng());
+        setTAng(getAngle().getPitch());
     }
 }

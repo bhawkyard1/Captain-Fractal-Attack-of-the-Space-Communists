@@ -13,11 +13,11 @@ struct mat3
     // 6 7 8
     float m_data[9];
 
-    float get(const int _i, const int _j) const {return m_data[_j / 3 + _i];}
+    float get(const int _i, const int _j) const {return m_data[_j * 3 + _i];}
     float get(const int _i) const {return m_data[_i];}
-    void set(const int _i, const int _j, const float _v) {m_data[_j / 3 + _i] = _v;}
+    void set(const int _i, const int _j, const float _v) {m_data[_j * 3 + _i] = _v;}
     void set(const int _i, const float _v) {m_data[_i] = _v;}
-    void incr(const int _i, const int _j, const float _v) {m_data[_j / 3 + _i] += _v;}
+    void incr(const int _i, const int _j, const float _v) {m_data[_j * 3 + _i] += _v;}
 
     mat3()
     {

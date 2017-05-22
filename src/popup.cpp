@@ -30,5 +30,5 @@ popup::popup(const std::string _label, vec3 _pos, vec3 _vel, float _smul, std::a
 void popup::update(float _dt)
 {
     m_col[3] -= 100.0f * _dt;
-    updatePos(_dt);
+    updateTransform(_dt);
 }

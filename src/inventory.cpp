@@ -56,7 +56,7 @@ void inventory::update(const float _dt)
 
         //Apply drag.
         i.setVel( i.getVel() * 0.995f );
-        i.updatePos(_dt);
+        i.updateTransform(_dt);
 
         vec3 pos = i.getPos();
         vec3 vel = i.getVel();

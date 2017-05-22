@@ -37,3 +37,9 @@ std::ostream& operator<<(std::ostream& os, const mat3 &_v)
     }
     return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const ang3 &_v)
+{
+    os << "[ " << _v.getPitch() << ", " << _v.getYaw() << ", " << _v.getRoll() << " ]\n";
+    return os;
+}

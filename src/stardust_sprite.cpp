@@ -45,7 +45,7 @@ sprite::sprite(
 void sprite::updateSprite(const float _dt)
 {
     m_ang += m_angVel;
-    updatePos(_dt);
+    updateTransform(_dt);
 }
 
 void sprite::incrDim(float _dt)

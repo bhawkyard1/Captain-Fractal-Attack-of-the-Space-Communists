@@ -54,11 +54,17 @@ public:
     vec3 getVel() const {return m_vel;}
     vec3 getWVel() const {return m_wvel;}
 
+    void setAngle(const ang3 &_ang) {m_angle = _ang;}
+    ang3 getAngle() const {return m_angle;}
+
+    void setAngleVel(const ang3 &_angleVel) {m_angleVel = _angleVel;}
+    ang3 getAngleVel() const {return m_angleVel;}
+
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the position of the object based on velocity, wvel, and time differece
     /// \param _dt the time difference since the last update.
     //----------------------------------------------------------------------------------------------------------------------
-    void updatePos(float _dt);
+    void updateTransform(float _dt);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Returns a vec2 interpolated between current and previous position
@@ -100,6 +106,8 @@ private:
     vec3 m_wvel;
 
     ang3 m_angle;
+
+    ang3 m_angleVel;
 };
 
 #endif

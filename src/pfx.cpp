@@ -53,7 +53,7 @@ void pfx::update(float _dt)
     for(size_t i = 0; i < m_alphas.size(); ++i)
     {
         m_particles[i].setWVel( getWVel() );
-        m_particles[i].updatePos( _dt );
+        m_particles[i].updateTransform( _dt );
 
         if(m_alphas[i] > 0.0f)
         {
@@ -69,5 +69,5 @@ void pfx::update(float _dt)
 
     //m_col[3] *= 0.995f;
 
-    updatePos(_dt);
+    updateTransform(_dt);
 }

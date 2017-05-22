@@ -6,6 +6,9 @@
 #include "universe.hpp"
 #include "util.hpp"
 
+//DELETE
+#include "math/mathstream.hpp"
+
 universe::universe()
 	:
 		m_drawer(),
@@ -18,7 +21,7 @@ universe::universe()
 	m_sounds.loadSounds();
 
 	m_showUI = true;
-	m_showDebugUI = true;
+    m_showDebugUI = false;
 	m_time_elapsed = 0.0;
 	m_pos = vec3();
 	setVel(vec3());
@@ -118,7 +121,7 @@ void universe::addMissile(
 {
 	missile m(_p);
 	m.setVel(_v + tovec3(vec(_angle + 90)) * 5);
-	m.setAng(_angle);
+    m.setAngle(ang3(_angle, 0.0f, 0.0f));
 
 	m.setTarget( closestEnemy( tovec3( toWorldSpace( getMousePos() ) ), _team ) );
 
@@ -141,7 +144,7 @@ void universe::update(float _dt)
 	//Clicking and buttons.
 	processInputMap();
 
-	m_ply.updatePos(_dt);
+    m_ply.updateTransform(_dt);
 	m_ply.ctrlUpdate();
 	m_ply.update(_dt);
 
@@ -199,7 +202,7 @@ void universe::update(float _dt)
 		m_ply.setFiring(false);
 		aiTarget player;
 		player.setPlayer( &m_ply );
-		addShot( m_ply.getPos(), m_ply.getVel(), m_ply.getAng(), m_ply.getWeap(), TEAM_PLAYER, player, m_ply.getXP() );
+        addShot( m_ply.getPos(), m_ply.getVel(), m_ply.getAngle().getPitch(), m_ply.getWeap(), TEAM_PLAYER, player, m_ply.getXP() );
 		m_ply.setEnergy( m_ply.getEnergy() - m_ply.getCurWeapStat(ENERGY_COST) );
 		m_ply.setCooldown( m_ply.getCurWeapStat(COOLDOWN) );
 		m_drawer.addShake(m_ply.getCurWeapStat(STOPPING_POWER) * 1000.0f);
@@ -271,7 +274,7 @@ void universe::update(float _dt)
 
 	for(int i = static_cast<int>(m_missiles.size()) - 1; i >= 0; i--)
 	{
-		m_missiles[i].updatePos(_dt);
+        m_missiles[i].updateTransform(_dt);
 		bool ofscr = isOffScreen(m_missiles[i].getPos(), 80000.0f);
 		if(ofscr or m_missiles[i].getHealth() <= 0 or m_missiles[i].detonate())
 		{
@@ -319,7 +322,7 @@ void universe::update(float _dt)
 
 	for(int i = static_cast<int>(m_asteroids.size()) - 1; i >= 0; i--)
 	{
-		m_asteroids[i].updatePos(_dt);
+        m_asteroids[i].updateTransform(_dt);
 		vec3 p = m_asteroids[i].getPos();
 		vec3 v = m_asteroids[i].getVel();
 
@@ -352,7 +355,7 @@ void universe::update(float _dt)
 					{
 						ship a(g_ship_templates[ m_asteroids[i].getClassification() - 1 ], p + tovec3(randVec2( m_asteroids[i].getRadius()) ));
 						a.setVel( m_asteroids[i].getVel() + tovec3(randVec2(1.0f)) );
-						a.setAng(randNum(-180.0f, 180.0f));
+                        a.setAngle(ang3(randNum(-180.0f, 180.0f), 0.0f, 0.0f));
 						a.update(_dt);
 						m_asteroids.push_back(a);
 					}
@@ -378,7 +381,7 @@ void universe::update(float _dt)
 		else
 		{
 			m_resources[i].setWVel(m_vel + m_positioning);
-			m_resources[i].updatePos(_dt);
+            m_resources[i].updateTransform(_dt);
 		}
 	}
 
@@ -408,7 +411,7 @@ void universe::update(float _dt)
 		debug("parenting");
 		if(!m_agents[e].hasParent())
 		{
-			m_agents[e].updatePos(_dt);
+            m_agents[e].updateTransform(_dt);
 		}
 		else if(m_agents[e].hasParent())
 		{
@@ -421,7 +424,7 @@ void universe::update(float _dt)
 				continue;
 			}
 
-			float angle = parent->getAng();
+            float angle = parent->getAngle().getPitch();
 			float s = sin(rad(angle));
 			float c = cos(rad(angle));
 
@@ -534,7 +537,7 @@ void universe::update(float _dt)
 			m_agents[e].shoot();
 			aiTarget owner;
 			owner.setAgent( slotID<ship>(m_agents.getID(e), reinterpret_cast<slotmap<ship> *>(&m_agents) ) );
-			addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAng(), m_agents[e].getWeap(), m_agents[e].getTeam(), owner, m_agents[e].getXP());
+            addShot(m_agents[e].getPos() - m_agents[e].getVel(), m_agents[e].getVel(), m_agents[e].getAngle().getPitch(), m_agents[e].getWeap(), m_agents[e].getTeam(), owner, m_agents[e].getXP());
 			m_agents[e].setCooldown( ( m_agents[e].getCurWeapStat( COOLDOWN ) ) );
 			m_agents[e].setFiring(false);
 		}
@@ -757,6 +760,16 @@ void universe::calcSquadPositions()
 
 void universe::processInputMap()
 {
+    std::cout << "Player forwards is " << m_ply.right() << " from " << m_ply.getAngle() << '\n';
+    /*mat3 m1;
+    mat3 m2;
+    for(int i = 0; i < 9; ++i)
+    {
+        m1.set(i,(float)i);
+        m2.set(i,(float)i);
+    }
+    std::cout << "Mat mul \n" << m1 << "*\n" << m2 << "=\n" << (m1 * m2);*/
+
 	if(m_inputs.key(SDLK_w))
 	{
 		m_ply.accelerate(1.0f);
@@ -924,7 +937,7 @@ void universe::processInputMap()
 
 		if(m_inputs.rmb() and m_ply.getMissiles() > 0)
 		{
-			addMissile(m_ply.getPos(), m_ply.getVel(), m_ply.getAng(), TEAM_PLAYER);
+            addMissile(m_ply.getPos(), m_ply.getVel(), m_ply.getAngle().getPitch(), TEAM_PLAYER);
 			m_ply.incrMissiles(-1);
 			m_inputs.deactivatermb();
 		}
@@ -971,7 +984,7 @@ void universe::draw(float _dt)
 	//Draw the player if they are alive and not docked.
 	if(!g_GAME_OVER and !m_ply.isDocked())
 	{
-		m_drawer.setTransform(m_ply.getIPos(_dt), m_ply.getAng());
+        m_drawer.setTransform(m_ply.getIPos(_dt), m_ply.getAngle().getPitch());
 		m_drawer.drawAsset(m_ply.getIdentifier(), m_ply.getIdentifier(), "ship");
 	}
 	//Draw each agent.
@@ -980,7 +993,7 @@ void universe::draw(float _dt)
 		//Draw if not docked.
 		if(!i.isDocked())
 		{
-			m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+            m_drawer.setTransform(i.getIPos(_dt), i.getAngle().getPitch());
 			m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "ship");
 		}
 		//Draw debug lines if enabled.
@@ -994,25 +1007,25 @@ void universe::draw(float _dt)
 	//Draw all missiles.
 	for(auto &i : m_missiles)
 	{
-		m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+        m_drawer.setTransform(i.getIPos(_dt), i.getAngle().getPitch());
 		m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "ship");
 	}
 	//Draw all asteroids.
 	for(auto &i : m_asteroids.m_objects)
 	{
-		m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+        m_drawer.setTransform(i.getIPos(_dt), i.getAngle().getPitch());
 		m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "ship");
 	}
 	//Draw all resources.
 	for(auto &i : m_resources)
 	{
-		m_drawer.setTransform(i.getIPos(_dt), i.getAng());
+        m_drawer.setTransform(i.getIPos(_dt), i.getAngle().getPitch());
 		m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "ship");
 	}
 	//Draw all resources.
 	for(auto &i : m_selectedItems)
 	{
-		m_drawer.setTransform(mpos, i.getAng());
+        m_drawer.setTransform(mpos, i.getAngle().getPitch());
 		m_drawer.drawAsset(i.getIdentifier(), i.getIdentifier(), "ship");
 	}
 	debug("	drawing ships end");
@@ -1050,7 +1063,7 @@ void universe::draw(float _dt)
 	//Draw thruster flames.
 	slib->use("flame");
 	float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 32.0f;
-	vec3 backwards = tovec3(back(rad(m_ply.getAng())));
+    vec3 backwards = m_ply.back();
 	vec3 pos = m_ply.getIPos(_dt) + backwards * m_ply.getRadius() + backwards * stat;
 
 	if(stat > 0.05f and !g_GAME_OVER)
@@ -1058,7 +1071,7 @@ void universe::draw(float _dt)
 		m_drawer.drawFlames(
 					pos,
 					vec2(m_ply.getRadius() * 0.85f, stat),
-					m_ply.getAng(),
+                    m_ply.getAngle().getPitch(),
 		{{0.1f, 0.4f, 1.0f, 1.0f}},
 					m_time_elapsed,
 					m_ply.getAlphaStats()[0] * m_ply.getEnginePower()
@@ -1070,7 +1083,7 @@ void universe::draw(float _dt)
 	for(auto &i : m_agents.m_objects)
 	{
 		float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 32.0f;
-		vec3 backwards = tovec3(back(rad(i.getAng())));
+        vec3 backwards = i.back();
 		vec3 pos = i.getIPos(_dt) + backwards * i.getRadius() + backwards * stat;
 		std::array<float, 4> col = i.getCurWeapCol();
 		col[3] = 1.0f;
@@ -1080,7 +1093,7 @@ void universe::draw(float _dt)
 			m_drawer.drawFlames(
 						pos/* * clamp(stat * 0.055f, 1.0f, 20.0f)*/,
 			{i.getRadius() * 0.85f, stat},
-						i.getAng(),
+                        i.getAngle().getPitch(),
 						col,
 						m_time_elapsed,
 						i.getAlphaStats()[0] * i.getEnginePower()
@@ -1095,9 +1108,9 @@ void universe::draw(float _dt)
 		if(stat > 0.05f)
 		{
 			m_drawer.drawFlames(
-						i.getIPos(_dt) + tovec3(back(rad(i.getAng()))) * (i.getRadius() + stat),
+                        i.getIPos(_dt) + i.back() * (i.getRadius() + stat),
 						vec2(i.getRadius(), stat),
-						i.getAng(),
+                        i.getAngle().getPitch(),
 			{{0.1f, 0.4f, 1.0f, 1.0f}},
 						m_time_elapsed,
 						i.getAlphaStats()[0] * i.getEnginePower()
@@ -2362,7 +2375,7 @@ void universe::addBuild(
 			if(m_agents[i].getClassification() == PLAYER_CAPITAL and magns(_p - m_agents[i].getPos()) < sqr(m_agents[i].getRadius()))
 			{
 				vec3 pos = _p - m_agents[i].getPos();
-				float angle = -m_agents[i].getAng();
+                float angle = -m_agents[i].getAngle().getPitch();
 				float s = sin(rad(angle));
 				float c = cos(rad(angle));
 

@@ -385,7 +385,7 @@ void enemy::steering()
 	if(getParent().m_id != -1) selfRadius += 2048.0f;
 
 	if(getCanShoot()
-		 and fabs(shortestAngle(getAng(),getTAng())) <= 2.0f
+         and fabs(shortestAngle(getAngle().getPitch(),getTAng())) <= 2.0f
 		 and dist < 800.0f + radius + selfRadius
 		 and ( m_curGoal == GOAL_ATTACK or m_curGoal == GOAL_TURRET )
 		 and getEnergy() / getMaxEnergy() > 0.05f)
@@ -400,7 +400,7 @@ void enemy::steering()
 			int odds = static_cast<int>(64 * (1.0f + getCooldown()));
 			if(prob(odds) and
 				 t != nullptr and
-				 dot(vec(getAng()), vec(t->getAng())) < -0.8f
+                 dot(forward(), t->forward()) < -0.8f
 				 )
 			{
 				dodge(randNum(10.0f, 20.0f) * randNum(-1,1));
@@ -431,7 +431,7 @@ void enemy::steering()
 	if(fabs(vecMulSide) > 0.8f)
 	{
 		//closing speed * how sideways it is flying * its angle relative to velocity
-		float dv = clamp(cSpd * vecMulSide * dot(tovec2(uv), vec(getAng())), 0.0f, 1.0f);
+        float dv = clamp(cSpd * vecMulSide * dot(uv, forward()), 0.0f, 1.0f);
 		if(vecMulSide < 0) dodge( dv );
 		else if(vecMulSide > 0) dodge( -dv );
 	}

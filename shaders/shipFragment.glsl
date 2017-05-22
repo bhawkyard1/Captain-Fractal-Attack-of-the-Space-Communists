@@ -23,8 +23,8 @@ layout(location = 2) out vec4 fragPosition;
 
 void main()
 {
-    fragColour = texture( diffuse, UV );
+    fragColour = texture( diffuse, -UV );
     fragNormal = vec4(normalize(normal), 1.0);
     fragPosition = position;
-    fragColour = vec4(1.0);
+    //fragColour = vec4(1.0);
 }

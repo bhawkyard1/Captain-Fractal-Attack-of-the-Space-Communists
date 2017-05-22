@@ -393,7 +393,7 @@ void handleUserMouseDownInput(int btn, int * keymod, player *ply, universe *uni)
 		{
 			if(ply->getMissiles() > 0)
 			{
-				uni->addMissile(ply->getPos(), ply->getVel(), ply->getAng(), TEAM_PLAYER);
+                uni->addMissile(ply->getPos(), ply->getVel(), ply->getAngle().getPitch(), TEAM_PLAYER);
 				ply->incrMissiles(-1);
 			}
 		}
@@ -828,7 +828,7 @@ void playTutorial(universe &uni)
 		else if(tutStage == STAGE_MOVEMENT_INTRO)
 		{
 			vec2 ppos = tovec2(uni.getPly()->getPos());
-			float ang = uni.getPly()->getAng();
+            float ang = uni.getPly()->getAngle().getPitch();
 			uni.getRenderer()->drawText("OKAY, FIRST UP, MOVEMENT:", "pix", {g_HALFWIN.m_x - 300.0f, g_HALFWIN.m_y - 200.0f}, false, 1.2f);
 			uni.getRenderer()->drawText("YOU ALWAYS CHASE THE MOUSE", "pix", {g_HALFWIN.m_x - 200.0f, g_HALFWIN.m_y - 160.0f}, false, 1.0f);
 			uni.getRenderer()->drawText("TRY MOVING IN ALL FOUR DIRECTIONS", "pix", {g_HALFWIN.m_x - 100.0f, g_HALFWIN.m_y - 120.0f}, false, 1.0f);
@@ -1115,7 +1115,7 @@ void sandbox(universe &uni)
 	uni.getPly()->setMaxEnergy(100000.0f, true);
 	uni.getPly()->setGeneratorMul(100000.0f);
 	uni.getPly()->setEnginePower(50.0f);
-	uni.getPly()->setAng(0.0f);
+    uni.getPly()->setAngle(ang3());
 	uni.update(0.1f);
 	uni.getUI()->clear();
 
