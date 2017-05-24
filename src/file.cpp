@@ -572,7 +572,11 @@ selection loadSelection(const std::string _path)
                 std::vector<std::string> slnData = split(*j, ' ');
 
                 if(slnData[0] == "SaveSelection") menu.setSaveSelected(static_cast<bool>( std::stoi( slnData[1], nullptr) ) );
-                else if(slnData[0] == "Type") menu.setType(std::stoi(slnData[1]));
+                else if(slnData[0] == "Type")
+                {
+                    std::cout << _path << " : " << *i << ",  setting type " << slnData[1] << " > " << std::stoi(slnData[1]) << '\n';
+                    menu.setType(std::stoi(slnData[1]));
+                }
             }
         }
     }

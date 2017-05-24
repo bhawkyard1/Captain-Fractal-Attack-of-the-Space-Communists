@@ -133,6 +133,7 @@ tt getRandomEntry(std::vector<tt> * _ref)
 /// \param _M maximum threshold
 //----------------------------------------------------------------------------------------------------------------------
 float clampRoll(float _v, float _m, float _M);
+int clampRoll(int _v, int _m, int _M);
 
 //----------------------------------------------------------------------------------------------------------------------
 /// \brief Returns whether a given value is between two others.

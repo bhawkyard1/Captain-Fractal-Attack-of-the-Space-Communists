@@ -214,6 +214,16 @@ float clampRoll(float _v, float _m, float _M)
     return _m + (position - range * std::floor( position / range ));
 }
 
+int clampRoll(int _v, int _m, int _M)
+{
+    int range = _M - _m + 1;
+
+    if (_v < _m)
+        _v += range * ((_m - _v) / range + 1);
+
+    return _m + (_v - _m) % range;
+}
+
 void debug(const std::string _msg)
 {
     if(PRINT_DEBUG_MESSAGES) std::cout << _msg << std::endl;
@@ -255,6 +265,6 @@ bool prob(const int _r)
 
 void errorExit(const std::string &_msg)
 {
-		std::cerr << &_msg << '\n';
-		exit(EXIT_FAILURE);
+    std::cerr << &_msg << '\n';
+    exit(EXIT_FAILURE);
 }

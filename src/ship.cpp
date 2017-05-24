@@ -433,7 +433,6 @@ int ship::getScore() const
 void ship::setCooldown(const float _f)
 {
 	m_coolDown = _f;
-    addVelS(getAngle().back() * getCurWeapStat(STOPPING_POWER));
 }
 
 std::array<float, 4> ship::getCurWeapCol() const

@@ -209,8 +209,8 @@ renderer_ngl::renderer_ngl()
     loadShips();
     std::cout << "loading ships complete!\n";
 
-    m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock");
-		m_assets.loadTexture("RESOURCE_IRON_ROCK", "resource_iron_rock");
+    m_assets.loadMesh("RESOURCE_IRON_ROCK", "resource_iron_rock/resource_iron_rock.obj");
+        m_assets.loadTexture("RESOURCE_IRON_ROCK", "resource_iron_rock/resource_iron_rock.png");
 
     loadFontSpriteSheet("pix", g_RESOURCE_LOC + "fonts/pix.TTF", 20);
     loadFontSpriteSheet("minimal", g_RESOURCE_LOC + "fonts/minimal.otf", 20);

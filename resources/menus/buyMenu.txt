@@ -1,6 +1,6 @@
 SELECTION START
-Type 0
-SaveSelection 1
+Type 1
+SaveSelection 0
 SELECTION END
 
 BUTTON START

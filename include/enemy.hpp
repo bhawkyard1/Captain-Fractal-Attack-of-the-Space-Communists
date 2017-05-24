@@ -41,7 +41,7 @@ public:
     aiGoal getGoal() {return m_curGoal;}
 
     void targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions);
-
+    float getTargetAttractiveness(const ship &_ship, aiTarget _curTarget);
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Updates the behaviour of the agent, based on any target it has, and its relative position
     /// \param _dt time difference since last update

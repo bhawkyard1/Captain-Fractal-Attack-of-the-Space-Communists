@@ -762,7 +762,7 @@ void universe::processInputMap()
 {
     //std::cout << "Player right is " << m_ply.right() << " from\n " << m_ply.getAngle() << '\n';
 
-    std::cout << "Shortest rotation from " << m_ply.getAngle() << " to " << m_ply.getTAng() << " is " << shortestRotation(m_ply.getAngle(), ang3(m_ply.getTAng(),0.0f,0.0f)) << '\n';
+    //std::cout << "Shortest rotation from " << m_ply.getAngle() << " to " << m_ply.getTAng() << " is " << shortestRotation(m_ply.getAngle(), ang3(m_ply.getTAng(),0.0f,0.0f)) << '\n';
     /*mat3 m1;
     mat3 m2;
     for(int i = 0; i < 9; ++i)

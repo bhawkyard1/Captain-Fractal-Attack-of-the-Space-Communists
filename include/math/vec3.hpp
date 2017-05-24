@@ -73,6 +73,7 @@ vec3 operator /(const vec3 &_lhs, const vec3 &_rhs);
 vec3 operator /(const vec3 &_lhs, const float &_rhs);
 vec3 operator ^(const vec3 &_lhs, const float &_rhs);
 bool operator ==(const vec3 &_lhs, const vec3 &_rhs);
+bool operator !=(const vec3 &_lhs, const vec3 &_rhs);
 
 
 //----------------------------------------------------------------------------------------------------------------------

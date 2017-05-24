@@ -104,6 +104,11 @@ bool operator ==(const vec3 &lhs, const vec3 &rhs)
     return (lhs.m_x == rhs.m_x) and (lhs.m_y == rhs.m_y) and (lhs.m_z == rhs.m_z);
 }
 
+bool operator !=(const vec3 &lhs, const vec3 &rhs)
+{
+    return (lhs.m_x != rhs.m_x) or (lhs.m_y != rhs.m_y) or (lhs.m_z != rhs.m_z);
+}
+
 float sum(vec3 _vec)
 {
     return _vec.m_x + _vec.m_y + _vec.m_z;
