@@ -283,9 +283,9 @@ void ship::update(const float _dt)
 	if(spd > 0.5f) damage( spd );
 	m_inertia = 1.0f / (1.0f / m_initInertia + 1.0f / m_cargo.getInvMass());
 
-    ang3 angle = getAngle();
-    ang3 angleDiff = ang3(m_targetAngle, 0.0f, 0.0f) - angle;
-    setAngle(angle + angleDiff * m_inertia);
+    ang3 cur = getAngle();
+    ang3 targ = ang3(m_targetAngle, 0.0f, 0.0f);
+    setAngle(cur - shortestRotation(cur, targ) * m_inertia );
 
 	float energy_loss = 0.5f, shield_add = 0.5f;
 

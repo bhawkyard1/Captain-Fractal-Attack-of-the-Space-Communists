@@ -21,10 +21,19 @@ mat3 operator *(const mat3 &_lhs, const mat3 &_rhs)
     mat3 m;
     for(int i = 0; i < 3; ++i)
         for(int j = 0; j < 3; ++j)
-            for(int k = 0; k < 3; k++)
-            {
-                m.incr(i, j, _lhs.get( k, j ) * _rhs.get( i, k ));
-            }
+        {
+            vec3 l (
+                        _lhs.get( 0, j ),
+                        _lhs.get( 1, j ),
+                        _lhs.get( 2, j )
+                        );
+            vec3 r (
+                        _rhs.get( i, 0 ),
+                        _rhs.get( i, 1 ),
+                        _rhs.get( i, 2 )
+                        );
+            m.set(i, j, dot(l, r));
+        }
     return m;
 }
 

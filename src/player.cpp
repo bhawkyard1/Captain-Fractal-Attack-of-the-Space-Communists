@@ -22,5 +22,5 @@ void player::ctrlUpdate()
 
     vec2 p = toScreenSpace( tovec2( getPos() ) );
 
-    setTAng( deg( -ang(p - getMousePos() ) ) );
+    setTAng( deg( -ang( p - getMousePos() ) ) );
 }

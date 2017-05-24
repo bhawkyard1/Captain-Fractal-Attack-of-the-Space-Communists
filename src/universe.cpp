@@ -760,7 +760,9 @@ void universe::calcSquadPositions()
 
 void universe::processInputMap()
 {
-    std::cout << "Player forwards is " << m_ply.right() << " from " << m_ply.getAngle() << '\n';
+    //std::cout << "Player right is " << m_ply.right() << " from\n " << m_ply.getAngle() << '\n';
+
+    std::cout << "Shortest rotation from " << m_ply.getAngle() << " to " << m_ply.getTAng() << " is " << shortestRotation(m_ply.getAngle(), ang3(m_ply.getTAng(),0.0f,0.0f)) << '\n';
     /*mat3 m1;
     mat3 m2;
     for(int i = 0; i < 9; ++i)
@@ -2436,7 +2438,7 @@ bool universe::upgradeCallback(
 	button * selectedbutton = &m_ui.getElements()->at(_sel).getButtons()->at(_btn);
 
 	//The current upgrade level, -1 if it is a buy attempt.
-	int lvl;
+    int lvl = 0;
 	if(_sel == 1) lvl = (int)m_ply.getUpgrade( _btn );
 	else if(_sel == 2) lvl = -1;
 

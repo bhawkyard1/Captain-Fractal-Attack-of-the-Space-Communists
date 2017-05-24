@@ -75,6 +75,8 @@ public:
     vec3 up();
     vec3 down();
 
+    mat3 getTransform() const {return m_transform;}
+
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Rotation about z axis.
@@ -117,5 +119,12 @@ bool operator ==(const ang3 &_lhs, const ang3 &_rhs);
 //----------------------------------------------------------------------------------------------------------------------
 ang3 deg(const ang3 &_ang);
 ang3 rad(const ang3 &_ang);
+
+//----------------------------------------------------------------------------------------------------------------------
+/// \brief Gets the shortest rotation between _a and _b, in degrees.
+//----------------------------------------------------------------------------------------------------------------------
+ang3 shortestRotation(const ang3 &_a, const ang3 &_b);
+float shortestRotation(const float _from, const float _to);
+
 
 #endif

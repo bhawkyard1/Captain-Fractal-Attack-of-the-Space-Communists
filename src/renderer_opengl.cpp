@@ -1257,7 +1257,7 @@ void renderer_ngl::loadFontSpriteSheet(
     {
         //We need to first render to a surface as that's what TTF_RenderText
         //returns, then load that surface into a texture
-        SDL_Surface * surf = TTF_RenderGlyph_Blended(fnt, ascii[i], {255,255,255});
+        SDL_Surface * surf = TTF_RenderGlyph_Blended(fnt, ascii[i], {255,255,255,255});
 
         if(!surf)
         {

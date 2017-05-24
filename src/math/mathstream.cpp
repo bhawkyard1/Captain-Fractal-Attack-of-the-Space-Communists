@@ -18,7 +18,7 @@ std::ostream& operator<<(std::ostream& os, const mat2 &_v)
     {
         for(int j = 0; j < 2; ++j)
         {
-            os << _v.get(i, j) << " ";
+            os << _v.get(i, j) << "     ";
         }
         os << '\n';
     }

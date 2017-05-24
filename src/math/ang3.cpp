@@ -31,9 +31,9 @@ vec3 ang3::left()
     if(m_recalc)
         calculateMatrix();
     return vec3(
-                -m_transform.get(0, 0),
-                -m_transform.get(0, 1),
-                -m_transform.get(0, 2)
+                m_transform.get(0, 0),
+                m_transform.get(0, 1),
+                m_transform.get(0, 2)
                 );
 }
 
@@ -42,9 +42,9 @@ vec3 ang3::right()
     if(m_recalc)
         calculateMatrix();
     return vec3(
-                m_transform.get(0, 0),
-                m_transform.get(0, 1),
-                m_transform.get(0, 2)
+                -m_transform.get(0, 0),
+                -m_transform.get(0, 1),
+                -m_transform.get(0, 2)
                 );
 }
 
@@ -196,34 +196,55 @@ void ang3::calculateMatrix()
     mat3 rm;
 
     //Clockwise rotation about z
-    pm.set(0, -cosf(p));
-    pm.set(1, sinf(p));
-    pm.set(3, -sinf(p));
-    pm.set(4, -cosf(p));
+    pm.set(0, cosf(p));
+    pm.set(1, -sinf(p));
+    pm.set(3, sinf(p));
+    pm.set(4, cosf(p));
 
     //Clockwise rotation about y
-    ym.set(0, -cosf(y));
-    ym.set(2, -sinf(y));
-    ym.set(6, sinf(y));
-    ym.set(8, -cosf(y));
+    ym.set(0, cosf(y));
+    ym.set(2, sinf(y));
+    ym.set(6, -sinf(y));
+    ym.set(8, cosf(y));
 
     //Clockwise rotation about x
-    rm.set(4, -cosf(r));
-    rm.set(5, sinf(r));
-    rm.set(7, -sinf(r));
-    rm.set(8, -cosf(r));
+    rm.set(4, cosf(r));
+    rm.set(5, -sinf(r));
+    rm.set(7, sinf(r));
+    rm.set(8, cosf(r));
 
     m_transform = pm * ym * rm;
 
     m_recalc = false;
 }
 
-ang3 deg(ang3 ang)
+ang3 deg(const ang3 &_ang)
 {
-    return ang * ( 180 / V_PI );
+    return _ang * ( 180 / V_PI );
 }
 
-ang3 rad(ang3 ang)
+ang3 rad(const ang3 &_ang)
 {
-    return ang * ( V_PI / 180 );
+    return _ang * ( V_PI / 180 );
+}
+
+ang3 shortestRotation(const ang3 &_a, const ang3 &_b)
+{
+    ang3 a = rad(_a);
+    ang3 b = rad(_b);
+
+    ang3 ret;
+    ret.setPitch( shortestRotation( a.getPitch(), b.getPitch() ) );
+    ret.setYaw( shortestRotation( a.getYaw(), b.getYaw() ) );
+    ret.setRoll( shortestRotation( a.getRoll(), b.getRoll() ) );
+
+    ret = deg(ret);
+
+    return ret;
+}
+
+float shortestRotation(const float _from, const float _to)
+{
+    return (_from > _to) ? -V_PI + std::fmod(_from - _to + V_PI, V_PI * 2)
+                       :  V_PI - std::fmod(_to - _from + V_PI, V_PI * 2);
 }
