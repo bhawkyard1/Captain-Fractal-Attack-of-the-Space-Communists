@@ -32,7 +32,7 @@ public:
     //----------------------------------------------------------------------------------------------------------------------
     enemy(const vec3 _p, const vec3 _v, const ship_spec _type, const aiTeam _team);
 
-		void addXP(const float _xp);
+    void addXP(const float _xp);
 
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief Getter and setter for curent goal
@@ -90,7 +90,7 @@ public:
     float damage(const float _d, const vec3 _v, aiTarget _attacker);
     void damage(const float _d);
 
-		bool isFleeing() const {return m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO;}
+    bool isFleeing() const {return m_curGoal == GOAL_FLEE_FROM or m_curGoal == GOAL_FLEE_TO;}
 private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The target position
@@ -122,7 +122,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// \brief The confidence. If this drops too low, the enemy will flee
     //----------------------------------------------------------------------------------------------------------------------
-		float m_baseConfidence;
+    float m_baseConfidence;
     float m_confidence;
 
     //----------------------------------------------------------------------------------------------------------------------

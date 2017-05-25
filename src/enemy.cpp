@@ -216,11 +216,11 @@ float enemy::getTargetAttractiveness(const ship &_ship, aiTarget _curTarget)
                     );
 
     if( _curTarget.get() != nullptr and  _curTarget.get() == &_ship )
-        weight /= 3.0f;
+        weight /= 4.0f;
 
     //Concentrate on big enemies.
     weight /= clamp(
-                _ship.getRadius() / 512.0f,
+                _ship.getRadius() / 256.0f + 1.0f,
                 0.0f,
                 1.0f
                 );

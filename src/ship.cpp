@@ -203,7 +203,7 @@ void ship::decelerate()
 
 void ship::damage(float _d)
 {
-    if(getShield() - _d > 0.0f) m_shieldGlow = 1.0f;
+    m_shieldGlow = 1.0f;
 
 	float shieldDmg = clamp(_d, 0.0f, getShield());
 	_d -= shieldDmg;
@@ -261,7 +261,7 @@ float ship::damage(float _d, const vec3 _v)
 
 	ret = _d;
 
-    if(getShield() - _d > 0) m_shieldGlow = 1.0f;
+    m_shieldGlow = 1.0f;
 
 	float shieldDmg = clamp(_d, 0.0f, getShield());
 	_d -= shieldDmg;
@@ -315,7 +315,7 @@ void ship::update(const float _dt)
     if(m_docked and prob(32))
 		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
-    m_shieldGlow = clamp(m_shieldGlow - _dt, 0.0f, 1.0f);
+    m_shieldGlow = clamp(m_shieldGlow - _dt * 0.0f, 0.0f, 1.0f);
 	if(!m_accelerating)
 	{
         m_engineGlow = clamp(m_engineGlow - _dt, 0.0f, 1.0f);

@@ -468,9 +468,7 @@ void universe::update(float _dt)
 
 		debug("special actions");
 		//The stuff here is ships affecting other stuff easily accessible within the universe class, but not so easily dealt with inside enemy.cpp
-		if(
-			 m_agents[e].getType() == SHIP_TYPE_GRAVWELL
-			 ) //Gravwell attraction
+		if(m_agents[e].getType() == SHIP_TYPE_GRAVWELL) //Gravwell attraction
 		{
 			//Attract m_asteroids based on distancm_agents[e].
 			for(auto &k : m_asteroids.m_objects)
@@ -489,6 +487,10 @@ void universe::update(float _dt)
 			if(rand() % 2048 == 0 and m_wingmenCount < 20)
 				spawnShip(getRandomShipType(m_agents[e].getTeam()), m_agents[e].getTeam(), p);
 		}
+        else if(m_agents[e].getType() == SHIP_TYPE_CAPITAL and prob(10000) and m_agents[e].inCombat())
+        {
+            spawnSquad(m_agents[e].getTeam(), p, m_agents[e].getRadius() / 4.0f, randNum(3, 12) );
+        }
 
 		if(m_agents[e].getGoal() == GOAL_TRADE
 			 and magns(p - m_agents[e].getTarget()->getPos()) < sqr(m_agents[e].getRadius() + m_agents[e].getTarget()->getRadius()))
@@ -1041,6 +1043,7 @@ void universe::draw(float _dt)
 
 	//Now drawing self-illuminating elements.
 	m_drawer.drawingNonLitElements();
+    glDepthMask(false);
 
 	//Draw all buffered lines if debug mode enabled.
 	if(m_showDebugUI)
@@ -1066,7 +1069,7 @@ void universe::draw(float _dt)
 	slib->use("flame");
 	float stat = (m_ply.getAlphaStats()[0] * m_ply.getEnginePower()) / 32.0f;
     vec3 backwards = m_ply.back();
-	vec3 pos = m_ply.getIPos(_dt) + backwards * m_ply.getRadius() + backwards * stat;
+    vec3 pos = m_ply.getIPos(_dt) + backwards * ( m_ply.getRadius() + stat);
 
 	if(stat > 0.05f and !g_GAME_OVER)
 	{
@@ -1086,7 +1089,7 @@ void universe::draw(float _dt)
 	{
 		float stat = (i.getAlphaStats()[0] * i.getEnginePower()) / 32.0f;
         vec3 backwards = i.back();
-		vec3 pos = i.getIPos(_dt) + backwards * i.getRadius() + backwards * stat;
+        vec3 pos = i.getIPos(_dt) + backwards * (i.getRadius() + stat);
 		std::array<float, 4> col = i.getCurWeapCol();
 		col[3] = 1.0f;
 
@@ -1120,7 +1123,6 @@ void universe::draw(float _dt)
 		}
 	}
 
-	m_drawer.useShader("laser");
 	for(auto &i : m_shots)
 	{
 		vec3 ipos = i.getIPos(_dt);
@@ -1178,7 +1180,7 @@ void universe::draw(float _dt)
 	}
 
 	//Shields
-	if(m_ply.getShieldGlow() > 0 and !g_GAME_OVER)
+    if(m_ply.getShieldGlow() > 0.0f and !g_GAME_OVER)
 	{
 		m_drawer.setTransform(m_ply.getIPos(_dt), vec3(m_ply.getRadius()));
 		slib->use("shield");
@@ -1188,7 +1190,7 @@ void universe::draw(float _dt)
 	}
 	for(auto &i : m_agents.m_objects)
 	{
-		if(i.getShieldGlow() > 0)
+        if(i.getShieldGlow() > 0.0f)
 		{
 			std::array<float, 4> c = i.getShieldCol();
 			m_drawer.setTransform(i.getIPos(_dt), vec3(i.getRadius()));
@@ -1221,6 +1223,7 @@ void universe::draw(float _dt)
 		if(g_DEV_MODE and m_showDebugUI)
 			drawDebugUI();
     }
+    glDepthMask(true);
 	debug("draw end");
 
 	//Adding light.
@@ -2151,6 +2154,14 @@ void universe::spawnSquad(
 	}
 }
 
+void universe::spawnSquad(const aiTeam _t, const vec3 _p, const float _d, const int _num)
+{
+    for(int i = 0; i < _num; ++i)
+    {
+        spawnShip(getRandomShipType(_t), _t, _p + tovec3(randVec2(_d)) + getCameraPosition());
+    }
+}
+
 void universe::spawnSquad(
 		const aiTeam _t,
 		const float _min,
@@ -2168,6 +2179,8 @@ void universe::spawnSquad(
 		}
 	}
 }
+
+
 
 void universe::spawnBase(
 		const aiTeam _t,

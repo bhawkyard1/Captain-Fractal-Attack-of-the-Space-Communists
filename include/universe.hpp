@@ -151,6 +151,7 @@ public:
     /// \param _i number of ships to spawn
     //----------------------------------------------------------------------------------------------------------------------
     void spawnSquad(const aiTeam _t, const float _min, const float _max, const int _i);
+    void spawnSquad(const aiTeam _t, const vec3 _p, const float _d, const int _num);
 
     void spawnBase(const aiTeam _t, const vec3 _center, int _lvl, float _ang);
 
