@@ -178,9 +178,9 @@ void faction::updateDeployment(const std::vector<faction> &_rivals)
 //How should active squads behave?
 void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals, const std::vector<enemy> &_ships)
 {
-	//bool b = (m_team == ALLIANCE);
-
-	//if(b) std::cout << "DIP " << _rivals[ALLIANCE].getRelations(m_team) << ", " << getRelations(ALLIANCE) << '\n';
+    //Lower cost = a more attractive target. We want squads to target other squads really, so we multiply each ship which is considered for targeting
+    //by this value. It has the effect of making single ships less attractive targets.
+    const float shipTargetMul = 500.0f;
 
 	std::vector<squad> enemySquads;
 	for(size_t f = 0; f < _rivals.size(); ++f)
@@ -204,95 +204,84 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
 	{
 		s.m_targetPos += m_wvel * g_PIXEL_UNIT_CONVERSION * _dt;
 
-		bool done = false;
-		float bestDistance = F_INF;
+        float lowestCost = F_INF;
+        bool targetFound = false;
 
 		//Don't do shit if everything is too spread out.
 		if(s.m_averageDistance > sqr(s.m_regroupDist))
 		{
-			//if(b) std::cout << "squad " << &s << " size : " << s.m_size << '\n';
-
 			//Targeting enemy squads.
 			for(auto &target : enemySquads)
 			{
 				//if(b) std::cout << "target : " << target.m_size << ", " << target.m_team << '\n';
-				float dist = magns(s.m_averagePos - target.m_averagePos);
-				if(
-					 dist < bestDistance and
-					 s.m_strength * (1.0f + m_aggression) > target.m_strength
-					 )
+                //Target nearby, weak squads.
+                float cost = magns(s.m_averagePos - target.m_averagePos) *
+                        (s.m_strength * (1.0f + m_aggression)
+                         / target.m_strength);
+				if(cost < lowestCost)
 				{
 					//if(b) std::cout << "  targeting squad at " << target.m_averagePos.m_x << ", " << target.m_averagePos.m_y << " belonging to faction " << target.m_team << " of size " << target.m_size << '\n';
-					bestDistance = dist;
+                    lowestCost = cost;
 					s.m_targetPos = target.m_averagePos;
-					done = true;
+                    targetFound = true;
 				}
 			}
-			//if(b) std::cout << "targeting enemies\n";
-			//if( done ) continue;
+
+            //Reinforcing of squads within the SAME faction.
+            //To do: I expect this is causing ships to hang around forever, because they reinforce rather than withdrawing...?
+            for(auto &ally : m_squads.m_objects)
+            {
+                if(&s == &ally)
+                    continue;
+
+                float cost = magns(s.m_averagePos - ally.m_targetPos) * ally.m_strength;
+                if(cost < lowestCost)
+                {
+                    lowestCost = cost;
+                    s.m_targetPos = ally.m_averagePos;
+                    targetFound = true;
+                }
+            }
 
 			//Targeting of player.
-			float dist = magns(s.m_averagePos);
+            float cost = magns(s.m_averagePos) / 64.0f * shipTargetMul;
 			if(
 				 getRelations(TEAM_PLAYER) < DIPLOMACY_NEUTRAL and
-				 dist < bestDistance
+                 cost < lowestCost
 				 )
 			{
 				s.m_targetPos = vec3();
-				done = true;
+                lowestCost = cost;
+                targetFound = true;
 			}
-			else if(
-							getRelations(TEAM_PLAYER) == DIPLOMACY_SELF
-							and dist > sqr(512.0f)
-							)
+            else if(getRelations(TEAM_PLAYER) == DIPLOMACY_SELF
+                            /*and magns(s.m_averagePos) > sqr(512.0f)*/)
 			{
 				s.m_targetPos = vec3();
-				done = true;
+                targetFound = true;
+                continue;
 			}
-			//if(b) std::cout << "targeting player\n";
-			if( done )
-				continue;
-
-			//Reinforcing of squads within the SAME faction.
-			//To do: I expect this is causing ships to hang around forever, because they reinforce rather than withdrawing...?
-			for(auto &ally : m_squads.m_objects)
-			{
-				if(&s == &ally)
-					continue;
-
-				float dist = magns(s.m_averagePos - ally.m_targetPos);
-				if(
-					 dist < bestDistance and
-					 ally.m_strength < s.m_strength * 0.5f
-					 )
-				{
-					bestDistance = dist;
-					s.m_targetPos = ally.m_averagePos;
-					done = true;
-				}
-			}
-			//if(b) std::cout << "reinforcing teammates\n";
-			if( done ) continue;
 
 			//Targeting of individual ships/structures (since not every ship is in a squad).
 			for(auto &ship : _ships)
 			{
+                //Target close big ships. Multiplied by 1000 to make individual ships less attractive.
+                float cost = magns(ship.getPos() - s.m_averagePos) / ship.getRadius() * shipTargetMul;
 				//Skip if this ship is in a squad.
 				if(
 					 ship.getSquadID().m_version == -1 and
-					 _rivals[ship.getTeam()].getRelations(m_team) < DIPLOMACY_NEUTRAL and getRelations(ship.getTeam()) < DIPLOMACY_NEUTRAL
+                     _rivals[ship.getTeam()].getRelations(m_team) < DIPLOMACY_NEUTRAL and getRelations(ship.getTeam()) < DIPLOMACY_NEUTRAL and
+                        cost < lowestCost
 					 )
 				{
+                    lowestCost = cost;
 					s.m_targetPos = ship.getPos();
-					done = true;
+                    targetFound = true;
 				}
 			}
-			//if(b) std::cout << "chasing down stragglers\n";
-			if( done ) continue;
-			//std::cout << "p5\n";
 			//If no targets, withdraw.
-			s.m_targetPos = s.m_averagePos * 32.0f;
-			//if(b) std::cout << "withdrawing\n";
+            if(!targetFound)
+                s.m_targetPos = s.m_averagePos * 32.0f;
 		}
 		else
 		{

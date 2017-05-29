@@ -48,7 +48,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
                     ) continue;
             //Distance as a base.
             float weight = getTargetAttractiveness( _enemies[i], curTarget );
-            if(weight == 0.0f)
+            if(weight == 0.0f or _enemies[i].hasParent())
                 continue;
 
             if(_enemies[i].getGoal() == GOAL_FLEE_FROM)
@@ -219,11 +219,7 @@ float enemy::getTargetAttractiveness(const ship &_ship, aiTarget _curTarget)
         weight /= 4.0f;
 
     //Concentrate on big enemies.
-    weight /= clamp(
-                _ship.getRadius() / 256.0f + 1.0f,
-                0.0f,
-                1.0f
-                );
+    weight /= _ship.getRadius() / 400.0f + 1.0f;
 
     //Pursue last attacker.
     ship * lastAttacker = m_lastAttacker.get();
@@ -385,7 +381,6 @@ void enemy::steering()
     if( ( tvMul < 0.8f or tvMul > 1.2f or dist > radius )
             and ( canAccel /*or m_curGoal == GOAL_CONGREGATE*/ )
             and getCanMove()
-            and (getType() != SHIP_TYPE_CAPITAL)
             )
     {
         //Bug where capital ships do this
@@ -422,7 +417,7 @@ void enemy::steering()
             //Charge
             if(prob(odds * 2) and
                     t != nullptr and
-                    t->getType() == SHIP_TYPE_FIGHTER
+                    getInertia() > t->getInertia() //Only charge if we are bigger
                     )
             {
                 accelerate(

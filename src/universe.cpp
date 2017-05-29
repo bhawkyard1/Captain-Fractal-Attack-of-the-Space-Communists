@@ -1196,7 +1196,7 @@ void universe::draw(float _dt)
 			m_drawer.setTransform(i.getIPos(_dt), vec3(i.getRadius()));
 			slib->use("shield");
 			slib->setRegisteredUniform1f("iGlobalTime", m_time_elapsed / i.getRadius());
-			slib->setRegisteredUniform("inColour", ngl::Vec4(c[0], c[1], c[2], c[3]));
+            slib->setRegisteredUniform("inColour", ngl::Vec4(c[0], c[1], c[2], c[3]));
 			m_drawer.drawAsset("shield", "", "");
 		}
 	}

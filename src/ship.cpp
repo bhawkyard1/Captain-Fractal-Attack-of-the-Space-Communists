@@ -315,7 +315,7 @@ void ship::update(const float _dt)
     if(m_docked and prob(32))
 		m_health = clamp(m_health + 0.5f, 0.0f, m_maxHealth);
 
-    m_shieldGlow = clamp(m_shieldGlow - _dt * 0.0f, 0.0f, 1.0f);
+    m_shieldGlow = clamp(m_shieldGlow - _dt * 0.05f, 0.0f, 1.0f);
 	if(!m_accelerating)
 	{
         m_engineGlow = clamp(m_engineGlow - _dt, 0.0f, 1.0f);
