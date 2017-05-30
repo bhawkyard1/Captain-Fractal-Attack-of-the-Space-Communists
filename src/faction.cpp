@@ -234,7 +234,7 @@ void faction::updateTactics(const float _dt, const std::vector<faction> &_rivals
                 if(&s == &ally)
                     continue;
 
-                float cost = magns(s.m_averagePos - ally.m_targetPos) * ally.m_strength;
+                float cost = magns(s.m_averagePos - ally.m_targetPos) * ally.m_strength * 0.5f;
                 if(cost < lowestCost)
                 {
                     lowestCost = cost;

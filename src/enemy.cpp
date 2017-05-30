@@ -113,16 +113,17 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
         }
     }
 
-    float nd = magns(_ply.getPos() - getPos());
+    //Player following is handled by squads now.
+    /*float nd = magns(_ply.getPos() - getPos());
     float fd = 2000.0f;
 
     //If the agent can move, is friendly to the player, and close by, and not in combat.
-    if(getCanMove() and getTeam() == TEAM_PLAYER and nd > fd * fd and !inCombat())
+    /*if(getCanMove() and getTeam() == TEAM_PLAYER and nd > fd * fd and !inCombat())
     {
         m_target.setPlayer( dynamic_cast<ship*>(&_ply) );
         setGoal( GOAL_CONGREGATE );
     }
-    else if( getTarget() == nullptr and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_GOTO )
+    else */if( getTarget() == nullptr and m_curGoal != GOAL_FLEE_FROM and m_curGoal != GOAL_GOTO )
     {
         //If the agent has no m_target, it becomes idle.
         setGoal( GOAL_WANDER );
@@ -196,7 +197,7 @@ void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<sh
 float enemy::getTargetAttractiveness(const ship &_ship, aiTarget _curTarget)
 {
     //Get the weight of a potential target. Higher is less attractive.
-    float weight = magns(getPos() - _ship.getPos());
+    float weight = magns(getPos() - _ship.getPos()) - sqr(_ship.getRadius() + getRadius());
 
     //Skip this enemy if it is too far away.
     if(weight > sqr(m_aggroRadius)) return 0.0f;
@@ -209,17 +210,15 @@ float enemy::getTargetAttractiveness(const ship &_ship, aiTarget _curTarget)
     //Do not target enemies shooting by sideways.
     if(getVel() != vec3(0.0f, 0.0f, 0.0f) and
             _ship.getVel() != vec3(0.0f, 0.0f, 0.0f))
-        weight /= clamp(
-                    fabs(udot(getVel(), _ship.getVel())),
-                    0.001f,
-                    1.0f
-                    );
+        weight /= fabs(udot(getVel(), _ship.getVel())) + 1.0f;
 
     if( _curTarget.get() != nullptr and  _curTarget.get() == &_ship )
-        weight /= 4.0f;
+        weight /= 3.0f;
 
+    //std::cout << "Weight is " << weight << ", r = " << _ship.getRadius() << '\n';
     //Concentrate on big enemies.
-    weight /= _ship.getRadius() / 400.0f + 1.0f;
+    weight /=  (_ship.getRadius() / 100.0f + 1.0f);
+    //std::cout << "Post weight is " << weight << "\n\n";
 
     //Pursue last attacker.
     ship * lastAttacker = m_lastAttacker.get();
