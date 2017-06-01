@@ -139,6 +139,11 @@ private:
     /// \brief The agent will ignore enemies that are further away than this distance
     //----------------------------------------------------------------------------------------------------------------------
     float m_aggroRadius;
+
+    //The energy required for the enemy to shoot, expressed as m_energy / m_maxEnergy
+    //Energy must be above this to shoot/move
+    float m_shootEnergyThreshold;
+    float m_moveEnergyThreshold;
 };
 
 #endif

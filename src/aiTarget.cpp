@@ -29,6 +29,9 @@ ship * aiTarget::get()
 	}
 	case 2:
 		return m_target.m_asteroid.get();
+        break;
+    default:
+        return nullptr;
 	}
     return nullptr;
 }

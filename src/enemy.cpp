@@ -24,6 +24,9 @@ enemy::enemy(
     m_confidence = m_baseConfidence;//-1.0f;
     m_squadID = {0, -1};
     m_tPos = getPos();
+
+    m_shootEnergyThreshold = 0.1f;
+    m_moveEnergyThreshold = 0.2f;
 }
 
 void enemy::targetAcquisition(player &_ply, slotmap<enemy> &_enemies, slotmap<ship> &_asteroids, const std::vector<debris> &_resources, std::vector<faction> &_factions)
@@ -261,7 +264,18 @@ void enemy::behvrUpdate(float _dt)
         m_tVel = t->getVel();
     }
 
-    if(m_curGoal == GOAL_FLEE_FROM)
+    if(m_curGoal == GOAL_CONGREGATE)
+    {
+        //Can move, can't shoot.
+        m_moveEnergyThreshold = 0.0f;
+        m_shootEnergyThreshold = 1.0f;
+    }
+    else if(m_curGoal == GOAL_ATTACK)
+    {
+        m_moveEnergyThreshold = 0.1f;
+        m_shootEnergyThreshold = 0.0f;
+    }
+    else if(m_curGoal == GOAL_FLEE_FROM)
     {
         if(t != nullptr)
         {
@@ -274,6 +288,9 @@ void enemy::behvrUpdate(float _dt)
             m_tPos.m_y += 10000.0f;
             m_tVel = {0.0f, 0.0f, 0.0f};
         }
+        //Can move, can't shoot.
+        m_moveEnergyThreshold = 0.0f;
+        m_shootEnergyThreshold = 1.0f;
     }
     else if(m_curGoal == GOAL_WANDER)
     {
@@ -283,17 +300,28 @@ void enemy::behvrUpdate(float _dt)
         {
             m_tPos += tovec3(randVec2(2000.0f));
         }
+        //Can move a little.
+        m_moveEnergyThreshold = 0.8f;
+        m_shootEnergyThreshold = 1.0f;
     }
     else if(m_curGoal == GOAL_IDLE)
     {
         m_tPos = {randNum(-30000.0f, 30000.0f), randNum(-30000.0f, 30000.0f), 0.0f};
         m_tVel = {0.0f, 0.0f, 0.0f};
         m_curGoal = GOAL_IDLE;
+
+        //Can move a little.
+        m_moveEnergyThreshold = 0.9f;
+        m_shootEnergyThreshold = 1.0f;
     }
     else if(m_curGoal == GOAL_RETREAT)
     {
         m_tPos = getPos() * 2;
         m_tVel = {0.0f, 0.0f, 0.0f};
+
+        //Can move, can't shoot.
+        m_moveEnergyThreshold = 0.1f;
+        m_shootEnergyThreshold = 1.0f;
     }
 }
 
@@ -372,8 +400,8 @@ void enemy::steering()
     float towardsOrAway = dot(utv, uv);
     //When travelling towards target, can use energy until 25% is left. When travelling away, can use until 10% left.
     bool canAccel =
-            (towardsOrAway <= 0.0f and energyProportion > 0.1f) or
-            (towardsOrAway > 0.0f and energyProportion > 0.25f);
+            (towardsOrAway <= 0.0f and energyProportion > m_moveEnergyThreshold * 0.5f) or
+            (towardsOrAway > 0.0f and energyProportion > m_moveEnergyThreshold);
 
     //If we are angled towards the m_target...
     float tvMul = dot(m_tVel, v);
@@ -395,42 +423,43 @@ void enemy::steering()
             and fabs(shortestAngle(getAngle().getPitch(),getTAng())) <= 2.0f
             and dist < 800.0f + radius + selfRadius
             and ( m_curGoal == GOAL_ATTACK or m_curGoal == GOAL_TURRET )
-            and getEnergy() / getMaxEnergy() > 0.05f)
+            and getEnergy() / getMaxEnergy() > m_shootEnergyThreshold)
     {
         setFiring(true);
+    }
 
-        //Combat moves
-        if(getType() == SHIP_TYPE_FIGHTER)
+    //Combat moves
+    if(getType() == SHIP_TYPE_FIGHTER)
+    {
+        //Dodge
+        //1.0f + getCooldown = more likely to dodge just after shooting.
+        int odds = static_cast<int>(64 * (1.0f + getCooldown()));
+        if(prob(odds) and
+                t != nullptr and
+                dot(forward(), t->forward()) < -0.8f
+                )
         {
-            //Dodge
-            //1.0f + getCooldown = more likely to dodge just after shooting.
-            int odds = static_cast<int>(64 * (1.0f + getCooldown()));
-            if(prob(odds) and
-                    t != nullptr and
-                    dot(forward(), t->forward()) < -0.8f
-                    )
-            {
-                dodge(randNum(10.0f, 20.0f) * randNum(-1,1));
-            }
+            dodge(randNum(10.0f, 20.0f) * randNum(-1,1));
+        }
 
-            //Charge
-            if(prob(odds * 2) and
-                    t != nullptr and
-                    getInertia() > t->getInertia() //Only charge if we are bigger
-                    )
-            {
-                accelerate(
-                            unit(m_tPos - getPos()),
-                            randNum(15.0f, 25.0f)
-                            );
-            }
+        //Charge
+        if(prob(odds * 2) and
+                t != nullptr and
+                getInertia() > t->getInertia() //Only charge if we are bigger
+                )
+        {
+            accelerate(
+                        unit(m_tPos - getPos()),
+                        randNum(15.0f, 25.0f)
+                        );
         }
     }
-    else if(m_curGoal == GOAL_TRADE
+
+    /*else if(m_curGoal == GOAL_TRADE
             and dist < radius)
     {
 
-    }
+    }*/
 
     //This variable represents the ships' direction versus its ideal direction.
     float vecMulSide = dot(tovec2(uv), vec(getTAng()));
