@@ -150,15 +150,20 @@ void ship::accelerate(
 	if(m_priority == PRIORITY_ENGINES)
 	{
 		energyLoss = 1.2f;
-		accelMult = 2.0f;
+		accelMult *= 2.0f;
 	}
 	else if(m_priority == PRIORITY_GUNS)
 	{
 		energyLoss = 0.6f;
-		accelMult = 0.8f;
+		accelMult *= 0.8f;
 	}
 
 	if(m_energy <= energyLoss) return;
+
+	/*if(m_type == SHIP_TYPE_CAPITAL)
+		std::cout << "Total mul is " << accelMult << '\n' << "		mult " << _mult << "\n		intertia" << m_inertia << "\n		enginePower" << m_enginePower << "\n		engineTemp" << m_engineTemp << '\n';
+	*/
+
 	addForce(_dir * accelMult);
 	m_energy -= energyLoss;
     m_engineGlow = clamp(m_engineGlow + accelMult, 0.0f, 1.0f);
